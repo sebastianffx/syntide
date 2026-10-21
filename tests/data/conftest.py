@@ -1,5 +1,5 @@
-"""Fixtures for Phase 1: a tiny synthetic PTB-XL tree built through the real TimeNet pipeline, and a
-synthetic record index for manifest and leakage tests. No real PTB-XL bytes are used."""
+"""Fixtures for Phase 1: a tiny synthetic PTB-XL tree built through the real TimeNet pipeline. No real
+PTB-XL bytes are used. The synthetic record index is in tests/conftest.py."""
 
 import csv
 from collections.abc import Callable
@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
-import pyarrow as pa
 import pytest
 import wfdb
 from timenet.engine import run_pipeline
@@ -121,20 +120,3 @@ def built_ptbxl(tmp_path_factory, build_ptbxl_registry) -> BuiltPtbXl:
     return BuiltPtbXl(
         adapter=PtbXlAdapter(registry), registry=registry, tree=tree, signals=signals, adc_step=steps
     )
-
-
-@pytest.fixture(scope="session")
-def synthetic_index() -> pa.Table:
-    """A PTB-XL-shaped index: 1,500 patients over 10 patient-level folds, 1-3 ECGs each, ~22% artifacts."""
-    rng = np.random.default_rng(1234)
-    rows = {"record_id": [], "subject_uid": [], "strat_fold": [], "is_artifact": []}
-    ecg_id = 0
-    for patient in range(1500):
-        fold = int(rng.integers(1, 11))
-        for _ in range(int(rng.integers(1, 4))):
-            ecg_id += 1
-            rows["record_id"].append(f"ptbxl-{ecg_id}")
-            rows["subject_uid"].append(f"ptb-xl:{patient}")
-            rows["strat_fold"].append(fold)
-            rows["is_artifact"].append(bool(rng.random() < 0.22))
-    return pa.table(rows)

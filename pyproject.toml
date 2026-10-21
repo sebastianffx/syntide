@@ -9,19 +9,30 @@ dependencies = [
     "timenet[cli,torch]==0.11.0",
     "timenet-connectors==0.11.0",
     "hydra-core>=1.3.7,<1.4",
-    "lightning==2.6.*",
     "tensorboard>=2.21",
     "scikit-learn>=1.9",
     "scipy>=1.18",
     "matplotlib>=3.11",
 ]
 
+[project.optional-dependencies]
+wandb = ["wandb>=0.22"]
+
 [dependency-groups]
 dev = [
     "pytest>=9.1",
     "ruff>=0.14",
     "wfdb>=4.3",
+    # The reference trainer, so `uv sync` and `uv run pytest` cover it. syntide never imports it.
+    "syntide-trainers",
 ]
+
+# Trainers live outside the package: they import syntide, and syntide never imports them.
+[tool.uv.workspace]
+members = ["trainers"]
+
+[tool.uv.sources]
+syntide-trainers = { workspace = true }
 
 [build-system]
 requires = ["uv_build>=0.11,<0.12"]
@@ -33,10 +44,11 @@ module-name = "syntide"
 [tool.ruff]
 line-length = 110
 target-version = "py313"
+src = ["src", "trainers/src"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "trainers/tests"]
 addopts = "-ra --strict-markers --import-mode=importlib"

@@ -156,6 +156,32 @@ A fixture writes 4 synthetic format-16 WFDB records (`wfdb.wrsamp`) plus the two
 
 ## Phase 2 — Generator, paired training stream and the trainer seam
 
+> **Status (2026-10-21): Phase 2 is built (2A, 2B, 2C).** Tests 1–10 are in place, plus the Phase 3 tracking tests (8), because trainers need `syntide.eval.tracking` and `val_scores` now. `python -m syntide.generate` passes Gate 4 for both regimes. Where the code differs from the text below:
+> - Extra modules in `generate/`:
+>   - `plan.py`: the protocol schema and the planner, so `__main__` stays thin;
+>   - `ledger.py`: `Recipe`, recipe ids and the Parquet writer, shared by A1 and the editor;
+>   - `generic.py`: A1, `per_lead_aug@1`;
+>   - `gate.py`: Gate 4 and the review sample.
+> - `max_steps: null` instead of `???`, so one regime can be planned while the other waits for its pilot.
+> - Each regime names its `generator_gate` JSON. Planning an editor arm needs `"passed": true` from a gate run on exactly the regime's calibration file, fit on the same manifest and editor settings.
+> - `TrialSpec` also carries:
+>   - `transform`: the family's settings, so a new A1 envelope changes A1's id but not A0's;
+>   - `generator` and `validators`;
+>   - `registry`: a path, kept out of the id.
+>
+>   `Batch` also carries each slot's parent `record_id`.
+> - C1 and C2 are planned with `transform_fraction = 0`. A0 keeps the shared slot schedule, so its `transform_slots` equals A1–A3's.
+> - `result.json` is write-once: `prepare` and `finish` refuse a finished run directory.
+> - `syntide-trainers` is also in syntide's dev group, so a plain `uv sync` installs it. syntide still never imports it (a test checks this).
+> - `ResNet1d` stage widths are (w, w, 2w, 2w, 3w), 0.95M parameters at w=64. AdamW uses a constant learning rate.
+> - **Burst descriptor:** 0.5 s windows, not 0.25 s. At 100 Hz the 15 Hz high-pass makes each QRS ring for about 0.15 s, which fills a 0.25 s window, so the windowed RMS measured beats rather than noise. It now takes a robust (median) envelope, grows the segment around the loudest window, and refines the edges on a 0.1 s power trace. Clean ECGs read about 0.014 mV and burst-flagged ones 0.023–0.03 mV.
+> - **Amplitudes are in descriptor units.** Every lead coefficient is at most 1 in magnitude, so the residual's strongest lead carries the requested amplitude. Realized controls are measured on that lead, which equals the maximum over leads. Burst noise is normalized inside its interval, and drift frequency is 0.1–0.4 Hz, so 10 s always hold a full cycle (frequency is measured from zero crossings).
+> - **Envelope:** drift 0.1–3.5 mV, static noise 0.005–0.1 mV, burst noise 0.01–0.6 mV over 0.5–3 s. It covers every retained ECG of both pools. A1's wander was widened to 3.5 mV to share the drift ceiling, and planning enforces the shared ceilings.
+> - `in_context@1` (report-only) runs in the gate, not in the training stream, to keep editor arms at about 50 ms per step against 34 ms for A0.
+> - `bounds@1` allows a parent that already exceeds `mv_limit`, but an edit may not push past `max(mv_limit, parent peak)`.
+> - An exhausted slot keeps its unchanged parent and is counted in `exhausted_slots`. Gate outputs live in `manifests/<protocol>/generator_gate_poolXX/` (`recipes.parquet`, `review_sample.csv`).
+> - **Pilot (A1, 20k steps, old 1 mV wander):** validation AUROC peaks early, at step 1,000 for 25% (0.911) and step 500 for 10% (0.882), then overfits (val loss 0.34 → 1.09). `max_steps` stays unset until it is chosen from these curves. The pilot ran before A1's wander was widened, so rerunning it (into a new runs_dir) gives the exact A1 curve.
+
 Training is not part of the package. SYNTIDE plans each trial, serves its batches, and checks and records what the trainer hands back. Any trainer that goes through `syntide.trial` is acceptable. The first one is plain PyTorch (§2C).
 
 ### 2A. Experiment plan, trainer seam and training stream

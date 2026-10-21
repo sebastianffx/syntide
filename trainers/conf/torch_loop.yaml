@@ -1,0 +1,14 @@
+# python -m syntide_trainers.torch_loop: the plain PyTorch reference trainer.
+# Override any key on the command line, e.g. model.width=128 or device=cpu.
+# model and optim go into the trainer fingerprint, so every compared arm must share them;
+# a different value (the model gate's width 128) needs its own runs_dir.
+model:
+  width: 64          # channels of the first stage; about 1M parameters at 64
+  kernel_size: 7
+optim:
+  lr: 1.0e-3         # AdamW, constant learning rate
+  weight_decay: 1.0e-2
+device: auto         # auto = mps if available, else cuda, else cpu; recorded in the fingerprint
+log_every: 50        # train/loss cadence, in optimizer updates
+tracker: conf/tracker/tensorboard.yaml   # or conf/tracker/files.yaml, conf/tracker/wandb.yaml
+registry: null       # null = the registry path the trial was planned with

@@ -1,0 +1,58 @@
+# The whole PTB-XL artifact experiment (docs/SYNTIDE_MVE.md, v2): 6 arms x 2 regimes x 6 seeds = 72 trials.
+# Model, optimizer and device belong to the trainer's own config, not here.
+id: ptbxl-artifact-v2
+registry: datasets/timenet-registry
+dataset: physionet/ptb-xl@1.0.3
+
+batch_size: 64
+val_every: 250             # validation cadence, in optimizer updates; max_steps must be a multiple
+transform_fraction: 0.5    # share of each batch that A0-A3 put through their transform (A0: identity)
+
+# A1 and A2/A3 share one severity envelope (MVE: "fixed ranges, same severity envelope"), so they differ in
+# transform family and sampling policy, not in how severe an artifact may be. Planning checks that A1's
+# wander and noise ceilings equal the editor's drift and static-noise ceilings.
+# A1, per_lead_aug@1: every control drawn uniformly from its range.
+generic:
+  gain: [0.9, 1.1]           # per-lead multiplicative gain
+  max_shift_s: 0.5           # circular time shift, all leads together
+  noise_rms_mv: [0.0, 0.1]   # per-lead white noise
+  wander_mv: [0.0, 3.5]      # per-lead sinusoidal baseline wander
+  wander_hz: [0.05, 0.7]
+
+# A2/A3, ecg.electrode_artifact@1.0.0. Amplitudes are in descriptor units (ecg.electrode_artifacts@1):
+# drift = half peak-to-peak below 0.7 Hz, static and burst noise = robust RMS above 15 Hz. The ceilings
+# cover every retained artifact ECG of both pools, measured with physiology included (drift 0.14-3.48 mV,
+# static 0.008-0.056 mV, burst 0.013-0.53 mV), so A2 never clips a natural severity and A3 has
+# low-density regions to target.
+editor:
+  mv_limit: 10.0             # bounds@1
+  alignment_tol: 0.15        # alignment@1: relative error of the realized severity
+  max_retries: 5             # further draws for the same parent and slot after a rejection
+  type_smoothing: 0.1        # A3 type weights: prior / (retained frequency + type_smoothing)
+  density_floor: 1.0         # A3 severity: prior / (retained KDE + density_floor x prior)
+  envelope:
+    baseline_drift: {amplitude_mv: [0.1, 3.5], freq_hz: [0.1, 0.4]}
+    static_noise: {amplitude_mv: [0.005, 0.1]}
+    burst_noise: {amplitude_mv: [0.01, 0.6], duration_s: [0.5, 3.0]}
+
+arms:
+  A0: {source_role: depleted,    transform_family: none,    sampling_policy: none}              # real-only floor
+  A1: {source_role: depleted,    transform_family: generic, sampling_policy: fixed}             # standard augmentation
+  A2: {source_role: depleted,    transform_family: editor,  sampling_policy: coverage_matched}  # editor, untargeted
+  A3: {source_role: depleted,    transform_family: editor,  sampling_policy: gap_targeted}      # editor, targeted (primary)
+  C1: {source_role: natural_mix, transform_family: none,    sampling_policy: none}              # matched-N natural mix
+  C2: {source_role: pool,        transform_family: none,    sampling_policy: none}              # full oracle
+
+regimes:
+  scarcity10:
+    manifest: manifests/ptbxl-artifact-v2/pool10.json
+    calibration: manifests/ptbxl-artifact-v2/calibration/pool10.json
+    generator_gate: manifests/ptbxl-artifact-v2/generator_gate_pool10.json
+    max_steps: null          # set from the pilot
+  scarcity25:
+    manifest: manifests/ptbxl-artifact-v2/pool25.json
+    calibration: manifests/ptbxl-artifact-v2/calibration/pool25.json
+    generator_gate: manifests/ptbxl-artifact-v2/generator_gate_pool25.json
+    max_steps: null          # set from the pilot
+
+seeds: [0, 1, 2, 3, 4, 5]

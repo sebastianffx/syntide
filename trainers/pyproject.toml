@@ -1,0 +1,22 @@
+[project]
+name = "syntide-trainers"
+version = "0.1.0"
+description = "Trainers for SYNTIDE trials. They import syntide; syntide never imports them."
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "syntide",
+    "torch>=2.14",
+]
+
+[project.scripts]
+syntide-torch-loop = "syntide_trainers.torch_loop:main"
+
+[tool.uv.sources]
+syntide = { workspace = true }
+
+[build-system]
+requires = ["uv_build>=0.11,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "syntide_trainers"

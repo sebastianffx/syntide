@@ -1,0 +1,19 @@
+# python -m syntide.generate: plan trials (mode=plan) or calibrate the generator (mode=calibrate, Phase 2B).
+defaults:
+  - generate_schema
+  - protocol: ptbxl_artifact_v2
+  - override hydra/job_logging: stdout
+  - _self_
+
+mode: calibrate
+runs_dir: runs
+# Plan part of the protocol, e.g. select.arms=[A0,C1] select.regimes=[scarcity25] select.seeds=[0,1,2].
+select:
+  arms: null      # null = every arm
+  regimes: null
+  seeds: null
+
+hydra:
+  output_subdir: null   # trial.json and plan.json record everything; no .hydra/ folder needed
+  run:
+    dir: .
