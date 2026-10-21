@@ -1,0 +1,125 @@
+"""Fixtures for Phase 1: a tiny synthetic PTB-XL tree built through the real TimeNet pipeline, and a
+synthetic record index for manifest and leakage tests. No real PTB-XL bytes are used."""
+
+import csv
+from dataclasses import dataclass
+from pathlib import Path
+
+import numpy as np
+import pyarrow as pa
+import pytest
+import wfdb
+from timenet.engine import run_pipeline
+
+from syntide.data.adapter import PtbXlAdapter
+from syntide.data.ptbxl.connector import PtbXlConnector, PtbXlSource
+from syntide.data.schema import LEADS
+
+FS = 100
+N_SAMPLES = 100
+
+# ecg_id -> (patient_id, fold, scp_codes, noise columns). Chosen to hit every labelling rule:
+# 1 and 2 share a patient; 2 has two MI codes (deduplicated) plus an STTC code; 3 has only a rhythm
+# code (no diagnostic task); 4 has a whitespace-only noise value, which must count as clean.
+RECORDS = {
+    1: (101, 1, {"NORM": 100.0, "SR": 0.0}, {"static_noise": " , I-V1,  "}),
+    2: (101, 1, {"IMI": 50.0, "ASMI": 100.0, "NDT": 0.0}, {"burst_noise": "alles"}),
+    3: (202, 9, {"SR": 0.0}, {}),
+    4: (303, 10, {"LVH": 100.0, "CLBBB": 100.0}, {"baseline_drift": "   "}),
+}
+STATEMENTS = [  # (code, diagnostic, diagnostic_class)
+    ("NORM", "1.0", "NORM"),
+    ("IMI", "1.0", "MI"),
+    ("ASMI", "1.0", "MI"),
+    ("NDT", "1.0", "STTC"),
+    ("LVH", "1.0", "HYP"),
+    ("CLBBB", "1.0", "CD"),
+    ("SR", "", ""),
+]
+NOISE_COLUMNS = ("baseline_drift", "static_noise", "burst_noise", "electrodes_problems")
+
+
+@dataclass(frozen=True)
+class BuiltPtbXl:
+    adapter: PtbXlAdapter
+    registry: Path
+    signals: dict[int, np.ndarray]  # ecg_id -> (N_SAMPLES, 12) physical values as written, mV
+    adc_step: dict[int, float]  # ecg_id -> largest ADC step across leads, mV
+
+
+def _write_tree(root: Path) -> tuple[dict[int, np.ndarray], dict[int, float]]:
+    t = np.arange(N_SAMPLES) / FS
+    signals, steps = {}, {}
+    for ecg_id in RECORDS:
+        # Lead k carries a distinct offset, so any lead-order mix-up changes the values.
+        signal = np.stack(
+            [0.1 * k + 0.5 * np.sin(2 * np.pi * 1.2 * t + k + ecg_id) for k in range(12)], axis=1
+        )
+        bucket = root / "records100" / "00000"
+        bucket.mkdir(parents=True, exist_ok=True)
+        name = f"{ecg_id:05d}_lr"
+        wfdb.wrsamp(
+            name,
+            fs=FS,
+            units=["mV"] * 12,
+            sig_name=list(LEADS),
+            p_signal=signal,
+            fmt=["16"] * 12,
+            write_dir=str(bucket),
+        )
+        signals[ecg_id] = signal
+        steps[ecg_id] = float(1.0 / np.min(wfdb.rdheader(str(bucket / name)).adc_gain))
+
+    with (root / "ptbxl_database.csv").open("w", newline="", encoding="utf-8") as handle:
+        columns = ["ecg_id", "patient_id", "scp_codes", *NOISE_COLUMNS, "strat_fold", "filename_lr"]
+        writer = csv.DictWriter(handle, fieldnames=columns)
+        writer.writeheader()
+        for ecg_id, (patient, fold, codes, noise) in RECORDS.items():
+            writer.writerow(
+                {
+                    "ecg_id": ecg_id,
+                    "patient_id": f"{patient}.0",
+                    "scp_codes": repr(codes),
+                    **{column: noise.get(column, "") for column in NOISE_COLUMNS},
+                    "strat_fold": fold,
+                    "filename_lr": f"records100/00000/{ecg_id:05d}_lr",
+                }
+            )
+    with (root / "scp_statements.csv").open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["", "diagnostic", "diagnostic_class"])
+        writer.writerows(STATEMENTS)
+    return signals, steps
+
+
+@pytest.fixture(scope="session")
+def built_ptbxl(tmp_path_factory) -> BuiltPtbXl:
+    """Build the synthetic tree with the production pipeline; only the network download is replaced."""
+    root = tmp_path_factory.mktemp("ptbxl")
+    signals, steps = _write_tree(root / "ptb-xl-1.0.3")
+    registry = tmp_path_factory.mktemp("registry")
+
+    async def local_download(self, cache_dir):
+        return [PtbXlSource(root=root / "ptb-xl-1.0.3")]
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(PtbXlConnector, "download_async", local_download)
+        run_pipeline(PtbXlConnector(), registry, cache_dir=tmp_path_factory.mktemp("cache"), keep_cache=True)
+    return BuiltPtbXl(adapter=PtbXlAdapter(registry), registry=registry, signals=signals, adc_step=steps)
+
+
+@pytest.fixture(scope="session")
+def synthetic_index() -> pa.Table:
+    """A PTB-XL-shaped index: 1,500 patients over 10 patient-level folds, 1-3 ECGs each, ~22% artifacts."""
+    rng = np.random.default_rng(1234)
+    rows = {"record_id": [], "subject_uid": [], "strat_fold": [], "is_artifact": []}
+    ecg_id = 0
+    for patient in range(1500):
+        fold = int(rng.integers(1, 11))
+        for _ in range(int(rng.integers(1, 4))):
+            ecg_id += 1
+            rows["record_id"].append(f"ptbxl-{ecg_id}")
+            rows["subject_uid"].append(f"ptb-xl:{patient}")
+            rows["strat_fold"].append(fold)
+            rows["is_artifact"].append(bool(rng.random() < 0.22))
+    return pa.table(rows)
