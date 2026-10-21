@@ -155,16 +155,26 @@ uv run tensorboard --logdir runs
 ```
 
 The whole experiment is one file, `conf/protocol/ptbxl_artifact_v2.yaml`: the arms, the regimes, the seeds, the batch
-size, the validation cadence and A1's envelope. Every regime's `max_steps` is `null` until the pilot sets it, and
-planning refuses a regime without one. The pilot trains A1 with a generous budget in its own runs directory:
+size, the validation cadence, the step budgets, and the A1 and editor envelopes. A1 sets the step budgets in a pilot,
+in its own runs directory:
 
 ```bash
-uv run python -m syntide.generate mode=plan runs_dir=runs/pilot 'select.arms=[A1]' 'select.seeds=[0]' \
-  protocol.regimes.scarcity10.max_steps=20000 protocol.regimes.scarcity25.max_steps=20000
-uv run python -m syntide_trainers.torch_loop "runs/pilot/ptbxl-artifact-v2/*/A1/seed0"
+uv run python -m syntide.generate mode=plan runs_dir=runs/pilot2 'select.arms=[A1]' 'select.seeds=[0]' \
+  protocol.val_every=100 protocol.regimes.scarcity10.max_steps=6000 protocol.regimes.scarcity25.max_steps=6000
+uv run python -m syntide_trainers.torch_loop "runs/pilot2/ptbxl-artifact-v2/*/A1/seed0"
 ```
 
-Then set each regime's `max_steps` to where `val/auroc_overall` plateaus (a multiple of `val_every`).
+Validation AUROC peaks early and then overfits, so each budget is twice the step where `val/auroc_overall`, smoothed
+over 5 validations, peaks, rounded up to a multiple of `val_every`:
+
+| Regime | Smoothed peak | `max_steps` | Then, by step 6,000 |
+|---|---|---|---|
+| scarcity25 | 0.905 at step 1,600 | 3,250 | 0.878; val loss 0.33 → 0.83 |
+| scarcity10 | 0.885 at step 700 | 1,500 | 0.857; val loss 0.35 → 1.08 |
+
+The margin covers arms that should peak later than A1 (C2 trains on 36% more ECGs). The best checkpoint is still
+chosen on validation, so the extra steps cost only compute and the final-checkpoint sensitivity. The full grid of 72
+trials takes about 2–3 hours on an M1 Max.
 
 ### The artifact editor (A2, A3) and Gate 4
 

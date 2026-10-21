@@ -43,16 +43,20 @@ arms:
   C1: {source_role: natural_mix, transform_family: none,    sampling_policy: none}              # matched-N natural mix
   C2: {source_role: pool,        transform_family: none,    sampling_policy: none}              # full oracle
 
+# max_steps per regime, from the A1 pilot (runs/pilot2: seed 0, 6,000 steps, validation every 100):
+# twice the step where val/auroc_overall, smoothed over 5 validations, peaks, rounded up to a multiple of
+# val_every. The margin covers arms that peak later (C2 trains on 36% more ECGs); the best checkpoint is
+# still chosen on validation, so the extra steps cost only compute and the final-checkpoint sensitivity.
 regimes:
   scarcity10:
     manifest: manifests/ptbxl-artifact-v2/pool10.json
     calibration: manifests/ptbxl-artifact-v2/calibration/pool10.json
     generator_gate: manifests/ptbxl-artifact-v2/generator_gate_pool10.json
-    max_steps: null          # set from the pilot
+    max_steps: 1500          # A1 pilot: smoothed val AUROC peaks at step 700
   scarcity25:
     manifest: manifests/ptbxl-artifact-v2/pool25.json
     calibration: manifests/ptbxl-artifact-v2/calibration/pool25.json
     generator_gate: manifests/ptbxl-artifact-v2/generator_gate_pool25.json
-    max_steps: null          # set from the pilot
+    max_steps: 3250          # A1 pilot: smoothed val AUROC peaks at step 1600
 
 seeds: [0, 1, 2, 3, 4, 5]

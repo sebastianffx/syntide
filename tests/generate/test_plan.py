@@ -171,10 +171,11 @@ def test_the_protocol_yaml_defines_the_72_trial_grid():
     import syntide.generate.__main__  # noqa: F401  (registers the schema)
 
     with initialize_config_dir(config_dir=str(CONF), version_base=None):
-        cfg = compose("generate", overrides=["protocol.regimes.scarcity25.max_steps=500"])
+        cfg = compose("generate", overrides=["protocol.regimes.scarcity10.max_steps=500"])
     config: GenerateConfig = OmegaConf.to_object(cfg)
     protocol = config.protocol
     assert len(protocol.arms) * len(protocol.regimes) * len(protocol.seeds) == 72
-    assert protocol.regimes["scarcity25"].max_steps == 500
-    assert protocol.regimes["scarcity10"].max_steps is None  # still waiting for the pilot
+    assert protocol.regimes["scarcity10"].max_steps == 500  # the command line overrides a budget
+    # Every budget is set (by the pilot) and lands on the validation cadence.
+    assert all(regime.max_steps % protocol.val_every == 0 for regime in protocol.regimes.values())
     assert {arm.source_role for arm in protocol.arms.values()} == {"depleted", "natural_mix", "pool"}

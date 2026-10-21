@@ -180,7 +180,7 @@ A fixture writes 4 synthetic format-16 WFDB records (`wfdb.wrsamp`) plus the two
 > - `in_context@1` (report-only) runs in the gate, not in the training stream, to keep editor arms at about 50 ms per step against 34 ms for A0.
 > - `bounds@1` allows a parent that already exceeds `mv_limit`, but an edit may not push past `max(mv_limit, parent peak)`.
 > - An exhausted slot keeps its unchanged parent and is counted in `exhausted_slots`. Gate outputs live in `manifests/<protocol>/generator_gate_poolXX/` (`recipes.parquet`, `review_sample.csv`).
-> - **Pilot (A1, 20k steps, old 1 mV wander):** validation AUROC peaks early, at step 1,000 for 25% (0.911) and step 500 for 10% (0.882), then overfits (val loss 0.34 → 1.09). `max_steps` stays unset until it is chosen from these curves. The pilot ran before A1's wander was widened, so rerunning it (into a new runs_dir) gives the exact A1 curve.
+> - **Pilot and budgets:** A1's validation AUROC peaks early and then overfits, instead of plateauing. With the final config (`runs/pilot2`, seed 0, validation every 100), the smoothed curve peaks at step 1,600 (25%, 0.905) and step 700 (10%, 0.885). So `max_steps` is twice that, rounded up to a multiple of `val_every`: 3,250 and 1,500. An earlier 20k-step pilot, run with 1 mV wander, peaked at steps 1,000 and 500.
 
 Training is not part of the package. SYNTIDE plans each trial, serves its batches, and checks and records what the trainer hands back. Any trainer that goes through `syntide.trial` is acceptable. The first one is plain PyTorch (§2C).
 
