@@ -8,15 +8,20 @@ SYNTIDE's design (docs/SYNTIDE_Architecture.md, docs/SYNTIDE_MVE.md) answers thi
 
 The plan keeps the three requested phases:
 1. PTB-XL in TimeNet;
-2. training with Hydra + structured dataclasses + YAML groups;
-3. evaluation with TensorBoard / SummaryWriter.
+2. the generator and the paired training stream, consumed by a trainer that lives outside the package;
+3. evaluation, with the dashboard backend (local files, TensorBoard or Weights & Biases) chosen in YAML.
+
+SYNTIDE is three packages: `syntide.data`, `syntide.generate` and `syntide.eval`. Training is not part of it.
+- Any loop (plain PyTorch, Lightning, Hydra) can train a trial if it reads SYNTIDE's dataclasses from `syntide.trial` and hands back the outputs SYNTIDE defines.
+- The first trainer is plain PyTorch, in `trainers/`.
+- SYNTIDE still produces everything the comparison depends on: the batches, the step budget, exposure counts, the recipe ledger, the selection metric and the test predictions. A trainer therefore cannot weaken the experiment. It can only fail SYNTIDE's checks.
 
 Each phase has its own package, tests and file outputs, and each phase's outputs are the next phase's inputs.
 
 ### What the brief requires that the first draft missed
 | Brief requirement | First draft | Added in this revision |
 |---|---|---|
-| "Generate synthetic examples" and compare with vs without them | Generator deferred; only A1 standard augmentation | **Electrode-space artifact editor** plugged into Phase 2's mixer → arms A2/A3 and the full 72-run grid (this widens the earlier "A0, A1, C1, C2" choice) |
+| "Generate synthetic examples" and compare with vs without them | Generator deferred; only A1 standard augmentation | **Electrode-space artifact editor** plugged into Phase 2's training stream → arms A2/A3 and the full 72-run grid (this widens the earlier "A0, A1, C1, C2" choice) |
 | Decide *what* to generate, not just reproduce the distribution | Missing | Gap report + two sampling policies: **coverage-matched (A2)** vs **gap-targeted (A3)**, both fit on retained records only |
 | Evaluate quality, reject unsuitable outputs | Missing | Blocking validators (bounds, alignment), acceptance with retries, **generator gate** (Gate 4), calibration checked beyond correlation (timenet_syntide §2) |
 | Plausibility, diversity, semantic alignment, memorization | Missing | Coverage view (natural vs requested vs accepted descriptors), distinct-recipe count per run, label audit (report-only), parents limited to the depleted pool |
@@ -30,7 +35,7 @@ Verified facts this plan depends on:
 - `timenet.engine.run_pipeline(connector, root, *, cache_dir, keep_cache, force)` builds a connector straight from Python. `timenet-connectors==0.11.0` provides `BasePhysioNetConnector` (direct format-16 reader, header parser). Its ECG-QA CoT connector is a working PTB-XL template (`ptbxl-{ecg_id}` record ids).
 - TimeNet 0.11.0 has **no split API**, and `Record.subject_ids` is not stored. Patient and fold are stored by us. `Record.metadata` (JSON) and annotations (bool/int/float/str) round-trip.
 - Lead Signals come back **sorted by name**, not in clinical order. The adapter must reorder them.
-- All deps resolve on Python 3.14: hydra-core 1.3.7, lightning 2.6.6, tensorboard 2.21, scikit-learn 1.9 (which brings scipy), matplotlib 3.11, timenet-connectors 0.11.0 (which pulls `timenet[build]` for loading the card).
+- All deps resolve on Python 3.13 (Hydra 1.3 crashes on 3.14): hydra-core 1.3.7, tensorboard 2.21, torch 2.14 (from `timenet[torch]`), scikit-learn 1.9 (which brings scipy), matplotlib 3.11, timenet-connectors 0.11.0 (which pulls `timenet[build]` for loading the card).
 - PTB-XL 1.0.3 zip is at `https://physionet-open.s3.amazonaws.com/ptb-xl/ptb-xl-1.0.3.zip` (1.84 GB, plain HTTPS).
 
 ## Cross-cutting decisions
@@ -40,27 +45,38 @@ Verified facts this plan depends on:
 | Package | `src/syntide/` with uv build backend (`module-name = "syntide"`); delete `main.py` | One importable package |
 | TimeNet boundary | Only `syntide.data` imports `timenet`. Pin `timenet[torch]==0.11.0`, `timenet-connectors==0.11.0` | timenet_syntide.md §7 |
 | Generator boundary | `syntide.generate` is pure NumPy/SciPy: no timenet, no torch | Generators, validators and planner stay independent of the data plane (timenet_syntide §7) |
-| Config | Hydra 1.3 + one structured dataclass per entry point (`ConfigStore`) + small YAML groups in `conf/` | training_loop doc §1/§3. Hydra stays at the entry points |
-| Training loop | **Lightning `Trainer`** (`lightning==2.6.*`) + `TensorBoardLogger` (its `.experiment` is a `SummaryWriter`) | Chosen by user. Used as a plain trainer: no DataModule, no custom callbacks |
+| Config | Hydra 1.3 + one structured dataclass per SYNTIDE entry point (`ConfigStore`) + small YAML groups in `conf/`. The whole experiment (arms, regimes, seeds, budgets) is one file, `conf/protocol/ptbxl_artifact_v2.yaml` | training_loop doc §1/§3. Hydra stays at SYNTIDE's entry points. Trainers get plain dataclasses and need no Hydra |
+| Training | **Outside the package.** `syntide/trial.py` is the seam (Phase 2A). The first trainer is **plain PyTorch** in `trainers/`, a uv workspace member (`syntide-trainers`) that imports syntide; syntide never imports it | Chosen by user on 2026-10-21, replacing Lightning. Any framework (PyTorch, Lightning, Hydra) works if it passes SYNTIDE's checks |
+| Tracking | `syntide.eval.tracking`: one `Tracker` Protocol with `files`, `tensorboard` and `wandb` backends, chosen by `conf/tracker/*.yaml`. Trainers and eval use the same backend | Chosen by user. The evidence files never depend on the backend |
 | Sampling rate | 100 Hz (`records100`, 1,000 samples × 12 leads) | PTB-XL benchmark convention; 5× cheaper than 500 Hz |
 | Labels | 5 diagnostic superclasses, multi-label, from `scp_statements.csv` (`diagnostic == 1`) | MVE task |
 | No speculative abstractions | Concrete PTB-XL / ECG code; no plugin Protocols, registries or hydra-zen until a second dataset exists | User constraint |
-| Dependencies | runtime: the TimeNet pins, `hydra-core>=1.3.7,<1.4`, `lightning==2.6.*`, `tensorboard`, `scikit-learn`, `scipy`, `matplotlib`; dev group: `pytest`, `ruff`, `wfdb` (fixtures only) | |
-| Git | Ignore `.timenet-registry/`, `.cache/`, `runs/`, `.DS_Store`. **Commit `manifests/`** (manifests, calibrations, gate results: small JSON that is the frozen protocol) | |
+| Dependencies | syntide runtime: the TimeNet pins, `hydra-core>=1.3.7,<1.4`, `tensorboard`, `scikit-learn`, `scipy`, `matplotlib`; optional extra `wandb`; dev group: `pytest`, `ruff`, `wfdb` (fixtures only). `trainers/`: `syntide` (workspace source) + `torch`. No `lightning` | |
+| Git | Ignore `datasets/`, `runs/` (which also holds the tracker output, `wandb/` included), `outputs/`, `.DS_Store`. **Commit `manifests/`** (manifests, calibrations, gate results: small JSON that is the frozen protocol) | |
 
 Final layout:
 ```
-conf/  data.yaml  generate.yaml  train.yaml  evaluate.yaml
-       protocol/ptbxl_artifact_v2.yaml  arm/{A0,A1,A2,A3,C1,C2}.yaml
-       regime/{scarcity10,scarcity25}.yaml  runtime/{mps,cpu}.yaml
-src/syntide/
+conf/  data.yaml  generate.yaml  evaluate.yaml
+       protocol/ptbxl_artifact_v2.yaml  tracker/{files,tensorboard,wandb}.yaml
+src/syntide/      # data, generate, eval + the trainer seam; no training code
+  trial.py   TrialSpec, Batch, TrainerInfo, Checkpoint, Predictor; prepare, open_trial, is_complete, Trial.finish
   data/      __main__.py schema.py adapter.py challenge.py leakage.py ptbxl/{__init__,connector}.py ptbxl/dataset.yaml
-  generate/  __main__.py editor.py descriptors.py policy.py validate.py
-  train/     __main__.py config.py model.py mixer.py trial.py
-  eval/      __main__.py config.py stats.py freeze.py tensorboard.py report.py
-tests/  data/  generate/  train/  eval/  test_seams.py
+  generate/  __main__.py editor.py descriptors.py policy.py validate.py stream.py
+  eval/      __main__.py config.py runs.py stats.py freeze.py tracking.py views.py report.py
+trainers/         # uv workspace member syntide-trainers: imports syntide, never imported by it
+  pyproject.toml  conf/torch_loop.yaml  src/syntide_trainers/{__init__,torch_loop}.py  tests/test_torch_loop.py
+tests/  data/  generate/  eval/  test_trial.py  test_seams.py
 manifests/ptbxl-artifact-v2/  pool{10,25}.json  calibration/pool{10,25}.json  generator_gate_pool{10,25}.json
+runs/<protocol>/<regime>/<arm>/seed<n>/   trial.json from syntide, then the run outputs (Phase 2)
 ```
+
+### Where the experiment's controls live, now that training is outside the package
+| Brief requirement | Enforced by |
+|---|---|
+| Control for training budget | The stream yields exactly `max_steps` batches of `batch_size` and counts exposure itself. `finish` refuses an early stop. Eval refuses unequal presentations and different trainer fingerprints |
+| Isolate the synthetic effect | A0–A3 share the stream's parent and slot schedule. Eval requires the same trainer fingerprint, and the same `init_sha256` per (regime, seed) |
+| No leakage between generation, training and evaluation | Planning and `prepare` both run Gate 1. The trainer gets only its arm's role and `val`. Test predictions are made only inside `syntide.eval`, after the freeze |
+| Complete provenance | The stream writes `recipes.parquet` and `exposure.json`, not the trainer. `result.json` records the trainer's name, version, config and predictor, and the checkpoint shas |
 
 ---
 
@@ -69,7 +85,7 @@ manifests/ptbxl-artifact-v2/  pool{10,25}.json  calibration/pool{10,25}.json  ge
 **Step 0 (scaffold):**
 - Rewrite `pyproject.toml`: deps, uv build backend, ruff and pytest config.
 - Extend `.gitignore` and delete `main.py`.
-- `uv sync`, then run the 3.14 smoke check (see Risks).
+- `uv sync` on Python 3.13 (see Risks).
 - `README.md` grows with each phase.
 
 ### Taken from timenet_syntide.md (basic items only)
@@ -138,56 +154,69 @@ A fixture writes 4 synthetic format-16 WFDB records (`wfdb.wrsamp`) plus the two
 
 ---
 
-## Phase 2 — Training harness, with the synthetic generator plugged into the mixer
+## Phase 2 — Generator, paired training stream and the trainer seam
 
-### 2A. Harness (Hydra + structured dataclasses + Lightning)
-Config (`train/config.py`; OmegaConf-safe types):
-- `ProtocolConfig`: id, registry, dataset, batch_size=64, val_every=250, transform_fraction=0.5, `ModelConfig`, `OptimConfig`, `GenericAugConfig` (A1 envelope), `EditorConfig` (prior envelope per control, `mv_limit=10`, `alignment_tol=0.15`, `max_retries=5`).
-- `ArmConfig`: id, `source_role` (depleted | natural_mix | pool), `transform_family` (none | generic | editor), `sampling_policy` (none | fixed | coverage_matched | gap_targeted).
-- `RegimeConfig`: id, manifest, `calibration` (required for editor arms), `max_steps: int = MISSING`.
-- `RuntimeConfig`: accelerator (mps | cpu), deterministic, log_every_n_steps.
-- `TrainConfig`: the above plus replicate_seed (`train_schema`).
+Training is not part of the package. SYNTIDE plans each trial, serves its batches, and checks and records what the trainer hands back. Any trainer that goes through `syntide.trial` is acceptable. The first one is plain PyTorch (§2C).
 
-Budgets live in **regime**, so arms within a regime match by construction.
+### 2A. Experiment plan, trainer seam and training stream
 
-`conf/train.yaml`:
-- run and sweep dirs both resolve to `runs/${protocol.id}/${regime.id}/${arm.id}/seed${replicate_seed}`;
-- `hydra.sweeper.params`: `arm: A0,A1,A2,A3,C1,C2`, `regime: scarcity10,scarcity25`, `replicate_seed: 0..5` (72 trials).
+**Experiment definition.** `conf/protocol/ptbxl_artifact_v2.yaml` (schema `ProtocolConfig`, with OmegaConf-safe types) holds the whole experiment:
+- id, registry, dataset, batch_size=64, val_every=250, transform_fraction=0.5, `GenericAugConfig` (A1 envelope) and `EditorConfig` (prior envelope per control, `mv_limit=10`, `alignment_tol=0.15`, `max_retries=5`);
+- `arms:` A0–A3, C1 and C2. Each has a `source_role` (depleted | natural_mix | pool), a `transform_family` (none | generic | editor) and a `sampling_policy` (none | fixed | coverage_matched | gap_targeted);
+- `regimes:` scarcity10 and scarcity25. Each has a `manifest`, a `calibration` (required for editor arms) and `max_steps: ???`, which the pilot sets;
+- `seeds: [0, 1, 2, 3, 4, 5]`.
 
-Modules:
-- `train/__main__.py` (the only Hydra code):
-  1. `OmegaConf.to_object` → `TrainConfig`.
-  2. `load_manifest` + `check_manifest` (Gate 1).
-  3. `validate(spec, manifest)`:
-     - the arm's role exists;
-     - any transform family requires `source_role == depleted`;
-     - `max_steps % val_every == 0`;
-     - editor arms need a calibration whose `generator_gate` passed (Gate 4).
-  4. Adapter load.
-  5. `run_trial`.
-- `train/model.py`: `ResNet1d` (~1M params, 12 → 5) and `EcgModule(L.LightningModule)`.
-  - `training_step`: BCE. Counts presentations and transform slots. Logs `train/loss` and `budget/*`.
-  - `on_validation_epoch_end`: sklearn macro-AUROC overall/artifact/clean, logs `val/auroc_*` and `val/loss`, and appends to `val_history`.
-  - `configure_optimizers`: AdamW.
-  - Plain functions `load_model(ckpt)` and `predict_proba(model, x, device)` are reused by Phase 3.
-- `train/mixer.py` (training doc §1, §4A):
-  - `rng(seed, stream, *keys)`: separate INIT, PARENTS, SLOTS and TRANSFORM streams, keyed by `(replicate_seed, step, slot, attempt)` and **never the arm id**.
-  - `batch_plan(...)`: a seeded permutation per pass over the parents, plus a slot mask per step.
-  - Transform families:
-    - `none`: identity (A0's parents repeat in transform slots);
-    - `generic`: A1 per-lead gain, shift, Gaussian noise and sinusoidal wander;
-    - `editor`: §2B. The same uniform draws `u` go through A2's or A3's policy, so A2 and A3 differ only in the controls.
-  - `PairedStream(IterableDataset)` yields `(x, y, mask)` per step through `DataLoader(batch_size=None, num_workers=0)`. It appends one ledger row per candidate (including rejected ones).
-- `train/trial.py`:
-  - `trial_id`: sha256 of the scientific inputs (protocol, arm, regime, seed, manifest sha, source sha, calibration sha, generator and validator versions, `syntide.__version__`, accelerator). It excludes logging settings and paths.
-  - `run_trial(spec, train, val, out_dir, calibration) -> RunResult`:
-    1. If a completed `result.json` with the same id exists, return it. A different id is refused.
-    2. `L.seed_everything` from INIT.
-    3. `L.Trainer` with: `max_steps`; `val_check_interval=val_every`; `check_val_every_n_epoch=None`; `accumulate_grad_batches=1`; `num_sanity_val_steps=0`; `ModelCheckpoint(filename="best", monitor="val/auroc_overall", mode="max", save_top_k=1)`; and `TensorBoardLogger(save_dir=out_dir, name="", version="")`.
-    4. Fit.
-    5. Save `final.ckpt` explicitly (training doc §4B).
-    6. Read the best step from the best checkpoint's `global_step`.
-    7. Write val predictions for both checkpoints and the ledger. Ledger rows from Lightning's one-batch prefetch beyond `max_steps` are dropped.
+Budgets live in the regime, so arms within a regime match by construction. Model, optimizer and device belong to the trainer's own config (§2C).
+
+**Planning.** `python -m syntide.generate mode=plan` writes the plan before anything runs (training doc §4D). It can be narrowed with `select.arms=[A0,C1] select.regimes=[scarcity25] select.seeds=[0,1,2]`; `runs_dir` defaults to `runs`.
+1. It runs `load_manifest` + `check_manifest` (Gate 1), then the semantic checks. Nothing is written if one fails:
+   - the arm's role exists;
+   - any transform family requires `source_role == depleted`;
+   - `max_steps` is set and `max_steps % val_every == 0`;
+   - editor arms need a calibration whose `generator_gate` passed (Gate 4).
+2. It writes one frozen `TrialSpec` per selected (regime, arm, seed) to `runs/<protocol>/<regime>/<arm>/seed<n>/trial.json`, plus a `runs/<protocol>/plan.json` index. An existing `trial.json` with a different `trial_id` is refused.
+
+**The seam: `syntide/trial.py`.** A trainer needs only this module and `syntide.eval.tracking`. The dataclasses hold NumPy arrays, and nothing here imports torch.
+- `TrialSpec`:
+  - protocol id, arm, source_role, transform_family, sampling_policy, and the generator and validator versions;
+  - regime, manifest path + sha, source sha, calibration path + sha;
+  - replicate_seed, and `init_seed` from the INIT stream (trainers seed model initialization with it);
+  - batch_size, max_steps, val_every, transform_fraction;
+  - `trial_id`: sha256 of all of the above plus `syntide.__version__`. It excludes trainer settings, logging settings and paths.
+- `Batch(step, x[B,12,T] float32 mV, y[B,5] float32, transformed[B] bool)`.
+- `TrainerInfo(name, version, config, device, predictor="module:function")`, with a `fingerprint` (sha256 of name, version, config and device). Compared arms must share it.
+- `Checkpoint(path, step)`, and the `Predictor` Protocol: `(checkpoint, x, device) -> probs[n,5]`.
+- `prepare(run_dir, *, registry, tracker) -> Trial`:
+  1. reads `trial.json` and reruns Gate 1 (`PtbXlAdapter.index/source`, `check_manifest`);
+  2. checks the calibration gate for editor arms;
+  3. loads the arm's role and `val` with `PtbXlAdapter.load`. It never loads `test`;
+  4. calls `open_trial(spec, parents, val, tracker)`, which builds the stream and opens the tracker. `open_trial` does no I/O, so tests call it directly.
+
+  `Trial` exposes `spec`, `batches()`, `val` and `tracker`.
+- `is_complete(run_dir, trainer) -> bool` lets a trainer skip finished trials.
+- `Trial.finish(trainer, best, final, val_history, val_probs={"best", "final"}, init_sha256, wall_time_s)`:
+  - It refuses when:
+    - the stream was not fully consumed;
+    - `final.step != max_steps`;
+    - `best.step` is not a multiple of `val_every`, or is not the argmax of `val/auroc_overall` in `val_history`;
+    - `val_scores(val_probs["best"])` does not reproduce the reported score;
+    - a checkpoint file is missing;
+    - an existing `result.json` holds a different trial_id or trainer fingerprint.
+  - Otherwise it writes the run outputs (see "Outputs per trial") and closes the tracker.
+- SYNTIDE owns the selection metric. Trainers call `syntide.eval.stats.val_scores(val, probs)`, which returns `val/auroc_{overall,artifact,clean}` (sklearn macro-AUROC) and `val/loss`.
+
+**The training stream: `generate/stream.py`** (training doc §1, §4A). It is framework-free.
+- `rng(seed, stream, *keys)`: separate INIT, PARENTS, SLOTS and TRANSFORM streams, keyed by `(replicate_seed, step, slot, attempt)` and **never the arm id**.
+- `batch_plan(...)`: a seeded permutation per pass over the parents, plus a slot mask per step.
+- Transform families:
+  - `none`: identity (A0's parents repeat in transform slots);
+  - `generic`: A1 per-lead gain, shift, Gaussian noise and sinusoidal wander;
+  - `editor`: §2B. The same uniform draws `u` go through A2's or A3's policy, so A2 and A3 differ only in the controls.
+- `TrainStream` yields exactly `max_steps` NumPy `Batch`es and then stops, so the data enforces the budget whatever the trainer does.
+  - It keeps its own exposure counters: presentations, transform slots, candidates, accepted, exhausted slots and distinct recipes.
+  - It appends one ledger row per candidate, rejected ones included.
+  - At each `val_every` boundary it logs `budget/*` and `generator/acceptance_rate` to the tracker, so every trainer's dashboard shows them.
+  - A PyTorch trainer wraps each batch with `torch.from_numpy`. No `DataLoader` is needed.
 
 ### 2B. Synthetic generator: `ecg.electrode_artifact@1.0.0` (`syntide/generate/`)
 - `editor.py`:
@@ -228,24 +257,42 @@ Modules:
   - validations (name, version, value, pass), decision, reason;
   - label_effect.
   - A1 recipes are logged the same way.
-- `generate/__main__.py` + `conf/generate.yaml`, run per regime before the grid:
+- `generate/__main__.py` + `conf/generate.yaml` with `mode=calibrate` (the default; `mode=plan` is §2A), run per regime before the editor arms are planned:
   1. Fit the calibration.
   2. Run the **generator gate (Gate 4)** on 1,000 recipes per policy over depleted parents. For each continuous control, realized vs requested needs slope ∈ [0.9, 1.1], |intercept| ≤ 5% of the range, MAE ≤ 10% of the range and corr ≥ 0.9. Correlation alone would pass a 2×+0.2 bias. All outputs must be finite and within bounds.
   3. Write `generator_gate_poolXX.json`, `gate_recipes.parquet` (for Phase 3's audit views), and `review_sample.csv`. The review sample holds 40 recipes, stratified toward severity extremes, with an empty `verdict` column for one-time expert calibration review.
 
+### 2C. Reference trainer: plain PyTorch in `trainers/` (outside the package)
+- `trainers/pyproject.toml` defines the `syntide-trainers` package, which depends on `syntide` (workspace source) and `torch`. The root `pyproject.toml` lists it under `[tool.uv.workspace] members`, and `uv sync --all-packages` installs both.
+- `trainers/conf/torch_loop.yaml`: model width, lr, weight_decay, device, `log_every`, and the tracker YAML to use (default `conf/tracker/tensorboard.yaml`).
+- `trainers/src/syntide_trainers/torch_loop.py`, about 150 lines:
+  - `ResNet1d` (~1M params, 12 → 5).
+  - `predict(checkpoint, x, device)`, which satisfies the `Predictor` Protocol. Phase 3 calls it for the test split and the label audit.
+  - `train(run_dir, cfg, tracker_cfg)`:
+    1. Call `prepare(...)`, and skip the trial if `is_complete`.
+    2. Call `torch.manual_seed(spec.init_seed)`, build the model and hash its initial state (`init_sha256`).
+    3. Train with AdamW + BCE over `trial.batches()`, logging `train/loss` every `log_every` steps.
+    4. At each `val_every`, compute `val_scores` on `trial.val`, log them, and save `best.pt` when `val/auroc_overall` improves.
+    5. Save `final.pt` and call `trial.finish(...)`.
+  - `main()`: argparse over run-dir globs, with `--config`, `--tracker conf/tracker/<backend>.yaml` and `key=value` overrides through `OmegaConf.from_dotlist`. It does not use Hydra.
+- A Lightning or Hydra trainer would be another package that makes the same calls. Nothing in syntide changes for it.
+
 ### Outputs per trial (Phase 3's input contract)
-`.hydra/config.yaml`, TensorBoard events, `checkpoints/{best,final}.ckpt`, `recipes.parquet`, and:
-- `predictions_val.parquet`: `trial_id, arm, regime, seed, checkpoint, step, record_id, subject_uid, class_id, y_true, y_prob, is_artifact`;
-- `result.json` (RunResult):
-  - trial info: status, ids, best_step, best_val_auroc, final_step;
-  - exposure: presentations, transform_slots, candidates, accepted, exhausted_slots, distinct_recipes;
-  - timing: wall_time_s;
-  - provenance: manifest, source and calibration shas; registry, dataset and paths; checkpoint shas;
-  - env.
+- **Written by SYNTIDE:** `trial.json` (at planning), plus `recipes.parquet` and `exposure.json` (from the stream, at `finish`).
+- **Written by the trainer:** its checkpoints (`best.pt` and `final.pt` for the reference trainer) and the tracker output (`metrics.jsonl`, TensorBoard events or `wandb/`).
+- **Written by `finish`, from what the trainer hands over:**
+  - `predictions_val.parquet`: `trial_id, arm, regime, seed, checkpoint, step, record_id, subject_uid, class_id, y_true, y_prob, is_artifact`;
+  - `result.json` (RunResult):
+    - trial info: status, ids, best_step, best_val_auroc, final_step, val_history;
+    - exposure: presentations, transform_slots, candidates, accepted, exhausted_slots, distinct_recipes;
+    - trainer: name, version, config, device, predictor, fingerprint, and `init_sha256`;
+    - timing: wall_time_s;
+    - provenance: manifest, source and calibration shas; registry, dataset and paths; checkpoint shas;
+    - env.
 
 No test-split access anywhere in Phase 2.
 
-### Tests (tests/generate, tests/train), using synthetic arrays and CPU (no TimeNet)
+### Tests (tests/generate, tests/test_trial.py, trainers/tests), using synthetic arrays and CPU (no TimeNet)
 1. **Electrode projection:** an LA artifact appears in every lead except II, where it is exactly zero. An RA artifact is absent from III, and a V3 artifact appears only in V3.
 2. **Recipe provenance:** regenerating from a ledger row is bit-identical, and `recipe_id` changes when any field changes.
 3. **Descriptor calibration and gate:**
@@ -257,41 +304,53 @@ No test-split access anywhere in Phase 2.
    - A3 moves mass to low-density severities and under-represented types;
    - fitting on a withheld record raises `LeakageError`.
 5. **Acceptance:** a rejected candidate retries with the same parent, slot and next draw, and exhaustion is recorded, not replaced.
-6. **Pairing:** with the same seed, A0–A3 share parent indices, slot masks and initial weights, and A2/A3 share `u` while their controls differ. A0's batches equal their parents. A new seed gives a new schedule.
-7. **Budget and checkpoints** (Lightning on CPU, 30 steps, val_every 10):
+6. **Pairing:** with the same seed, A0–A3 share parent indices, slot masks and `init_seed`, and A2/A3 share `u` while their controls differ. A0's batches equal their parents. A new seed gives a new schedule.
+7. **Run contract** (`tests/test_trial.py`: a fake NumPy trainer through `open_trial`, with no torch):
    - presentations = steps × batch;
    - transform_slots = Σmask (0 for C1);
-   - `best_step` = argmax of `val_history`, and `final.ckpt` has `global_step == 30`;
-   - the ledger holds only rows with step ≤ 30;
-   - the predictions cover both checkpoints × all records × 5 classes.
-8. **Trial identity and reuse:** the id ignores logging settings and paths, and changes with seed, max_steps, manifest, calibration and accelerator. A completed trial is reused, and a different trial in the same dir is refused.
-9. **Config boundary** (Hydra `compose`, parametrized): each of these is refused before any data loads: missing `max_steps`, a transform arm on a non-depleted role, a non-divisible `max_steps`, and an editor arm without a passed gate.
+   - the ledger holds only rows with step ≤ max_steps;
+   - the predictions cover both checkpoints × all records × 5 classes;
+   - `finish` refuses (parametrized) a partly consumed stream, a wrong final step, a best step that is not the argmax, an unreproducible val score, and a different trainer in the same dir.
+8. **Trial identity and reuse:** the id ignores trainer settings, logging settings and paths, and changes with seed, max_steps, manifest and calibration. `is_complete` reports a finished trial, and a different trial in the same dir is refused.
+9. **Plan boundary** (parametrized): each of these is refused before any `trial.json` is written: a missing `max_steps`, a transform arm on a non-depleted role, a non-divisible `max_steps`, and an editor arm without a passed gate.
+10. **Reference trainer** (`trainers/tests/test_torch_loop.py`; CPU, 30 steps, val_every 10, synthetic `Samples`): `finish` accepts the run, `final.pt` is at step 30, and `predict(best.pt)` reproduces `val_probs["best"]`.
 
 **Done when:**
-1. The tests pass.
-2. The pilot (`arm=A1 regime=scarcity25 regime.max_steps=20000 hydra.run.dir=runs/pilot/A1-25`) sets numeric `max_steps` in both regime YAMLs.
-3. The model gate runs (width 128 and 2× steps, in separate run dirs).
-4. The gap-gate subset runs (`-m arm=A0,C1 regime=scarcity25 replicate_seed=0,1,2`).
+1. The tests pass, and `syntide` imports neither `lightning` nor `syntide_trainers`.
+2. The pilot sets a numeric `max_steps` for both regimes in the protocol YAML. It is planned with `mode=plan runs_dir=runs/pilot select.arms=[A1] select.regimes=[scarcity25] select.seeds=[0] protocol.regimes.scarcity25.max_steps=20000`, then trained by the reference trainer on that run dir.
+3. The model gate runs (width 128 and 2× steps, in separate runs dirs).
+4. The gap-gate subset runs: `mode=plan select.arms=[A0,C1] select.regimes=[scarcity25] select.seeds=[0,1,2]`, then the trainer.
 5. `python -m syntide.generate` passes Gate 4 for both regimes.
-6. The full sweep runs and skips the 6 reused trials.
+6. The full plan runs, and the trainer skips the 6 completed trials.
 
 ---
 
-## Phase 3 — Evaluation, test-once discipline, TensorBoard views, results for the presentation
+## Phase 3 — Evaluation, test-once discipline, dashboard views, results for the presentation
 
 ### Modules
 - `eval/config.py` + `conf/evaluate.yaml`: `EvaluateConfig` with:
   - `runs_dir`, `split` (val | test), `checkpoint` (best | final), `mode` (evaluate | freeze | audit);
+  - `tracker`: `defaults: [tracker: tensorboard]`, and `tracker=files` or `tracker=wandb` switches the dashboard;
   - `n_boot=2000`, `ci_level=0.95`, `bootstrap_seed`;
   - **primary** `[A3, A1]` (artifact slice, scarcity25);
   - **fixed sequence** `[[A3,A2],[A2,A1]]`, then the same chain at scarcity10;
   - diagnostics `[[A1,A0],[C1,A0],[C2,A0]]`;
   - `practical_target=0.02`, `noninferiority_margin=-0.01`, `gap_gate: {contrast: [C1,A0], regime: scarcity25, min_effect: 0.02}`.
   - Contrast labels follow timenet_syntide §3A: A2−A1 is "two recipes", not "realism".
+- `eval/runs.py`: `load_run(run_dir)` re-checks the run contract, whichever trainer produced the run:
+  - `trial.json` and `result.json` agree;
+  - the checkpoint shas match;
+  - the predictions cover both checkpoints × all val records × 5 classes.
 - `eval/stats.py` (pure):
   - `macro_auroc(y, p, weights)`: classes without both weighted labels are skipped, so the result never contains NaN.
+  - `val_scores(val, probs)`: the checkpoint-selection metric that trainers and `finish` use (Phase 2A).
   - `paired_contrast(...) -> UtilityReport`:
-    - `PairingError` if the seeds, records or labels differ between arms;
+    - `PairingError` when any of these holds:
+      - the seeds, records or labels differ between arms;
+      - the compared runs have different trainer fingerprints;
+      - `init_sha256` differs within a (regime, seed) block;
+      - presentations differ within a regime;
+      - transform slots differ across A0–A3;
     - estimate = mean over seeds of the paired difference;
     - crossed bootstrap: patient multiplicities become record weights, and seeds are resampled; the same draw serves both arms.
   - `findings(...)`, as separate flags (timenet_syntide §3B):
@@ -302,31 +361,46 @@ No test-split access anywhere in Phase 2.
   - `fixed_sequence(...)`: stops at the first contrast that fails; later ones are marked "not tested".
   - `gap_closed(...)`: reports the numerator (A3−A0) and denominator (C1−A0) separately; the ratio only when the gap gate passed and the denominator > 0 (timenet_syntide §3C).
 - `eval/freeze.py` (Gate 5):
-  - `write_freeze` records the completed trial ids, checkpoint shas, manifest and calibration shas, a hash of the decision rules, and the git rev;
+  - `write_freeze` records the completed trial ids, checkpoint shas, trainer fingerprints and predictor paths, manifest and calibration shas, a hash of the decision rules, and the git rev;
   - `verify_freeze` raises `FreezeError` naming each change;
   - `claim_test_evaluation` is a one-shot marker (`open(path, "x")`).
-- `eval/tensorboard.py` (functions taking a `SummaryWriter`; untested presentation code; every figure is also saved as PNG under `figures/` for slides). The five views from results_visualization.md:
-  - **Training health:** comes from Phase 2's scalars.
+- `eval/tracking.py`: the dashboard backends, which trainers and eval share.
+  - `TrackerConfig(backend="files"|"tensorboard"|"wandb", project="syntide", entity=None, mode="online")` loads from `conf/tracker/{files,tensorboard,wandb}.yaml`. `TrackerConfig.from_yaml(path)` serves trainers that don't use Hydra.
+  - `Tracker` Protocol: `log_scalars(values, step)`, `log_figure(name, fig, step)`, `log_text(name, md, step)`, `log_summary(hparams, metrics)` and `close()`.
+  - `make_tracker(cfg, log_dir, run_name, group, config)` imports the backend lazily. An unknown backend name raises an error that lists the choices.
+    - `files`: `metrics.jsonl` (one `{"step", **values}` line per call), `figures/*.png`, `text/*.md` and `summary.json`. No extra dependencies.
+    - `tensorboard`: `torch.utils.tensorboard.SummaryWriter(log_dir)` with `add_scalar`, `add_figure`, `add_text` and `add_hparams`.
+    - `wandb`: `run = wandb.init(project, entity, group=<protocol id>, name="<regime>/<arm>/seed<n>", dir=log_dir, config=..., mode=...)`, then `run.log(..., step=)`, `wandb.Image(fig)`, `run.summary.update`, and `run.finish()` in `close()`. Using the returned run object lets one process train several run dirs in turn.
+  - Metric names follow results_visualization.md, and the step axis is optimizer updates.
+  - The evidence files are always written, whatever the backend: predictions, `result.json`, the ledger, `comparisons.json`, `results.md` and the slide PNGs. The backend only decides where the dashboard goes.
+- `eval/views.py` (functions taking a `Tracker`; untested presentation code; every figure is also saved as PNG under `figures/` for slides). The five views from results_visualization.md:
+  - **Training health:** comes from the trainer's and the stream's scalars.
   - **Downstream utility:** `log_paired_effects`, a forest plot per regime with artifact and clean panels, CI and seed dots, and reference lines at 0/+0.02 and 0/−0.01.
   - **Coverage & acceptance:** `log_coverage` shows retained natural vs requested vs accepted severity per type and policy, acceptance rate by type, severity bin and rejection reason, plus distinct recipes per transformed presentation (diversity / memorization).
   - **Signal inspection:** `log_signal_examples` shows fixed development records (original / edited / residual), with consistent mV axes and the edited interval shaded.
   - **Failure slices:** `log_slice_differences` gives per-class Δ with counts.
-  - Plus `log_hparams` (one row per trial) and `log_findings` (markdown).
+  - Plus `log_hparams` (one row per trial, through `log_summary`) and `log_findings` (markdown, through `log_text`).
 - `eval/report.py`: `results.md`, holding:
   - the MVE's **one results table** (arm × artifact 25% / clean 25% / Δ vs A1 [CI] / gap closed / artifact 10%, with seed SD per arm);
   - the findings flags and the fixed-sequence outcome;
   - gate outcomes 1–5, read from their JSON files;
   - run counts and compute time.
 - `eval/__main__.py`:
-  - `mode=audit`: coverage and examples from `gate_recipes.parquet`, plus a **label audit** (report-only). The audit takes the mean |Δp| and the flip rate of A0's best checkpoint between each parent and its edit over the gate recipes, which shows whether edits erase diagnostic evidence.
+  - `mode=audit`: coverage and examples from `gate_recipes.parquet`, plus a **label audit** (report-only). The audit takes the mean |Δp| and the flip rate of A0's best checkpoint (run through its `trainer.predictor`) between each parent and its edit over the gate recipes, which shows whether edits erase diagnostic evidence.
   - `mode=freeze`: writes `freeze.json`.
-  - `split=val`: reports, TensorBoard and `results.md` from `predictions_val.parquet`.
-  - `split=test`: `verify_freeze` + `claim_test_evaluation`, then inference on fold 10 for the **frozen** trials only (Phase 1 adapter, Phase 2 `load_model`/`predict_proba`), then the same reports.
+  - `split=val`: reports, dashboard views and `results.md` from `predictions_val.parquet`.
+  - `split=test`:
+    1. `verify_freeze` + `claim_test_evaluation`.
+    2. SYNTIDE loads fold 10 itself through the Phase 1 adapter.
+    3. For each **frozen** run, it imports the run's `trainer.predictor` and writes `predictions_test.parquet`.
+    4. It produces the same reports.
+
+    The trainer never sees the test split.
 
 ### Tests (tests/eval and tests/test_seams.py)
 1. **Paired arms cancel:** identical predictions give estimate 0 and a CI of exactly [0, 0].
 2. **Known effect detected:** the CI excludes 0, and every seed's effect is reported.
-3. **Pairing guard:** differing seeds, records or labels raise `PairingError`.
+3. **Pairing guard:** each of these raises `PairingError`: differing seeds, records or labels; a different trainer fingerprint; a different `init_sha256` within a (regime, seed) block.
 4. **Degenerate class:** it is excluded, and the result is finite.
 5. **Decision rules:**
    - CI [0.003, 0.015] sets both `positive_effect_supported` and `target_effect_ruled_out`;
@@ -335,9 +409,14 @@ No test-split access anywhere in Phase 2.
    - the fixed sequence stops at the first failure;
    - gap closed is withheld when the gate fails or the denominator ≤ 0.
 6. **Freeze guard** (parametrized): a changed checkpoint, rule or calibration is rejected, and a second test claim is refused.
-7. **Seam test:** a tiny Phase 2 run of A0 and A3 produces outputs that Phase 3's `paired_contrast` accepts, and its ledger parents are all in `depleted`.
+7. **Seam test:** a tiny plan → reference-trainer run of A0 and A3 produces run dirs that `load_run` and `paired_contrast` accept, and its ledger parents are all in `depleted`.
+8. **Tracking backends** (`tests/eval/test_tracking.py`):
+   - each backend accepts the same call sequence;
+   - the `files` output is read back, and TensorBoard events are read with `EventAccumulator`;
+   - `wandb` runs with `mode=offline` in a temp dir, and is skipped when wandb is not installed;
+   - each `conf/tracker/*.yaml` loads into `TrackerConfig`.
 
-**Done when:** the tests pass; `mode=audit` and `split=val` populate all five TensorBoard views and `results.md`; the test-once flow works on a throwaway runs dir (a second `split=test` is refused); and the real `split=test` is run exactly once after freezing.
+**Done when:** the tests pass; `mode=audit` and `split=val` populate all five views on the configured dashboard, and `results.md`; the test-once flow works on a throwaway runs dir (a second `split=test` is refused); and the real `split=test` is run exactly once after freezing.
 
 ---
 
@@ -345,13 +424,15 @@ No test-split access anywhere in Phase 2.
 | From → to | Contract |
 |---|---|
 | Phase 1 → 2 | Registry `physionet/ptb-xl@1.0.3`; `manifests/<protocol>/pool{10,25}.json`; `PtbXlAdapter.load → Samples`; `load_manifest`, `check_manifest`, `check_calibration_ids` |
-| Phase 2 → 3 | Run dirs (`predictions_val.parquet`, `result.json`, `recipes.parquet`, `checkpoints/*.ckpt`); calibration + gate JSON + `gate_recipes.parquet`; `load_model`, `predict_proba`, `edit` |
-| Phase 3 → presentation | `results.md`, `figures/*.png`, `comparisons.json` (UtilityReports), TensorBoard |
+| SYNTIDE → trainer | `runs/<protocol>/<regime>/<arm>/seed<n>/trial.json` (`TrialSpec`); `syntide.trial.prepare → Trial` (`batches()`, `val`, `tracker`); `syntide.eval.stats.val_scores` |
+| Trainer → SYNTIDE | `Trial.finish(TrainerInfo, best, final, val_history, val_probs, init_sha256)`; the checkpoints; a `Predictor` named in `TrainerInfo.predictor` |
+| Phase 2 → 3 | Run dirs (`trial.json`, `result.json`, `predictions_val.parquet`, `recipes.parquet`, `exposure.json`, checkpoints); calibration + gate JSON + `gate_recipes.parquet`; each run's `trainer.predictor`; `edit` |
+| Phase 3 → presentation | `results.md`, `figures/*.png`, `comparisons.json` (UtilityReports), the dashboard (files, TensorBoard or W&B) |
 
 ## Schedule against the brief's 3-day budget, and deliverables
 | Day | Build | Run / gate |
 |---|---|---|
-| 1 | Phase 1; Phase 2A | Gate 1; pilot + model gate (Gate 2); gap-gate runs A0/C1 × 3 seeds |
+| 1 | Phase 1; Phase 2A; Phase 2C (reference trainer) | Gate 1; pilot + model gate (Gate 2); gap-gate runs A0/C1 × 3 seeds |
 | 2 | Phase 2B; Phase 3 stats + views | Gap gate verdict (Gate 3; MVE fallback: retain 0% and retest once); Gate 4; remaining 66 trials (≈ 8–13 h on the M1 Max) |
 | 3 | Phase 3 report | Freeze (Gate 5) → test once → `results.md` + figures → slides for the 45-minute discussion |
 
@@ -362,27 +443,35 @@ Deliverables:
 - a notes section filled from the actual findings: what evidence would change the conclusion, and next week's plan with a larger cluster (from MVE §Plan).
 
 ## Out of scope (future plugins at these seams)
-TimeNet exporter (provenance lives in the ledger until then), `electrodes_problems` artifact type, electrode-attribution descriptor, joint multi-control planning, validation-error slices in the gap detector, two-sample plausibility test, blinded gap discovery, NSTDB stress test, learned or text-conditioned generators, Plotly export, hydra-zen, Ray/Slurm launchers.
+TimeNet exporter (provenance lives in the ledger until then), `electrodes_problems` artifact type, electrode-attribution descriptor, joint multi-control planning, validation-error slices in the gap detector, two-sample plausibility test, blinded gap discovery, NSTDB stress test, learned or text-conditioned generators, Plotly export, hydra-zen, Ray/Slurm launchers, and a second trainer (for example Lightning) on the same seam.
 
 ## Risks
-- Hydra 1.3 and Lightning 2.6 resolve on Python 3.14, but Lightning only declares support up to 3.13. Step 0 runs an import + compose + 2-step CPU `Trainer.fit` smoke check; if it fails, pin `.python-version` to 3.13.
+- Hydra 1.3 crashes on Python 3.14, because its help object fails the stricter argparse. The project is therefore pinned to 3.13 (`.python-version`, `requires-python`).
 - Retained artifact counts are small (≈ 37 / 93 split over 3 types), so the per-type quantile maps are noisy. A KDE floor `ε` and clipping to the envelope regularize them; the numbers are reported in the gap report.
 - Descriptors measured on natural ECGs mix with physiological content (T waves in the wander band, QRS in the high-frequency band). The robust estimators limit this, and the coverage view shows the residual bias.
 - TimeNet per-lead reads may be slow; measure, and add the `.npy` cache only if needed.
-- MPS is not bitwise deterministic. Pairing holds at the RNG and data level, and the accelerator is part of the trial id.
+- MPS is not bitwise deterministic. Pairing holds at the RNG and data level. The device is part of the trainer fingerprint, which compared runs must share.
+- A trainer could ignore `init_seed`, or use a different config per arm. Eval catches both, because `init_sha256` and the trainer fingerprint must match across compared runs.
+- W&B ignores logged steps that go backwards within a run, so each trial and each eval split is its own W&B run.
 - Disk: 1.84 GB download + about 3 GB extracted + the registry.
 
 ## Verification (end to end)
 ```bash
-uv sync && uv run ruff check && uv run pytest
+uv sync --all-packages && uv run ruff check && uv run pytest tests trainers/tests   # add --extra wandb for W&B
 uv run python -m syntide.data                                    # registry + manifests (Gate 1)
-TIMENET_REGISTRY=.timenet-registry uv run timenet info physionet/ptb-xl
-uv run python -m syntide.train arm=A1 regime=scarcity25 regime.max_steps=20000 hydra.run.dir=runs/pilot/A1-25
-uv run python -m syntide.train -m arm=A0,C1 regime=scarcity25 replicate_seed=0,1,2   # gap-gate runs
-uv run python -m syntide.generate                                # calibration + Gate 4 + review sample
+TIMENET_REGISTRY=datasets/timenet-registry uv run timenet info physionet/ptb-xl
+# Pilot: plan one A1 trial with a trial budget, then train it with the reference trainer
+uv run python -m syntide.generate mode=plan runs_dir=runs/pilot select.arms=[A1] select.regimes=[scarcity25] \
+  select.seeds=[0] protocol.regimes.scarcity25.max_steps=20000
+uv run python -m syntide_trainers.torch_loop "runs/pilot/ptbxl-artifact-v2/scarcity25/A1/seed0"
+# Gap-gate runs
+uv run python -m syntide.generate mode=plan select.arms=[A0,C1] select.regimes=[scarcity25] select.seeds=[0,1,2]
+uv run python -m syntide_trainers.torch_loop "runs/ptbxl-artifact-v2/scarcity25/*/seed*"
+uv run python -m syntide.generate                                # mode=calibrate: calibration + Gate 4 + review sample
 uv run python -m syntide.eval mode=audit                         # coverage, examples, label audit
-uv run python -m syntide.train -m                                # full 72-trial grid (reuses 6)
-uv run python -m syntide.eval split=val                          # gap gate, forest plot, results.md (val)
+uv run python -m syntide.generate mode=plan                      # full 72-trial plan
+uv run python -m syntide_trainers.torch_loop "runs/ptbxl-artifact-v2/*/*/seed*"   # skips the 6 completed trials
+uv run python -m syntide.eval split=val                          # tracker=files|tensorboard|wandb picks the dashboard
 uv run python -m syntide.eval mode=freeze && uv run python -m syntide.eval split=test   # once
-uv run tensorboard --logdir runs
+uv run tensorboard --logdir runs                                 # with the tensorboard backend
 ```

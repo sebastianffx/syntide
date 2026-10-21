@@ -9,8 +9,15 @@ The work is built in three phases, each with its own package, tests and file out
 | Phase | Package | Output |
 |---|---|---|
 | 1. PTB-XL in TimeNet | `syntide.data` | TimeNet registry `physionet/ptb-xl@1.0.3`, `manifests/ptbxl-artifact-v2/pool{10,25}.json` |
-| 2. Training + generator | `syntide.train`, `syntide.generate` | one run directory per trial |
-| 3. Evaluation | `syntide.eval` | paired comparisons, TensorBoard views, results table |
+| 2. Generator + training stream | `syntide.generate`, with the trainer seam `syntide.trial`; the trainer lives in `trainers/` | one run directory per trial |
+| 3. Evaluation | `syntide.eval` | paired comparisons, dashboard views, results table |
+
+Training is not part of SYNTIDE (planned, not built yet):
+- SYNTIDE writes a frozen `trial.json` per run. It serves the batches, enforces the step budget, records every recipe, and checks what the trainer hands back.
+- Any loop (plain PyTorch, Lightning, Hydra) that goes through `syntide.trial` can train a trial. The first one is a plain PyTorch trainer in `trainers/`, a separate workspace package that imports syntide.
+- Trainers and evaluation log to the same dashboard: local files, TensorBoard or Weights & Biases, chosen in `conf/tracker/*.yaml`.
+
+See `docs/implementation_plan_v2.md`, Phases 2 and 3.
 
 ## Setup
 
@@ -104,8 +111,8 @@ The leakage gate (Gate 1, `syntide.data.leakage.check_manifest`) checks that:
 - `natural_mix` is the pool minus whole patients and has the same size as `depleted`.
 
 For Phase 2 it also provides `check_calibration_ids` (calibration reads only `retained_artifact`) and
-`check_recipe_parents` (every recipe starts from `depleted`). The trainer runs the gate again before
-every trial.
+`check_recipe_parents` (every recipe starts from `depleted`). `syntide.trial.prepare` runs the gate again
+before every trial, whichever trainer runs it.
 
 ### How the split compares with OpenTSLM and ECG-QA
 

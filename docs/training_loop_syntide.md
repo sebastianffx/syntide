@@ -1,3 +1,10 @@
+> **Status (2026-10-21): partly superseded.** Training now lives outside the `syntide` package.
+> - SYNTIDE writes a frozen `trial.json` per run and owns the batches, the step budget, the ledger and the checks, through `syntide.trial`.
+> - Any trainer consumes them. The first one is plain PyTorch in `trainers/`, not Lightning.
+> - The grid is planned by `python -m syntide.generate mode=plan`, not by Hydra multirun.
+>
+> The harness invariants in §4 still hold. See `docs/implementation_plan_v2.md`, Phase 2.
+
 **For SYNTIDE, I would revise my recommendation to: Hydra + explicit typed protocol schemas + Lightning, with a small SYNTIDE-owned trial runner.** Keep YAML as the readable experiment definition; use `hydra-zen` selectively to construct models and plugins.
 
 For the initial M1 Max experiment, I would run trials sequentially. Add Ray or a Slurm launcher when you move to a cluster.

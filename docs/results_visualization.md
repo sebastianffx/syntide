@@ -1,3 +1,8 @@
+> **Status (2026-10-21):** the dashboard is no longer TensorBoard-only. `syntide.eval.tracking` sends the same
+> metric names and views to local files, TensorBoard or Weights & Biases, chosen by `conf/tracker/*.yaml`.
+> The five views, the metric names and "save predictions, not just dashboard metrics" are unchanged.
+> See `docs/implementation_plan_v2.md`, Phase 3.
+
 **Yes—TensorBoard is a good starting point for SYNTIDE.** I would pair it with a small evaluation module that computes the comparisons you care about and saves the underlying predictions. That gives you live training diagnostics and a rigorous answer to “did this synthetic data improve the model?”
 
 My suggested setup is:
