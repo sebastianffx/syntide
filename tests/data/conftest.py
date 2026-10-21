@@ -2,6 +2,7 @@
 synthetic record index for manifest and leakage tests. No real PTB-XL bytes are used."""
 
 import csv
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -43,6 +44,7 @@ NOISE_COLUMNS = ("baseline_drift", "static_noise", "burst_noise", "electrodes_pr
 class BuiltPtbXl:
     adapter: PtbXlAdapter
     registry: Path
+    tree: Path  # the synthetic PTB-XL directory the registry was built from
     signals: dict[int, np.ndarray]  # ecg_id -> (N_SAMPLES, 12) physical values as written, mV
     adc_step: dict[int, float]  # ecg_id -> largest ADC step across leads, mV
 
@@ -93,19 +95,32 @@ def _write_tree(root: Path) -> tuple[dict[int, np.ndarray], dict[int, float]]:
 
 
 @pytest.fixture(scope="session")
-def built_ptbxl(tmp_path_factory) -> BuiltPtbXl:
-    """Build the synthetic tree with the production pipeline; only the network download is replaced."""
-    root = tmp_path_factory.mktemp("ptbxl")
-    signals, steps = _write_tree(root / "ptb-xl-1.0.3")
-    registry = tmp_path_factory.mktemp("registry")
+def build_ptbxl_registry(tmp_path_factory) -> Callable[[Path], Path]:
+    """Build a PTB-XL tree into a fresh registry with the production pipeline (no network)."""
 
-    async def local_download(self, cache_dir):
-        return [PtbXlSource(root=root / "ptb-xl-1.0.3")]
+    def build(tree: Path) -> Path:
+        async def local_download(self, cache_dir):
+            return [PtbXlSource(root=tree)]
 
-    with pytest.MonkeyPatch.context() as patch:
-        patch.setattr(PtbXlConnector, "download_async", local_download)
-        run_pipeline(PtbXlConnector(), registry, cache_dir=tmp_path_factory.mktemp("cache"), keep_cache=True)
-    return BuiltPtbXl(adapter=PtbXlAdapter(registry), registry=registry, signals=signals, adc_step=steps)
+        registry = tmp_path_factory.mktemp("registry")
+        with pytest.MonkeyPatch.context() as patch:
+            patch.setattr(PtbXlConnector, "download_async", local_download)
+            run_pipeline(
+                PtbXlConnector(), registry, cache_dir=tmp_path_factory.mktemp("cache"), keep_cache=True
+            )
+        return registry
+
+    return build
+
+
+@pytest.fixture(scope="session")
+def built_ptbxl(tmp_path_factory, build_ptbxl_registry) -> BuiltPtbXl:
+    tree = tmp_path_factory.mktemp("ptbxl") / "ptb-xl-1.0.3"
+    signals, steps = _write_tree(tree)
+    registry = build_ptbxl_registry(tree)
+    return BuiltPtbXl(
+        adapter=PtbXlAdapter(registry), registry=registry, tree=tree, signals=signals, adc_step=steps
+    )
 
 
 @pytest.fixture(scope="session")

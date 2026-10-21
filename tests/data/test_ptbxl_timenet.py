@@ -1,9 +1,12 @@
 """Round-trip contract: PTB-XL rows -> connector -> TimeNet registry -> adapter."""
 
+import shutil
+
 import numpy as np
 import pytest
 from timenet.client import TimeNet
 
+from syntide.data.adapter import PtbXlAdapter
 from syntide.data.schema import ARTIFACT_TYPES, SUPERCLASSES
 
 
@@ -55,3 +58,20 @@ def test_index_namespaces_subjects_and_counts_only_real_noise_flags(built_ptbxl)
     samples = built_ptbxl.adapter.load(["ptbxl-2", "ptbxl-4"])
     assert samples.artifacts[0].tolist() == [t == "burst_noise" for t in ARTIFACT_TYPES]
     assert samples.is_artifact.tolist() == [True, False]
+
+
+def test_source_fingerprint_survives_rebuilds_and_tracks_record_facts(
+    built_ptbxl, build_ptbxl_registry, tmp_path
+):
+    # Committed manifests carry this fingerprint, so rebuilding the same data must reproduce it, even
+    # though TimeNet's control database comes out with different bytes on every build.
+    rebuilt = PtbXlAdapter(build_ptbxl_registry(built_ptbxl.tree))
+    assert rebuilt.source() == built_ptbxl.adapter.source()
+
+    # Patients, folds and labels live only in that database, so changing one must change the fingerprint.
+    tree = tmp_path / "ptb-xl-1.0.3"
+    shutil.copytree(built_ptbxl.tree, tree)
+    database = tree / "ptbxl_database.csv"
+    database.write_text(database.read_text().replace("303.0", "304.0"))
+    changed = PtbXlAdapter(build_ptbxl_registry(tree))
+    assert changed.source_sha256() != built_ptbxl.adapter.source_sha256()

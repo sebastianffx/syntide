@@ -1,15 +1,20 @@
 """The scarcity challenge: which records each experimental arm may train on.
 
-One manifest per pool fraction holds every role as an explicit, ordered list of record ids:
+One manifest per pool fraction holds every role as an explicit, ordered list of record ids. Every
+draw takes whole patients, so no patient is split between roles that are meant to differ:
 
-- ``pool`` / ``unused``: a seeded fraction of training *subjects* (all their records) and the rest.
-  Pools for different fractions share one subject permutation, so smaller pools nest in larger ones.
-- ``retained_artifact`` / ``withheld``: the pool's artifact-bearing records, split by ``retain``.
+- ``pool`` / ``unused``: a seeded fraction of training patients (all their ECGs) and the rest.
+  Pools for different fractions share one patient permutation, so smaller pools nest in larger ones.
+- ``retained_artifact`` / ``withheld``: the pool's artifact patients (at least one artifact ECG) are
+  split by ``retain``. Retained patients' artifact ECGs calibrate the generator; withheld patients
+  leave with all their ECGs, clean ones included.
 - ``depleted`` = pool - withheld: parents for A0-A3.
-- ``natural_mix``: the pool minus as many *random* records as were withheld (C1, matched N).
+- ``natural_mix``: the pool minus random whole patients holding as many ECGs as were withheld
+  (C1: matched N, natural artifact prevalence).
 - ``val`` / ``test``: the outer validation and test folds, untouched.
 
-The manifest's sha256 covers everything else in it, so an edited file is rejected on load.
+The manifest's sha256 covers everything else in it, so an edited file is rejected on load, and a
+written manifest is never silently replaced by a different one.
 """
 
 import hashlib
@@ -65,23 +70,19 @@ def build_manifest(index: pa.Table, spec: ChallengeSpec, pool_fraction: float, s
     train_subjects = np.unique(subject[train])
     # One permutation per seed, whatever the fraction: pools nest.
     order = np.random.default_rng([spec.seed, 0]).permutation(train_subjects)
-    pool_subjects = order[: math.ceil(pool_fraction * len(train_subjects))]
-    pool = train & np.isin(subject, pool_subjects)
+    pool = train & np.isin(subject, order[: math.ceil(pool_fraction * len(train_subjects))])
 
-    artifact_in_pool = np.flatnonzero(pool & is_artifact)
-    n_retained = math.ceil(spec.retain * len(artifact_in_pool))
     stream = round(pool_fraction * 1_000_000)
-    retained_idx = np.random.default_rng([spec.seed, 1, stream]).choice(
-        artifact_in_pool, n_retained, replace=False
+    artifact_subjects = np.unique(subject[pool & is_artifact])
+    retained_subjects = np.random.default_rng([spec.seed, 1, stream]).choice(
+        artifact_subjects, math.ceil(spec.retain * len(artifact_subjects)), replace=False
     )
-    retained = _mask(len(index), retained_idx)
-    withheld = pool & is_artifact & ~retained
+    retained = pool & is_artifact & np.isin(subject, retained_subjects)
+    withheld = pool & np.isin(subject, artifact_subjects) & ~np.isin(subject, retained_subjects)
 
-    pool_idx = np.flatnonzero(pool)
-    dropped_idx = np.random.default_rng([spec.seed, 2, stream]).choice(
-        pool_idx, withheld.sum(), replace=False
+    dropped_subjects = _subjects_totalling(
+        subject[pool], int(withheld.sum()), np.random.default_rng([spec.seed, 2, stream])
     )
-    natural_mix = pool & ~_mask(len(index), dropped_idx)
 
     masks = {
         "pool": pool,
@@ -89,7 +90,7 @@ def build_manifest(index: pa.Table, spec: ChallengeSpec, pool_fraction: float, s
         "retained_artifact": retained,
         "withheld": withheld,
         "depleted": pool & ~withheld,
-        "natural_mix": natural_mix,
+        "natural_mix": pool & ~np.isin(subject, dropped_subjects),
         "val": np.isin(fold, spec.val_folds),
         "test": np.isin(fold, spec.test_folds),
     }
@@ -104,6 +105,16 @@ def build_manifest(index: pa.Table, spec: ChallengeSpec, pool_fraction: float, s
 
 
 def save_manifest(manifest: Manifest, path: Path) -> None:
+    """Write a manifest. Once written it is frozen: rewriting it with different content is refused."""
+    path = Path(path)
+    if path.exists():
+        existing = load_manifest(path)
+        if existing.sha256 != manifest.sha256:
+            raise FileExistsError(
+                f"{path} already holds a different manifest (sha256 {existing.sha256[:12]}). Manifests "
+                "are frozen: set a new challenge.id, or delete the file on purpose to rebuild it."
+            )
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(asdict(manifest), indent=1) + "\n", encoding="utf-8")
 
@@ -120,10 +131,23 @@ def load_manifest(path: Path) -> Manifest:
     return Manifest(**payload, sha256=recorded)
 
 
-def _mask(n: int, indices: np.ndarray) -> np.ndarray:
-    mask = np.zeros(n, dtype=bool)
-    mask[indices] = True
-    return mask
+def _subjects_totalling(subjects: np.ndarray, n_records: int, rng: np.random.Generator) -> list[str]:
+    """Random whole subjects whose records add up to exactly ``n_records``.
+
+    Subjects are taken in a seeded random order, skipping any that would overshoot. PTB-XL has
+    thousands of single-ECG patients, so the exact total is reachable in practice.
+    """
+    names, counts = np.unique(subjects, return_counts=True)
+    chosen, remaining = [], n_records
+    for k in rng.permutation(len(names)):
+        if remaining == 0:
+            break
+        if counts[k] <= remaining:
+            chosen.append(str(names[k]))
+            remaining -= int(counts[k])
+    if remaining:
+        raise ValueError(f"no set of whole subjects holds exactly {n_records} records")
+    return chosen
 
 
 def _sha256(content: dict) -> str:

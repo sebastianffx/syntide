@@ -5,6 +5,7 @@ leakage gate. ``load()`` materializes signals for a list of record ids, in clini
 """
 
 import hashlib
+import json
 from collections import defaultdict
 from collections.abc import Sequence
 from pathlib import Path
@@ -35,11 +36,16 @@ class PtbXlAdapter:
         return {"dataset": self.dataset_id, "version": self.dataset_version, "sha256": self.source_sha256()}
 
     def source_sha256(self) -> str:
-        """Hash the stored files' checksums. Unlike ``manifest.json``, this ignores the build environment."""
-        parts = sorted((part.path, part.checksum) for part in self._version.manifest.files.all_files())
-        return hashlib.sha256(
-            "\n".join(f"{path} {checksum}" for path, checksum in parts).encode()
-        ).hexdigest()
+        """Fingerprint what SYNTIDE reads: the signal files plus the index.
+
+        TimeNet's control database holds the records, labels and annotations, but its bytes differ on
+        every build, so the index derived from it is hashed instead of the file.
+        """
+        digest = hashlib.sha256()
+        for part in sorted(self._version.manifest.files.time_series, key=lambda part: part.path):
+            digest.update(f"{part.path} {part.checksum}\n".encode())
+        digest.update(json.dumps(self.index().to_pylist(), sort_keys=True).encode())
+        return digest.hexdigest()
 
     def index(self) -> pa.Table:
         """One row per record that has a diagnostic task, ordered by ECG id.

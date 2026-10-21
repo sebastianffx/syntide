@@ -1,7 +1,8 @@
 """``python -m syntide.data``: build PTB-XL into TimeNet, then write and check the challenge manifests.
 
 The build is skipped when the registry already holds the version; the raw download is cached in
-``download_cache`` so a rebuild does not fetch 1.8 GB again.
+``download_cache`` so a rebuild does not fetch 1.8 GB again. Manifests are written under
+``manifests/<challenge.id>/``; an existing manifest with different content is never overwritten.
 """
 
 import logging
@@ -26,7 +27,7 @@ class DataConfig:
     registry: str = "datasets/timenet-registry"
     download_cache: str = "datasets/raw/ptb-xl"
     dataset: str = "physionet/ptb-xl@1.0.3"
-    manifests_dir: str = "manifests/ptbxl-artifact-v2"
+    manifests_dir: str = "manifests/${challenge.id}"
     challenge: ChallengeSpec = field(default_factory=ChallengeSpec)
 
 
@@ -48,7 +49,7 @@ def main(cfg: DictConfig) -> None:
 
     for fraction in config.challenge.pool_fractions:
         manifest = build_manifest(index, config.challenge, fraction, source)
-        check_manifest(manifest, index)  # Gate 1
+        check_manifest(manifest, index, source)  # Gate 1
         path = Path(config.manifests_dir) / f"{pool_name(fraction)}.json"
         save_manifest(manifest, path)
         counts = ", ".join(f"{role}={len(ids)}" for role, ids in manifest.roles.items())
