@@ -1,0 +1,47 @@
+Generated with the built-in image_gen tool. Final asset: syntide-workflow.png.
+
+Initial prompt:
+Use case: infographic-diagram
+Asset type: high-resolution landscape architecture image for the Syntide GitHub README.
+Create a precise, elegant technical workflow diagram on an off-white background. Flat vector-like design, crisp dark navy text, subtle teal and amber accents, generous spacing, no decorative photography, no fake code. Large readable labels; excellent text accuracy. Title "SYNTIDE" and subtitle "Find coverage gaps. Generate examples. Measure the benefit."
+Show exactly five main module cards arranged in two rows. Top row left to right: syntide.data, syntide.explore, syntide.generate. Bottom row: syntide.eval below the middle, trainers below the right.
+Card text verbatim:
+"syntide.data"
+"Prepare trustworthy data"
+"Signals, labels and patient splits"
+"Outputs: registry + manifests"
+
+"syntide.explore"
+"Decide what to generate"
+"Embeddings, clusters and coverage"
+"Output: generation-plan.json"
+
+"syntide.generate"
+"Create and track samples"
+"Augmentation · artifact editing · DiffuSETS"
+"Outputs: recipes, catalogs and trials"
+
+"trainers"
+"Train downstream models"
+"Separate package; uses syntide.trial"
+"Outputs: checkpoints + predictions"
+
+"syntide.eval"
+"Measure what improved"
+"Paired comparisons and generator audits"
+"Outputs: metrics, figures and reports"
+
+Use directional arrows with these exact meanings, arranged cleanly without crossing text:
+1. data -> explore, label "training records".
+2. explore -> generate, label "selected generation plan".
+3. data -> generate via a neat top routing lane, label "manifests + calibration data".
+4. generate -> trainers vertically down on right, label "trial.json + controlled batches".
+5. trainers -> eval pointing left along bottom row, label "results + predictions".
+6. generate -> explore, separate return arrow below the top row cards, label "new signal catalog".
+7. eval -> explore vertically upwards using a dotted arrow, label "research feedback".
+Put a small "separate training package" tag on the trainers card. Solid arrows = artifact/data flow; dotted arrow = researcher-guided feedback.
+Bottom note, exactly: "Explorer plans require explicit execution and conditioning. Full DiffuSETS samples require dataset integration before training."
+Do not imply that an explorer plan directly launches a trainer. Do not imply evaluation verifies synthetic diagnoses. All five named modules must be present exactly once. Keep all typography legible at README width; use a wide landscape composition approximately 3:2. No logos or watermarks.
+
+Final edit prompt:
+Edit this Syntide workflow diagram with one precise correction only. The upper teal routed connector labeled 'manifests + calibration data' must be ONE-WAY FROM syntide.data TO syntide.generate. Remove the downward-pointing arrowhead where that connector meets the top of the syntide.data card (upper left); leave a plain line starting at that card. Keep the downward arrowhead where it enters syntide.generate (upper right). Preserve every other arrow, all text, all cards, spacing, colors, fonts, background, and resolution unchanged. No other changes.

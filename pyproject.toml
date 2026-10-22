@@ -17,6 +17,17 @@ dependencies = [
 
 [project.optional-dependencies]
 wandb = ["wandb>=0.22"]
+explore = [
+    "chronos-forecasting>=2.2,<3",
+    "sentence-transformers>=5,<6",
+    "huggingface-hub>=0.34,<2",
+    "umap-learn>=0.5.9,<0.6",
+]
+diffusets = [
+    "diffusers>=0.35,<0.40",
+    # Upstream's pinned architecture imports pandas; no external embedding API is called.
+    "pandas>=2.2,<4",
+]
 
 [dependency-groups]
 dev = [

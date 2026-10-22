@@ -1,0 +1,1940 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SYNTIDE · Coverage explorer</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #192e3b;
+        --muted: #607581;
+        --line: #dce5e8;
+        --paper: #f4f7f8;
+        --accent: #087f8c;
+        --blue: #316aab;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          14px system-ui,
+          -apple-system,
+          sans-serif;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      button,
+      select,
+      input,
+      textarea {
+        border: 1px solid #bdcdd3;
+        border-radius: 5px;
+        padding: 8px;
+        background: #fff;
+        color: var(--ink);
+      }
+      button {
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--accent);
+        background: #edf8f8;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible {
+        outline: 3px solid #75bccb;
+        outline-offset: 2px;
+      }
+      button.primary {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      h1 {
+        font-size: 25px;
+        letter-spacing: -0.8px;
+      }
+      h2 {
+        font-size: 16px;
+      }
+      #record-heading {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+      #record-meta,
+      #record-slices {
+        overflow-wrap: anywhere;
+      }
+      #toggle-record {
+        flex-shrink: 0;
+      }
+      h3 {
+        font-size: 14px;
+      }
+      small,
+      .muted {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .eyebrow {
+        font:
+          600 11px ui-monospace,
+          monospace;
+        letter-spacing: 1.8px;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      header {
+        padding: 25px 30px 20px;
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+      }
+      .topmeta {
+        text-align: right;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+      .chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .chip {
+        background: #edf3f5;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      .metric {
+        padding: 16px 30px;
+        background: #fff;
+      }
+      .metric strong {
+        display: block;
+        font-size: 23px;
+        font-weight: 600;
+      }
+      .metric span {
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+      }
+      main {
+        display: grid;
+        grid-template-columns: 235px minmax(0, 1fr) 310px;
+        gap: 18px;
+        padding: 20px;
+        align-items: start;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .pad {
+        padding: 16px;
+      }
+      .stack {
+        display: grid;
+        gap: 16px;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .wrap {
+        flex-wrap: wrap;
+      }
+      .section {
+        padding: 14px 16px;
+        border-top: 1px solid var(--line);
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        font-weight: 550;
+        margin: 13px 0 5px;
+      }
+      label:first-child {
+        margin-top: 0;
+      }
+      input:not([type="checkbox"]),
+      select,
+      textarea {
+        width: 100%;
+      }
+      input[type="range"] {
+        padding: 0;
+      }
+      textarea {
+        font:
+          11px ui-monospace,
+          monospace;
+        min-height: 70px;
+      }
+      .help {
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-top: 8px;
+      }
+      .smallbuttons {
+        display: flex;
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .smallbuttons button {
+        flex: 1;
+        font-size: 12px;
+      }
+      .scroll {
+        overflow: auto;
+        max-height: 270px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+      }
+      th,
+      td {
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        padding: 8px 9px;
+        white-space: nowrap;
+      }
+      th {
+        background: #f4f7f8;
+        color: var(--muted);
+        font-weight: 500;
+        position: sticky;
+        top: 0;
+      }
+      tr[data-id] {
+        cursor: pointer;
+      }
+      tr[data-id]:hover {
+        background: #f0f8f8;
+      }
+      .tablerow-selected {
+        background: #e0f1f2;
+      }
+      .plothead {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      .plothead select {
+        width: auto;
+        font-size: 12px;
+      }
+      .plot {
+        width: 100%;
+        height: 430px;
+        display: block;
+        background-color: #fbfdfe;
+        background-image:
+          linear-gradient(#eaf0f3 1px, transparent 1px),
+          linear-gradient(90deg, #eaf0f3 1px, transparent 1px);
+        background-size: 32px 32px;
+        touch-action: none;
+        cursor: crosshair;
+      }
+      .point {
+        cursor: pointer;
+        transition: opacity 0.12s;
+      }
+      .point:hover {
+        stroke: #122e39;
+        stroke-width: 2;
+      }
+      .legend {
+        padding: 9px 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .legend button {
+        padding: 3px 7px;
+        font-size: 10px;
+      }
+      .dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 5px;
+      }
+      .notice {
+        padding: 11px 16px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.6;
+        background: #f5f9fa;
+      }
+      .waveform {
+        display: block;
+        width: 100%;
+        height: 270px;
+      }
+      .tag {
+        display: inline-block;
+        background: #edf4f5;
+        border-radius: 3px;
+        padding: 3px 6px;
+        font-size: 10px;
+        margin: 2px;
+      }
+      .tag.synthetic {
+        background: #fff2e3;
+        color: #925a19;
+      }
+      .wave-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 18px;
+        font-size: 11px;
+        overflow-wrap: anywhere;
+      }
+      .wave-key {
+        display: inline-block;
+        width: 22px;
+        margin-right: 5px;
+        vertical-align: middle;
+        border-top: 2px solid;
+      }
+      .tuple {
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 12px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+      }
+      .tuple strong {
+        font-size: 11px;
+        color: var(--accent);
+      }
+      .tuple p {
+        white-space: pre-wrap;
+      }
+      .method {
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+      .method label {
+        margin: 0 0 7px;
+      }
+      .method input[type="number"] {
+        width: 78px;
+      }
+      .method details {
+        margin-top: 8px;
+      }
+      summary {
+        cursor: pointer;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .full {
+        width: 100%;
+      }
+      .empty {
+        padding: 28px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .error {
+        color: #9b2931;
+        white-space: pre-wrap;
+        font-size: 12px;
+        margin-top: 10px;
+      }
+      .success {
+        color: var(--accent);
+      }
+      #provenance {
+        white-space: pre-wrap;
+        font:
+          10px ui-monospace,
+          monospace;
+        overflow-wrap: anywhere;
+        max-height: 300px;
+        overflow: auto;
+      }
+      footer {
+        padding: 0 24px 24px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.6;
+      }
+      .select-count {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .tabs {
+        display: flex;
+        gap: 5px;
+      }
+      .tabs button {
+        font-size: 11px;
+        padding: 5px 9px;
+      }
+      .tabs button[aria-pressed="true"] {
+        background: #e2f1f2;
+        border-color: var(--accent);
+      }
+      @media (max-width: 1200px) {
+        main {
+          grid-template-columns: 210px minmax(0, 1fr);
+        }
+        .plan {
+          grid-column: 1/-1;
+        }
+        .metrics .metric {
+          padding: 14px 20px;
+        }
+        .plan .method {
+          display: inline-block;
+          vertical-align: top;
+          width: 31%;
+          margin-right: 1%;
+        }
+      }
+      @media (max-width: 720px) {
+        header {
+          padding: 18px;
+          display: block;
+        }
+        .topmeta {
+          text-align: left;
+          margin-top: 12px;
+        }
+        main {
+          display: flex;
+          flex-direction: column;
+          padding: 10px;
+        }
+        .stack,
+        .card,
+        .plan {
+          width: 100%;
+        }
+        .metrics {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .metric {
+          padding: 12px !important;
+        }
+        .metric strong {
+          font-size: 20px;
+        }
+        .plot {
+          height: 330px;
+        }
+        .reading-guide {
+          display: none;
+        }
+        .plan .method {
+          display: block;
+          width: 100%;
+        }
+        .plothead .row {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <div class="eyebrow">SYNTIDE / DATA DISCOVERY</div>
+        <h1>Decide what to generate.</h1>
+        <div class="chips" id="header-chips"></div>
+      </div>
+      <div class="topmeta">
+        Signal clusters · semantic coverage · generation plans<br /><span
+          id="analysis-tag"
+        ></span>
+      </div>
+    </header>
+    <div class="metrics">
+      <div class="metric">
+        <strong id="n-pop">—</strong><span>Population recordings</span>
+      </div>
+      <div class="metric">
+        <strong id="n-sample">—</strong><span>Embedded recordings</span>
+      </div>
+      <div class="metric">
+        <strong id="n-labels">—</strong><span>Observed labels</span>
+      </div>
+      <div class="metric">
+        <strong id="n-clusters">—</strong><span>Signal clusters</span>
+      </div>
+      <div class="metric">
+        <strong id="n-selected">0</strong><span>Selected for plan</span>
+      </div>
+    </div>
+    <main>
+      <aside class="stack">
+        <section class="card pad">
+          <details id="filters-details" open>
+            <summary
+              style="font-size: 15px; color: var(--ink); font-weight: 600"
+            >
+              Find a coverage gap
+            </summary>
+            <p class="help">
+              Filters affect the map. Population counts stay fixed to the
+              selected source.
+            </p>
+            <label for="search">Recording, patient or text</label
+            ><input
+              id="search"
+              type="search"
+              placeholder="Search the sample…"
+            />
+            <label for="label-filter">Label / slice</label
+            ><select id="label-filter">
+              <option value="">All labels</option>
+            </select>
+            <label for="slice-field">Metadata slice</label
+            ><select id="slice-field">
+              <option value="">All metadata</option></select
+            ><input
+              id="slice-value"
+              placeholder="Value contains…"
+              aria-label="Metadata contains"
+              style="margin-top: 6px"
+            />
+            <div class="row" style="margin-top: 6px">
+              <input
+                id="slice-min"
+                type="number"
+                placeholder="Minimum"
+                aria-label="Metadata minimum"
+              /><input
+                id="slice-max"
+                type="number"
+                placeholder="Maximum"
+                aria-label="Metadata maximum"
+              />
+            </div>
+            <label for="cluster-filter">Signal cluster</label
+            ><select id="cluster-filter">
+              <option value="">All clusters</option>
+            </select>
+            <label for="signal-min"
+              >Signal novelty percentile ≥
+              <output id="signal-value">0</output></label
+            ><input id="signal-min" type="range" min="0" max="100" value="0" />
+            <label for="text-min"
+              >Text novelty percentile ≥
+              <output id="text-value">0</output></label
+            ><input id="text-min" type="range" min="0" max="100" value="0" />
+            <label for="cluster-max">Maximum cluster size</label
+            ><input
+              id="cluster-max"
+              type="number"
+              min="1"
+              placeholder="No limit"
+            />
+            <label for="intra-min">Minimum within-cluster distance</label
+            ><input
+              id="intra-min"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="No minimum"
+            />
+            <label for="separation-min">Minimum nearest-cluster distance</label
+            ><input
+              id="separation-min"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="No minimum"
+            />
+            <div class="smallbuttons">
+              <button id="select-visible">Select filtered</button
+              ><button id="reset-filters">Reset filters</button>
+            </div>
+            <p class="help" id="filter-count"></p>
+          </details>
+        </section>
+        <section class="card pad reading-guide">
+          <h3>Reading this map</h3>
+          <p class="help">
+            One point is one multichannel recording. Clusters use signal
+            embeddings; labels describe them afterward.
+          </p>
+          <p class="help">
+            Novelty ranks the embedded sample. A distant sentence is unusual,
+            not necessarily missing or useful. The 2D map can distort distances
+            and density.
+          </p>
+          <p class="help">
+            Click a point to inspect it. Drag a rectangle to add points to your
+            plan. Shift-click toggles one point.
+          </p>
+        </section>
+      </aside>
+      <div class="stack">
+        <section class="card">
+          <div class="plothead">
+            <div class="row">
+              <h2>Signal landscape</h2>
+              <div class="row">
+                <select id="projection" aria-label="Projection">
+                  <option value="umap">UMAP</option>
+                  <option value="pca">PCA</option></select
+                ><select id="color" aria-label="Color by">
+                  <option value="cluster">Cluster</option>
+                  <option value="origin">Real / synthetic</option>
+                  <option value="signal_novelty">Signal novelty</option>
+                  <option value="text_novelty">Text novelty</option>
+                  <option value="label">Selected label</option></select
+                ><button id="zoom-in" aria-label="Zoom in">+</button
+                ><button id="zoom-out" aria-label="Zoom out">−</button
+                ><button id="zoom-reset">Fit</button>
+              </div>
+            </div>
+          </div>
+          <svg
+            id="scatter"
+            class="plot"
+            viewBox="0 0 800 480"
+            role="img"
+            aria-label="Interactive recording embedding map"
+          ></svg>
+          <div class="legend" id="legend"></div>
+          <div class="notice">
+            Metrics below use the original embedding space. UMAP and PCA are
+            visualization views only.
+          </div>
+        </section>
+        <section class="card">
+          <div class="plothead row">
+            <h2 id="record-heading">Recording inspector</h2>
+            <button id="toggle-record" disabled>Add to plan</button>
+          </div>
+          <div id="record-empty" class="empty">
+            Select a point or a row to inspect its channels and linked text.
+          </div>
+          <div id="inspector" hidden>
+            <div class="pad">
+              <div id="record-meta" class="muted"></div>
+              <div id="record-labels" style="margin-top: 8px"></div>
+              <div id="record-requested-labels" class="help" hidden></div>
+              <details style="margin-top: 8px">
+                <summary>Recording metadata</summary>
+                <pre
+                  id="record-slices"
+                  style="white-space: pre-wrap; font-size: 11px"
+                ></pre>
+              </details>
+              <div class="row" style="margin-top: 12px">
+                <span class="muted" id="wave-caption"></span
+                ><select
+                  id="channel"
+                  aria-label="Waveform channel"
+                  style="width: auto"
+                ></select>
+              </div>
+              <label for="compare-record">Compare with recording</label>
+              <select id="compare-record">
+                <option value="">No comparison</option>
+              </select>
+              <div
+                id="wave-legend"
+                class="wave-legend"
+                style="margin-top: 12px"
+              ></div>
+              <p id="comparison-note" class="help" role="status"></p>
+            </div>
+            <svg
+              id="waveform"
+              class="waveform"
+              viewBox="0 0 800 270"
+              aria-label="Selected recording waveform"
+            ></svg>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Channel</th>
+                    <th>Mean</th>
+                    <th>Std</th>
+                    <th>RMS</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>Peak–peak</th>
+                    <th>Missing</th>
+                  </tr>
+                </thead>
+                <tbody id="channel-stats"></tbody>
+              </table>
+            </div>
+            <div class="section">
+              <h3>Text & question–answer tuples</h3>
+              <div id="record-texts" class="scroll"></div>
+            </div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="plothead row">
+            <h2>Coverage evidence</h2>
+            <div class="tabs">
+              <button id="tab-clusters" aria-pressed="true">Clusters</button
+              ><button id="tab-labels" aria-pressed="false">Labels</button
+              ><button id="tab-records" aria-pressed="false">Recordings</button>
+            </div>
+          </div>
+          <div class="scroll" id="evidence"></div>
+        </section>
+      </div>
+      <aside class="card plan">
+        <div class="pad">
+          <div class="eyebrow">REPRODUCIBLE EXPORT</div>
+          <h2>Generation plan</h2>
+          <p class="help">
+            Choose targets on the map, then assign counts to one or more
+            generation methods.
+          </p>
+          <div class="row" style="margin-top: 14px">
+            <span class="select-count" id="selection-count"
+              >0 recordings selected</span
+            ><button id="clear-selection">Clear</button>
+          </div>
+          <div id="selection-summary" class="help"></div>
+          <label for="plan-seed">Generation seed</label
+          ><input
+            id="plan-seed"
+            type="number"
+            min="0"
+            max="4294967295"
+            value="42"
+          />
+          <div class="method">
+            <label
+              ><input id="use-augmentation" type="checkbox" checked /> Standard
+              augmentation</label
+            >
+            <div class="row">
+              <small>Requested samples</small
+              ><input
+                id="count-augmentation"
+                type="number"
+                min="1"
+                value="100"
+                aria-label="Augmentation count"
+              />
+            </div>
+            <details>
+              <summary>Control parameters (JSON)</summary>
+              <textarea
+                id="params-augmentation"
+                aria-label="Augmentation parameters"
+              >
+{}</textarea
+              >
+            </details>
+          </div>
+          <div class="method">
+            <label
+              ><input id="use-editing" type="checkbox" /> Synthetic
+              editing</label
+            >
+            <div class="row">
+              <small>Requested samples</small
+              ><input
+                id="count-editing"
+                type="number"
+                min="1"
+                value="100"
+                aria-label="Editing count"
+              />
+            </div>
+            <details>
+              <summary>Control parameters (JSON)</summary>
+              <textarea id="params-editing" aria-label="Editing parameters">
+{}</textarea
+              >
+            </details>
+          </div>
+          <div class="method">
+            <label
+              ><input id="use-diffusion" type="checkbox" /> DiffuSETS / full
+              signal</label
+            >
+            <div class="row">
+              <small>Requested samples</small
+              ><input
+                id="count-diffusion"
+                type="number"
+                min="1"
+                value="100"
+                aria-label="Diffusion count"
+              />
+            </div>
+            <label for="diffusion-generator">Generator</label>
+            <input
+              id="diffusion-generator"
+              type="text"
+              value="diffusets@1"
+              spellcheck="false"
+            />
+            <label for="diffusion-modality">Time series modality</label>
+            <input
+              id="diffusion-modality"
+              type="text"
+              value="ecg"
+              spellcheck="false"
+            />
+            <p class="help">
+              DiffuSETS generates complete ECG signals. Other modalities need a
+              matching generator plugin.
+            </p>
+            <details>
+              <summary>Generation intentions (JSON)</summary>
+              <textarea id="params-diffusion" aria-label="Diffusion parameters">
+{}</textarea
+              >
+            </details>
+          </div>
+          <p class="help">
+            Export a plan, then execute it with
+            <code>python -m syntide.generate.full</code>. DiffuSETS requires
+            checkpoints, matching clinical text embeddings, and age, sex and
+            heart-rate conditioning. Generated signals and label effects require
+            review before training. A signal edit does not automatically
+            preserve an answer or rationale.
+          </p>
+          <button
+            id="export-plan"
+            class="primary full"
+            style="margin-top: 14px"
+          >
+            Export generation plan</button
+          ><button id="export-selection" class="full" style="margin-top: 8px">
+            Export selection only
+          </button>
+          <div id="plan-message" class="error" role="status"></div>
+        </div>
+        <div class="section">
+          <details>
+            <summary>Analysis provenance</summary>
+            <pre id="provenance"></pre>
+          </details>
+          <button id="download-analysis" class="full" style="margin-top: 12px">
+            Download analysis JSON
+          </button>
+        </div>
+      </aside>
+    </main>
+    <footer>
+      SYNTIDE · Training-scope discovery. Population counts describe the
+      selected source; cluster and novelty metrics describe only its embedded
+      sample. No generation, training or external service runs from this
+      explorer.
+    </footer>
+    <script id="analysis-data" type="application/json">
+      __SYNTIDE_ANALYSIS_JSON__
+    </script>
+    <script>
+      "use strict";
+      const A = JSON.parse(
+          document.getElementById("analysis-data").textContent,
+        ),
+        R = A.records,
+        $ = (id) => document.getElementById(id);
+      const palette = [
+        "#087f8c",
+        "#597ac2",
+        "#a869a9",
+        "#c38b3e",
+        "#548975",
+        "#ce6e68",
+        "#758592",
+        "#7767b0",
+        "#8c9847",
+        "#4d91b8",
+      ];
+      const selected = new Set();
+      let active = null,
+        visible = R,
+        tab = "clusters",
+        drag = null,
+        view = [0, 0, 800, 480],
+        positions = new Map();
+      const fmt = (n, d = 3) =>
+        n === null || n === undefined || !Number.isFinite(Number(n))
+          ? "—"
+          : Number(n).toLocaleString(undefined, { maximumFractionDigits: d });
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      const clusterId = (c) => c.id ?? c.cluster ?? c.cluster_id;
+      function recordOrigin(r) {
+        const origin = r.metadata?.origin;
+        if (origin === "real" || origin === "synthetic") return origin;
+        return r.metadata?.synthetic === true ? "synthetic" : "real";
+      }
+      function pairedRecordId(r, records) {
+        const sources = r.metadata?.generation?.source_record_ids;
+        const candidates = [
+          r.metadata?.source_record_id,
+          ...(Array.isArray(sources) ? sources : []),
+        ];
+        return candidates.find(
+          (id) =>
+            id !== r.record_id &&
+            records.some((reference) => reference.record_id === id),
+        );
+      }
+      function recordLabel(r) {
+        const preferred = r.metadata?.display_name;
+        if (typeof preferred === "string" && preferred.trim())
+          return preferred.trim();
+        const id = String(r.record_id);
+        return id.length > 42 ? id.slice(0, 18) + "…" + id.slice(-12) : id;
+      }
+      const originColor = (r) =>
+        recordOrigin(r) === "synthetic" ? "#bd6a20" : "#087f8c";
+      function requestedLabels(r) {
+        const value = r.metadata?.requested_labels;
+        return Array.isArray(value) ? value : value ? [value] : [];
+      }
+      // Geometry uses each recording's time samples and one amplitude range per
+      // shared channel, so comparisons never normalize away amplitude differences.
+      function waveformComparison(record, reference, names) {
+        const notices = [],
+          rows = [];
+        let maxTime = 0;
+        const unitAt = (waveform, index) =>
+          Array.isArray(waveform.units)
+            ? waveform.units[index]
+            : waveform.units;
+        for (const name of names) {
+          const index = record.waveform.channels.indexOf(name);
+          const units = unitAt(record.waveform, index) ?? "unknown units";
+          const series = [];
+          for (const r of [record, reference].filter(Boolean)) {
+            const w = r.waveform,
+              channel = w.channels.indexOf(name);
+            if (channel < 0) {
+              notices.push(
+                `${recordLabel(r)}: channel ${name} is unavailable.`,
+              );
+              continue;
+            }
+            if ((unitAt(w, channel) ?? "unknown units") !== units) {
+              notices.push(
+                `${name}: comparison omitted because channel units differ.`,
+              );
+              continue;
+            }
+            const values = w.values[channel];
+            const times =
+              w.times ??
+              values.map(
+                (_, i) =>
+                  (i * (w.original_samples - 1)) /
+                  Math.max(1, values.length - 1) /
+                  w.sample_rate,
+              );
+            for (const time of times)
+              if (Number.isFinite(time)) maxTime = Math.max(maxTime, time);
+            series.push({
+              record: r,
+              values,
+              times,
+              reference: r === reference,
+            });
+          }
+          const finite = series
+            .flatMap((s) => s.values)
+            .filter((v) => v !== null && Number.isFinite(v));
+          let lo = finite.length ? Math.min(...finite) : -1;
+          let hi = finite.length ? Math.max(...finite) : 1;
+          if (lo === hi) {
+            lo -= 0.5;
+            hi += 0.5;
+          }
+          rows.push({ name, units, lo, hi, series });
+        }
+        return { rows, maxTime: maxTime || 1, notices: [...new Set(notices)] };
+      }
+      const clusters = new Map(A.clusters.map((c) => [clusterId(c), c]));
+      const intra = (c) =>
+        c?.intra_distance ??
+        c?.mean_intra_distance ??
+        c?.mean_distance_to_centroid;
+      const separation = (c) =>
+        c?.nearest_cluster_distance ?? c?.nearest_centroid_distance;
+      const labelRows = Array.isArray(A.label_summary)
+        ? A.label_summary
+        : Object.entries(A.label_summary || {}).map(([label, v]) => ({
+            label,
+            ...v,
+          }));
+      const labelName = (l) => l.label ?? l.name;
+      function text(el, value) {
+        el.textContent = value;
+      }
+      function svg(tag, attrs = {}) {
+        const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+        return e;
+      }
+      const sortedScores = {};
+      for (const key of ["signal_novelty", "text_novelty"])
+        sortedScores[key] = R.map((r) => r[key])
+          .filter((v) => v !== null && v !== undefined && Number.isFinite(v))
+          .sort((a, b) => a - b);
+      function rank(field, value) {
+        const vals = sortedScores[field];
+        if (!vals.length || value === null || value === undefined) return null;
+        let lo = 0,
+          hi = vals.length;
+        while (lo < hi) {
+          const mid = (lo + hi) >>> 1;
+          if (vals[mid] < value) lo = mid + 1;
+          else hi = mid;
+        }
+        return (100 * lo) / Math.max(1, vals.length - 1);
+      }
+      for (const r of R) {
+        r._signalRank = rank("signal_novelty", r.signal_novelty);
+        r._textRank = rank("text_novelty", r.text_novelty);
+      }
+      const cleanAnalysis = JSON.parse($("analysis-data").textContent);
+      text($("n-pop"), fmt(A.provenance.sampling.population_count, 0));
+      text($("n-sample"), fmt(R.length, 0));
+      text($("n-labels"), fmt(labelRows.length, 0));
+      text($("n-clusters"), A.clusters.length);
+      text($("analysis-tag"), "Analysis " + A.analysis_id.slice(0, 12));
+      text($("provenance"), JSON.stringify(A.provenance, null, 2));
+      if (window.innerWidth < 720) $("filters-details").open = false;
+      const metadataFields = [
+        ...new Set(R.flatMap((r) => Object.keys(r.metadata || {}))),
+      ].sort();
+      for (const field of metadataFields) {
+        const o = document.createElement("option");
+        o.value = field;
+        text(o, field);
+        $("slice-field").append(o);
+      }
+      const source = A.provenance.source;
+      const hasMixedOrigins = new Set(R.map(recordOrigin)).size > 1;
+      if (hasMixedOrigins) $("color").value = "origin";
+      for (const value of [
+        source.dataset ??
+          source.source?.dataset ??
+          A.request_config?.source.dataset,
+        A.provenance.embedding.backend ?? A.request_config?.embedding.backend,
+        source.role ?? "train",
+        A.provenance.embedding.device,
+      ]) {
+        if (value) {
+          const e = document.createElement("span");
+          e.className = "chip";
+          text(e, value);
+          $("header-chips").append(e);
+        }
+      }
+      for (const l of labelRows) {
+        const o = document.createElement("option");
+        o.value = labelName(l);
+        text(
+          o,
+          labelName(l) +
+            (source.label_definitions?.[labelName(l)]?.description
+              ? " · " + source.label_definitions[labelName(l)].description
+              : ""),
+        );
+        $("label-filter").append(o);
+      }
+      for (const c of A.clusters) {
+        const id = clusterId(c),
+          o = document.createElement("option");
+        o.value = id;
+        text(o, "Cluster " + id + " · " + c.size);
+        $("cluster-filter").append(o);
+      }
+      function drawLegend() {
+        $("legend").replaceChildren();
+        const mode = $("color").value;
+        if (mode === "origin") {
+          for (const origin of ["real", "synthetic"]) {
+            const records = R.filter((r) => recordOrigin(r) === origin);
+            if (!records.length) continue;
+            const e = document.createElement("span");
+            e.innerHTML = `<span class="dot" style="background:${originColor(records[0])}"></span>${origin === "real" ? "Real" : "Synthetic"} · ${records.length}`;
+            $("legend").append(e);
+          }
+          return;
+        }
+        if (mode !== "cluster") return;
+        for (const c of A.clusters) {
+          const id = clusterId(c),
+            b = document.createElement("button");
+          b.innerHTML = `<span class="dot" style="background:${palette[id % palette.length]}"></span>Cluster ${esc(id)}`;
+          b.onclick = () => {
+            $("cluster-filter").value = id;
+            filter();
+          };
+          $("legend").append(b);
+        }
+      }
+      if (!R.some((r) => r.coordinates.umap)) {
+        $("projection").value = "pca";
+        $("projection").options[0].disabled = true;
+      }
+      if (
+        !R.some((r) => r.text_novelty !== null && r.text_novelty !== undefined)
+      ) {
+        $("text-min").disabled = true;
+        $("text-min").title = "No text embeddings in this analysis";
+      }
+      function criteria() {
+        return {
+          search: $("search").value,
+          label: $("label-filter").value,
+          cluster: $("cluster-filter").value,
+          slice_field: $("slice-field").value,
+          slice_value: $("slice-value").value,
+          slice_min: $("slice-min").value,
+          slice_max: $("slice-max").value,
+          signal_percentile: Number($("signal-min").value),
+          text_percentile: Number($("text-min").value),
+          maximum_cluster_size: $("cluster-max").value,
+          min_intra_distance: $("intra-min").value,
+          min_separation: $("separation-min").value,
+        };
+      }
+      function filter() {
+        const f = criteria(),
+          q = f.search.toLowerCase();
+        visible = R.filter((r) => {
+          const c = clusters.get(r.cluster),
+            sv = f.slice_field ? r.metadata?.[f.slice_field] : null;
+          return (
+            (!f.slice_field ||
+              ((!f.slice_value ||
+                String(sv ?? "")
+                  .toLowerCase()
+                  .includes(f.slice_value.toLowerCase())) &&
+                (f.slice_min === "" ||
+                  (sv !== null &&
+                    Number.isFinite(Number(sv)) &&
+                    Number(sv) >= Number(f.slice_min))) &&
+                (f.slice_max === "" ||
+                  (sv !== null &&
+                    Number.isFinite(Number(sv)) &&
+                    Number(sv) <= Number(f.slice_max))))) &&
+            (!q ||
+              JSON.stringify([r.record_id, r.subject_uid, r.metadata, r.texts])
+                .toLowerCase()
+                .includes(q)) &&
+            (!f.label || r.labels.includes(f.label)) &&
+            (f.cluster === "" || r.cluster === Number(f.cluster)) &&
+            (!f.signal_percentile ||
+              (r._signalRank !== null &&
+                r._signalRank >= f.signal_percentile)) &&
+            (!f.text_percentile ||
+              (r._textRank !== null && r._textRank >= f.text_percentile)) &&
+            (!f.maximum_cluster_size ||
+              c.size <= Number(f.maximum_cluster_size)) &&
+            (!f.min_intra_distance ||
+              intra(c) >= Number(f.min_intra_distance)) &&
+            (!f.min_separation || separation(c) >= Number(f.min_separation))
+          );
+        });
+        text($("signal-value"), f.signal_percentile);
+        text($("text-value"), f.text_percentile);
+        text(
+          $("filter-count"),
+          `${visible.length} of ${R.length} embedded recordings match`,
+        );
+        draw();
+        evidence();
+      }
+      function pointColor(r) {
+        const mode = $("color").value;
+        if (mode === "origin") return originColor(r);
+        if (mode === "cluster") return palette[r.cluster % palette.length];
+        if (mode === "label")
+          return r.labels.includes($("label-filter").value)
+            ? "#087f8c"
+            : "#cdd8dc";
+        const v = mode === "signal_novelty" ? r._signalRank : r._textRank;
+        return v === null
+          ? "#cdd8dc"
+          : `hsl(${190 - v * 0.45} 55% ${80 - v * 0.45}%)`;
+      }
+      function draw() {
+        drawLegend();
+        const plot = $("scatter");
+        plot.replaceChildren();
+        plot.setAttribute("viewBox", view.join(" "));
+        const mode = $("projection").value,
+          xy = R.map((r) => r.coordinates[mode] || r.coordinates.pca);
+        const xs = xy.map((p) => p[0]),
+          ys = xy.map((p) => p[1]),
+          xmin = Math.min(...xs),
+          xrange = Math.max(...xs) - xmin || 1,
+          ymin = Math.min(...ys),
+          yrange = Math.max(...ys) - ymin || 1;
+        positions = new Map();
+        const shown = new Set(visible.map((r) => r.record_id));
+        R.forEach((r, i) => {
+          const x = 35 + (730 * (xy[i][0] - xmin)) / xrange,
+            y = 445 - (410 * (xy[i][1] - ymin)) / yrange;
+          positions.set(r.record_id, [x, y]);
+          const on = shown.has(r.record_id),
+            circle = svg("circle", {
+              cx: x,
+              cy: y,
+              r: active === r.record_id ? 6 : 4,
+              fill: pointColor(r),
+              opacity: on ? 0.85 : 0.08,
+              stroke: selected.has(r.record_id) ? "#132f3c" : "white",
+              "stroke-width": selected.has(r.record_id) ? 2 : 0.6,
+              class: "point",
+              tabindex: on ? 0 : -1,
+              "aria-label": `${r.record_id}, ${recordOrigin(r)}, cluster ${r.cluster}`,
+            });
+          const title = svg("title");
+          text(
+            title,
+            `${r.record_id} · ${recordOrigin(r)} · ${r.labels.join(", ")}\nSignal novelty ${fmt(r.signal_novelty)} · Text novelty ${fmt(r.text_novelty)}`,
+          );
+          circle.append(title);
+          circle.onclick = (e) => {
+            if (drag?.moved) return;
+            e.stopPropagation();
+            if (e.shiftKey) {
+              selected.has(r.record_id)
+                ? selected.delete(r.record_id)
+                : selected.add(r.record_id);
+              selectionChanged();
+            }
+            inspect(r.record_id);
+          };
+          circle.onkeydown = (e) => {
+            if (e.key === "Enter") inspect(r.record_id);
+          };
+          plot.append(circle);
+        });
+      }
+      function plotPoint(event) {
+        const p = $("scatter").createSVGPoint();
+        p.x = event.clientX;
+        p.y = event.clientY;
+        return p.matrixTransform($("scatter").getScreenCTM().inverse());
+      }
+      $("scatter").onpointerdown = (e) => {
+        if (e.button !== 0) return;
+        const p = plotPoint(e);
+        drag = { start: p, moved: false };
+      };
+      $("scatter").onpointermove = (e) => {
+        if (!drag) return;
+        const p = plotPoint(e);
+        if (Math.abs(p.x - drag.start.x) + Math.abs(p.y - drag.start.y) < 5)
+          return;
+        drag.moved = true;
+        let rect = $("brush");
+        if (!rect) {
+          rect = svg("rect", {
+            id: "brush",
+            fill: "#087f8c22",
+            stroke: "#087f8c",
+            "stroke-dasharray": "4 3",
+            "pointer-events": "none",
+          });
+          $("scatter").append(rect);
+        }
+        const bounds = [
+          Math.min(p.x, drag.start.x),
+          Math.min(p.y, drag.start.y),
+          Math.abs(p.x - drag.start.x),
+          Math.abs(p.y - drag.start.y),
+        ];
+        drag.bounds = bounds;
+        ["x", "y", "width", "height"].forEach((k, i) =>
+          rect.setAttribute(k, bounds[i]),
+        );
+      };
+      window.addEventListener("pointerup", () => {
+        if (drag?.moved) {
+          const [x, y, w, h] = drag.bounds;
+          for (const r of visible) {
+            const [a, b] = positions.get(r.record_id);
+            if (a >= x && a <= x + w && b >= y && b <= y + h)
+              selected.add(r.record_id);
+          }
+          selectionChanged();
+        }
+        setTimeout(() => (drag = null), 0);
+      });
+      function inspect(id) {
+        active = id;
+        const r = R.find((r) => r.record_id === id);
+        $("record-empty").hidden = true;
+        $("inspector").hidden = false;
+        $("toggle-record").disabled = false;
+        text($("record-heading"), recordLabel(r));
+        $("record-heading").title = r.record_id;
+        text(
+          $("record-meta"),
+          `${recordOrigin(r) === "synthetic" ? "Synthetic record" : `Real · Patient ${r.subject_uid ?? r.metadata?.subject_uid ?? "—"}`} · Cluster ${r.cluster} · Signal novelty ${fmt(r.signal_novelty)} · Text novelty ${fmt(r.text_novelty)}`,
+        );
+        text(
+          $("record-slices"),
+          JSON.stringify({ ...r.metadata, record_id: r.record_id }, null, 2),
+        );
+        $("record-labels").innerHTML = r.labels
+          .map((l) => `<span class="tag">${esc(l)}</span>`)
+          .join("");
+        const requested = requestedLabels(r);
+        $("record-requested-labels").hidden = !requested.length;
+        $("record-requested-labels").innerHTML = requested.length
+          ? `Requested labels (unverified): ${requested.map((l) => `<span class="tag synthetic">${esc(l)}</span>`).join("")}<br>Generation conditioning is not a confirmed diagnosis.`
+          : "";
+        const previousComparison = $("compare-record").value;
+        $("compare-record").replaceChildren();
+        const none = document.createElement("option");
+        none.value = "";
+        text(none, "No comparison");
+        $("compare-record").append(none);
+        for (const candidate of R.filter(
+          (candidate) => candidate.record_id !== id,
+        )) {
+          const option = document.createElement("option");
+          option.value = candidate.record_id;
+          option.title = candidate.record_id;
+          text(
+            option,
+            `${recordOrigin(candidate) === "synthetic" ? "Synthetic" : "Real"} · ${recordLabel(candidate)}`,
+          );
+          $("compare-record").append(option);
+        }
+        const paired = pairedRecordId(r, R);
+        $("compare-record").value = paired
+          ? paired
+          : previousComparison !== id
+            ? previousComparison
+            : "";
+        const previousChannel = $("channel").value;
+        $("channel").replaceChildren();
+        const all = document.createElement("option");
+        all.value = "all";
+        text(all, "All channels");
+        $("channel").append(all);
+        for (const name of r.waveform.channels) {
+          const o = document.createElement("option");
+          o.value = name;
+          text(o, name);
+          $("channel").append(o);
+        }
+        $("channel").value =
+          previousChannel === "all" ||
+          r.waveform.channels.includes(previousChannel)
+            ? previousChannel
+            : $("compare-record").value && r.waveform.channels.includes("II")
+              ? "II"
+              : "all";
+        const stats = Array.isArray(r.stats.channels)
+          ? r.stats.channels
+          : Object.entries(r.stats.channels || {}).map(([name, v]) => ({
+              name,
+              ...v,
+            }));
+        $("channel-stats").innerHTML = stats
+          .map(
+            (s) =>
+              `<tr><td>${esc(s.name ?? s.channel)}</td>${["mean", "std", "rms", "min", "max", "ptp"].map((k) => `<td>${fmt(s[k] ?? (k === "ptp" ? s.peak_to_peak : null))}</td>`).join("")}<td>${fmt(100 * s.missing_fraction, 1)}%</td></tr>`,
+          )
+          .join("");
+        $("record-texts").innerHTML = r.texts?.length
+          ? r.texts
+              .map(
+                (t) =>
+                  `<div class="tuple"><strong>${esc(t.text_id)} · novelty ${fmt(t.text_novelty ?? t.novelty)}</strong>${t.question ? `<p><b>Q</b> ${esc(t.question)}</p>` : ""}${t.answer ? `<p><b>A</b> ${esc(t.answer)}</p>` : ""}${!t.question ? `<p>${esc(t.source_text ?? t.text)}</p>` : ""}${t.rationale || t.metadata?.rationale ? `<details><summary>Rationale</summary><p>${esc(t.rationale ?? t.metadata.rationale)}</p></details>` : ""}<details><summary>Tuple metadata</summary><pre style="white-space:pre-wrap">${esc(JSON.stringify(t.metadata || {}, null, 2))}</pre></details></div>`,
+              )
+              .join("")
+          : '<p class="help">No text attached to this recording.</p>';
+        wave();
+        selectionChanged();
+      }
+      function wave() {
+        if (!active) return;
+        const r = R.find((r) => r.record_id === active),
+          reference = R.find((r) => r.record_id === $("compare-record").value),
+          w = r.waveform,
+          plot = $("waveform");
+        plot.replaceChildren();
+        plot.setAttribute(
+          "aria-label",
+          reference
+            ? `${recordLabel(r)} and ${recordLabel(reference)} on shared channel amplitude and time axes`
+            : `Selected recording ${recordLabel(r)} waveform`,
+        );
+        const names =
+            $("channel").value === "all" ? w.channels : [$("channel").value],
+          comparison = waveformComparison(r, reference, names),
+          height = 220 / Math.max(1, names.length);
+        comparison.rows.forEach((row, j) => {
+          const { name, lo, hi, series } = row,
+            range = hi - lo,
+            base = 12 + j * height;
+          const t = svg("text", {
+            x: 9,
+            y: base + height / 2,
+            "font-size": 10,
+            fill: "#607581",
+          });
+          text(t, name);
+          plot.append(t);
+          plot.append(
+            svg("line", {
+              x1: 60,
+              y1: base + height / 2,
+              x2: 780,
+              y2: base + height / 2,
+              stroke: "#e3ecef",
+            }),
+          );
+          // Draw the reference first so the selected trace remains visible.
+          for (const trace of [...series].reverse()) {
+            let path = "",
+              gap = true;
+            trace.values.forEach((n, i) => {
+              const time = trace.times[i];
+              if (n === null || !Number.isFinite(n) || !Number.isFinite(time)) {
+                gap = true;
+                return;
+              }
+              const x = 60 + (720 * time) / comparison.maxTime,
+                y = base + height * 0.9 - (height * 0.8 * (n - lo)) / range;
+              path += (gap ? "M" : "L") + x.toFixed(2) + "," + y.toFixed(2);
+              gap = false;
+            });
+            plot.append(
+              svg("path", {
+                d: path,
+                fill: "none",
+                stroke: originColor(trace.record),
+                "stroke-width": trace.reference ? 1.4 : 1.2,
+                "stroke-dasharray": trace.reference ? "5 3" : "none",
+                "data-record-id": trace.record.record_id,
+                "data-channel": name,
+              }),
+            );
+          }
+          if (names.length === 1) {
+            for (const [value, y] of [
+              [hi, base + height * 0.1],
+              [lo, base + height * 0.9],
+            ]) {
+              const label = svg("text", {
+                x: 62,
+                y: y - 4,
+                "font-size": 10,
+                fill: "#607581",
+              });
+              text(label, `${fmt(value)} ${row.units}`);
+              plot.append(label);
+            }
+          }
+        });
+        for (let i = 0; i <= 4; i++) {
+          const label = svg("text", {
+            x: 60 + (720 * i) / 4,
+            y: 250,
+            "font-size": 10,
+            fill: "#607581",
+            "text-anchor": i === 4 ? "end" : "start",
+          });
+          text(label, `${fmt((comparison.maxTime * i) / 4, 2)} s`);
+          plot.append(label);
+        }
+        $("wave-legend").innerHTML = [r, reference]
+          .filter(Boolean)
+          .map(
+            (record, i) =>
+              `<span title="${esc(record.record_id)}"><span class="wave-key" style="border-color:${originColor(record)};border-top-style:${i ? "dashed" : "solid"}"></span>${recordOrigin(record) === "synthetic" ? "Synthetic" : "Real"} · ${esc(recordLabel(record))} · ${record.waveform.sample_rate} Hz</span>`,
+          )
+          .join("");
+        text(
+          $("comparison-note"),
+          [
+            reference
+              ? "Shared time and amplitude axes within each channel; no amplitude normalization or beat alignment. Statistics below describe the selected recording."
+              : "Channels use independent amplitude ranges. Select a comparison to share each channel's amplitude and time axes.",
+            ...comparison.notices,
+          ].join(" "),
+        );
+        text(
+          $("wave-caption"),
+          `${w.sample_rate} Hz · ${[...new Set(Array.isArray(w.units) ? w.units : [w.units])].join(", ")} · ${w.preview_samples}/${w.original_samples} preview samples · ${fmt(r.stats.duration_seconds, 2)} s`,
+        );
+      }
+      function selectionChanged() {
+        text($("n-selected"), selected.size);
+        text($("selection-count"), `${selected.size} recordings selected`);
+        const rs = R.filter((r) => selected.has(r.record_id));
+        text(
+          $("selection-summary"),
+          `${new Set(rs.flatMap((r) => r.labels)).size} labels · ${rs.reduce((n, r) => n + (r.texts?.length || 0), 0)} linked text tuples`,
+        );
+        text(
+          $("toggle-record"),
+          selected.has(active) ? "Remove from plan" : "Add to plan",
+        );
+        draw();
+        evidence();
+      }
+      function evidence() {
+        for (const key of ["clusters", "labels", "records"])
+          $("tab-" + key).setAttribute("aria-pressed", String(tab === key));
+        let headers, body;
+        if (tab === "clusters") {
+          headers = [
+            "Cluster",
+            "Records",
+            "Within distance",
+            "Nearest cluster distance",
+            "Silhouette",
+            "Purity",
+            "Entropy",
+            "Leading labels",
+          ];
+          body = A.clusters
+            .map(
+              (c) =>
+                `<tr data-cluster="${clusterId(c)}"><td>${clusterId(c)}</td><td>${c.size}</td><td>${fmt(intra(c))}</td><td>${fmt(separation(c))}</td><td>${fmt(c.silhouette)}</td><td>${fmt(c.label_purity)}</td><td>${fmt(c.label_entropy)}</td><td>${esc(
+                  Object.entries(c.label_counts ?? {})
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5)
+                    .map(([k, v]) => k + ": " + v)
+                    .join(" · "),
+                )}</td></tr>`,
+            )
+            .join("");
+        } else if (tab === "labels") {
+          headers = [
+            "Label",
+            "Population",
+            "Sample",
+            "Patients",
+            "Target deficit",
+            "Relative scarcity",
+          ];
+          body = labelRows
+            .map(
+              (l) =>
+                `<tr data-label="${esc(labelName(l))}"><td>${esc(labelName(l))}</td><td>${fmt(l.population_count ?? l.population_records, 0)}</td><td>${fmt(l.sample_count ?? l.sample_records, 0)}</td><td>${fmt(l.population_patients ?? l.population_subjects ?? l.patient_count, 0)}</td><td>${fmt(l.deficit ?? l.target_deficit, 0)}</td><td>${fmt(l.relative_imbalance ?? l.imbalance_ratio)}</td></tr>`,
+            )
+            .join("");
+        } else {
+          headers = [
+            "Recording",
+            "Origin",
+            "Cluster",
+            "Signal novelty",
+            "Text novelty",
+            "Selected",
+          ];
+          body = visible
+            .map(
+              (r) =>
+                `<tr data-id="${esc(r.record_id)}" class="${selected.has(r.record_id) ? "tablerow-selected" : ""}"><td title="${esc(r.record_id)}">${esc(recordLabel(r))}</td><td>${recordOrigin(r)}</td><td>${r.cluster}</td><td>${fmt(r.signal_novelty)}</td><td>${fmt(r.text_novelty)}</td><td>${selected.has(r.record_id) ? "✓" : ""}</td></tr>`,
+            )
+            .join("");
+        }
+        $("evidence").innerHTML =
+          `<table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table>`;
+        for (const tr of $("evidence").querySelectorAll("[data-id]"))
+          tr.onclick = () => inspect(tr.dataset.id);
+        for (const tr of $("evidence").querySelectorAll("[data-cluster]"))
+          tr.onclick = () => {
+            $("cluster-filter").value = tr.dataset.cluster;
+            filter();
+          };
+        for (const tr of $("evidence").querySelectorAll("[data-label]"))
+          tr.onclick = () => {
+            $("label-filter").value = tr.dataset.label;
+            filter();
+          };
+      }
+      function getSelection() {
+        const requests = [];
+        for (const method of ["augmentation", "editing", "diffusion"])
+          if ($("use-" + method).checked) {
+            const count = Number($("count-" + method).value),
+              parameters = JSON.parse($("params-" + method).value);
+            if (!Number.isSafeInteger(count) || count < 1)
+              throw Error("Every method needs a positive integer count.");
+            if (
+              !parameters ||
+              Array.isArray(parameters) ||
+              typeof parameters !== "object"
+            )
+              throw Error("Parameters must be a JSON object.");
+            const request = { method, count, parameters };
+            if (method === "diffusion") {
+              request.generator = $("diffusion-generator").value.trim();
+              request.modality = $("diffusion-modality").value.trim();
+            }
+            normalizeRequest(request);
+            requests.push(request);
+          }
+        const seed = Number($("plan-seed").value);
+        if (!Number.isInteger(seed) || seed < 0 || seed >= 2 ** 32)
+          throw Error("Seed must be an integer in [0, 2³²).");
+        if (!selected.size) throw Error("Select at least one recording.");
+        if (!requests.length)
+          throw Error("Choose at least one generation method.");
+        return {
+          record_ids: [...selected].sort(),
+          seed,
+          requests,
+          criteria: criteria(),
+        };
+      }
+      function download(value, name) {
+        const blob = new Blob([JSON.stringify(value, null, 2) + "\n"], {
+            type: "application/json",
+          }),
+          url = URL.createObjectURL(blob),
+          a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      function canonical(value) {
+        if (value === null) return ["null"];
+        if (typeof value === "boolean") return ["boolean", value];
+        if (typeof value === "string") return ["string", value];
+        if (typeof value === "number") {
+          if (
+            !Number.isFinite(value) ||
+            (Number.isInteger(value) && !Number.isSafeInteger(value))
+          )
+            throw Error(
+              "Artifact numbers must be finite and integers must be JavaScript-safe",
+            );
+          const b = new ArrayBuffer(8);
+          new DataView(b).setFloat64(0, value === 0 ? 0 : value, false);
+          return [
+            "number",
+            [...new Uint8Array(b)]
+              .map((x) => x.toString(16).padStart(2, "0"))
+              .join(""),
+          ];
+        }
+        if (Array.isArray(value)) return ["array", value.map(canonical)];
+        if (typeof value === "object")
+          return [
+            "object",
+            Object.keys(value)
+              .sort()
+              .map((k) => [k, canonical(value[k])]),
+          ];
+        throw Error("Unsupported artifact value");
+      }
+      function stable(value) {
+        return JSON.stringify(canonical(value));
+      }
+      function normalizeRequest(request) {
+        if (!request || Array.isArray(request) || typeof request !== "object")
+          throw Error("Every method request must be a JSON object");
+        const methods = {
+          augmentation: "per_lead_aug@1",
+          editing: "ecg.electrode_artifact@1.0.0",
+          diffusion: "diffusets@1",
+        };
+        if (
+          typeof request.method !== "string" ||
+          !Object.hasOwn(methods, request.method)
+        )
+          throw Error("Unknown generation method");
+        if (!Number.isSafeInteger(request.count) || request.count <= 0)
+          throw Error("Every method needs a positive integer count");
+        const parameters = Object.hasOwn(request, "parameters")
+          ? request.parameters
+          : {};
+        if (
+          !parameters ||
+          Array.isArray(parameters) ||
+          typeof parameters !== "object"
+        )
+          throw Error("Method parameters must be a JSON object");
+        const normalized = {
+          method: request.method,
+          count: request.count,
+          generator: methods[request.method],
+          parameters,
+          configuration_status:
+            request.method === "diffusion"
+              ? "requires_plugin_configuration"
+              : "requires_recipe_calibration_and_validation",
+        };
+        if (request.method === "diffusion") {
+          const generator = Object.hasOwn(request, "generator")
+              ? request.generator
+              : methods.diffusion,
+            modality = Object.hasOwn(request, "modality")
+              ? request.modality
+              : "ecg";
+          if (
+            typeof generator !== "string" ||
+            generator.trim() !== generator ||
+            !/^[A-Za-z0-9][A-Za-z0-9_.-]*@[A-Za-z0-9][A-Za-z0-9_.+-]*$/.test(
+              generator,
+            )
+          )
+            throw Error(
+              "Diffusion generator must be a versioned ID such as diffusets@1",
+            );
+          if (typeof modality !== "string" || !modality.trim())
+            throw Error("Diffusion modality must be a nonempty string");
+          normalized.generator = generator;
+          normalized.modality = modality.trim();
+        } else if (
+          Object.hasOwn(request, "generator") ||
+          Object.hasOwn(request, "modality")
+        ) {
+          throw Error(
+            "Generator and modality overrides are supported only for diffusion requests",
+          );
+        }
+        return normalized;
+      }
+      async function portablePlan(s) {
+        const records = cleanAnalysis.records.filter((r) =>
+          s.record_ids.includes(r.record_id),
+        );
+        const body = {
+          schema_version: "syntide.generation-plan@1",
+          analysis_id: A.analysis_id,
+          source: A.provenance.source,
+          embedding: A.provenance.embedding ?? null,
+          text_embedding: A.provenance.text_embedding ?? null,
+          sampling: A.provenance.sampling ?? null,
+          seed: s.seed,
+          targets: {
+            record_ids: s.record_ids,
+            text_ids: [
+              ...new Set(
+                records.flatMap((r) =>
+                  (r.texts || []).map((t) => t.text_id).filter(Boolean),
+                ),
+              ),
+            ].sort(),
+            labels: [...new Set(records.flatMap((r) => r.labels))].sort(),
+            clusters: [...new Set(records.map((r) => r.cluster))].sort(
+              (a, b) => a - b,
+            ),
+            criteria: s.criteria,
+          },
+          requests: s.requests.map(normalizeRequest),
+          total_requested: s.requests.reduce((n, r) => n + r.count, 0),
+          status:
+            "intent_only_requires_generator_configuration_and_label_review",
+          requirements: [
+            "Resolve and pin every generator, checkpoint and control configuration before execution.",
+            "Validate generated signals; record accepted/rejected recipes and exact seeds in a ledger.",
+            "Review label effects per method; augmentation/editing cannot imply a new diagnosis.",
+            "Review text, answer and rationale validity after every signal change; never inherit them blindly.",
+            "Keep selected source roles and held-out patients separate under the experiment protocol.",
+          ],
+        };
+        if (!crypto.subtle)
+          throw Error(
+            "Open with the local serve command to export a hashed plan, or export a selection and use the plan CLI.",
+          );
+        const hash = await crypto.subtle.digest(
+          "SHA-256",
+          new TextEncoder().encode(stable(body)),
+        );
+        return {
+          ...body,
+          plan_id: [...new Uint8Array(hash)]
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join(""),
+        };
+      }
+      $("export-plan").onclick = async () => {
+        try {
+          const s = getSelection();
+          let plan;
+          if (location.protocol === "file:") {
+            plan = await portablePlan(s);
+          } else {
+            const response = await fetch("/api/plan", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(s),
+            });
+            plan = await response.json();
+            if (!response.ok) throw Error(plan.error || "Plan export failed");
+          }
+          download(plan, "syntide-plan-" + plan.plan_id.slice(0, 12) + ".json");
+          $("plan-message").className = "help success";
+          text(
+            $("plan-message"),
+            `Exported ${plan.total_requested} requested samples across ${plan.requests.length} method(s).`,
+          );
+        } catch (e) {
+          $("plan-message").className = "error";
+          text($("plan-message"), e.message);
+        }
+      };
+      $("export-selection").onclick = () => {
+        try {
+          download(getSelection(), "syntide-selection.json");
+          text(
+            $("plan-message"),
+            "Selection exported. The plan CLI can validate and finalize it.",
+          );
+        } catch (e) {
+          text($("plan-message"), e.message);
+        }
+      };
+      $("download-analysis").onclick = () =>
+        download(cleanAnalysis, "analysis.json");
+      $("toggle-record").onclick = () => {
+        if (active) {
+          selected.has(active) ? selected.delete(active) : selected.add(active);
+          selectionChanged();
+        }
+      };
+      $("clear-selection").onclick = () => {
+        selected.clear();
+        selectionChanged();
+      };
+      $("select-visible").onclick = () => {
+        visible.forEach((r) => selected.add(r.record_id));
+        selectionChanged();
+      };
+      $("reset-filters").onclick = () => {
+        for (const id of [
+          "search",
+          "label-filter",
+          "cluster-filter",
+          "slice-field",
+          "slice-value",
+          "slice-min",
+          "slice-max",
+          "cluster-max",
+          "intra-min",
+          "separation-min",
+        ])
+          $(id).value = "";
+        $("signal-min").value = 0;
+        $("text-min").value = 0;
+        filter();
+      };
+      for (const id of [
+        "search",
+        "label-filter",
+        "cluster-filter",
+        "slice-field",
+        "slice-value",
+        "slice-min",
+        "slice-max",
+        "signal-min",
+        "text-min",
+        "cluster-max",
+        "intra-min",
+        "separation-min",
+      ])
+        $(id).addEventListener("input", filter);
+      for (const id of ["projection", "color"]) $(id).onchange = draw;
+      $("channel").onchange = wave;
+      $("compare-record").onchange = wave;
+      for (const key of ["clusters", "labels", "records"])
+        $("tab-" + key).onclick = () => {
+          tab = key;
+          evidence();
+        };
+      function zoom(factor) {
+        const w = view[2] * factor,
+          h = view[3] * factor;
+        view = [view[0] + (view[2] - w) / 2, view[1] + (view[3] - h) / 2, w, h];
+        draw();
+      }
+      $("zoom-in").onclick = () => zoom(0.75);
+      $("zoom-out").onclick = () => zoom(1.333);
+      $("zoom-reset").onclick = () => {
+        view = [0, 0, 800, 480];
+        draw();
+      };
+      filter();
+      selectionChanged();
+      if (hasMixedOrigins) {
+        const paired = R.find(
+          (r) =>
+            recordOrigin(r) === "synthetic" &&
+            pairedRecordId(r, R),
+        );
+        if (paired) inspect(paired.record_id);
+      }
+    </script>
+  </body>
+</html>
