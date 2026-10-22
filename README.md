@@ -288,3 +288,61 @@ accepted.
   target as a line, and each arm's gap to it;
 - `figures/arms_slices.png`: the same for noisy and clean records;
 - `arms_summary.md`: the numbers, each arm's seed-paired change over A0, and a convergence check.
+
+## Phase 3: judging the results
+
+`python -m syntide.eval` judges a protocol's runs by decision rules frozen before the test fold is scored. The rules
+are one file per protocol, `conf/analysis/<protocol>.yaml`, and `protocol=<name>` selects both.
+
+```bash
+# 1. Before the test fold is claimed: freeze the decision rules into runs/<protocol>/eval/rules.json (create-only).
+uv run python -m syntide.eval protocol=ptbxl_artifact_50 mode=freeze
+# 2. Any time: the validation report (partial while trials train), and the final-checkpoint sensitivity check.
+uv run python -m syntide.eval protocol=ptbxl_artifact_50
+uv run python -m syntide.eval protocol=ptbxl_artifact_50 checkpoint=final
+# 3. What the generator made: coverage, acceptance, signal examples and a label audit (report-only, ~1 min on CPU).
+uv run python -m syntide.eval protocol=ptbxl_artifact_50 mode=audit
+# 4. Once every trial is finished: score the test fold through syntide.eval.holdout, then report on it.
+uv run python -m syntide.eval protocol=ptbxl_artifact_50 split=test
+```
+
+Each report goes to `runs/<protocol>/eval/<split>[-final]/` (the audit to `eval/audit/`):
+
+| File | Content |
+|---|---|
+| `comparisons.json` | every paired contrast (estimate, CI, per-seed and per-class effects, counts) and the findings |
+| `results.md` | the primary question, the fixed sequence, the results table, gap closed, diagnostics, exposure, gates |
+| `figures/*.png` | `forest` (paired effects), `per_class`, `learning_curves`; the audit adds `coverage_*` and `signal_examples_*` |
+| `dashboard/` | the same figures and text in the chosen dashboard: `tracker=files`, `tensorboard` (default) or `wandb` |
+
+How a contrast `a - b` is computed (`syntide.eval.contrasts`):
+- **Estimate:** the mean over seeds of the paired difference in macro-AUROC on one slice: artifact (ECGs with any
+  PTB-XL signal-quality flag), clean or all.
+- **CI:** a crossed bootstrap (2,000 draws). Each draw resamples the slice's patients, with all of a drawn patient's
+  ECGs, and, independently, the seeds. Both arms are scored on the same draw, and every contrast uses the same draws.
+- **Pairing:** a contrast is refused unless both arms share seeds, records and labels, the trainer fingerprint, the
+  number of presentations, each seed's initial weights, and (between transform arms) the transform slots. An arm in
+  another regime is named `C2@full100`; it pairs when those all match.
+- **Run contract:** before scoring, every run is re-checked. `trial.json` must be unedited, the checkpoints must
+  have their recorded sha256, and the predictions must cover every record and class and reproduce the score the
+  run reported.
+
+The frozen rules of `ptbxl-artifact-50` (sha256 `e6a66b593c2c…`, frozen 2026-10-22 14:16 UTC):
+
+| Rule | Value |
+|---|---|
+| Primary | A3 − A1 on the artifact slice, scarcity50 |
+| Benefit | artifact CI low > 0 **and** clean CI low > −0.01 (non-inferiority) |
+| Practical target | +0.02, reported as supported (CI low > 0.02), ruled out (CI high < 0.02) or plausible |
+| Fixed sequence | A3 − A1 → A3 − A2 → A2 − A1; each step only if every earlier one showed a benefit |
+| Gap gate (Gate 3) | C1 − A0 ≥ 0.02 on the validation artifact slice; judged on validation even in the test report |
+| Gap closed | (arm − A0) / (C1 − A0), only if the gap gate passed; (arm − A0) / (C2@full100 − A0). Each ratio only when its denominator's CI is above 0 |
+| Diagnostics | A1 − A0, C1 − A0, C2 − A0, C2@full100 − A0, C2@full100 − C2; reported, never evidence |
+
+The test report needs three things:
+- the rules it runs with must equal the frozen ones;
+- `plan.json` must be unchanged since the freeze;
+- `test_claim.json` must be dated after the freeze.
+
+`split=test` checks the first two, scores the test fold once through `syntide.eval.holdout` (runs already scored
+are only read back), and then checks the claim date.

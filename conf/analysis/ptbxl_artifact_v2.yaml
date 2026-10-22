@@ -1,0 +1,19 @@
+# Decision rules for ptbxl-artifact-v2 (docs/SYNTIDE_MVE.md): primary A3 - A1 at 25%, then the fixed sequence,
+# then the same chain at 10%. Freeze with `python -m syntide.eval protocol=ptbxl_artifact_v2 mode=freeze`.
+regime: scarcity25
+reference: A1
+primary: [A3, A1]
+sequence: [[A3, A2], [A2, A1]]
+sequence_regimes: [scarcity25, scarcity10]
+diagnostics:
+  - [A1, A0]
+  - [C1, A0]
+  - [C2, A0]
+practical_target: 0.02
+noninferiority_margin: -0.01
+gap_gate: {contrast: [C1, A0], min_effect: 0.02}
+gap_closed:
+  - {name: natural mix, target: C1, baseline: A0, gated: true}
+n_boot: 2000
+ci_level: 0.95
+bootstrap_seed: 0

@@ -1,0 +1,25 @@
+# python -m syntide.eval: paired comparisons, findings, results.md, figures and the dashboard for one protocol.
+#   mode=audit           coverage, acceptance, signal examples and label audit from the Gate 4 recipes
+#   mode=freeze          freeze the decision rules (runs/<protocol>/eval/rules.json) before the test fold is claimed
+#   split=val            report on validation, as often as wanted (checkpoint=final for the sensitivity check)
+#   split=test           score the test fold once (syntide.eval.holdout), then report on it
+# protocol=<name> also picks the decision rules conf/analysis/<name>.yaml; tracker=files|tensorboard|wandb picks
+# the dashboard.
+defaults:
+  - evaluate_schema
+  - protocol: ptbxl_artifact_50
+  - analysis: ${protocol}
+  - tracker: tensorboard
+  - override hydra/job_logging: stdout
+  - _self_
+
+mode: evaluate        # evaluate | freeze | audit
+split: val            # val | test
+checkpoint: best      # best | final; the test fold is scored on best only
+runs_dir: runs        # the protocol's runs are in <runs_dir>/<protocol.id>
+registry: null        # override the registry path the trials were planned with (split=test)
+
+hydra:
+  output_subdir: null   # the outputs record their own inputs; no .hydra/ folder needed
+  run:
+    dir: .

@@ -353,6 +353,18 @@ No test-split access anywhere in Phase 2.
 
 ## Phase 3 — Evaluation, test-once discipline, dashboard views, results for the presentation
 
+> **Status (2026-10-22): built** (see the README, "Phase 3"). Where it differs from the list below:
+> - The test fold is frozen, claimed and scored by `syntide.eval.holdout`. `eval/freeze.py` freezes only the
+>   decision rules (`runs/<protocol>/eval/rules.json`), and the test report checks they were frozen before the claim.
+> - The decision rules are `conf/analysis/<protocol>.yaml` (schema `AnalysisConfig` in `eval/analysis.py`), chosen
+>   with `protocol=`. There is no `eval/config.py`.
+> - The paired statistics are in `eval/contrasts.py`. `eval/stats.py` keeps only the selection metric, which the
+>   trainer seam imports.
+> - An arm can be named in another regime (`C2@full100`). Gap closed needs its denominator's CI above 0, not only
+>   its estimate.
+> - The rules were frozen for `ptbxl-artifact-50` (one 50% regime plus the 100% reference), which replaced the
+>   10%/25% grid below.
+
 ### Modules
 - `eval/config.py` + `conf/evaluate.yaml`: `EvaluateConfig` with:
   - `runs_dir`, `split` (val | test), `checkpoint` (best | final), `mode` (evaluate | freeze | audit);
