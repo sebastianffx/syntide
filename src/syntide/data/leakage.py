@@ -95,6 +95,67 @@ def check_recipe_parents(parent_ids: Iterable[str], manifest: Manifest) -> None:
     _fail_if(set(parent_ids) - set(manifest.roles["depleted"]), "recipe parents are outside depleted")
 
 
+def check_lineage(
+    ancestry: Iterable[tuple[str, Iterable[str], Iterable[str]]],
+    manifest: Manifest,
+    index: pa.Table,
+    allowed_roles: Iterable[str],
+) -> None:
+    """Every task input must descend only from records of ``allowed_roles``, and from their patients only.
+
+    ``ancestry`` holds one ``(input id, root record ids, root subject uids)`` per task input: the real
+    recordings a waveform descends from (itself, for a real recording). A generated or edited waveform's
+    own id proves nothing; its roots are what this checks:
+
+    - every root is a record of the index, and its declared patient is the index's patient;
+    - every root is in one of ``allowed_roles``;
+    - no root patient has any record outside ``allowed_roles`` (so a val or test patient, or a withheld
+      patient for a depleted arm, can never come back through a synthetic descendant).
+
+    An input without any root is refused: an ancestry that cannot be resolved does not pass.
+    """
+    allowed_roles = tuple(allowed_roles)
+    unknown_roles = set(allowed_roles) - set(manifest.roles)
+    if unknown_roles:
+        raise LeakageError(f"{manifest.challenge_id} has no roles {sorted(unknown_roles)}")
+    allowed = set().union(*(manifest.roles[role] for role in allowed_roles))
+    columns = index.select(["record_id", "subject_uid"]).to_pydict()
+    subject_of = dict(zip(columns["record_id"], columns["subject_uid"], strict=True))
+    managed = set().union(*manifest.roles.values())
+    # A partial index would silently shrink the forbidden patients, so the subject rule could never fire.
+    _fail_if(managed - subject_of.keys(), "manifest records are missing from the index; pass the full index")
+    forbidden_subjects = {subject_of[r] for r in managed - allowed}
+    orphans, unknown, mismatched, outside, crossing = set(), set(), set(), set(), set()
+    for input_id, roots, subjects in ancestry:
+        roots, subjects = tuple(roots), tuple(subjects)
+        if not roots or len(roots) != len(subjects):
+            orphans.add(input_id)
+            continue
+        for root, subject in zip(roots, subjects, strict=True):
+            if root not in subject_of:
+                unknown.add(f"{input_id}<-{root}")
+            elif subject_of[root] != subject:
+                mismatched.add(f"{input_id}<-{root}")
+            elif root not in allowed:
+                outside.add(f"{input_id}<-{root}")
+            if subject in forbidden_subjects:
+                crossing.add(f"{input_id}<-{subject}")
+    _fail_if(orphans, "task inputs have no resolvable real ancestry")
+    _fail_if(unknown, "task inputs descend from records outside the index")
+    _fail_if(mismatched, "task inputs declare another patient than their root record's")
+    _fail_if(outside, f"task inputs descend from records outside roles {list(allowed_roles)}")
+    _fail_if(crossing, f"task inputs descend from patients with records outside roles {list(allowed_roles)}")
+
+
+def check_disjoint_subjects(named: dict[str, Iterable[str]]) -> None:
+    """No patient may appear in two of the named populations (training corpus, selection, test, external)."""
+    sets = {name: set(subjects) for name, subjects in named.items()}
+    names = sorted(sets)
+    for i, a in enumerate(names):
+        for b in names[i + 1 :]:
+            _fail_if(sets[a] & sets[b], f"patients are in both {a} and {b}")
+
+
 def _fail_if(offenders: set[str], message: str) -> None:
     if offenders:
         examples = ", ".join(sorted(offenders)[:5])

@@ -150,6 +150,26 @@ uv run python -m syntide_trainers.torch_loop "runs/smoke/ptbxl-artifact-v2/*/*/s
 This subset checks training; use the complete protocol for the full set of scientific comparisons.
 Quote list overrides and glob patterns as shown, including in zsh.
 
+## ECG-QA-CoT: evidence-grounded synthetic QA
+
+`syntide.generate.qa` turns real, edited and generated ECGs into question–answer–rationale tasks whose
+answers come from verified waveform evidence, never from generator controls. It publishes immutable
+TimeNet corpora (each waveform stored once; a comparison is one task over two recordings). Corpora reopen
+in the explorer. QA trials are planned through a separate, versioned trial seam (`syntide.qa_trial`), and
+held-out QA suites are scored once, after the rules are frozen. The QA protocol reuses the RunPod
+baseline's split, selection subset, budget, parser and prompt.
+
+```bash
+uv run --extra explore --extra diffusets pytest tests/qa -q              # the offline end-to-end check
+uv run python -m syntide.generate.qa build --config conf/qa/corpus_grounded.yaml \
+  --output outputs/qa/grounded --max-records 64                          # a small real-data build
+uv run python -m syntide.generate.qa plan-trials --protocol conf/qa/protocol_ecgqa_cot_qa50.yaml
+uv run python -m syntide.eval.qa_holdout freeze runs/ecgqa-cot-qa50 --rules conf/qa/eval_ecgqa_cot_qa50.yaml
+```
+
+See [evidence-grounded QA generation](docs/qa_generation.md) for the five capabilities, what is
+unsupported, the corpus guarantees and the experiment that measures validation and external gains.
+
 ## Development and guides
 
 ```bash
@@ -163,4 +183,5 @@ Tests use synthetic fixtures and do not require a PTB-XL download or cloud GPU.
 - [Full generation](docs/full_generation.md): DiffuSETS setup, conditioning and backend extensions.
 - [PTB-XL experiment reference](docs/ptbxl_artifact_workflow.md): manifests, calibration, leakage checks, arms, budgets and evaluation rules.
 - [Trainer interface](docs/training_loop_syntide.md): connecting a training loop through `syntide.trial`.
+- [Evidence-grounded QA generation](docs/qa_generation.md): ECG-QA-CoT corpora, QA trials and frozen QA evaluation.
 - [Architecture](docs/SYNTIDE_Architecture.md) and [experiment design](docs/SYNTIDE_MVE.md).

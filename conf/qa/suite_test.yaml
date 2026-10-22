@@ -1,0 +1,14 @@
+# The internal held-out suite: fold 10, original questions (deduplicated as in the baseline) plus
+# evidence-grounded questions on the same held-out ECGs. Scored once, after the rules are frozen.
+source:
+  registry: datasets/timenet-registry
+  manifest: manifests/ecgqa-artifact-50/pool50.json
+  manifest_sha256: 6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4
+  role: test
+build:
+  name: ecgqa-cot-test
+  purpose: evaluation
+  suite_role: test
+  components: [source, grounded]
+  source_dedupe: true
+  cache_dir: outputs/qa/evidence-cache

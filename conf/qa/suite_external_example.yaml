@@ -1,0 +1,14 @@
+# An evaluation-only suite from another ECG-QA dataset, as an explorer-style JSONL catalog (split: test).
+# Patients are namespaced external:<dataset>:...; answers are mapped onto canonical options explicitly.
+source:
+  kind: external
+  catalog: datasets/external/mimic-ecgqa/catalog.jsonl
+  dataset: mimic-iv-ecg-qa
+  label_mapping: {}
+build:
+  name: ecgqa-external-mimic
+  purpose: evaluation
+  suite_role: external
+  components: [source, grounded]
+  source_dedupe: true
+  cache_dir: outputs/qa/evidence-cache

@@ -1,0 +1,14 @@
+# The checkpoint-selection suite: exactly the baseline's 2,000 fixed validation questions (fold 9).
+source:
+  registry: datasets/timenet-registry
+  manifest: manifests/ecgqa-artifact-50/pool50.json
+  manifest_sha256: 6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4
+  role: val
+build:
+  name: ecgqa-cot-selection
+  purpose: evaluation
+  suite_role: selection
+  components: [source]
+  task_ids_file: outputs/runpod-baseline/prepared/selection.parquet   # copy of the baseline's file
+  task_ids_sha256: 29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1
+  cache_dir: outputs/qa/evidence-cache

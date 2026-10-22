@@ -1,0 +1,22 @@
+# Frozen QA evaluation rules for ecgqa-cot-qa50. Freeze before any held-out suite is scored:
+#   uv run python -m syntide.eval.qa_holdout freeze runs/ecgqa-cot-qa50 --rules conf/qa/eval_ecgqa_cot_qa50.yaml
+suites:
+  test: outputs/qa/test                 # internal: PTB-XL fold 10 (original + grounded questions)
+  # external_mimic: outputs/qa/external # an evaluation-only suite (suite_role: external) from another dataset
+primary_suite: test
+primary: [grounded_acq_gen/rationale, real_qa/rationale]   # all synthetic data vs the baseline's data
+contrasts:
+  - [paraphrase/rationale, real_qa/rationale]
+  - [grounded/rationale, real_qa/rationale]
+  - [grounded_acq/rationale, grounded/rationale]
+  - [grounded_acq_gen/rationale, grounded_acq/rationale]
+  - [real_qa/rationale, real_qa/answer_only]
+  - [grounded_acq_gen/rationale, grounded_acq_gen/answer_only]
+controls: [context_only, waveform_swap]
+external_overlap:
+  # DiffuSETS was trained on MIMIC-IV-ECG; an external MIMIC-based suite's overlap is not established.
+  external_mimic: unknown
+n_boot: 1000
+ci_level: 0.95
+bootstrap_seed: 0
+device: cpu

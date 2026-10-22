@@ -1,0 +1,31 @@
+# A curriculum study on arm 5's data: basic attribute tasks, then composed questions, then short
+# rationales, replaying earlier stages. Same budget and selection as the primary protocol.
+id: ecgqa-cot-qa50-curriculum
+corpora:
+  real_qa: outputs/qa/real_qa
+  grounded: outputs/qa/grounded
+  acquisition: outputs/qa/acquisition
+  generated: outputs/qa/generated
+selection: outputs/qa/selection
+arms:
+  uniform: {corpora: [real_qa, grounded, acquisition, generated]}
+supervision: [rationale]
+seeds: [0, 1, 2]
+batch_size: 16
+max_steps: 15531
+val_every: 1000
+curriculum:
+  name: basic-composed-rationale@1
+  seed: 0
+  stages:
+    - {name: basic, until_step: 4000, compositions: [source, attribute], target_mode: answer_only}
+    - {name: composed, until_step: 10000, compositions: [source, composed, reasoning, situation, comparison], replay: 0.3}
+    - {name: rationale, until_step: 0, replay: 0.3}
+decoding:
+  selection: option-nll
+  reporting: greedy
+  max_new_tokens: 384
+  max_length: 1536
+  prompt_version: ecgqa-cot-single-joint-media-v1
+budget:
+  primary: "15,531 optimizer updates x 16 examples"
