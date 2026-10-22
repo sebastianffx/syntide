@@ -1,0 +1,59 @@
+# The PTB-XL artifact experiment at one data size: 50% of the training patients.
+# 6 arms x 3 seeds at 50%, plus a 100% reference (C2 on every training patient) x 3 seeds = 21 trials.
+# Build the manifests:  python -m syntide.data challenge.id=ptbxl-artifact-50 'challenge.pool_fractions=[0.5,1.0]'
+# Calibrate (Gate 4):   python -m syntide.generate protocol=ptbxl_artifact_50
+# Plan:                 python -m syntide.generate protocol=ptbxl_artifact_50 mode=plan
+# Train:                python -m syntide_trainers.torch_loop "runs/ptbxl-artifact-50/*/*/seed*"
+# Model, optimizer and device belong to the trainer's own config, not here.
+id: ptbxl-artifact-50
+registry: datasets/timenet-registry
+dataset: physionet/ptb-xl@1.0.3
+
+batch_size: 64
+val_every: 250             # validation cadence, in optimizer updates; max_steps must be a multiple
+transform_fraction: 0.5    # share of each batch that A0-A3 put through their transform (A0: identity)
+
+# Same transforms as ptbxl_artifact_v2. A1 and A2/A3 share one severity envelope; planning checks that
+# A1's wander and noise ceilings equal the editor's drift and static-noise ceilings.
+generic:
+  gain: [0.9, 1.1]           # per-lead multiplicative gain
+  max_shift_s: 0.5           # circular time shift, all leads together
+  noise_rms_mv: [0.0, 0.1]   # per-lead white noise
+  wander_mv: [0.0, 3.5]      # per-lead sinusoidal baseline wander
+  wander_hz: [0.05, 0.7]
+
+editor:
+  mv_limit: 10.0             # bounds@1
+  alignment_tol: 0.15        # alignment@1: relative error of the realized severity
+  max_retries: 5             # further draws for the same parent and slot after a rejection
+  type_smoothing: 0.1        # A3 type weights: prior / (retained frequency + type_smoothing)
+  density_floor: 1.0         # A3 severity: prior / (retained KDE + density_floor x prior)
+  envelope:
+    baseline_drift: {amplitude_mv: [0.1, 3.5], freq_hz: [0.1, 0.4]}
+    static_noise: {amplitude_mv: [0.005, 0.1]}
+    burst_noise: {amplitude_mv: [0.01, 0.6], duration_s: [0.5, 3.0]}
+
+arms:
+  A0: {source_role: depleted,    transform_family: none,    sampling_policy: none}              # real-only floor
+  A1: {source_role: depleted,    transform_family: generic, sampling_policy: fixed}             # standard augmentation
+  A2: {source_role: depleted,    transform_family: editor,  sampling_policy: coverage_matched}  # editor, untargeted
+  A3: {source_role: depleted,    transform_family: editor,  sampling_policy: gap_targeted}      # editor, targeted (primary)
+  C1: {source_role: natural_mix, transform_family: none,    sampling_policy: none}              # matched-N natural mix
+  C2: {source_role: pool,        transform_family: none,    sampling_policy: none}              # every ECG of the regime's pool
+
+# One budget for every trial, so no arm or data size gets more updates than another. 6,500 steps is twice
+# the step where real-only training on 100% of patients peaks (runs/ptbxl-scaling/pool100: smoothed val
+# AUROC peaks at step 3,200), and about six times the 50% peak (1,100). The best checkpoint is still
+# chosen on validation, so the extra steps cost only compute.
+regimes:
+  scarcity50:
+    manifest: manifests/ptbxl-artifact-50/pool50.json
+    calibration: manifests/ptbxl-artifact-50/calibration/pool50.json
+    generator_gate: manifests/ptbxl-artifact-50/generator_gate_pool50.json
+    max_steps: 6500
+  full100:                   # the target: real ECGs of every training patient (folds 1-8)
+    manifest: manifests/ptbxl-artifact-50/pool100.json
+    max_steps: 6500
+    arms: [C2]
+
+seeds: [0, 1, 2]

@@ -252,3 +252,39 @@ The model and optimizer settings and the device form the trainer fingerprint. Co
 directory trained with one fingerprint refuses another. The model gate's wider model therefore needs its own
 `runs_dir`. A new trainer (for example, Lightning) is a package that makes the same `syntide.trial` calls; see the
 docstrings in `src/syntide/trial.py` and `trainers/src/syntide_trainers/torch_loop.py`.
+
+## The 50% experiment: every arm against 100% of the patients
+
+`conf/protocol/ptbxl_artifact_50.yaml` runs the six arms on one data size, 50% of the training patients, and adds
+the target they are measured against: C2 on every training patient (`full100`, which lists `arms: [C2]`, so no other
+arm runs there). Each runs 3 seeds, so there are 21 trials. They all share one budget of 6,500 steps, twice the
+step where real-only training on 100% of the patients peaks (`runs/ptbxl-scaling`).
+
+```bash
+# Manifests: pool50 and pool100, whole patients, checked by the leakage gate.
+uv run python -m syntide.data challenge.id=ptbxl-artifact-50 'challenge.pool_fractions=[0.5,1.0]'
+# Calibrate the editor and run Gate 4 (only regimes with an editor arm), then plan and train the 21 trials.
+uv run python -m syntide.generate protocol=ptbxl_artifact_50
+uv run python -m syntide.generate protocol=ptbxl_artifact_50 mode=plan
+uv run python -m syntide_trainers.torch_loop "runs/ptbxl-artifact-50/*/*/seed*"
+# Score the held-out test fold once, then draw the figures and the summary table.
+uv run python -m syntide.eval.holdout runs/ptbxl-artifact-50
+uv run python -m syntide.eval.arms_figure runs/ptbxl-artifact-50
+```
+
+At 50% the pool holds 8,579 ECGs. Withholding 90% of the noisy patients leaves 6,389 ECGs for A0–A3, and C1 gets
+the same number drawn at the natural noisy rate. Gate 4 passed: 99.8% (A2) and 98.7% (A3) of generated edits were
+accepted.
+
+`syntide.eval.holdout` is where the test fold is spent, once:
+- it refuses to run until every trial in `plan.json` has finished;
+- it checks that each best checkpoint is unchanged since training;
+- it writes `test_claim.json` (create-only) naming every trial and checkpoint it scores, so a later call can only
+  finish that same list;
+- each run gets `predictions_test.parquet` and `test_scores.json`, which are never rescored.
+
+`syntide.eval.arms_figure` writes:
+- `figures/arms_overall.png`: validation and test macro-AUROC per arm, with every seed, the mean ± SD, the 100%
+  target as a line, and each arm's gap to it;
+- `figures/arms_slices.png`: the same for noisy and clean records;
+- `arms_summary.md`: the numbers, each arm's seed-paired change over A0, and a convergence check.

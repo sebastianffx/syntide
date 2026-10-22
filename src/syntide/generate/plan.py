@@ -49,6 +49,7 @@ class RegimeConfig:
     calibration: str | None = None  # Phase 2B: required by editor arms
     generator_gate: str | None = None  # Phase 2B: Gate 4 result; editor arms need "passed": true
     max_steps: int | None = None  # set from the pilot; planning refuses a regime without it
+    arms: list[str] | None = None  # the arms this regime runs; None = every arm of the protocol
 
 
 @dataclass
@@ -100,12 +101,18 @@ def plan_trials(
     for name in arms:
         _check_arm(name, protocol.arms[name])
     _check_shared_envelope(protocol)
+    # A regime runs the selected arms it lists (all of them when it lists none).
+    runs = {name: [arm for arm in arms if arm in regime_arms(protocol, name)] for name in regimes}
+    if not any(runs.values()):
+        raise PlanError(f"no selected regime runs any of the selected arms {arms}")
 
     specs = []
     for regime_name in regimes:
+        if not runs[regime_name]:
+            continue
         regime = protocol.regimes[regime_name]
         manifest = _checked_manifest(regime_name, regime, protocol, index, source)
-        for arm_name in arms:
+        for arm_name in runs[regime_name]:
             arm = protocol.arms[arm_name]
             if arm.source_role not in manifest.roles:
                 raise PlanError(f"arm {arm_name}: {regime.manifest} has no role {arm.source_role!r}")
@@ -117,6 +124,17 @@ def plan_trials(
             for seed in seeds:
                 specs.append(_spec(protocol, regime_name, regime, manifest, arm_name, arm, seed, calibration))
     return specs
+
+
+def regime_arms(protocol: ProtocolConfig, name: str) -> list[str]:
+    """The arms regime ``name`` runs: the ones it lists, or every arm of the protocol."""
+    listed = protocol.regimes[name].arms
+    if listed is None:
+        return list(protocol.arms)
+    unknown = sorted(set(listed) - set(protocol.arms))
+    if unknown:
+        raise PlanError(f"regime {name} lists unknown arms {unknown}; the protocol has {list(protocol.arms)}")
+    return list(listed)
 
 
 def write_plan(specs: list[TrialSpec], runs_dir: str | Path) -> list[Path]:

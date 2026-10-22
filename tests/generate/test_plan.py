@@ -118,6 +118,26 @@ def test_editor_arms_are_planned_against_the_exact_calibration_their_gate_passed
     assert not runs.exists()
 
 
+def test_a_regime_runs_only_the_arms_it_lists(protocol, synthetic_index, tmp_path):
+    # A reference regime that runs one arm only, and needs no calibration for the editor arm it skips.
+    protocol.regimes["reference"] = replace(protocol.regimes["scarcity25"], arms=["C1"])
+    specs = plan_trials(protocol, Selection(arms=["A0", "C1"]), index=synthetic_index, source=SOURCE)
+    assert sorted({(s.regime, s.arm) for s in specs}) == [
+        ("reference", "C1"),
+        ("scarcity25", "A0"),
+        ("scarcity25", "C1"),
+    ]
+    assert len(specs) == 9  # three seeds each
+    (reference,) = plan_trials(
+        protocol, Selection(regimes=["reference"], seeds=[0]), index=synthetic_index, source=SOURCE
+    )
+    assert reference.arm == "C1"
+    with pytest.raises(PlanError, match="no selected regime runs"):
+        plan_trials(
+            protocol, Selection(arms=["A0"], regimes=["reference"]), index=synthetic_index, source=SOURCE
+        )
+
+
 def _as_records(samples, manifest, role):
     return replace(samples, record_id=np.array(manifest.roles[role][: len(samples)]))
 
@@ -147,6 +167,7 @@ def _failed_gate(p):
         (None, ["A3"], "needs the regime's calibration and generator_gate"),
         (_failed_gate, ["A3"], "did not pass"),
         (None, ["A9"], "unknown arms"),
+        (_regime(arms=["A0", "A9"]), ["A0"], "lists unknown arms"),
     ],
     ids=[
         "no-budget",
@@ -156,6 +177,7 @@ def _failed_gate(p):
         "no-gate",
         "gate-failed",
         "unknown-arm",
+        "regime-lists-unknown-arm",
     ],
 )
 def test_plan_refuses_before_writing_anything(protocol, synthetic_index, tmp_path, change, arms, message):
@@ -179,3 +201,16 @@ def test_the_protocol_yaml_defines_the_72_trial_grid():
     # Every budget is set (by the pilot) and lands on the validation cadence.
     assert all(regime.max_steps % protocol.val_every == 0 for regime in protocol.regimes.values())
     assert {arm.source_role for arm in protocol.arms.values()} == {"depleted", "natural_mix", "pool"}
+
+
+def test_the_50_percent_protocol_defines_21_trials_with_one_budget():
+    import syntide.generate.__main__  # noqa: F401  (registers the schema)
+    from syntide.generate.plan import regime_arms
+
+    with initialize_config_dir(config_dir=str(CONF), version_base=None):
+        cfg = compose("generate", overrides=["protocol=ptbxl_artifact_50"])
+    protocol = OmegaConf.to_object(cfg).protocol
+    runs = {name: regime_arms(protocol, name) for name in protocol.regimes}
+    assert runs == {"scarcity50": ["A0", "A1", "A2", "A3", "C1", "C2"], "full100": ["C2"]}
+    assert sum(len(arms) for arms in runs.values()) * len(protocol.seeds) == 21
+    assert len({regime.max_steps for regime in protocol.regimes.values()}) == 1  # one budget for every trial

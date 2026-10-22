@@ -36,6 +36,7 @@ from syntide.generate.plan import (
     RegimeConfig,
     Selection,
     plan_trials,
+    regime_arms,
     write_plan,
 )
 from syntide.generate.policy import fit_calibration, save_calibration, save_frozen_json
@@ -66,7 +67,13 @@ def main(cfg: DictConfig) -> None:
     adapter = PtbXlAdapter(config.protocol.registry, config.protocol.dataset)
     if config.mode == "calibrate":
         index, source = adapter.index(), adapter.source()
-        regimes = config.select.regimes or list(config.protocol.regimes)
+        protocol = config.protocol
+        # By default, calibrate only the regimes that run an editor arm; the others need no generator.
+        regimes = config.select.regimes or [
+            name
+            for name in protocol.regimes
+            if any(protocol.arms[arm].transform_family == "editor" for arm in regime_arms(protocol, name))
+        ]
         for name in regimes:
             regime = config.protocol.regimes[name]
             manifest = load_manifest(Path(regime.manifest))

@@ -1,0 +1,149 @@
+{
+ "passed": true,
+ "gate": "generator_gate@1",
+ "generator": "ecg.electrode_artifact@1.0.0",
+ "descriptors": "ecg.electrode_artifacts@1",
+ "calibration_sha256": "862998a56e7e4644151015c604a5c3c3c476eb63546718d15c136153e563e999",
+ "gap_report_id": "gap-57b799dc546bc9e7",
+ "recipes_per_policy": 1000,
+ "seed": 0,
+ "thresholds": {
+  "slope": [
+   0.9,
+   1.1
+  ],
+  "intercept_of_range": 0.05,
+  "mae_of_range": 0.1,
+  "corr": 0.9
+ },
+ "policies": {
+  "coverage_matched": {
+   "candidates": 1000,
+   "accepted": 998,
+   "acceptance_rate": 0.998,
+   "rejections": {
+    "alignment@1": 2
+   },
+   "artifact_types": {
+    "static_noise": 631,
+    "baseline_drift": 241,
+    "burst_noise": 128
+   },
+   "all_finite": true,
+   "controls": {
+    "baseline_drift.amplitude_mv": {
+     "n": 241,
+     "slope": 1.0017663469219074,
+     "intercept_of_range": -8.7259604692752e-05,
+     "mae_of_range": 0.0008318580317479495,
+     "corr": 0.9999807253140465,
+     "passed": true
+    },
+    "baseline_drift.freq_hz": {
+     "n": 241,
+     "slope": 0.9999999992011055,
+     "intercept_of_range": 4.506128377418351e-10,
+     "mae_of_range": 4.709703776696369e-09,
+     "corr": 0.9999999999999996,
+     "passed": true
+    },
+    "static_noise.amplitude_mv": {
+     "n": 631,
+     "slope": 0.9819641542533669,
+     "intercept_of_range": -0.0006868825767937873,
+     "mae_of_range": 0.004103343751363529,
+     "corr": 0.9994843844358503,
+     "passed": true
+    },
+    "burst_noise.amplitude_mv": {
+     "n": 128,
+     "slope": 0.9678935554001395,
+     "intercept_of_range": 0.00030304754066137166,
+     "mae_of_range": 0.002461407140260338,
+     "corr": 0.9988204416712376,
+     "passed": true
+    },
+    "burst_noise.onset_s": {
+     "n": 128,
+     "slope": 0.9984523675659884,
+     "intercept_of_range": 0.0027010752859194256,
+     "mae_of_range": 0.003182377635644956,
+     "corr": 0.9998696622823159,
+     "passed": true
+    },
+    "burst_noise.duration_s": {
+     "n": 128,
+     "slope": 0.9792925282715966,
+     "intercept_of_range": 0.007679974110986374,
+     "mae_of_range": 0.015927826086143494,
+     "corr": 0.9979216756094861,
+     "passed": true
+    }
+   }
+  },
+  "gap_targeted": {
+   "candidates": 1000,
+   "accepted": 987,
+   "acceptance_rate": 0.987,
+   "rejections": {
+    "alignment@1": 13
+   },
+   "artifact_types": {
+    "burst_noise": 496,
+    "baseline_drift": 312,
+    "static_noise": 192
+   },
+   "all_finite": true,
+   "controls": {
+    "baseline_drift.amplitude_mv": {
+     "n": 312,
+     "slope": 1.0017219632754646,
+     "intercept_of_range": -0.0002147598856958247,
+     "mae_of_range": 0.0017516572989648945,
+     "corr": 0.9999604234738644,
+     "passed": true
+    },
+    "baseline_drift.freq_hz": {
+     "n": 312,
+     "slope": 0.9999999983302835,
+     "intercept_of_range": 1.0161306428193968e-09,
+     "mae_of_range": 4.6878922034615274e-09,
+     "corr": 0.9999999999999996,
+     "passed": true
+    },
+    "static_noise.amplitude_mv": {
+     "n": 192,
+     "slope": 0.9801486244259985,
+     "intercept_of_range": -0.0015869615634150653,
+     "mae_of_range": 0.013748550011630917,
+     "corr": 0.9993666913537662,
+     "passed": true
+    },
+    "burst_noise.amplitude_mv": {
+     "n": 496,
+     "slope": 0.9741512244309748,
+     "intercept_of_range": -0.002105812222578369,
+     "mae_of_range": 0.02794746476111196,
+     "corr": 0.9909605346528325,
+     "passed": true
+    },
+    "burst_noise.onset_s": {
+     "n": 496,
+     "slope": 0.9986735347691936,
+     "intercept_of_range": 0.002476358490666802,
+     "mae_of_range": 0.0030592583858249102,
+     "corr": 0.9998660998126352,
+     "passed": true
+    },
+    "burst_noise.duration_s": {
+     "n": 496,
+     "slope": 0.9805986243873439,
+     "intercept_of_range": 0.007390545746039737,
+     "mae_of_range": 0.01608136062453936,
+     "corr": 0.9974072175954573,
+     "passed": true
+    }
+   }
+  }
+ }
+}
