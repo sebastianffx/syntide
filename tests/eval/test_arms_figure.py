@@ -1,6 +1,8 @@
 """The arms summary: gaps to the 100% target and seed-paired changes over the baseline arm."""
 
-from syntide.eval.arms_figure import figures, summary
+import pytest
+
+from syntide.eval.arms_figure import figures, shown, summary
 
 
 def _row(regime, arm, seed, auroc, group="augmented", best_step=1000):
@@ -44,3 +46,13 @@ def test_figures_are_written(tmp_path):
     paths = figures(ROWS, "half", ("full", "C2"), tmp_path)
     assert [p.name for p in paths] == ["arms_overall.png", "arms_slices.png"]
     assert all(p.stat().st_size > 10_000 for p in paths)
+
+
+def test_hidden_arms_leave_the_figures_but_never_the_baseline_or_the_target():
+    rows = [*ROWS, *(_row("half", "S4", seed, 0.86) for seed in range(3))]
+    drawn = shown(rows, ["S4"], "half", "A0", ("full", "C2"))
+    assert {r["arm"] for r in drawn} == {"A0", "A3", "C2"}
+    assert shown(rows, [], "half", "A0", ("full", "C2")) == rows
+    for arm in ("A0", "C2"):
+        with pytest.raises(SystemExit, match=f"cannot hide {arm}"):
+            shown(rows, [arm], "half" if arm == "A0" else "full", "A0", ("full", "C2"))

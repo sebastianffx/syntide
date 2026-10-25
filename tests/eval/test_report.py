@@ -2,12 +2,14 @@
 the evaluator reports validation, then the test fold after the rules were frozen and the fold was scored."""
 
 import json
+from dataclasses import asdict
 
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 
+from syntide.eval import across
 from syntide.eval.analysis import AnalysisConfig, GapClosedRule
 from syntide.eval.freeze import freeze_rules, verify_frozen
 from syntide.eval.holdout import evaluate as score_test_fold
@@ -16,7 +18,8 @@ from syntide.eval.runs import RunError, load_run, load_runs
 from syntide.eval.stats import SELECTION_METRIC, val_scores
 from syntide.eval.tracking import TrackerConfig, make_tracker
 from syntide.generate.plan import ArmConfig, ProtocolConfig, RegimeConfig
-from syntide.trial import Checkpoint, TrainerInfo, open_trial, write_spec
+from syntide.generate.simvea import SimveaConfig
+from syntide.trial import Checkpoint, TrainerInfo, make_spec, open_trial, write_spec
 
 TRAINER = TrainerInfo(name="fake", version="1", config={}, device="cpu", predictor="fake:predict")
 ARMS = {"A0": 1.0, "A1": 1.5, "A3": 3.0, "C1": 2.0}  # arm -> how well its fake model separates labels
@@ -46,14 +49,14 @@ def _probs(labels, quality, seed):
     return 1 / (1 + np.exp(-(quality * (labels - 0.5) + noise)))
 
 
-def _train(protocol_dir, spec, val, parents, calibration):
+def _train(protocol_dir, spec, val, parents, calibration, quality=None):
     run_dir = protocol_dir / spec.regime / spec.arm / f"seed{spec.replicate_seed}"
     write_spec(run_dir, spec)
     tracker = make_tracker(TrackerConfig("files"), run_dir, spec.run_name, spec.protocol, spec.to_dict())
     with open_trial(spec, parents, val, tracker, run_dir, calibration=calibration) as trial:
         for _ in trial.batches():
             pass
-        quality = ARMS[spec.arm]
+        quality = ARMS[spec.arm] if quality is None else quality
         probs = {
             step: _probs(val.labels, quality * step / 20, 100 * spec.replicate_seed + step)
             for step in (10, 20, 30)
@@ -185,3 +188,57 @@ def test_validation_report_then_test_report_after_freeze_and_scoring(protocol_di
     assert results["chain"][0]["artifact"]["split"] == "test"
     assert results["gap_gate"]["artifact"]["split"] == "val"  # the gate is judged on validation only
     assert "test fold claimed" in results["freeze"]
+
+
+def test_an_arm_planned_in_another_protocol_is_compared_with_the_first_protocols_draws(
+    protocol_dir, make_samples, make_test_spec
+):
+    """An arm added after a test claim has its own protocol. ``across`` pairs it with the first protocol's
+    runs under that protocol's frozen bootstrap, and reproduces that protocol's own contrasts exactly."""
+    out = write_report(protocol_dir, PROTOCOL, RULES, "val", "best", TrackerConfig("files"))
+    own = json.loads((out / "comparisons.json").read_text())["diagnostics"][0]
+    assert own["label"] == "C1 - A0"
+    with pytest.raises(across.AcrossError, match=r"rules\.json does not exist"):
+        across.load([protocol_dir], "val")
+    freeze_rules(protocol_dir, RULES)
+
+    ext_dir = protocol_dir.parent / "ext-protocol"
+    val, parents = make_samples(60, seed=1, prefix="val"), make_samples(20)
+    entries = []
+    for seed in SEEDS:
+        base = make_test_spec(
+            "A1",
+            protocol="ext-protocol",
+            transform_family="simvea",
+            generator="simvea@1",
+            transform=asdict(SimveaConfig()),
+            replicate_seed=seed,
+        ).to_dict()
+        derived = ("init_seed", "syntide_version", "trial_id")
+        spec = make_spec(**{**{key: value for key, value in base.items() if key not in derived}, "arm": "T6"})
+        entries.append(_train(ext_dir, spec, val, parents, None, quality=2.5))
+    (ext_dir / "plan.json").write_text(json.dumps({"protocol": "ext-protocol", "trials": entries}))
+
+    rules, runs = across.load([protocol_dir, ext_dir], "val")
+    assert rules.sha256 == RULES.sha256 and len(runs) == (len(ARMS) + 1) * len(SEEDS)
+    contrasts = across.compare(runs, rules, [("C1", "A0"), ("T6", "A0"), ("T6", "A1")])
+    for name in ("artifact", "clean", "overall"):
+        assert contrasts[0][name] == own[name]  # the same draws as the first protocol's own report
+    assert contrasts[1]["label"] == "T6 - A0" and contrasts[1]["overall"]["estimate"] > 0
+    assert contrasts[1]["overall"]["seeds"] == list(SEEDS) and set(contrasts[1]["best_step"]) == {"T6", "A0"}
+    with pytest.raises(across.AcrossError, match="is in both"):
+        across.load([protocol_dir, ext_dir, protocol_dir], "val")
+
+    across.main([str(protocol_dir), str(ext_dir), "--contrast", "T6-A0", "--contrast", "T6-A1"])
+    text = (ext_dir / "eval" / "val" / "across.md").read_text()
+    assert "| T6 - A0 |" in text and "| T6 - A1 |" in text
+
+    # On test, every protocol's own claim must cover its runs: the extension's fold is scored separately.
+    test = make_samples(50, seed=3, prefix="test")
+    predict = lambda checkpoint, x, device: _probs(test.labels, 2.0, len(checkpoint.path.read_bytes()))  # noqa: E731
+    score_test_fold(protocol_dir, test=test, load_predictor=lambda name: predict)
+    with pytest.raises(RunError, match="score the test fold first"):
+        across.load([protocol_dir, ext_dir], "test")
+    score_test_fold(ext_dir, test=test, load_predictor=lambda name: predict)
+    rules, runs = across.load([protocol_dir, ext_dir], "test")
+    assert {run.split for run in runs} == {"test"} and len(runs) == (len(ARMS) + 1) * len(SEEDS)

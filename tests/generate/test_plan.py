@@ -1,7 +1,7 @@
 """Planning: one frozen trial.json per selected trial, and nothing at all when the protocol is wrong."""
 
 import json
-from dataclasses import replace
+from dataclasses import asdict, replace
 from pathlib import Path
 
 import numpy as np
@@ -12,6 +12,8 @@ from omegaconf import OmegaConf
 from syntide.data.challenge import ChallengeSpec, build_manifest, load_manifest, save_manifest
 from syntide.data.schema import ARTIFACT_TYPES
 from syntide.generate.__main__ import GenerateConfig, calibrate_regime
+from syntide.generate.ecg_aug import EcgAugConfig
+from syntide.generate.generic import GenericAugConfig
 from syntide.generate.plan import (
     ArmConfig,
     PlanError,
@@ -21,6 +23,7 @@ from syntide.generate.plan import (
     plan_trials,
     write_plan,
 )
+from syntide.generate.simvea import SimveaConfig
 from syntide.trial import load_spec
 
 SOURCE = {"dataset": "physionet/ptb-xl", "version": "1.0.3", "sha256": "test"}
@@ -168,6 +171,23 @@ def _failed_gate(p):
         (_failed_gate, ["A3"], "did not pass"),
         (None, ["A9"], "unknown arms"),
         (_regime(arms=["A0", "A9"]), ["A0"], "lists unknown arms"),
+        (_arm("A1", transform_fraction=0.3), ["A1"], "whole number of slots"),
+        (_arm("C1", transform_fraction=0.5), ["C1"], "only depleted arms"),
+        (_arm("A3", generic=GenericAugConfig()), ["A3"], "generic arms only"),
+        (_arm("T1", transform_family="ecg_aug", sampling_policy="fixed"), ["T1"], "set the ecg_aug"),
+        (
+            _arm("T1", transform_family="ecg_aug", sampling_policy="fixed", ecg_aug=EcgAugConfig()),
+            ["T1"],
+            "switch on at least one",
+        ),
+        (_arm("A1", ecg_aug=EcgAugConfig(scale=[0.9, 1.1])), ["A1"], "set the ecg_aug"),
+        (_arm("T6", transform_family="simvea", sampling_policy="fixed"), ["T6"], "set the simvea"),
+        (
+            _arm("T6", transform_family="simvea", sampling_policy="fixed", simvea=SimveaConfig(beta=[0, 3])),
+            ["T6"],
+            "high <= 2",
+        ),
+        (_arm("A1", simvea=SimveaConfig()), ["A1"], "set the simvea"),
     ],
     ids=[
         "no-budget",
@@ -178,6 +198,15 @@ def _failed_gate(p):
         "gate-failed",
         "unknown-arm",
         "regime-lists-unknown-arm",
+        "fraction-off-slots",
+        "fraction-without-slots",
+        "envelope-on-editor-arm",
+        "ecg-aug-without-ops",
+        "ecg-aug-all-off",
+        "ops-on-generic-arm",
+        "simvea-without-settings",
+        "simvea-beta-beyond-2",
+        "simvea-on-generic-arm",
     ],
 )
 def test_plan_refuses_before_writing_anything(protocol, synthetic_index, tmp_path, change, arms, message):
@@ -214,3 +243,70 @@ def test_the_50_percent_protocol_defines_21_trials_with_one_budget():
     assert runs == {"scarcity50": ["A0", "A1", "A2", "A3", "C1", "C2"], "full100": ["C2"]}
     assert sum(len(arms) for arms in runs.values()) * len(protocol.seeds) == 21
     assert len({regime.max_steps for regime in protocol.regimes.values()}) == 1  # one budget for every trial
+
+
+def test_dose_and_technique_arms_carry_their_own_fraction_and_transform(protocol, synthetic_index):
+    strong = GenericAugConfig(gain=[0.8, 1.2], max_shift_s=1.0, noise_rms_mv=[0.0, 0.2], wander_mv=[0.0, 7.0])
+    protocol.arms["S4"] = ArmConfig("depleted", "generic", "fixed", transform_fraction=1.0, generic=strong)
+    protocol.arms["T3"] = ArmConfig("depleted", "ecg_aug", "fixed", ecg_aug=EcgAugConfig(scale=[0.7, 1.43]))
+    specs = plan_trials(
+        protocol, Selection(arms=["A0", "A1", "S4", "T3"], seeds=[0]), index=synthetic_index, source=SOURCE
+    )
+    by_arm = {spec.arm: spec for spec in specs}
+    assert by_arm["S4"].transform_fraction == 1.0 and by_arm["S4"].transform["wander_mv"] == [0.0, 7.0]
+    assert by_arm["T3"].generator == "ecg_aug@1" and by_arm["T3"].transform["scale"] == [0.7, 1.43]
+    # Arms without overrides keep the protocol's fraction and A1's envelope.
+    assert (
+        by_arm["A1"].transform_fraction == by_arm["T3"].transform_fraction == by_arm["A0"].transform_fraction
+    )
+    assert by_arm["A1"].transform == asdict(protocol.generic)
+    assert len({spec.init_seed for spec in specs}) == 1  # paired: one initialization per seed
+
+
+def test_the_augmentation_sweep_defines_42_paired_trials_with_one_budget():
+    import syntide.generate.__main__  # noqa: F401  (registers the schema)
+    from syntide.generate.plan import regime_arms
+
+    with initialize_config_dir(config_dir=str(CONF), version_base=None):
+        cfg = compose("generate", overrides=["protocol=ptbxl_aug_sweep"])
+    protocol = OmegaConf.to_object(cfg).protocol
+    runs = {name: regime_arms(protocol, name) for name in protocol.regimes}
+    assert sum(len(arms) for arms in runs.values()) * len(protocol.seeds) == 42
+    assert runs["full100"] == ["C2"]
+    assert {"A0", "A1", "A3"} <= set(runs["scarcity50"])  # the 50% experiment's references
+    assert len({regime.max_steps for regime in protocol.regimes.values()}) == 1
+    arms = protocol.arms
+    # The dose ladder: S1 < S2 < A1 < S3 < S4 in (share of the batch) x (strength).
+    dose = {
+        name: (arms[name].transform_fraction or protocol.transform_fraction)
+        * (arms[name].generic or protocol.generic).wander_mv[1]
+        for name in ("S1", "S2", "A1", "S3", "S4")
+    }
+    assert list(dose) == sorted(dose, key=dose.get)
+    # Technique arms augment exactly A1's slots, with one operation each.
+    for name in ("T1", "T2", "T3", "T4", "T5"):
+        assert arms[name].transform_fraction is None
+        assert sum(value is not None for value in asdict(arms[name].ecg_aug).values()) == 1
+
+
+def test_the_simvea_extension_plans_t6_on_the_sweeps_pool_budget_and_slots():
+    """T6 pairs with the sweep's runs: same pool, budget, batch, cadence, seeds and share of slots."""
+    import syntide.generate.__main__  # noqa: F401  (registers the schema)
+    from syntide.generate.plan import regime_arms
+
+    protocols = {}
+    for name in ("ptbxl_aug_sweep", "ptbxl_aug_simvea"):
+        with initialize_config_dir(config_dir=str(CONF), version_base=None):
+            protocols[name] = OmegaConf.to_object(
+                compose("generate", overrides=[f"protocol={name}"])
+            ).protocol
+    sweep, ext = protocols["ptbxl_aug_sweep"], protocols["ptbxl_aug_simvea"]
+    assert {name: regime_arms(ext, name) for name in ext.regimes} == {"scarcity50": ["T6"]}
+    assert not set(ext.arms) & set(sweep.arms)  # no arm of the sweep is trained again
+    for key in ("batch_size", "val_every", "transform_fraction", "seeds", "dataset", "generic", "editor"):
+        assert getattr(ext, key) == getattr(sweep, key), key
+    for key in ("manifest", "max_steps"):
+        assert getattr(ext.regimes["scarcity50"], key) == getattr(sweep.regimes["scarcity50"], key), key
+    t6 = ext.arms["T6"]
+    assert (t6.transform_family, t6.sampling_policy, t6.transform_fraction) == ("simvea", "fixed", None)
+    assert t6.simvea == SimveaConfig()  # the paper's random-hyperparameter setting

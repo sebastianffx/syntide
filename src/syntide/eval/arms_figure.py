@@ -1,7 +1,10 @@
-"""``python -m syntide.eval.arms_figure runs/<protocol>``: every arm next to the 100%-data target.
+"""``python -m syntide.eval.arms_figure runs/<protocol> [runs/<extension> ...] [--hide S4]``: every arm next
+to the 100%-data target.
 
 Reads each run's ``result.json`` (validation scores at the best checkpoint, which validation chose) and
-``test_scores.json`` (the held-out test fold, written once by ``syntide.eval.holdout``). Writes:
+``test_scores.json`` (the held-out test fold, written once by ``syntide.eval.holdout``). Further protocol
+directories add arms planned after the first protocol's test claim (``ptbxl-aug-simvea``'s T6), each scored
+under its own claim. ``--hide`` leaves arms out of the figures only. Writes to the first protocol directory:
 
 - ``figures/arms_overall.png``: macro-AUROC per arm on validation and on test. Each seed is a small dot,
   the mean ± SD a large one, and the reference arm (by default C2 on 100% of patients) a line with its
@@ -33,7 +36,22 @@ ARM_NAMES = {
     "A3": "synthetic,\ntargeted",
     "C1": "natural\nmix",
     "C2": "every ECG\nof the pool",
+    # The augmentation sweep (ptbxl_aug_sweep).
+    "S1": "standard,\ndose 1/32",
+    "S2": "standard,\ndose 1/8",
+    "S3": "standard,\ndose 1",
+    "S4": "standard,\ndose 2",
+    "E1": "targeted,\nevery ECG",
+    "T1": "time\nmasking",
+    "T2": "lead\ndropout",
+    "T3": "amplitude\nscaling",
+    "T4": "time\nstretch",
+    "T5": "mixup",
+    "T6": "SIMVEA_h\n(chest leads)",
 }
+# Next to the sweep's dose ladder, A1 reads as one more dose.
+SWEEP_NAMES = {"A1": "standard,\ndose 1/2"}
+SWEEP_ARMS = {"S1", "S2", "S3", "S4"}
 # Validated with the dataviz palette checks (light surface, all pairs): blue, orange, aqua.
 SURFACE, INK, INK2, MUTED, GRID, AXIS = "#fcfcfb", "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7"
 GROUPS = {
@@ -46,9 +64,30 @@ MINUS = "\u2212"  # a typographic minus for signed gaps
 CONVERGENCE_SHARE = 0.8  # a best step past 80% of the budget may mean the run had not peaked yet
 
 
-def collect(protocol_dir: str | Path) -> list[dict]:
-    """One row per planned trial: its arm, seed, budget, and val and test AUROCs at the best checkpoint."""
-    protocol_dir = Path(protocol_dir)
+def collect(protocol_dirs: Sequence[str | Path]) -> list[dict]:
+    """One row per planned trial of every protocol: arm, seed, budget, val and test AUROCs at the best
+    checkpoint. A (regime, arm, seed) planned in two protocols is refused."""
+    rows, source = [], {}
+    for protocol_dir in map(Path, protocol_dirs):
+        for row in _collect_one(protocol_dir):
+            key = (row["regime"], row["arm"], row["seed"])
+            if key in source:
+                raise SystemExit(f"{'/'.join(map(str, key))} is in both {source[key]} and {protocol_dir}")
+            source[key] = protocol_dir
+            rows.append(row)
+    return rows
+
+
+def shown(rows: list[dict], hide: Sequence[str], regime: str, baseline: str, reference: tuple[str, str]):
+    """The rows a figure draws: every arm of ``regime`` but the hidden ones. The baseline and the target stay,
+    since every figure is drawn against them."""
+    hidden = {(regime, arm) for arm in hide}
+    if clash := hidden & {(regime, baseline), reference}:
+        raise SystemExit(f"cannot hide {', '.join(arm for _, arm in sorted(clash))}: every figure needs it")
+    return [r for r in rows if (r["regime"], r["arm"]) not in hidden]
+
+
+def _collect_one(protocol_dir: Path) -> list[dict]:
     rows = []
     for entry in json.loads((protocol_dir / "plan.json").read_text(encoding="utf-8"))["trials"]:
         run_dir = protocol_dir / entry["run_dir"]
@@ -74,6 +113,11 @@ def collect(protocol_dir: str | Path) -> list[dict]:
             }
         )
     return rows
+
+
+def _arm_name(arm: str, arms: Sequence[str]) -> str:
+    names = ARM_NAMES | SWEEP_NAMES if SWEEP_ARMS & set(arms) else ARM_NAMES
+    return names.get(arm, "")
 
 
 def _group(source_role: str, family: str) -> str:
@@ -145,7 +189,7 @@ def _panel(ax, rows, regime, arms, reference: tuple[str, str], split, part, titl
         top = max(mean + sd, *values.values())  # above every mark of this arm
         ax.annotate(f"{mean - ref_mean:+.3f}".replace("-", MINUS), (x, top), xytext=(0, 6),
                     textcoords="offset points", ha="center", color=INK2, fontsize=8.5)  # fmt: skip
-    ax.set_xticks(range(len(arms)), [f"{arm}\n{ARM_NAMES.get(arm, '')}" for arm in arms], fontsize=8.5)
+    ax.set_xticks(range(len(arms)), [f"{arm}\n{_arm_name(arm, arms)}" for arm in arms], fontsize=8.5)
     ax.set_xlim(-0.6, len(arms) - 0.4)
     ax.set_title(title)
     ax.tick_params(axis="x", length=0)
@@ -167,12 +211,14 @@ def _share_y(axes, rows, regime, arms, reference: tuple[str, str], split_parts) 
         ax.set_ylim(low - pad, high + 2.2 * pad)
 
 
-def _legend(fig, top: float) -> None:
+def _legend(fig, top: float, groups: set[str]) -> None:
+    """Only the groups the figure shows, in GROUPS order."""
     from matplotlib.lines import Line2D
 
     handles = [
         Line2D([], [], marker="o", ls="", ms=8, color=color, mec=SURFACE, mew=2, label=name)
-        for name, color in GROUPS.values()
+        for group, (name, color) in GROUPS.items()
+        if group in groups
     ]
     handles += [
         Line2D([], [], color=REFERENCE_COLOR, lw=2, label="Target: 100% of patients (mean ± SD band)"),
@@ -192,6 +238,7 @@ def figures(rows: list[dict], regime: str, reference: tuple[str, str], out_dir: 
     out_dir.mkdir(parents=True, exist_ok=True)
     arms = list(dict.fromkeys(r["arm"] for r in rows if r["regime"] == regime))
     seeds = len({r["seed"] for r in rows})
+    groups = {r["group"] for r in rows if r["regime"] == regime}
     split_titles = {"val": "Validation (fold 9, picks the checkpoint)", "test": "Test (fold 10, held out)"}
     caption = (
         f"Numbers above each arm: its gap to the 100% target. Arms train on {regime}; "
@@ -199,21 +246,22 @@ def figures(rows: list[dict], regime: str, reference: tuple[str, str], out_dir: 
     )
     paths = []
 
-    fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), sharey=True)
+    width = max(13.0, 1.35 * len(arms))  # about 0.65 in per arm and panel
+    fig, axes = plt.subplots(1, 2, figsize=(width, 4.8), sharey=True)
     for ax, split in zip(axes, SPLITS, strict=True):
         _panel(ax, rows, regime, arms, reference, split, "overall", split_titles[split])
     _share_y(axes, rows, regime, arms, reference, [(s, "overall") for s in SPLITS])
     axes[0].set_ylabel("Macro-AUROC, all records")
     fig.suptitle("Does augmenting 50% of the patients reach the performance of 100%?", x=0.01, ha="left",
                  color=INK, fontsize=12, fontweight="semibold")  # fmt: skip
-    _legend(fig, top=0.925)
+    _legend(fig, top=0.925, groups=groups)
     fig.text(0.01, 0.015, caption, color=MUTED, fontsize=8.5)
     fig.subplots_adjust(left=0.06, right=0.99, top=0.78, bottom=0.21, wspace=0.05)
     paths.append(out_dir / "arms_overall.png")
     fig.savefig(paths[-1], dpi=200)
     plt.close(fig)
 
-    fig, grid = plt.subplots(2, 2, figsize=(13, 8.6), sharey="row")
+    fig, grid = plt.subplots(2, 2, figsize=(width, 8.6), sharey="row")
     for row_axes, part in zip(grid, ("artifact", "clean"), strict=True):
         for ax, split in zip(row_axes, SPLITS, strict=True):
             _panel(
@@ -223,7 +271,7 @@ def figures(rows: list[dict], regime: str, reference: tuple[str, str], out_dir: 
         row_axes[0].set_ylabel(f"Macro-AUROC, {SLICE_NAMES[part]}")
     fig.suptitle("The same comparison on noisy and on clean records", x=0.01, ha="left", color=INK,
                  fontsize=12, fontweight="semibold")  # fmt: skip
-    _legend(fig, top=0.962)
+    _legend(fig, top=0.962, groups=groups)
     fig.text(0.01, 0.008, caption + " Noisy = any PTB-XL signal-quality flag.", color=MUTED, fontsize=8.5)
     fig.subplots_adjust(left=0.06, right=0.99, top=0.885, bottom=0.105, wspace=0.05, hspace=0.42)
     paths.append(out_dir / "arms_slices.png")
@@ -254,7 +302,7 @@ def summary(rows: list[dict], regime: str, reference: tuple[str, str], baseline:
         v = {(s, p): _values(rows, regime, arm, s, p) for s in SPLITS for p in SLICES}
         gap = {p: _mean_sd(v["test", p])[0] - ref["test", p][0] for p in ("overall", "artifact")}
         lines.append(
-            f"| {arm} {ARM_NAMES.get(arm, '').replace(chr(10), ' ')} | {cell(v['val', 'overall'])} | "
+            f"| {arm} {_arm_name(arm, arms).replace(chr(10), ' ')} | {cell(v['val', 'overall'])} | "
             f"{cell(v['test', 'overall'])} | {cell(v['test', 'artifact'])} | {cell(v['test', 'clean'])} | "
             f"{gap['overall']:+.4f} | {gap['artifact']:+.4f} |"
         )
@@ -317,15 +365,21 @@ def main(argv: Sequence[str] | None = None) -> None:
         prog="python -m syntide.eval.arms_figure",
         description="Plot every arm against the 100%-data target on validation and on the test fold.",
     )
-    parser.add_argument("protocol_dir", help="the protocol's runs directory, e.g. runs/ptbxl-artifact-50")
+    parser.add_argument(
+        "protocol_dirs",
+        nargs="+",
+        help="protocol runs directories, e.g. runs/ptbxl-artifact-50; outputs go to the first one",
+    )
     parser.add_argument("--regime", default="scarcity50", help="the regime whose arms are compared")
     parser.add_argument("--reference", default="full100/C2", help="REGIME/ARM of the target line")
     parser.add_argument("--baseline", default="A0", help="the arm paired changes are measured from")
+    parser.add_argument("--hide", nargs="*", default=[], help="arms to leave out of the figures, e.g. S4")
     args = parser.parse_args(argv)
-    protocol_dir = Path(args.protocol_dir)
+    protocol_dir = Path(args.protocol_dirs[0])
     reference = tuple(args.reference.split("/", 1))
-    rows = collect(protocol_dir)
-    for path in figures(rows, args.regime, reference, protocol_dir / "figures"):
+    rows = collect(args.protocol_dirs)
+    drawn = shown(rows, args.hide, args.regime, args.baseline, reference)
+    for path in figures(drawn, args.regime, reference, protocol_dir / "figures"):
         print(path)
     text = summary(rows, args.regime, reference, args.baseline)
     (protocol_dir / "arms_summary.md").write_text(text, encoding="utf-8")

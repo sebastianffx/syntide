@@ -10,6 +10,8 @@ slots and the same model initialization, and differ only in what happens inside 
 
 - ``none``: the parent goes in unchanged (A0; C1 and C2 have no transform slots at all);
 - ``generic``: A1's per-lead augmentation (``syntide.generate.generic``);
+- ``ecg_aug``: single augmentation techniques (``syntide.generate.ecg_aug``); its mixup also blends labels;
+- ``simvea``: SIMVEA_h, chest leads rebuilt from their neighbours (``syntide.generate.simvea``);
 - ``editor``: the electrode-space artifact editor. A2 and A3 draw the same uniforms ``u`` for a
   (step, slot, attempt) and differ only in the policy that maps them to controls.
 
@@ -30,7 +32,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from syntide.data.schema import FS_HZ, Samples
-from syntide.generate import editor, generic, policy, validate
+from syntide.generate import ecg_aug, editor, generic, policy, simvea, validate
 from syntide.generate.ledger import LedgerWriter, Recipe, ledger_row
 
 if TYPE_CHECKING:
@@ -38,7 +40,7 @@ if TYPE_CHECKING:
     from syntide.trial import TrialSpec
 
 STREAMS = {"init": 0, "parents": 1, "slots": 2, "transform": 3, "gate": 4}
-FAMILIES = ("none", "generic", "editor")
+FAMILIES = ("none", "generic", "editor", "ecg_aug", "simvea")
 
 
 def rng(seed: int, stream: str, *keys: int) -> np.random.Generator:
@@ -55,7 +57,7 @@ def init_seed(replicate_seed: int) -> int:
 class Batch:
     step: int  # the optimizer update this batch is for, 1..max_steps
     x: np.ndarray  # (B, 12, T) float32, millivolts
-    y: np.ndarray  # (B, 5) float32 multi-hot diagnostic superclasses
+    y: np.ndarray  # (B, 5) float32 multi-hot diagnostic superclasses (mixup slots hold blended labels)
     transformed: np.ndarray  # (B,) bool: the slot holds a transformed parent
     record_id: np.ndarray  # (B,) str: the parent record of each slot
 
@@ -89,6 +91,12 @@ class TrainStream:
         self._generic = (
             generic.GenericAugConfig(**spec.transform) if spec.transform_family == "generic" else None
         )
+        self._ecg_aug = ecg_aug.EcgAugConfig(**spec.transform) if spec.transform_family == "ecg_aug" else None
+        if self._ecg_aug is not None:
+            ecg_aug.check(self._ecg_aug, parents.x.shape[1])
+        self._simvea = simvea.SimveaConfig(**spec.transform) if spec.transform_family == "simvea" else None
+        if self._simvea is not None:
+            simvea.check(self._simvea, parents.x.shape[1])
         self._perms: dict[int, np.ndarray] = {}
         self._started = False
         self.steps_served = 0
@@ -124,18 +132,24 @@ class TrainStream:
 
     def _batches(self) -> Iterator[Batch]:
         spec = self.spec
-        transform = {"generic": self._augment, "editor": self._edit}.get(spec.transform_family)
+        transform = {
+            "generic": self._augment,
+            "editor": self._edit,
+            "ecg_aug": self._augment_ops,
+            "simvea": self._augment_simvea,
+        }.get(spec.transform_family)
         started = time.monotonic()
         for step in range(1, spec.max_steps + 1):
             index = self.parent_positions(step)
             mask = self.slot_mask(step)
             x = self.parents.x[index]  # fancy indexing copies, so edits never touch the parents
+            y = self.parents.labels[index].astype(np.float32)
             transformed = np.zeros(spec.batch_size, dtype=bool)
             if transform is not None:
                 for slot in np.flatnonzero(mask):
-                    edited = transform(x[slot], int(index[slot]), step, int(slot))
+                    edited = transform(x[slot], y[slot], int(index[slot]), step, int(slot))
                     if edited is not None:
-                        x[slot] = edited
+                        x[slot], y[slot] = edited
                         transformed[slot] = True
             self.presentations += spec.batch_size
             self.transform_slots += int(mask.sum())
@@ -145,7 +159,7 @@ class TrainStream:
             yield Batch(
                 step=step,
                 x=x,
-                y=self.parents.labels[index].astype(np.float32),
+                y=y,
                 transformed=transformed,
                 record_id=self.parents.record_id[index],
             )
@@ -175,13 +189,52 @@ class TrainStream:
     def _rng_stream(self, step: int, slot: int, attempt: int) -> str:
         return f"{self.spec.arm}/s{self.spec.replicate_seed}/step{step}/slot{slot}/try{attempt}"
 
-    def _augment(self, x: np.ndarray, parent: int, step: int, slot: int) -> np.ndarray:
+    def _augment(
+        self, x: np.ndarray, y: np.ndarray, parent: int, step: int, slot: int
+    ) -> tuple[np.ndarray, np.ndarray]:
         draw = rng(self.spec.replicate_seed, "transform", step, slot, 0)
         controls = generic.draw_controls(draw, self._generic, x.shape[0], FS_HZ)
         seed_key = int(draw.integers(2**63))
         recipe = Recipe(
             str(self.parents.record_id[parent]), generic.GENERATOR, generic.VERSION, controls, seed_key, None
         )
+        self._accept(recipe, parent, step, slot, generic.LABEL_EFFECT)
+        return generic.apply(x, controls, seed_key, FS_HZ), y
+
+    def _augment_ops(
+        self, x: np.ndarray, y: np.ndarray, parent: int, step: int, slot: int
+    ) -> tuple[np.ndarray, np.ndarray]:
+        draw = rng(self.spec.replicate_seed, "transform", step, slot, 0)
+        controls = ecg_aug.draw_controls(draw, self._ecg_aug, *x.shape, FS_HZ, len(self.parents))
+        seed_key = int(draw.integers(2**63))
+        partner = controls.get("mixup_partner")
+        if partner is not None:
+            controls["mixup_partner"] = str(self.parents.record_id[partner])  # the ledger names records
+        recipe = Recipe(
+            str(self.parents.record_id[parent]), ecg_aug.GENERATOR, ecg_aug.VERSION, controls, seed_key, None
+        )
+        self._accept(recipe, parent, step, slot, ecg_aug.label_effect(controls))
+        if partner is None:
+            return ecg_aug.apply(x, controls), y
+        return (
+            ecg_aug.apply(x, controls, self.parents.x[partner]),
+            ecg_aug.mix_labels(y, self.parents.labels[partner], controls),
+        )
+
+    def _augment_simvea(
+        self, x: np.ndarray, y: np.ndarray, parent: int, step: int, slot: int
+    ) -> tuple[np.ndarray, np.ndarray]:
+        draw = rng(self.spec.replicate_seed, "transform", step, slot, 0)
+        controls = simvea.draw_controls(draw, self._simvea)
+        seed_key = int(draw.integers(2**63))
+        recipe = Recipe(
+            str(self.parents.record_id[parent]), simvea.GENERATOR, simvea.VERSION, controls, seed_key, None
+        )
+        self._accept(recipe, parent, step, slot, simvea.LABEL_EFFECT)
+        return simvea.apply(x, controls), y
+
+    def _accept(self, recipe: Recipe, parent: int, step: int, slot: int, label_effect: dict) -> None:
+        """Count and log a candidate that needs no validation: one draw per slot, always accepted."""
         self.candidates += 1
         self.accepted += 1
         self._recipes.add(recipe.recipe_id)
@@ -194,12 +247,13 @@ class TrainStream:
                     attempt=0,
                     rng_stream=self._rng_stream(step, slot, 0),
                     parent_subject_uid=str(self.parents.subject_uid[parent]),
-                    label_effect=generic.LABEL_EFFECT,
+                    label_effect=label_effect,
                 )
             )
-        return generic.apply(x, controls, seed_key, FS_HZ)
 
-    def _edit(self, x: np.ndarray, parent: int, step: int, slot: int) -> np.ndarray | None:
+    def _edit(
+        self, x: np.ndarray, y: np.ndarray, parent: int, step: int, slot: int
+    ) -> tuple[np.ndarray, np.ndarray] | None:
         cfg, calibration = self.spec.transform, self.calibration
         parent_id = str(self.parents.record_id[parent])
         for attempt in range(cfg["max_retries"] + 1):
@@ -232,7 +286,7 @@ class TrainStream:
             if ok:
                 self.accepted += 1
                 self._recipes.add(recipe.recipe_id)
-                return candidate.x
+                return candidate.x, y
         self.exhausted_slots += 1
         return None
 

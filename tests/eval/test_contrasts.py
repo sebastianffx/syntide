@@ -164,6 +164,28 @@ def test_an_arm_without_transform_slots_pairs_with_a_transform_arm(make_run, rec
     _scorer(a[0]).contrast(a, b, "overall", ci_level=0.95, labels=("C1", "A0"))
 
 
+def test_a_dose_arm_pairs_with_a0_and_a1_but_a_slot_mismatch_at_one_share_is_refused(make_run, records):
+    # A dose arm declares 1/8 of the batch. A0 has half-batch slots of unchanged parents; A1 augments half.
+    dose = [
+        replace(
+            make_run("A1", s, _probs(records["labels"], 2.0, s)),
+            result={
+                **make_run("A1", s, None).result,
+                "exposure": {"presentations": 240, "transform_slots": 30},
+            },
+        )
+        for s in SEEDS
+    ]
+    dose = [replace(run, spec=replace(run.spec, transform_fraction=0.125)) for run in dose]
+    a0 = [make_run("A0", s, _probs(records["labels"], 2.0, s)) for s in SEEDS]
+    _scorer(a0[0]).contrast(dose, a0, "overall", ci_level=0.95, labels=("S1", "A0"))
+    a1 = [make_run("A1", s, _probs(records["labels"], 2.0, s)) for s in SEEDS]
+    _scorer(a0[0]).contrast(dose, a1, "overall", ci_level=0.95, labels=("S1", "A1"))
+    undeclared = [replace(run, spec=replace(run.spec, transform_fraction=0.5)) for run in dose]
+    with pytest.raises(PairingError, match="different transform slots"):
+        _scorer(a0[0]).contrast(undeclared, a1, "overall", ci_level=0.95, labels=("S1", "A1"))
+
+
 def _report(estimate, low, high, slice_name="artifact"):
     return UtilityReport(
         a="A3", b="A1", split="val", checkpoint="best", slice=slice_name, metric="macro_auroc",

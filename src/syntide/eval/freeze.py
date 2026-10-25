@@ -90,9 +90,14 @@ def verify_frozen(protocol_dir: str | Path, rules: AnalysisConfig, *, claimed: b
     return frozen
 
 
+def frozen_rules(frozen: dict[str, Any]) -> AnalysisConfig:
+    """The rules of a ``rules.json`` payload, read through today's schema (a field added later takes its
+    default)."""
+    return load_dataclass(AnalysisConfig, frozen["rules"])
+
+
 def _frozen_sha256(frozen: dict[str, Any]) -> str:
-    """The frozen rules read through today's schema, so a field added later with a default still matches."""
-    return load_dataclass(AnalysisConfig, frozen["rules"]).sha256
+    return frozen_rules(frozen).sha256
 
 
 def _diff(frozen: dict[str, Any], current: dict[str, Any]) -> str:

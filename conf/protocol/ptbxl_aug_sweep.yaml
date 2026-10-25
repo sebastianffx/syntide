@@ -1,0 +1,112 @@
+# The augmentation sweep at 50% of the training patients: how much augmentation, and which kind, helps?
+# Design and hypotheses: docs/augmentation_sweep.md.
+#
+# 10 new arms x 3 seeds, plus 4 references re-run in this protocol so every contrast is paired:
+#   A0 (no augmentation), A1 (standard augmentation), A3 (targeted artifact edits) and C2@full100 (the target).
+# 14 arms x 3 seeds = 42 trials.
+#
+# Plan:   python -m syntide.generate protocol=ptbxl_aug_sweep mode=plan
+# Train:  python -m syntide_trainers.torch_loop "runs/ptbxl-aug-sweep/*/*/seed*"      (about 4.6 h on MPS)
+# Peek:   python -m syntide.eval.aug_figure runs/ptbxl-aug-sweep --split val          (any time)
+# Freeze: python -m syntide.eval protocol=ptbxl_aug_sweep mode=freeze                 (before the test claim)
+# Test:   python -m syntide.eval protocol=ptbxl_aug_sweep split=test
+# Plot:   python -m syntide.eval.aug_figure runs/ptbxl-aug-sweep --split test
+#         python -m syntide.eval.arms_figure runs/ptbxl-aug-sweep
+#
+# Same data, model, optimizer, batch size, seeds and validation cadence as runs/ptbxl-artifact-50-val100,
+# so the four references reproduce its numbers. Only the budget differs (see regimes).
+id: ptbxl-aug-sweep
+registry: datasets/timenet-registry
+dataset: physionet/ptb-xl@1.0.3
+
+batch_size: 64
+val_every: 100
+transform_fraction: 0.5    # A0, A1, A3 and the technique arms T1-T5; the dose arms set their own
+
+# A1's envelope, unchanged. The dose arms S1-S4 scale it.
+generic:
+  gain: [0.9, 1.1]
+  max_shift_s: 0.5
+  noise_rms_mv: [0.0, 0.1]
+  wander_mv: [0.0, 3.5]
+  wander_hz: [0.05, 0.7]
+
+# The 50% experiment's editor settings, unchanged, so A3 and E1 reuse its calibration and its Gate 4.
+editor:
+  mv_limit: 10.0
+  alignment_tol: 0.15
+  max_retries: 5
+  type_smoothing: 0.1
+  density_floor: 1.0
+  envelope:
+    baseline_drift: {amplitude_mv: [0.1, 3.5], freq_hz: [0.1, 0.4]}
+    static_noise: {amplitude_mv: [0.005, 0.1]}
+    burst_noise: {amplitude_mv: [0.01, 0.6], duration_s: [0.5, 3.0]}
+
+arms:
+  # References from the 50% experiment.
+  A0: {source_role: depleted, transform_family: none,    sampling_policy: none}          # no augmentation
+  A1: {source_role: depleted, transform_family: generic, sampling_policy: fixed}         # dose 1/2
+  A3: {source_role: depleted, transform_family: editor,  sampling_policy: gap_targeted}  # targeted edits, 1/2 of slots
+
+  # Dose ladder of A1's standard augmentation. Dose = share of the batch augmented x strength, where strength
+  # scales every range of A1's envelope (gain spread, shift, noise, wander amplitude).
+  S1:                        # almost none: dose 1/32 (1/8 of the batch at 1/4 strength)
+    source_role: depleted
+    transform_family: generic
+    sampling_policy: fixed
+    transform_fraction: 0.125
+    generic: {gain: [0.975, 1.025], max_shift_s: 0.125, noise_rms_mv: [0.0, 0.025], wander_mv: [0.0, 0.875], wander_hz: [0.05, 0.7]}
+  S2:                        # light: dose 1/8 (1/4 of the batch at 1/2 strength)
+    source_role: depleted
+    transform_family: generic
+    sampling_policy: fixed
+    transform_fraction: 0.25
+    generic: {gain: [0.95, 1.05], max_shift_s: 0.25, noise_rms_mv: [0.0, 0.05], wander_mv: [0.0, 1.75], wander_hz: [0.05, 0.7]}
+  S3:                        # every ECG: dose 1 (the whole batch at A1's strength); S3 - A1 isolates the share
+    source_role: depleted
+    transform_family: generic
+    sampling_policy: fixed
+    transform_fraction: 1.0
+    generic: {gain: [0.9, 1.1], max_shift_s: 0.5, noise_rms_mv: [0.0, 0.1], wander_mv: [0.0, 3.5], wander_hz: [0.05, 0.7]}
+  S4:                        # a lot: dose 2 (the whole batch at twice A1's strength); S4 - S3 isolates strength
+    source_role: depleted
+    transform_family: generic
+    sampling_policy: fixed
+    transform_fraction: 1.0
+    generic: {gain: [0.8, 1.2], max_shift_s: 1.0, noise_rms_mv: [0.0, 0.2], wander_mv: [0.0, 7.0], wander_hz: [0.05, 0.7]}
+
+  # The electrode editor at full dose: A3's targeted edits on every ECG of the batch. E1 - A3 isolates the share.
+  E1: {source_role: depleted, transform_family: editor, sampling_policy: gap_targeted, transform_fraction: 1.0}
+
+  # One technique each, on A1's half of the batch (the same slots as A0, A1 and A3), at a moderate strength.
+  T1:                        # time masking: one flat window of 0.5-2 s on all leads (cutout)
+    {source_role: depleted, transform_family: ecg_aug, sampling_policy: fixed, ecg_aug: {time_mask_s: [0.5, 2.0]}}
+  T2:                        # lead dropout: 1-4 of the 12 leads set to 0 mV. Risk: MI, which is lead-localized
+    {source_role: depleted, transform_family: ecg_aug, sampling_policy: fixed, ecg_aug: {lead_dropout: [1, 4]}}
+  T3:                        # amplitude scaling: one factor in [0.7, 1.43] for all leads. Risk: HYP voltage criteria
+    {source_role: depleted, transform_family: ecg_aug, sampling_policy: fixed, ecg_aug: {scale: [0.7, 1.43]}}
+  T4:                        # time stretch: heart rate and intervals x [0.85, 1.18]. Risk: CD interval criteria
+    {source_role: depleted, transform_family: ecg_aug, sampling_policy: fixed, ecg_aug: {stretch: [0.85, 1.18]}}
+  T5:                        # mixup: blend with a random parent, labels too, lambda ~ Beta(0.4, 0.4)
+    {source_role: depleted, transform_family: ecg_aug, sampling_policy: fixed, ecg_aug: {mixup_alpha: 0.4}}
+
+  C2: {source_role: pool, transform_family: none, sampling_policy: none}  # used only by full100
+
+# One budget for every trial. 10,000 steps, not the 50% experiment's 6,500: augmentation delays the peak
+# (A1 peaked at steps 3,000-3,800 with half the batch augmented, A0 at 900-1,100), so S3, S4 and E1 may
+# peak past 6,500. Training is deterministic and the learning rate constant, so the first 6,500 steps of
+# A0, A1, A3 and C2@full100 repeat the 50% experiment exactly.
+regimes:
+  scarcity50:
+    manifest: manifests/ptbxl-artifact-50/pool50.json
+    calibration: manifests/ptbxl-artifact-50/calibration/pool50.json
+    generator_gate: manifests/ptbxl-artifact-50/generator_gate_pool50.json
+    max_steps: 10000
+    arms: [A0, A1, A3, S1, S2, S3, S4, E1, T1, T2, T3, T4, T5]
+  full100:
+    manifest: manifests/ptbxl-artifact-50/pool100.json
+    max_steps: 10000
+    arms: [C2]
+
+seeds: [0, 1, 2]

@@ -10,7 +10,8 @@ A contrast ``a - b`` compares two arms seed by seed on the same records:
 Macro-AUROC skips a class without both a weighted positive and a weighted negative, like
 ``syntide.eval.stats.macro_auroc``, which it matches exactly at unit weights. Pairing is refused
 (``PairingError``) unless the arms share seeds, records and labels, trainer fingerprint, budget, the initial
-weights of each seed and, between transform arms, the transform slots.
+weights of each seed and, between transform arms that declare the same share of transformed slots, those
+slots. A dose arm that declares its own share (``ptbxl_aug_sweep``) pairs with any arm.
 """
 
 import warnings
@@ -120,8 +121,17 @@ def check_pairing(a: Sequence[Run], b: Sequence[Run]) -> None:
         run_b = by_seed[run_a.seed]
         if run_a.init_sha256 != run_b.init_sha256:
             raise PairingError(f"seed {run_a.seed} starts from different initial weights in the two arms")
-        transforms = run_a.spec.transform_fraction > 0 and run_b.spec.transform_fraction > 0
-        if transforms and run_a.exposure["transform_slots"] != run_b.exposure["transform_slots"]:
+        # Two transform arms that declare the same share of transformed slots must have served the same
+        # slots. A0's slots hold unchanged parents, and a dose arm declares its own share: that is the arm.
+        transforms = all(
+            run.spec.transform_family != "none" and run.spec.transform_fraction > 0 for run in (run_a, run_b)
+        )
+        same_share = run_a.spec.transform_fraction == run_b.spec.transform_fraction
+        if (
+            transforms
+            and same_share
+            and run_a.exposure["transform_slots"] != run_b.exposure["transform_slots"]
+        ):
             raise PairingError(f"seed {run_a.seed} has different transform slots in the two arms")
 
 

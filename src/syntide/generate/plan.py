@@ -16,10 +16,12 @@ from omegaconf import MISSING
 
 from syntide.data.challenge import Manifest, load_manifest
 from syntide.data.leakage import check_manifest
-from syntide.generate import editor, generic
+from syntide.generate import ecg_aug, editor, generic, simvea
+from syntide.generate.ecg_aug import EcgAugConfig
 from syntide.generate.editor import EditorConfig
 from syntide.generate.generic import GenericAugConfig
 from syntide.generate.policy import CalibrationError, load_calibration
+from syntide.generate.simvea import SimveaConfig
 from syntide.trial import TrialSpec, load_spec, make_spec, write_spec
 
 # Roles an arm may train on. val, test, withheld and unused never feed a training stream.
@@ -33,6 +35,8 @@ FAMILIES = {
         f"{editor.GENERATOR}@{editor.VERSION}",
         ("bounds@1", "alignment@1"),
     ),
+    "ecg_aug": (("fixed",), f"{ecg_aug.GENERATOR}@{ecg_aug.VERSION}", ()),
+    "simvea": (("fixed",), f"{simvea.GENERATOR}@{simvea.VERSION}", ()),
 }
 
 
@@ -41,6 +45,12 @@ class ArmConfig:
     source_role: str = "depleted"
     transform_family: str = "none"
     sampling_policy: str = "none"
+    # Dose arms (ptbxl_aug_sweep) set their own share of transformed slots and their own envelope.
+    # Unset, an arm takes the protocol's transform_fraction and generic envelope.
+    transform_fraction: float | None = None
+    generic: GenericAugConfig | None = None  # generic arms only
+    ecg_aug: EcgAugConfig | None = None  # required by ecg_aug arms: the operations they switch on
+    simvea: SimveaConfig | None = None  # required by simvea arms: SIMVEA_h's settings
 
 
 @dataclass
@@ -91,15 +101,11 @@ def plan_trials(
     seeds = _chosen("seed", select.seeds, list(protocol.seeds))
     if len(set(protocol.seeds)) != len(protocol.seeds):
         raise PlanError(f"protocol seeds {protocol.seeds} repeat a seed")
-    if not 0 <= protocol.transform_fraction <= 1:
-        raise PlanError(f"transform_fraction must be in [0, 1], got {protocol.transform_fraction}")
-    if not (protocol.transform_fraction * protocol.batch_size).is_integer():
-        raise PlanError(
-            f"transform_fraction {protocol.transform_fraction} x batch_size {protocol.batch_size} "
-            "is not a whole number of slots"
-        )
+    _check_fraction("protocol", protocol.transform_fraction, protocol.batch_size)
     for name in arms:
         _check_arm(name, protocol.arms[name])
+        if protocol.arms[name].transform_fraction is not None:
+            _check_fraction(f"arm {name}", protocol.arms[name].transform_fraction, protocol.batch_size)
     _check_shared_envelope(protocol)
     # A regime runs the selected arms it lists (all of them when it lists none).
     runs = {name: [arm for arm in arms if arm in regime_arms(protocol, name)] for name in regimes}
@@ -194,6 +200,15 @@ def _chosen(kind: str, chosen: list | None, available: list) -> list:
     return list(chosen)
 
 
+def _check_fraction(where: str, fraction: float, batch_size: int) -> None:
+    if not 0 <= fraction <= 1:
+        raise PlanError(f"{where}: transform_fraction must be in [0, 1], got {fraction}")
+    if not (fraction * batch_size).is_integer():
+        raise PlanError(
+            f"{where}: transform_fraction {fraction} x batch_size {batch_size} is not a whole number of slots"
+        )
+
+
 def _check_arm(name: str, arm: ArmConfig) -> None:
     if arm.source_role not in TRAIN_ROLES:
         raise PlanError(f"arm {name}: source_role {arm.source_role!r} is not one of {TRAIN_ROLES}")
@@ -204,10 +219,31 @@ def _check_arm(name: str, arm: ArmConfig) -> None:
         raise PlanError(f"arm {name}: {arm.transform_family} arms take sampling_policy in {policies}")
     if arm.transform_family != "none" and arm.source_role != "depleted":
         raise PlanError(f"arm {name}: a {arm.transform_family} transform must start from depleted parents")
+    if arm.transform_fraction is not None and arm.source_role != "depleted":
+        raise PlanError(f"arm {name}: only depleted arms have transform slots to set a fraction for")
+    if arm.generic is not None and arm.transform_family != "generic":
+        raise PlanError(f"arm {name}: a generic envelope applies to generic arms only")
+    if (arm.ecg_aug is not None) != (arm.transform_family == "ecg_aug"):
+        raise PlanError(f"arm {name}: ecg_aug arms, and only they, set the ecg_aug operations")
+    if arm.ecg_aug is not None:
+        try:
+            ecg_aug.check(arm.ecg_aug)
+        except ValueError as error:
+            raise PlanError(f"arm {name}: {error}") from error
+    if (arm.simvea is not None) != (arm.transform_family == "simvea"):
+        raise PlanError(f"arm {name}: simvea arms, and only they, set the simvea settings")
+    if arm.simvea is not None:
+        try:
+            simvea.check(arm.simvea)
+        except ValueError as error:
+            raise PlanError(f"arm {name}: {error}") from error
 
 
 def _check_shared_envelope(protocol: ProtocolConfig) -> None:
-    """A1 and the editor must allow the same worst severity (MVE: "same severity envelope")."""
+    """A1 and the editor must allow the same worst severity (MVE: "same severity envelope").
+
+    Arms with their own ``generic`` envelope are dose arms: their envelope is the treatment, so it is exempt.
+    """
     envelope = protocol.editor.envelope
     pairs = (
         (
@@ -296,7 +332,14 @@ def _spec(
     calibration: tuple[str, str] | None,
 ) -> TrialSpec:
     _, generator, validators = FAMILIES[arm.transform_family]
-    transform = {"none": {}, "generic": asdict(protocol.generic), "editor": asdict(protocol.editor)}
+    transform = {
+        "none": {},
+        "generic": asdict(arm.generic or protocol.generic),
+        "editor": asdict(protocol.editor),
+        "ecg_aug": asdict(arm.ecg_aug) if arm.ecg_aug is not None else {},
+        "simvea": asdict(arm.simvea) if arm.simvea is not None else {},
+    }
+    fraction = protocol.transform_fraction if arm.transform_fraction is None else arm.transform_fraction
     return make_spec(
         protocol=protocol.id,
         regime=regime_name,
@@ -316,7 +359,7 @@ def _spec(
         max_steps=regime.max_steps,
         val_every=protocol.val_every,
         # A0-A3 share one slot schedule (A0's slots hold unchanged parents); C1 and C2 have none.
-        transform_fraction=protocol.transform_fraction if arm.source_role == "depleted" else 0.0,
+        transform_fraction=fraction if arm.source_role == "depleted" else 0.0,
         registry=protocol.registry,
         manifest=regime.manifest,
         calibration=calibration[0] if calibration else None,
