@@ -1,0 +1,18 @@
+# Arm 4 extra data: acquisition variants of each pool ECG, with task-aware answers, plus controlled pairs.
+source:
+  registry: datasets/timenet-registry
+  manifest: manifests/ecgqa-artifact-50/pool50.json
+  manifest_sha256: 6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4
+  role: pool
+build:
+  name: ecgqa-cot-acquisition
+  components: [acquisition]
+  seed: 0
+  unit_size: 256
+  acquisition:
+    operations: [resample, lowpass, crop, lead_mask, gain, electrode_artifact]
+    per_waveform: 1
+  pairs:
+    variations: [amplitude_up@1, wander_up@1]
+    variation_fraction: 0.25
+  cache_dir: outputs/qa/evidence-cache

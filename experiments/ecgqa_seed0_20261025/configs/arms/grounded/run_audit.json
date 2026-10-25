@@ -1,0 +1,52 @@
+{
+  "best_checkpoint_sha256": "63ccdab993178277936ac175f558c125f2e58bf427c29877b172ec2de4f3d84c",
+  "best_selection_accuracy": 0.407,
+  "best_step": 4000,
+  "changed_training_files": [
+    "train.parquet"
+  ],
+  "checkpoint_bytes_verified": true,
+  "distinct_seen_training_questions": 152118,
+  "distinct_truncated_rationales": 0,
+  "frozen_checkpoint_verified": false,
+  "gpu": {
+    "baseline": "NVIDIA H100 80GB HBM3",
+    "candidate": "NVIDIA A100-SXM4-80GB"
+  },
+  "identical_config_fields": [
+    "base_revision",
+    "batch_size",
+    "effective_batch_size",
+    "eval_batch_size",
+    "gradient_accumulation",
+    "gradient_clip",
+    "init_sha256",
+    "learning_rate",
+    "max_length",
+    "max_new_tokens",
+    "max_steps",
+    "metrics_source_sha256",
+    "model",
+    "opentslm_commit",
+    "packages",
+    "precision",
+    "prompt_version",
+    "python",
+    "seed",
+    "selection_limit",
+    "selection_method",
+    "selection_questions",
+    "total_parameters",
+    "trainable_parameters",
+    "trainer_source_sha256",
+    "val_every",
+    "warmup_fraction",
+    "weight_decay"
+  ],
+  "manifest_changed": true,
+  "manifest_sha256": "0bbf9e36a278b037d18403954df30b88293a6b7a18cd98ce49a24b0d77c0d4e8",
+  "seed": 0,
+  "selection_sha256": "29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1",
+  "status": "passed",
+  "test_eligible": true
+}

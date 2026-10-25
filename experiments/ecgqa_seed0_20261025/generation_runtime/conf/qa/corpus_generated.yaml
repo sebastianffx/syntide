@@ -1,0 +1,18 @@
+# Arm 5 extra data: tasks on verified generated ECGs (syntide.generate.full bundles, e.g. DiffuSETS).
+# Each bundle's conditioning must name source_record_ids from the pool role; others are refused before
+# any waveform is read. DiffuSETS writes 102.4 Hz; allow_resample converts to 100 Hz explicitly.
+source:
+  registry: datasets/timenet-registry
+  manifest: manifests/ecgqa-artifact-50/pool50.json
+  manifest_sha256: 6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4
+  role: pool
+build:
+  name: ecgqa-cot-generated
+  components: [generated]
+  generated:
+    bundles: [outputs/generated/hr60, outputs/generated/hr100]   # same plan seed, heart_rate 60 vs 100
+    allow_resample: true
+    required: [heart_rate_bpm, beat_count, rr_regularity]
+    min_confidence: 0.8
+    heart_rate_pairs: true
+  cache_dir: outputs/qa/evidence-cache

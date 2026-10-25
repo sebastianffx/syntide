@@ -1,0 +1,44 @@
+{
+  "baseline_manifest": {
+    "content_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+    "file_sha256": "c77ab178b55a652282fbdfbaf729cc4a1ccb19ec75f67482cf7ee761900fe513"
+  },
+  "builder_sha256": "7ea3cb5af2d95dc94b2ebd1ad894e5b5a0d48f10d4c4813d36fd3ef957ea9e14",
+  "generated": {
+    "count": 11672,
+    "start": 82829,
+    "task_ids_sha256": "24fdae071c3c78f82beb89cf5d67c45671e4647355c8ca4fa85dba2a269b527d"
+  },
+  "generated_rows_before_signal_remap_sha256": "99433dde47b9855be684250140490a0ad1d0bf44f3829e6177955aa70be18c0c",
+  "original": {
+    "count": 82829,
+    "start": 0,
+    "task_ids_sha256": "ceee2844e0830380b0cece4bddcdc65e078dbcd9bf869d5333eb37d4c526a63b"
+  },
+  "original_rows_sha256": "def70839e01e011ba724aea629c49f2feeec50cfc69ebe525d834b0287a5ba6e",
+  "original_train_parquet_sha256": "e150bb0ec1564a8aa7aa7506c62e22b79ad243ea63950c7b8a03756fcd74219a",
+  "policy": "original baseline rows in original order, then existing generated rows in source prepared order; no grounded or acquisition rows",
+  "schema_version": 1,
+  "snapshot_generated_binding": {
+    "accepted_waveform_ids_sha256": "4ad86a75c8c3bfca86e523b13500704d4b248d77f2b6b53018e866b90efb0fae",
+    "accepted_waveforms": 3030,
+    "corpus_id": "corpus-0172ff51a3ea48d72957b917",
+    "corpus_manifest_file_sha256": "372c82f822edad87d161b90ffd0063b9451f2b00cfe124d88d90262ad257de22",
+    "family_counts": {
+      "rhythm.beat_count": 3030,
+      "rhythm.heart_rate": 3030,
+      "rhythm.rate_band": 2582,
+      "rhythm.regularity": 3030
+    },
+    "generation_id": "bb68a35b6430053d2c9d2993a0c5ab45c2f6b775a78c53f773674fd98f1b522e",
+    "ledger_sha256": "901835b5a3f6e29e2602440c09d96e1f000aa08a913487315a6948bb9e878766",
+    "prepared_manifest_content_sha256": "d0d919378f3aa659ecb872b48a92297c635081b45537d48d5ac159a0ebcc0d6d",
+    "prepared_manifest_file_sha256": "355f67dfd7ae2f9a264b14a9a3ee4e9a12f462115233fa86b2d88972048517fc",
+    "prepared_train_parquet_sha256": "259c5765694f5a3e1f825f86d9edc9c66edaed22d64fc54524f6bf2702d0a0b7",
+    "snapshot_inventory_sha256": "1c0dab886b03b854bcfa7b2d0e45aa0d3139186d34ae572c9d1053b5bc2f0619",
+    "snapshot_manifest_file_sha256": "2e670dc7dc793c3adddffba89e73f825d0be46fb19f98f3b5e35cc7bf1c33bfd"
+  },
+  "task_id_hash_encoding": "sha256(json.dumps(ids).encode('utf-8')); Python defaults",
+  "train_task_ids_sha256": "e2b2de4dc09b009fa5d3c57d6ad3e4da38954c410ea1b61ec311b9551aef75d3",
+  "version": "syntide.qa-exposure-subset@1"
+}

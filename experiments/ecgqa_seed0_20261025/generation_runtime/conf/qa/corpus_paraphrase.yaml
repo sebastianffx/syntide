@@ -1,0 +1,18 @@
+# Arm 2 data: one teacher paraphrase per original question (answers, options and rationales unchanged).
+# The template provider is offline and free. For an LLM teacher (opt-in, paid) set provider: anthropic and
+# run with `uv run --with anthropic ...`; responses are stored and replayed with mode: replay.
+source:
+  registry: datasets/timenet-registry
+  manifest: manifests/ecgqa-artifact-50/pool50.json
+  manifest_sha256: 6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4
+  role: pool
+build:
+  name: ecgqa-cot-paraphrase
+  components: [paraphrase]
+  paraphrase_fraction: 1.0
+  unit_size: 256
+  teacher:
+    provider: template        # or: anthropic (model claude-opus-5-5, effort medium, max_tokens 1024)
+    store: outputs/qa/teacher/paraphrase.jsonl
+    mode: record              # replay: the store only, never a provider call
+  cache_dir: outputs/qa/evidence-cache

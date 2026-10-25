@@ -1,0 +1,176 @@
+{
+  "distributions": {
+    "accepted": {
+      "hr_difference": {
+        "count": 4515,
+        "max": 89.10000000000001,
+        "median": 7.6000000000000085,
+        "min": -113.6,
+        "p10": 4.099999999999994,
+        "p90": 12.299999999999997
+      },
+      "max_burst_rms_mv": {
+        "count": 4515,
+        "max": 0.2535,
+        "median": 0.0079,
+        "min": 0.0009,
+        "p10": 0.0024,
+        "p90": 0.0544
+      },
+      "max_hf_rms_mv": {
+        "count": 4515,
+        "max": 0.0634,
+        "median": 0.0023,
+        "min": 0.0007,
+        "p10": 0.0012,
+        "p90": 0.0064
+      },
+      "max_wander_mv": {
+        "count": 4515,
+        "max": 2.6464,
+        "median": 0.05,
+        "min": 0.0103,
+        "p10": 0.0246,
+        "p90": 0.16803999999999997
+      },
+      "measured_hr": {
+        "count": 4515,
+        "max": 214.3,
+        "median": 82.2,
+        "min": 33.5,
+        "p10": 60.72000000000001,
+        "p90": 118.3199999999999
+      },
+      "requested_hr": {
+        "count": 4515,
+        "max": 187.5,
+        "median": 75.0,
+        "min": 31.2,
+        "p10": 55.3,
+        "p90": 107.1
+      }
+    },
+    "all_measured": {
+      "hr_difference": {
+        "count": 4911,
+        "max": 89.10000000000001,
+        "median": 7.599999999999994,
+        "min": -113.6,
+        "p10": 3.8999999999999986,
+        "p90": 12.299999999999997
+      },
+      "max_burst_rms_mv": {
+        "count": 5000,
+        "max": 0.3585,
+        "median": 0.0081,
+        "min": 0.0009,
+        "p10": 0.0024,
+        "p90": 0.0599
+      },
+      "max_hf_rms_mv": {
+        "count": 5000,
+        "max": 0.0634,
+        "median": 0.0023,
+        "min": 0.0007,
+        "p10": 0.0011,
+        "p90": 0.0063
+      },
+      "max_wander_mv": {
+        "count": 5000,
+        "max": 2.6464,
+        "median": 0.0507,
+        "min": 0.0103,
+        "p10": 0.0247,
+        "p90": 0.17754000000000014
+      },
+      "measured_hr": {
+        "count": 4911,
+        "max": 214.3,
+        "median": 82.2,
+        "min": 31.3,
+        "p10": 60.6,
+        "p90": 117.6
+      },
+      "requested_hr": {
+        "count": 5000,
+        "max": 187.5,
+        "median": 74.1,
+        "min": 27.3,
+        "p10": 55.0,
+        "p90": 107.1
+      }
+    }
+  },
+  "note": "Measured recording descriptors include physiology; they do not validate a noise or diagnostic label. Parent strata are conditioning provenance only.",
+  "regularity": {
+    "accepted": {
+      "irregular": 1447,
+      "regular": 3068
+    },
+    "all_measured": {
+      "irregular": 1472,
+      "regular": 3069,
+      "unmeasured": 459
+    }
+  },
+  "rejection_reasons": {
+    "implausible_amplitude": 2,
+    "low_confidence:beat_count": 27,
+    "low_confidence:heart_rate_bpm": 27,
+    "low_confidence:rr_regularity": 26,
+    "unmeasured:beat_count": 89,
+    "unmeasured:heart_rate_bpm": 89,
+    "unmeasured:rr_regularity": 459
+  },
+  "requested_strata_outcomes": {
+    "fast|irregular|higher": {
+      "rejected": 11,
+      "verified": 89
+    },
+    "fast|irregular|lower": {
+      "rejected": 9,
+      "verified": 91
+    },
+    "fast|regular|higher": {
+      "rejected": 26,
+      "verified": 374
+    },
+    "fast|regular|lower": {
+      "rejected": 14,
+      "verified": 386
+    },
+    "middle|irregular|higher": {
+      "rejected": 39,
+      "verified": 261
+    },
+    "middle|irregular|lower": {
+      "rejected": 38,
+      "verified": 262
+    },
+    "middle|regular|higher": {
+      "rejected": 98,
+      "verified": 1102
+    },
+    "middle|regular|lower": {
+      "rejected": 100,
+      "verified": 1100
+    },
+    "slow|irregular|higher": {
+      "rejected": 25,
+      "verified": 75
+    },
+    "slow|irregular|lower": {
+      "rejected": 21,
+      "verified": 79
+    },
+    "slow|regular|higher": {
+      "rejected": 52,
+      "verified": 348
+    },
+    "slow|regular|lower": {
+      "rejected": 52,
+      "verified": 348
+    }
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,23 @@
+{
+  "accepted_generated_signals_content_hash_verified": 3030,
+  "baseline_row_order_and_values_preserved": true,
+  "baseline_signal_prefix_bitwise_identical": true,
+  "builder_sha256": "7ea3cb5af2d95dc94b2ebd1ad894e5b5a0d48f10d4c4813d36fd3ef957ea9e14",
+  "generated_fields_unchanged_except_signal_index": true,
+  "generated_rows": 11672,
+  "heldout_copied_byte_exact_without_parsing": true,
+  "no_regeneration_or_remeasurement": true,
+  "original_rows": 82829,
+  "prepared_manifest": {
+    "bytes": 9351455,
+    "sha256": "636ecd055c2179b8f03f5b7b1e2de99598cc3865b562709d85c01c75005927f4"
+  },
+  "schema_version": 1,
+  "signals": 13105,
+  "source_manifest": {
+    "bytes": 2493,
+    "sha256": "e75cb40a70ea9f2a0d65e3bf2b909c4903ce94961cd0c96cf7757c8b2375f800"
+  },
+  "status": "verified",
+  "total_rows": 94501
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "syntide.ecgqa-training-runtime@1",
+  "python": "3.11.11 (main, Dec  4 2024, 08:55:07) [GCC 11.4.0]",
+  "packages": {
+    "numpy": "2.2.6",
+    "open-flamingo": "2.0.1",
+    "opentslm": "source@2968f4b891baab4307f7e9d0043e87677b593a30",
+    "pyarrow": "21.0.0",
+    "torch": "2.8.0.dev20250319+cu128",
+    "transformers": "4.53.3"
+  },
+  "model": "google/gemma-3-270m",
+  "base_revision": "9b0cfec892e2bc2afd938c98eabe4e4a7b1e0ca1",
+  "opentslm_commit": "2968f4b891baab4307f7e9d0043e87677b593a30",
+  "cuda": "12.8",
+  "initialization_sha256": "6c7ef8101d69ea50576bd4b401f88582415e6450e52f8ef0cb10e28b7b9b0791",
+  "precision": "bf16 autocast; frozen base bf16; trainable weights fp32",
+  "hardware_by_arm": {
+    "real_qa": "NVIDIA H100 80GB HBM3",
+    "paraphrase": "NVIDIA A100-SXM4-80GB",
+    "grounded": "NVIDIA A100-SXM4-80GB",
+    "grounded_acq": "NVIDIA A100-SXM4-80GB",
+    "diffusets3030_stack": "NVIDIA A40",
+    "diffusets_full_stack": "NVIDIA A40",
+    "exposure_matched": "NVIDIA A40"
+  },
+  "notes": [
+    "The pip freeze files record installed environments, including system and notebook packages; they are provenance rather than universal pip install requirements.",
+    "Nightly CUDA PyTorch and OpenTSLM source checkout are pinned separately; a current CPU environment is not an equivalent training runtime.",
+    "Hardware differs between arms; exact floating-point training trajectories are not guaranteed across accelerators."
+  ]
+}

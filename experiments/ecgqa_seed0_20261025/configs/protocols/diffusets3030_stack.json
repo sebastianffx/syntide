@@ -1,0 +1,63 @@
+{
+  "accepted_count": 3030,
+  "arms": {
+    "grounded_acq_gen": {
+      "prepared": "/workspace/diffusets-study/snapshot3030/prepared"
+    }
+  },
+  "baseline": {
+    "checkpoint_sha256": "664dc289c8713eb4b53801dc6d4000a39173abf0a6700ed3d9ca61f92eab9224",
+    "config_sha256": "000374029d4b0ab78c52cb97b587ccd79c2b6145811cf565dfcd4d7271525078",
+    "manifest_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+    "original_study_dir": "/workspace/diffusets-study/reference",
+    "prepared": "/workspace/diffusets-inputs/real_qa",
+    "run_dir": "/workspace/diffusets-study/reference"
+  },
+  "candidate_count": 3380,
+  "candidate_plan_path": "/workspace/diffusets-study/planning/candidate-plan.json",
+  "candidate_plan_sha256": "2bc86083e7a684340bd5a10e8a4ea174671e665e3b1f5903e78a865ec3f009f4",
+  "evaluation_budget": {
+    "deadline_utc": "2026-10-25T01:12:47Z",
+    "final_reserve_seconds": 1800,
+    "initial_rate_basis": "Conservative planning assumption, about three times the observed A100 seconds/question; replace upward with measured extension validation rates.",
+    "safety_factor": 1.25,
+    "seconds_per_pass_overhead": 180,
+    "seconds_per_question": 0.3
+  },
+  "evaluation_policy": "Unchanged selection/validation/test datasets, real and zero-waveform passes, freeze before test, one seed SD null",
+  "extension_intent_sha256": "bda992ac7f8e8009048776f549a13e0951248cf96ef18b2363f3de27ce042e28",
+  "generation_batch_note": "A40 memory accommodation, unchanged greedy decoding and questions; original A100 comparison uses512.",
+  "generation_batch_size": 256,
+  "interpretation": "Exploratory fixed accepted prefix snapshot. Candidate acceptance and allocation unchanged; prefix composition differs from full5000 plan. Existing held-out results are known. No adjustment based on new validation/test findings.",
+  "reused_comparator_results": "Original four completed arms are reused without retraining or re-evaluation.",
+  "run_dir": "/workspace/diffusets-study/snapshot3030/training",
+  "scheduling": {
+    "full_arm_work_deadline_utc": "2026-10-25T23:12:47Z",
+    "max_spend_usd": 40,
+    "reserve_full_arm_hours": 22,
+    "same_owned_pod": true,
+    "snapshot_first": true,
+    "user_decision": "Run both experiments; keep the full 5,000-candidate training queued"
+  },
+  "schema_version": 1,
+  "seeds": [
+    0
+  ],
+  "snapshot": {
+    "manifest_path": "/workspace/diffusets-study/snapshot3030/snapshot/snapshot_manifest.json",
+    "manifest_sha256": "2e670dc7dc793c3adddffba89e73f825d0be46fb19f98f3b5e35cc7bf1c33bfd",
+    "preparation_audit_path": "/workspace/diffusets-study/snapshot3030/preparation-audit.json",
+    "preparation_audit_sha256": "c1fd3b165a3cf9e42ae6a73832b4a1fcaf0813375e1bf8153e0aab865c2ff1c3"
+  },
+  "snapshot_request": "Use exactly 3,030 accepted candidates reported at 2026-10-24T06:34:52 UTC for a baseline-matched OpenTSLM ECG-QA experiment.",
+  "source_candidate_budget": 5000,
+  "study_kind": "selection_tuned_diffusets_snapshot3030",
+  "training_corpora": {
+    "grounded_acq_gen": [
+      "baseline_original",
+      "grounded",
+      "acquisition",
+      "accepted_generated"
+    ]
+  }
+}

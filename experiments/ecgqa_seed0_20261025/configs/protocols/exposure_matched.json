@@ -1,0 +1,90 @@
+{
+  "authorization": "User requested this ablation after existing evaluations and explicitly selected Baseline QA + DiffuSETS only.",
+  "baseline_config": "/workspace/diffusets-study/reference/config.json",
+  "bindings": {
+    "/workspace/baseline-runtime/src/syntide/baseline/metrics.py": "e71f882ef9a0b2cf71bde6d2aeab0c9bd2d61bd7cd0d86e8bf1b8a606583f8aa",
+    "/workspace/baseline-runtime/trainers/src/syntide_trainers/opentslm_loop.py": "16bf861ea252e68dd2adc452bab6abfa0d37e29103337c2cab0d94bd3c075128",
+    "/workspace/diffusets-study/exposure3030/prepare_exposure_data.py": "7ea3cb5af2d95dc94b2ebd1ad894e5b5a0d48f10d4c4813d36fd3ef957ea9e14",
+    "/workspace/diffusets-study/exposure3030/prepared/builder-audit.json": "68ccec533991e8d35c07ca0437cda7571f54556f2dcf4b1b4624bd8b8d089b8d",
+    "/workspace/diffusets-study/exposure3030/prepared/manifest.json": "636ecd055c2179b8f03f5b7b1e2de99598cc3865b562709d85c01c75005927f4",
+    "/workspace/diffusets-study/exposure3030/prepared/source-manifest.json": "e75cb40a70ea9f2a0d65e3bf2b909c4903ce94961cd0c96cf7757c8b2375f800",
+    "/workspace/diffusets-study/exposure3030/run_exposure_ablation.py": "83bc225e572a869216b01c5e8509217d06f52220b22f87e9e6b691b123900111",
+    "/workspace/diffusets-study/exposure3030/trainer/exposure_protocol.py": "d8d0c3807e292f6c075c74f245fe7ed6adda55e7ac6a636335988e0448662585",
+    "/workspace/diffusets-study/exposure3030/trainer/opentslm_exposure.py": "cac7f8de478cf727e8184dcbf68a387d3729bc66c5bee2b3350bc1a9187abadb",
+    "/workspace/diffusets-study/exposure3030/trainer/source-audit.json": "d6ac879e403760c3fb4665c3ba18361fa0fd109bbd00ca3725a8828b86ffbeb3",
+    "/workspace/diffusets-study/reference/config.json": "000374029d4b0ab78c52cb97b587ccd79c2b6145811cf565dfcd4d7271525078",
+    "/workspace/diffusets-study/snapshot3030/snapshot/snapshot_manifest.json": "2e670dc7dc793c3adddffba89e73f825d0be46fb19f98f3b5e35cc7bf1c33bfd",
+    "/workspace/diffusets-study/snapshot3030/training/preflight.json": "3e7621b2074895e29bcc84d500531780205484ff0a218f2b9f4c69ded8953b4f"
+  },
+  "data": {
+    "accepted_generated_ecgs": 3030,
+    "grounded_acquisition_rows": 0,
+    "original_qa_rows": 82829,
+    "snapshot_manifest_sha256": "2e670dc7dc793c3adddffba89e73f825d0be46fb19f98f3b5e35cc7bf1c33bfd",
+    "synthetic_qa_rows": 11672,
+    "total_rows": 94501
+  },
+  "evaluation": {
+    "compare_existing_saved_results": true,
+    "freeze_before_heldout": true,
+    "no_test_replay": true,
+    "passes": [
+      "validation",
+      "validation_zero",
+      "test",
+      "test_zero"
+    ],
+    "selection_questions": 2000,
+    "test_questions": 26841,
+    "validation_questions": 27264
+  },
+  "exposure": {
+    "checkpoint_policy": "fixed_original_exposure_12000_updates_no_selection_argmax",
+    "effective_batch_size": 18,
+    "generated_draws": 24000,
+    "generated_examples_per_update": 2,
+    "generated_rng": "separate deterministic stream; does not advance original RNG",
+    "loss_microbatch_weights": [
+      0.4444444444444444,
+      0.4444444444444444,
+      0.1111111111111111
+    ],
+    "original_accumulations": 2,
+    "original_draws": 192000,
+    "original_examples_per_update": 16,
+    "original_microbatch": 8,
+    "original_order": "exact baseline PCG64 seed0 stream over original unchanged row order",
+    "primary_original_update": 12000
+  },
+  "intentional_differences": [
+    "Add only 11,672 frozen DiffuSETS QA rows to original 82,829 baseline rows; exclude grounded and acquisition corpora.",
+    "16 original plus2 generated examples per optimizer update; effective batch18 instead of16. Existing token-normalized microbatch losses weighted8/18,8/18,2/18.",
+    "Stop at fixed original update12000, matching baseline selected192000 original draws; LR horizon15531 and warmup1554 retained. Option-NLL selection is diagnostic only.",
+    "A40 hardware and generated-evaluation batch256; four original comparators are reused from saved results."
+  ],
+  "interpretation": "Exploratory exposure-matched ablation designed after prior held-out results were known. Total effective batch and checkpoint rule intentionally differ. Original exposure/order and learning-rate chronology match baseline selected checkpoint.",
+  "max_spend_usd": 40,
+  "preparation_audit": "/workspace/diffusets-study/exposure3030/prepared/builder-audit.json",
+  "prepared": "/workspace/diffusets-study/exposure3030/prepared",
+  "prepared_manifest_content_sha256": "533e115899b25e409f332cbe7f9b05046b970ff3ea0f2442e1cab64032ff45ae",
+  "prior_snapshot_preflight": "/workspace/diffusets-study/snapshot3030/training/preflight.json",
+  "protocol_path": "/workspace/diffusets-study/exposure3030/protocol.json",
+  "schema": "syntide.exposure3030-run@1",
+  "train_arguments": {
+    "base_revision": "9b0cfec892e2bc2afd938c98eabe4e4a7b1e0ca1",
+    "batch_size": 8,
+    "eval_batch_size": 256,
+    "gradient_accumulation": 2,
+    "learning_rate": 0.0002,
+    "log_every": 20,
+    "max_length": 1536,
+    "max_new_tokens": 384,
+    "max_steps": 12000,
+    "seed": 0,
+    "selection_method": "option-nll",
+    "val_every": 1000
+  },
+  "trainer_path": "/workspace/diffusets-study/exposure3030/trainer/opentslm_exposure.py",
+  "training_root": "/workspace/diffusets-study/exposure3030/training",
+  "work_deadline_utc": "2026-10-25T22:56:47Z"
+}

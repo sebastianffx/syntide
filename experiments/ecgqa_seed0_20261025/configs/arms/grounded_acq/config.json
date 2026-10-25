@@ -1,0 +1,81 @@
+{
+  "base_revision": "9b0cfec892e2bc2afd938c98eabe4e4a7b1e0ca1",
+  "batch_size": 8,
+  "data_files": {
+    "records.json": "d23c666836fea141eae6480209fe6bc3e0df40d44d625485aa1484eda9ac5f85",
+    "selection.parquet": "29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1",
+    "signals.npy": "f1bc51ce719634c4584014c088fc3be9054832dfefdc3607188a2621555a6194",
+    "train.parquet": "47a189fb50a3fc913badb9a68cb8382c4abeb60da56ce73d905b7bf396db28e8"
+  },
+  "effective_batch_size": 16,
+  "eval_batch_size": 256,
+  "gpu": "NVIDIA A100-SXM4-80GB",
+  "gradient_accumulation": 2,
+  "gradient_clip": 1.0,
+  "init_sha256": "6c7ef8101d69ea50576bd4b401f88582415e6450e52f8ef0cb10e28b7b9b0791",
+  "learning_rate": 0.0002,
+  "manifest_sha256": "6e48bb03e80bc89e7df70dc7b3524fc6e53bc1d7fedbbd941cb2cef882387f43",
+  "max_length": 1536,
+  "max_new_tokens": 384,
+  "max_steps": 15531,
+  "metrics_source_sha256": "e71f882ef9a0b2cf71bde6d2aeab0c9bd2d61bd7cd0d86e8bf1b8a606583f8aa",
+  "model": "google/gemma-3-270m",
+  "opentslm_commit": "2968f4b891baab4307f7e9d0043e87677b593a30",
+  "packages": {
+    "numpy": "2.2.6",
+    "open-flamingo": "2.0.1",
+    "opentslm": "source@2968f4b891baab4307f7e9d0043e87677b593a30",
+    "pyarrow": "21.0.0",
+    "torch": "2.8.0.dev20250319+cu128",
+    "transformers": "4.53.3"
+  },
+  "precision": "bf16 autocast; frozen base bf16; trainable weights fp32",
+  "prompt_version": "ecgqa-cot-single-joint-media-v1",
+  "python": "3.11.11 (main, Dec  4 2024, 08:55:07) [GCC 11.4.0]",
+  "seed": 0,
+  "selection_limit": 0,
+  "selection_method": "option-nll",
+  "selection_questions": 2000,
+  "token_lengths": {
+    "selection": {
+      "max_prompt_tokens": 842,
+      "sample_questions": 1024,
+      "target_tokens_p50_p90_p99_max": [
+        167.0,
+        203.0,
+        232.76999999999998,
+        261.0
+      ],
+      "total_tokens_p50_p90_p99_max": [
+        763.0,
+        896.0,
+        1057.77,
+        1091.0
+      ],
+      "would_truncate_rationale": 0
+    },
+    "train": {
+      "max_prompt_tokens": 845,
+      "sample_questions": 1024,
+      "target_tokens_p50_p90_p99_max": [
+        42.0,
+        195.0,
+        228.0,
+        263.0
+      ],
+      "total_tokens_p50_p90_p99_max": [
+        633.0,
+        988.4000000000001,
+        1051.31,
+        1079.0
+      ],
+      "would_truncate_rationale": 0
+    }
+  },
+  "total_parameters": 343788580,
+  "trainable_parameters": 75688484,
+  "trainer_source_sha256": "16bf861ea252e68dd2adc452bab6abfa0d37e29103337c2cab0d94bd3c075128",
+  "val_every": 1000,
+  "warmup_fraction": 0.1,
+  "weight_decay": 0.01
+}

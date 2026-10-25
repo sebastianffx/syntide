@@ -1,0 +1,976 @@
+{
+  "schema": "syntide.ecgqa-corpus-external-inputs@1",
+  "note": "Frozen corpus identities and aggregate counts. Task text, rationales, waveform lineage and catalog rows are external inputs. Paraphrases use the deterministic template provider, not a language-model API.",
+  "corpora": {
+    "paraphrase": {
+      "original_manifest": {
+        "bytes": 862033,
+        "sha256": "33733badedf5c6ffc157eb6080ad3763d85860a695a5e81ee4251dc79ef09d2c",
+        "path": "outputs/qa/paraphrase/corpus.json",
+        "verified_against_collection_inventory": false
+      },
+      "schema_version": "syntide.qa-corpus@1",
+      "corpus_id": "corpus-2d045095c1af506b20423127",
+      "identity_id": "c1e6da8dc96f33721e6b8b1a786b1e53628f906f022db3f465541af447384f26",
+      "content_sha256": "252db61c349ba906714c0a33661716946f0e1b03c58bee1ce63178451d28f3fd",
+      "counts": {
+        "accepted": 82829,
+        "attempts": 82829,
+        "by_answerability": {
+          "answerable": 82829
+        },
+        "by_composition": {
+          "source": 82829
+        },
+        "by_family": {
+          "ecgqa.template01": 3003,
+          "ecgqa.template02": 245,
+          "ecgqa.template03": 232,
+          "ecgqa.template04": 10068,
+          "ecgqa.template05": 10166,
+          "ecgqa.template06": 1779,
+          "ecgqa.template07": 509,
+          "ecgqa.template08": 1191,
+          "ecgqa.template09": 2131,
+          "ecgqa.template10": 920,
+          "ecgqa.template11": 2060,
+          "ecgqa.template12": 311,
+          "ecgqa.template13": 312,
+          "ecgqa.template14": 322,
+          "ecgqa.template15": 274,
+          "ecgqa.template16": 318,
+          "ecgqa.template17": 10690,
+          "ecgqa.template18": 6383,
+          "ecgqa.template19": 2053,
+          "ecgqa.template20": 546,
+          "ecgqa.template21": 105,
+          "ecgqa.template22": 324,
+          "ecgqa.template23": 441,
+          "ecgqa.template24": 69,
+          "ecgqa.template25": 312,
+          "ecgqa.template26": 4233,
+          "ecgqa.template27": 956,
+          "ecgqa.template28": 2073,
+          "ecgqa.template29": 326,
+          "ecgqa.template30": 202,
+          "ecgqa.template31": 992,
+          "ecgqa.template32": 750,
+          "ecgqa.template33": 4103,
+          "ecgqa.template34": 1712,
+          "ecgqa.template35": 252,
+          "ecgqa.template36": 821,
+          "ecgqa.template37": 119,
+          "ecgqa.template38": 602,
+          "ecgqa.template39": 3014,
+          "ecgqa.template40": 487,
+          "ecgqa.template41": 1670,
+          "ecgqa.template42": 5753
+        },
+        "context_reveals_answer": 15347,
+        "generated_waveforms": 0,
+        "paraphrases": 82829,
+        "qa_examples": 82829,
+        "rejected": 0,
+        "rejection_reasons": {},
+        "root_recordings": 5778,
+        "semantic_tasks": 72471,
+        "tokens": {
+          "answer_only_target_whitespace_tokens": 262502,
+          "note": "whitespace tokens; trainers report their own tokenizer counts in result.json",
+          "question_whitespace_tokens": 1383560,
+          "rationale_target_whitespace_tokens": 11680636
+        },
+        "unique_patients": 5266,
+        "waveforms": 5778,
+        "waveforms_by_origin": {
+          "real": 5778
+        }
+      },
+      "status": "published",
+      "identity": {
+        "components": [
+          "paraphrase"
+        ],
+        "config": {
+          "acquisition": {
+            "crop_s": [
+              5.0
+            ],
+            "editor": {
+              "alignment_tol": 0.15,
+              "density_floor": 1.0,
+              "envelope": {
+                "baseline_drift": {
+                  "amplitude_mv": [
+                    0.1,
+                    3.5
+                  ],
+                  "freq_hz": [
+                    0.1,
+                    0.4
+                  ]
+                },
+                "burst_noise": {
+                  "amplitude_mv": [
+                    0.01,
+                    0.6
+                  ],
+                  "duration_s": [
+                    0.5,
+                    3.0
+                  ]
+                },
+                "static_noise": {
+                  "amplitude_mv": [
+                    0.005,
+                    0.1
+                  ]
+                }
+              },
+              "max_retries": 5,
+              "mv_limit": 10.0,
+              "type_smoothing": 0.1
+            },
+            "gains": [
+              0.5,
+              2.0
+            ],
+            "highpass_hz": [
+              0.67
+            ],
+            "lead_masks": [
+              [
+                "V1",
+                "V2",
+                "V3",
+                "V4",
+                "V5",
+                "V6"
+              ],
+              [
+                "I",
+                "II",
+                "III",
+                "AVR",
+                "AVL",
+                "AVF"
+              ],
+              [
+                "V2"
+              ]
+            ],
+            "lowpass_hz": [
+              25.0,
+              35.0
+            ],
+            "mv_limit": 10.0,
+            "operations": [
+              "resample",
+              "lowpass",
+              "crop",
+              "lead_mask",
+              "gain",
+              "electrode_artifact"
+            ],
+            "per_waveform": 1,
+            "resample_rates_hz": [
+              50.0
+            ]
+          },
+          "cache_dir": null,
+          "components": [
+            "paraphrase"
+          ],
+          "evol": {
+            "evolutions": 4,
+            "insufficient_fraction": 0.25,
+            "max_paraphrases": 1,
+            "max_per_family": 3,
+            "max_seed_tasks": 8,
+            "operators": [
+              "breadth",
+              "depth",
+              "reasoning",
+              "situation"
+            ],
+            "paraphrase_fraction": 0.0,
+            "rationale_fraction": 0.0,
+            "seed_templates": [
+              "acquisition.duration@1",
+              "acquisition.flat_leads@1",
+              "artifact.wander_in_lead@1",
+              "artifact.max_wander_lead@1",
+              "rhythm.heart_rate@1",
+              "rhythm.beat_count@1",
+              "rhythm.regularity@1",
+              "rhythm.rate_band@1",
+              "quality.noise_annotation@1",
+              "diagnosis.superclass@1",
+              "interval.measurement@1"
+            ]
+          },
+          "exclude_corpora": [],
+          "extractor": {
+            "annotations": true,
+            "beats": {
+              "band_hz": [
+                5.0,
+                15.0
+              ],
+              "height": 0.3,
+              "integrate_s": 0.1,
+              "irregular_cv": 0.15,
+              "match_s": 0.06,
+              "min_agreement": 0.6,
+              "min_beats": 4,
+              "refractory_s": 0.25,
+              "regular_cv": 0.08,
+              "rr_range_s": [
+                0.25,
+                2.5
+              ]
+            },
+            "flat_mv": 0.005,
+            "localization_floor_mv": 0.05,
+            "localization_margin": 1.25,
+            "sidecar": null
+          },
+          "generated": {
+            "allow_resample": false,
+            "bundles": [],
+            "heart_rate_pairs": true,
+            "min_confidence": 0.8,
+            "required": [
+              "heart_rate_bpm",
+              "beat_count",
+              "rr_regularity"
+            ],
+            "templates": [
+              "rhythm.heart_rate@1",
+              "rhythm.beat_count@1",
+              "rhythm.regularity@1",
+              "rhythm.rate_band@1",
+              "acquisition.duration@1",
+              "acquisition.flat_leads@1"
+            ]
+          },
+          "max_records": null,
+          "name": "ecgqa-cot-paraphrase",
+          "pairs": {
+            "natural_per_unit": 4,
+            "variation_fraction": 0.25,
+            "variations": [
+              "amplitude_up@1",
+              "wander_up@1"
+            ]
+          },
+          "paraphrase_fraction": 1.0,
+          "purpose": "training",
+          "seed": 0,
+          "source_dedupe": false,
+          "suite_role": null,
+          "task_ids_file": null,
+          "task_ids_sha256": null,
+          "teacher": {
+            "provider": "template"
+          },
+          "unit_size": 256
+        },
+        "context_policy": "ecgqa-cot-baseline@1",
+        "generators": {
+          "acquisition": "ecg.acquisition@1",
+          "editor": "ecg.electrode_artifact@1.0.0",
+          "pairs": "syntide.pairs@1",
+          "tsevol": "syntide.tsevol@1"
+        },
+        "name": "ecgqa-cot-paraphrase",
+        "parent_corpus_id": null,
+        "plan_id": null,
+        "purpose": "training",
+        "schema": "syntide.qa-build@1",
+        "source": {
+          "challenge_id": "ecgqa-artifact-50/pool50",
+          "fingerprint": "9ac2b2791b9ea1cb4ff44908dd2ab7e1e1eb12b49ae3ac6a858a0a3635acf93b",
+          "manifest": "manifests/ecgqa-artifact-50/pool50.json",
+          "manifest_sha256": "6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4",
+          "purpose": "training",
+          "questions": 82829,
+          "records": 5778,
+          "role": "pool",
+          "source": {
+            "dataset": "physionet/ecg-qa-cot",
+            "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+            "signals": {
+              "dataset": "physionet/ptb-xl",
+              "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+              "version": "1.0.3"
+            },
+            "version": "1.0.0"
+          },
+          "split_policy": "PTB-XL patient folds through the manifest; the CoT release split is descriptive",
+          "subjects": 5266
+        },
+        "syntide_version": "0.1.0",
+        "templates": [
+          "acquisition.duration@1",
+          "acquisition.flat_leads@1",
+          "artifact.max_noise_lead@1",
+          "artifact.max_wander_lead@1",
+          "artifact.wander_in_lead@1",
+          "compare.attribute@1",
+          "compose.rate_and_wander@1",
+          "diagnosis.superclass@1",
+          "interval.measurement@1",
+          "quality.noise_annotation@1",
+          "reason.support_refute@1",
+          "rhythm.beat_count@1",
+          "rhythm.heart_rate@1",
+          "rhythm.rate_band@1",
+          "rhythm.regularity@1",
+          "situation.lead_subset@1",
+          "situation.supplied_rule@1"
+        ]
+      },
+      "file_count": 5780,
+      "metadata_files": {
+        "catalog.jsonl": "480c272dc623683d23f7e92a7837bb215b66a8522f64903df00ef44f4bdb1bb9",
+        "ledger.json": "8bd3dad5e8104f000674738238fb2fe706860ddb6261fd055c1729c2ba8223c0"
+      },
+      "waveform_file_count": 5778
+    },
+    "grounded": {
+      "original_manifest": {
+        "bytes": 861486,
+        "sha256": "b5fa69862edf8e437a660fb3e291fe21361bcb453addc9047b0c2ff0b9d46825",
+        "path": "outputs/qa/grounded/corpus.json",
+        "verified_against_collection_inventory": false
+      },
+      "schema_version": "syntide.qa-corpus@1",
+      "corpus_id": "corpus-52daac927b9ea8c6db1a4ae0",
+      "identity_id": "98bfe56c3e0023aa70b2628ac9b54346b77c98e1fd4d3384d95859c455247859",
+      "content_sha256": "f7602146df8e99402621b1d1ed2225065f7a1bbbc5d387126aa6d6ed40decf04",
+      "counts": {
+        "accepted": 71088,
+        "attempts": 71088,
+        "by_answerability": {
+          "answerable": 67439,
+          "insufficient_evidence": 3649
+        },
+        "by_composition": {
+          "attribute": 52030,
+          "comparison": 1799,
+          "composed": 5742,
+          "reasoning": 5714,
+          "situation": 5803
+        },
+        "by_family": {
+          "acquisition.duration": 3035,
+          "acquisition.flat_leads": 3017,
+          "artifact.max_wander_lead": 3036,
+          "artifact.wander_in_lead": 17010,
+          "compare.attribute": 1799,
+          "compose.rate_and_wander": 5742,
+          "diagnosis.superclass": 3049,
+          "quality.noise_annotation": 11483,
+          "reason.support_refute": 5714,
+          "rhythm.beat_count": 2953,
+          "rhythm.heart_rate": 3002,
+          "rhythm.rate_band": 2417,
+          "rhythm.regularity": 3028,
+          "situation.lead_subset": 3318,
+          "situation.supplied_rule": 2485
+        },
+        "context_reveals_answer": 14532,
+        "generated_waveforms": 0,
+        "paraphrases": 0,
+        "qa_examples": 71088,
+        "rejected": 0,
+        "rejection_reasons": {},
+        "root_recordings": 5778,
+        "semantic_tasks": 71088,
+        "tokens": {
+          "answer_only_target_whitespace_tokens": 156979,
+          "note": "whitespace tokens; trainers report their own tokenizer counts in result.json",
+          "question_whitespace_tokens": 911232,
+          "rationale_target_whitespace_tokens": 1072984
+        },
+        "unique_patients": 5266,
+        "waveforms": 5778,
+        "waveforms_by_origin": {
+          "real": 5778
+        }
+      },
+      "status": "published",
+      "identity": {
+        "components": [
+          "grounded"
+        ],
+        "config": {
+          "acquisition": {
+            "crop_s": [
+              5.0
+            ],
+            "editor": {
+              "alignment_tol": 0.15,
+              "density_floor": 1.0,
+              "envelope": {
+                "baseline_drift": {
+                  "amplitude_mv": [
+                    0.1,
+                    3.5
+                  ],
+                  "freq_hz": [
+                    0.1,
+                    0.4
+                  ]
+                },
+                "burst_noise": {
+                  "amplitude_mv": [
+                    0.01,
+                    0.6
+                  ],
+                  "duration_s": [
+                    0.5,
+                    3.0
+                  ]
+                },
+                "static_noise": {
+                  "amplitude_mv": [
+                    0.005,
+                    0.1
+                  ]
+                }
+              },
+              "max_retries": 5,
+              "mv_limit": 10.0,
+              "type_smoothing": 0.1
+            },
+            "gains": [
+              0.5,
+              2.0
+            ],
+            "highpass_hz": [
+              0.67
+            ],
+            "lead_masks": [
+              [
+                "V1",
+                "V2",
+                "V3",
+                "V4",
+                "V5",
+                "V6"
+              ],
+              [
+                "I",
+                "II",
+                "III",
+                "AVR",
+                "AVL",
+                "AVF"
+              ],
+              [
+                "V2"
+              ]
+            ],
+            "lowpass_hz": [
+              25.0,
+              35.0
+            ],
+            "mv_limit": 10.0,
+            "operations": [
+              "resample",
+              "lowpass",
+              "crop",
+              "lead_mask",
+              "gain",
+              "electrode_artifact"
+            ],
+            "per_waveform": 1,
+            "resample_rates_hz": [
+              50.0
+            ]
+          },
+          "cache_dir": null,
+          "components": [
+            "grounded"
+          ],
+          "evol": {
+            "evolutions": 4,
+            "insufficient_fraction": 0.25,
+            "max_paraphrases": 1,
+            "max_per_family": 3,
+            "max_seed_tasks": 8,
+            "operators": [
+              "breadth",
+              "depth",
+              "reasoning",
+              "situation"
+            ],
+            "paraphrase_fraction": 0.0,
+            "rationale_fraction": 0.0,
+            "seed_templates": [
+              "acquisition.duration@1",
+              "acquisition.flat_leads@1",
+              "artifact.wander_in_lead@1",
+              "artifact.max_wander_lead@1",
+              "rhythm.heart_rate@1",
+              "rhythm.beat_count@1",
+              "rhythm.regularity@1",
+              "rhythm.rate_band@1",
+              "quality.noise_annotation@1",
+              "diagnosis.superclass@1",
+              "interval.measurement@1"
+            ]
+          },
+          "exclude_corpora": [],
+          "extractor": {
+            "annotations": true,
+            "beats": {
+              "band_hz": [
+                5.0,
+                15.0
+              ],
+              "height": 0.3,
+              "integrate_s": 0.1,
+              "irregular_cv": 0.15,
+              "match_s": 0.06,
+              "min_agreement": 0.6,
+              "min_beats": 4,
+              "refractory_s": 0.25,
+              "regular_cv": 0.08,
+              "rr_range_s": [
+                0.25,
+                2.5
+              ]
+            },
+            "flat_mv": 0.005,
+            "localization_floor_mv": 0.05,
+            "localization_margin": 1.25,
+            "sidecar": null
+          },
+          "generated": {
+            "allow_resample": false,
+            "bundles": [],
+            "heart_rate_pairs": true,
+            "min_confidence": 0.8,
+            "required": [
+              "heart_rate_bpm",
+              "beat_count",
+              "rr_regularity"
+            ],
+            "templates": [
+              "rhythm.heart_rate@1",
+              "rhythm.beat_count@1",
+              "rhythm.regularity@1",
+              "rhythm.rate_band@1",
+              "acquisition.duration@1",
+              "acquisition.flat_leads@1"
+            ]
+          },
+          "max_records": null,
+          "name": "ecgqa-cot-grounded",
+          "pairs": {
+            "natural_per_unit": 32,
+            "variation_fraction": 0.25,
+            "variations": [
+              "amplitude_up@1",
+              "wander_up@1"
+            ]
+          },
+          "paraphrase_fraction": 1.0,
+          "purpose": "training",
+          "seed": 0,
+          "source_dedupe": false,
+          "suite_role": null,
+          "task_ids_file": null,
+          "task_ids_sha256": null,
+          "teacher": {},
+          "unit_size": 256
+        },
+        "context_policy": "ecgqa-cot-baseline@1",
+        "generators": {
+          "acquisition": "ecg.acquisition@1",
+          "editor": "ecg.electrode_artifact@1.0.0",
+          "pairs": "syntide.pairs@1",
+          "tsevol": "syntide.tsevol@1"
+        },
+        "name": "ecgqa-cot-grounded",
+        "parent_corpus_id": null,
+        "plan_id": null,
+        "purpose": "training",
+        "schema": "syntide.qa-build@1",
+        "source": {
+          "challenge_id": "ecgqa-artifact-50/pool50",
+          "fingerprint": "9ac2b2791b9ea1cb4ff44908dd2ab7e1e1eb12b49ae3ac6a858a0a3635acf93b",
+          "manifest": "manifests/ecgqa-artifact-50/pool50.json",
+          "manifest_sha256": "6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4",
+          "purpose": "training",
+          "questions": 82829,
+          "records": 5778,
+          "role": "pool",
+          "source": {
+            "dataset": "physionet/ecg-qa-cot",
+            "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+            "signals": {
+              "dataset": "physionet/ptb-xl",
+              "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+              "version": "1.0.3"
+            },
+            "version": "1.0.0"
+          },
+          "split_policy": "PTB-XL patient folds through the manifest; the CoT release split is descriptive",
+          "subjects": 5266
+        },
+        "syntide_version": "0.1.0",
+        "templates": [
+          "acquisition.duration@1",
+          "acquisition.flat_leads@1",
+          "artifact.max_noise_lead@1",
+          "artifact.max_wander_lead@1",
+          "artifact.wander_in_lead@1",
+          "compare.attribute@1",
+          "compose.rate_and_wander@1",
+          "diagnosis.superclass@1",
+          "interval.measurement@1",
+          "quality.noise_annotation@1",
+          "reason.support_refute@1",
+          "rhythm.beat_count@1",
+          "rhythm.heart_rate@1",
+          "rhythm.rate_band@1",
+          "rhythm.regularity@1",
+          "situation.lead_subset@1",
+          "situation.supplied_rule@1"
+        ]
+      },
+      "file_count": 5780,
+      "metadata_files": {
+        "catalog.jsonl": "1a9dd122cdf6a7b65b67911a2fe54b9afc2cb7c7f40cc722d70a6fe48b5efc4d",
+        "ledger.json": "a55876bd0efc24dd2bcebab7fee7c966458bbc66af07b4bec6cc51ec09be129d"
+      },
+      "waveform_file_count": 5778
+    },
+    "acquisition": {
+      "original_manifest": {
+        "bytes": 1254771,
+        "sha256": "fa931ee40f9afbbd3a79feb321bf3c06a91ebeed68374b666f6ca73c98a76913",
+        "path": "outputs/qa/acquisition/corpus.json",
+        "verified_against_collection_inventory": false
+      },
+      "schema_version": "syntide.qa-corpus@1",
+      "corpus_id": "corpus-13e878b64fa1a2dfdebdd6e3",
+      "identity_id": "33fccfc766cd42c236678174bebcc76a9a7c88a1f3398dc07d554eeb02fb1818",
+      "content_sha256": "9d71ef5808b969a01a155d99bd9b290c9e230bbfab3a3820a6350aaf69dc9c85",
+      "counts": {
+        "accepted": 70201,
+        "attempts": 70598,
+        "by_answerability": {
+          "answerable": 52881,
+          "insufficient_evidence": 17320
+        },
+        "by_composition": {
+          "attribute": 51832,
+          "comparison": 1333,
+          "composed": 5560,
+          "reasoning": 5686,
+          "situation": 5790
+        },
+        "by_family": {
+          "acquisition.duration": 3029,
+          "acquisition.flat_leads": 3012,
+          "artifact.max_wander_lead": 3031,
+          "artifact.wander_in_lead": 16977,
+          "compare.attribute": 1333,
+          "compose.rate_and_wander": 5560,
+          "diagnosis.superclass": 3044,
+          "quality.noise_annotation": 11457,
+          "reason.support_refute": 5686,
+          "rhythm.beat_count": 2915,
+          "rhythm.heart_rate": 2958,
+          "rhythm.rate_band": 2386,
+          "rhythm.regularity": 3023,
+          "situation.lead_subset": 3310,
+          "situation.supplied_rule": 2480
+        },
+        "context_reveals_answer": 0,
+        "generated_waveforms": 0,
+        "paraphrases": 0,
+        "qa_examples": 70201,
+        "rejected": 397,
+        "rejection_reasons": {
+          "change_not_observed:max_wander_mv": 22,
+          "invalid_signal": 5,
+          "invalid_signal:alignment": 6,
+          "invalid_signal:signal_valid@1": 5,
+          "invariant_unmeasured:rr_regularity": 70,
+          "rejected:invariant_violation:duration": 29,
+          "rejected:invariant_violation:rate": 42,
+          "rejected:template_no_longer_applies": 218
+        },
+        "root_recordings": 5770,
+        "semantic_tasks": 70201,
+        "tokens": {
+          "answer_only_target_whitespace_tokens": 169794,
+          "note": "whitespace tokens; trainers report their own tokenizer counts in result.json",
+          "question_whitespace_tokens": 900932,
+          "rationale_target_whitespace_tokens": 1186239
+        },
+        "unique_patients": 5259,
+        "waveforms": 8433,
+        "waveforms_by_origin": {
+          "real": 1333,
+          "transformed": 7100
+        }
+      },
+      "status": "published",
+      "identity": {
+        "components": [
+          "acquisition"
+        ],
+        "config": {
+          "acquisition": {
+            "crop_s": [
+              5.0
+            ],
+            "editor": {
+              "alignment_tol": 0.15,
+              "density_floor": 1.0,
+              "envelope": {
+                "baseline_drift": {
+                  "amplitude_mv": [
+                    0.1,
+                    3.5
+                  ],
+                  "freq_hz": [
+                    0.1,
+                    0.4
+                  ]
+                },
+                "burst_noise": {
+                  "amplitude_mv": [
+                    0.01,
+                    0.6
+                  ],
+                  "duration_s": [
+                    0.5,
+                    3.0
+                  ]
+                },
+                "static_noise": {
+                  "amplitude_mv": [
+                    0.005,
+                    0.1
+                  ]
+                }
+              },
+              "max_retries": 5,
+              "mv_limit": 10.0,
+              "type_smoothing": 0.1
+            },
+            "gains": [
+              0.5,
+              2.0
+            ],
+            "highpass_hz": [
+              0.67
+            ],
+            "lead_masks": [
+              [
+                "V1",
+                "V2",
+                "V3",
+                "V4",
+                "V5",
+                "V6"
+              ],
+              [
+                "I",
+                "II",
+                "III",
+                "AVR",
+                "AVL",
+                "AVF"
+              ],
+              [
+                "V2"
+              ]
+            ],
+            "lowpass_hz": [
+              25.0,
+              35.0
+            ],
+            "mv_limit": 10.0,
+            "operations": [
+              "resample",
+              "lowpass",
+              "crop",
+              "lead_mask",
+              "gain",
+              "electrode_artifact"
+            ],
+            "per_waveform": 1,
+            "resample_rates_hz": [
+              50.0
+            ]
+          },
+          "cache_dir": null,
+          "components": [
+            "acquisition"
+          ],
+          "evol": {
+            "evolutions": 4,
+            "insufficient_fraction": 0.25,
+            "max_paraphrases": 1,
+            "max_per_family": 3,
+            "max_seed_tasks": 8,
+            "operators": [
+              "breadth",
+              "depth",
+              "reasoning",
+              "situation"
+            ],
+            "paraphrase_fraction": 0.0,
+            "rationale_fraction": 0.0,
+            "seed_templates": [
+              "acquisition.duration@1",
+              "acquisition.flat_leads@1",
+              "artifact.wander_in_lead@1",
+              "artifact.max_wander_lead@1",
+              "rhythm.heart_rate@1",
+              "rhythm.beat_count@1",
+              "rhythm.regularity@1",
+              "rhythm.rate_band@1",
+              "quality.noise_annotation@1",
+              "diagnosis.superclass@1",
+              "interval.measurement@1"
+            ]
+          },
+          "exclude_corpora": [],
+          "extractor": {
+            "annotations": true,
+            "beats": {
+              "band_hz": [
+                5.0,
+                15.0
+              ],
+              "height": 0.3,
+              "integrate_s": 0.1,
+              "irregular_cv": 0.15,
+              "match_s": 0.06,
+              "min_agreement": 0.6,
+              "min_beats": 4,
+              "refractory_s": 0.25,
+              "regular_cv": 0.08,
+              "rr_range_s": [
+                0.25,
+                2.5
+              ]
+            },
+            "flat_mv": 0.005,
+            "localization_floor_mv": 0.05,
+            "localization_margin": 1.25,
+            "sidecar": null
+          },
+          "generated": {
+            "allow_resample": false,
+            "bundles": [],
+            "heart_rate_pairs": true,
+            "min_confidence": 0.8,
+            "required": [
+              "heart_rate_bpm",
+              "beat_count",
+              "rr_regularity"
+            ],
+            "templates": [
+              "rhythm.heart_rate@1",
+              "rhythm.beat_count@1",
+              "rhythm.regularity@1",
+              "rhythm.rate_band@1",
+              "acquisition.duration@1",
+              "acquisition.flat_leads@1"
+            ]
+          },
+          "max_records": null,
+          "name": "ecgqa-cot-acquisition",
+          "pairs": {
+            "natural_per_unit": 4,
+            "variation_fraction": 0.25,
+            "variations": [
+              "amplitude_up@1",
+              "wander_up@1"
+            ]
+          },
+          "paraphrase_fraction": 1.0,
+          "purpose": "training",
+          "seed": 0,
+          "source_dedupe": false,
+          "suite_role": null,
+          "task_ids_file": null,
+          "task_ids_sha256": null,
+          "teacher": {},
+          "unit_size": 256
+        },
+        "context_policy": "ecgqa-cot-baseline@1",
+        "generators": {
+          "acquisition": "ecg.acquisition@1",
+          "editor": "ecg.electrode_artifact@1.0.0",
+          "pairs": "syntide.pairs@1",
+          "tsevol": "syntide.tsevol@1"
+        },
+        "name": "ecgqa-cot-acquisition",
+        "parent_corpus_id": null,
+        "plan_id": null,
+        "purpose": "training",
+        "schema": "syntide.qa-build@1",
+        "source": {
+          "challenge_id": "ecgqa-artifact-50/pool50",
+          "fingerprint": "9ac2b2791b9ea1cb4ff44908dd2ab7e1e1eb12b49ae3ac6a858a0a3635acf93b",
+          "manifest": "manifests/ecgqa-artifact-50/pool50.json",
+          "manifest_sha256": "6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4",
+          "purpose": "training",
+          "questions": 82829,
+          "records": 5778,
+          "role": "pool",
+          "source": {
+            "dataset": "physionet/ecg-qa-cot",
+            "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+            "signals": {
+              "dataset": "physionet/ptb-xl",
+              "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+              "version": "1.0.3"
+            },
+            "version": "1.0.0"
+          },
+          "split_policy": "PTB-XL patient folds through the manifest; the CoT release split is descriptive",
+          "subjects": 5266
+        },
+        "syntide_version": "0.1.0",
+        "templates": [
+          "acquisition.duration@1",
+          "acquisition.flat_leads@1",
+          "artifact.max_noise_lead@1",
+          "artifact.max_wander_lead@1",
+          "artifact.wander_in_lead@1",
+          "compare.attribute@1",
+          "compose.rate_and_wander@1",
+          "diagnosis.superclass@1",
+          "interval.measurement@1",
+          "quality.noise_annotation@1",
+          "reason.support_refute@1",
+          "rhythm.beat_count@1",
+          "rhythm.heart_rate@1",
+          "rhythm.rate_band@1",
+          "rhythm.regularity@1",
+          "situation.lead_subset@1",
+          "situation.supplied_rule@1"
+        ]
+      },
+      "file_count": 8435,
+      "metadata_files": {
+        "catalog.jsonl": "d48b8d120f95020a5b10ec3074b03693aba3157858daa61f04a920d51257791c",
+        "ledger.json": "5b5da742b0df3153be54166f7a16e4d397de4d2356d758fd26b9bd69146f3f24"
+      },
+      "waveform_file_count": 8433
+    }
+  }
+}

@@ -1,0 +1,14 @@
+# Arm 1 data: the original ECG-QA-CoT questions of the RunPod baseline's training pool, unchanged.
+#   uv run python -m syntide.generate.qa build --config conf/qa/corpus_real_qa.yaml --output outputs/qa/real_qa
+# The manifest is the baseline's split (ecgqa-artifact-50/pool50, built on the runpod-baseline branch); the
+# pin refuses any other manifest at that path.
+source:
+  registry: datasets/timenet-registry
+  manifest: manifests/ecgqa-artifact-50/pool50.json
+  manifest_sha256: 6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4
+  role: pool                 # the baseline trained C2 on every pool ECG
+build:
+  name: ecgqa-cot-real-qa
+  components: [source]        # every question/rationale row, as the baseline trained
+  unit_size: 256
+  cache_dir: outputs/qa/evidence-cache

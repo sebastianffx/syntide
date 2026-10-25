@@ -1,0 +1,166 @@
+{
+  "amplitude_mv": [
+    0.2,
+    10.0
+  ],
+  "backend": {
+    "capabilities": {
+      "channels": [
+        "I",
+        "II",
+        "III",
+        "aVR",
+        "aVL",
+        "aVF",
+        "V1",
+        "V2",
+        "V3",
+        "V4",
+        "V5",
+        "V6"
+      ],
+      "conditioning": [
+        "report",
+        "age",
+        "sex",
+        "heart_rate",
+        "text_embedding_path"
+      ],
+      "devices": [
+        "cpu",
+        "mps",
+        "cuda"
+      ],
+      "duration_seconds": 10,
+      "explicit_resampling": true,
+      "modalities": [
+        "ecg"
+      ],
+      "native_num_samples": 1024,
+      "native_sample_rate": 102.4,
+      "text_embedding_dimension": 1536,
+      "text_embedding_model": "text-embedding-ada-002",
+      "units": "mV"
+    },
+    "checkpoint_sha256": {
+      "unet": "00c59c81a0a5506f3655e5ed7761af5665e423798b0c9f438ee10aa702d24d6f",
+      "vae": "c2b4ef8060e412bd503f46b66dd44fc460e67a89de0ae1809dcc771358b3fa93"
+    },
+    "device": "cuda",
+    "diffusers_version": "0.35.1",
+    "dtype": "float32",
+    "generator": "diffusets@1",
+    "num_inference_steps": 1000,
+    "randomness": "per-sample seeded CPU torch.Generator; device-specific arithmetic",
+    "resample": true,
+    "scheduler": {
+      "beta_end": 0.012,
+      "beta_schedule": "linear",
+      "beta_start": 0.00085,
+      "clip_sample": true,
+      "name": "DDPM",
+      "prediction_type": "epsilon",
+      "timestep_spacing": "leading",
+      "variance_type": "fixed_small"
+    },
+    "source_repository": "https://github.com/Raiiyf/DiffuSETS_Exp",
+    "source_revision": "f9106528a9e5348d94a118a71eb79d459ee4197a",
+    "source_sha256": {
+      "unet/unet_conditional.py": "82a341d7a0e9e6718ea278552a51af8f663fd2a0cd584bf8b9e4be7f64cace1d",
+      "vae/vae_model.py": "be13b4b991022bf4447f9db9ed273d65f2139f144de8ea3de718a26d3a4b0b3a"
+    },
+    "torch_version": "2.8.0.dev20250319+cu128",
+    "training_steps": 1000,
+    "variant": "original_ada002"
+  },
+  "count": 5000,
+  "driver_sha256": "fd4161d29c85d50fe8905b628e92c963a40b49ca5ae29d92bde013ce33df696b",
+  "embedding_fingerprint": "17384c5c08471355fae4b461271b69143efec0d98c149d470340bcc0ff40b7e3",
+  "extractor": {
+    "annotations": true,
+    "beats": {
+      "band_hz": [
+        5.0,
+        15.0
+      ],
+      "height": 0.3,
+      "integrate_s": 0.1,
+      "irregular_cv": 0.15,
+      "match_s": 0.06,
+      "min_agreement": 0.6,
+      "min_beats": 4,
+      "refractory_s": 0.25,
+      "regular_cv": 0.08,
+      "rr_range_s": [
+        0.25,
+        2.5
+      ]
+    },
+    "flat_mv": 0.005,
+    "localization_floor_mv": 0.05,
+    "localization_margin": 1.25,
+    "sidecar": null
+  },
+  "generation_id": "bb68a35b6430053d2c9d2993a0c5ab45c2f6b775a78c53f773674fd98f1b522e",
+  "implementation": {
+    "packages": {
+      "numpy": "2.2.6",
+      "scipy": "1.16.2"
+    },
+    "source_sha256": {
+      "syntide.generate.descriptors": "645a4dece00192846dfb884f1426b948a8b0ae79c5d42cc8b04cdf7008526118",
+      "syntide.generate.full.diffusets": "cf2d963a5f37e8dac43625ee6964b205726a246db65fb2151a30ec8ccefc6b5f",
+      "syntide.generate.qa.build": "f2363dff12be826cb073146f32076bd1eb20116d576a14ece4cb99800733e15e",
+      "syntide.generate.qa.evidence": "8d334edc332ec11397836e1d00f225d6e9cecf929178180dc9e9092198d17517",
+      "syntide.generate.qa.generated": "cb12da4d315203fae02270abc7d6564e4dd46a55ad3477a7b17e2841671f04de",
+      "syntide.generate.qa.templates": "b8e1f9e146f3afcbed31a9dc3d9d4b7f19a6e18c40b0598926e3ab7b1332cba5"
+    }
+  },
+  "min_confidence": 0.8,
+  "no_top_up": true,
+  "plan_sha256": "88181fe3c0031872f31c5630bb0460ca23db7951bd7ab2291836d3f1bad3904c",
+  "qa_policy": {
+    "evolutions": 0,
+    "heart_rate_pairs": false,
+    "max_seed_tasks": 4,
+    "min_confidence": 0.8,
+    "required": [
+      "heart_rate_bpm",
+      "beat_count",
+      "rr_regularity"
+    ],
+    "templates": [
+      "rhythm.heart_rate@1",
+      "rhythm.beat_count@1",
+      "rhythm.regularity@1",
+      "rhythm.rate_band@1"
+    ]
+  },
+  "qa_policy_sha256": "3ddc5ad0d4dd65ddc3ebe76ae38387a884eeceb4a9be044791610fb4e2189048",
+  "required": [
+    "heart_rate_bpm",
+    "beat_count",
+    "rr_regularity"
+  ],
+  "schema_version": "syntide.diffusets-fixed-slots@1",
+  "signal": {
+    "channels": [
+      "I",
+      "II",
+      "III",
+      "aVR",
+      "aVL",
+      "aVF",
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6"
+    ],
+    "modality": "ecg",
+    "num_samples": 1000,
+    "sample_rate": 100.0,
+    "units": "mV"
+  }
+}

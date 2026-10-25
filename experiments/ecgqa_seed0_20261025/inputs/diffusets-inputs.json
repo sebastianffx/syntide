@@ -1,0 +1,104 @@
+{
+  "schema": "syntide.diffusets-external-inputs@1",
+  "note": "The CSV is an audit index, not a generator plan. Exact regeneration requires the external frozen full plan, exact report-matched published embeddings, pinned model weights and source parents. No reports, demographics, embeddings, waveforms or checkpoints are distributed here.",
+  "candidate_index": "candidate-slots.csv",
+  "candidate_index_fields": {
+    "accepted": "1 if accepted by frozen measurement/quality policy; 0 otherwise",
+    "snapshot_prefix": "1 for slots 0 through 3379; snapshot uses only their accepted rows"
+  },
+  "candidate_index_original_results_verified_against_full_inventory": true,
+  "full_candidate_plan": {
+    "bytes": 5090721,
+    "sha256": "2bc86083e7a684340bd5a10e8a4ea174671e665e3b1f5903e78a865ec3f009f4",
+    "archive": "diffusets",
+    "path": "planning/candidate-plan.json",
+    "verified_against_collection_inventory": true
+  },
+  "generation_summary": {
+    "bytes": 629306,
+    "sha256": "e7dc8e22829eb40d088801bc33093f5a9ceb48d71f5631a1354bcd0e88dd3c38",
+    "archive": "diffusets",
+    "path": "generation/summary.json",
+    "verified_against_collection_inventory": true
+  },
+  "counts": {
+    "full": {
+      "attempted": 5000,
+      "accepted": 4515,
+      "rejected": 485
+    },
+    "snapshot_prefix_0_3379": {
+      "attempted": 3380,
+      "accepted": 3030,
+      "rejected": 350
+    }
+  },
+  "generation_id": "bb68a35b6430053d2c9d2993a0c5ab45c2f6b775a78c53f773674fd98f1b522e",
+  "no_top_up": true,
+  "plan_seed": 0,
+  "training_seed": 0,
+  "allocation": {
+    "distinct_parent_records": 3874,
+    "distinct_parent_subjects": 3811,
+    "distinct_report_texts": 2483,
+    "exact_stratum_quota": {
+      "fast|irregular|higher": 100,
+      "fast|irregular|lower": 100,
+      "fast|regular|higher": 400,
+      "fast|regular|lower": 400,
+      "middle|irregular|higher": 300,
+      "middle|irregular|lower": 300,
+      "middle|regular|higher": 1200,
+      "middle|regular|lower": 1200,
+      "slow|irregular|higher": 100,
+      "slow|irregular|lower": 100,
+      "slow|regular|higher": 400,
+      "slow|regular|lower": 400
+    },
+    "maximum_parent_replicates": 8,
+    "noise_thresholds": {
+      "parent_max_hf_rms_mv_q75": 0.0157,
+      "parent_max_wander_mv_q75": 0.4704
+    },
+    "parent_choice_rule": "Round-robin lexicographically sorted strata. Within stratum minimize (record uses, subject uses, exact-report uses, SHA256(diffusets-allocation|0|record_id)).",
+    "rate_quota": {
+      "fast_measured_bpm_gt100": 1000,
+      "middle_measured_bpm_60_to100_inclusive": 3000,
+      "slow_measured_bpm_lt60": 1000
+    },
+    "report_cluster_rule": "Lexical descriptions only, priority pacing, atrial irregularity, slow rate, fast rate, sinus, other. Clusters describe conditioning text and never establish generated answers.",
+    "seed_rule": "First four bytes big-endian SHA256(diffusets-candidate|0|slot_id|record_id), increment modulo 2**32 only on collision.",
+    "source_report_rule": "Exact source report with age and sex unchanged; PTB-XL sex 0 maps M, 1 maps F. Exclude missing/unsupported demographics and exact noninformative trace-only report.",
+    "target_heart_rate_rule": "Use each source waveform measured heart_rate_bpm unchanged; do not invent rates that contradict the preserved report.",
+    "within_each_rate": {
+      "higher_parent_noise": 0.5,
+      "irregular": 0.2,
+      "lower_parent_noise": 0.5,
+      "regular": 0.8
+    }
+  },
+  "generation_identity": "../configs/diffusets-generation-identity.json",
+  "conditioning_embedding_index": {
+    "bytes": 2525340,
+    "sha256": "4f2ed3dd9763ae04b9b996b42d659800bd8648275b871d8a0581303293520767",
+    "archive": "diffusets",
+    "path": "conditioning/embedding-index.json",
+    "verified_against_collection_inventory": true
+  },
+  "published_embeddings": {
+    "repository": "Laiyf/DiffuSETS",
+    "revision": "80b04013aef594c7c3012a8b932e5e09524e581a",
+    "archive_member": "prerequsites_for_inference.zip/prerequisites/ptbxl_text_embed.csv",
+    "csv_sha256": "aee14e1aade59f025192dacc62b0d1f756f345e2ff01575aa16766f063d7c49d",
+    "model": "text-embedding-ada-002",
+    "dimension": 1536,
+    "provenance": "Published vectors matched to exact source report, age and sex; legacy embedding API input provenance is unknown. No new embedding API calls were used."
+  },
+  "snapshot_manifest": {
+    "bytes": 5079200,
+    "sha256": "2e670dc7dc793c3adddffba89e73f825d0be46fb19f98f3b5e35cc7bf1c33bfd",
+    "archive": "diffusets",
+    "path": "snapshot3030/snapshot/snapshot_manifest.json",
+    "verified_against_collection_inventory": true
+  }
+}

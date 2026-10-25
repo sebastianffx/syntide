@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Compact ECG-QA seed-0 result table",
+  "type": "object",
+  "required": [
+    "schema",
+    "seed",
+    "seed_sd",
+    "arms"
+  ],
+  "properties": {
+    "schema": {
+      "const": "syntide.ecgqa-seed0-reproduction-results@1"
+    },
+    "seed": {
+      "const": 0
+    },
+    "seed_sd": {
+      "type": "null"
+    },
+    "arms": {
+      "type": "object",
+      "required": [
+        "real_qa",
+        "paraphrase",
+        "grounded",
+        "grounded_acq",
+        "diffusets3030_stack",
+        "diffusets_full_stack",
+        "exposure_matched"
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "label",
+          "source_summary_sha256",
+          "source_summary_bytes",
+          "metrics"
+        ],
+        "properties": {
+          "metrics": {
+            "type": "object",
+            "required": [
+              "validation",
+              "validation_zero",
+              "test",
+              "test_zero"
+            ],
+            "additionalProperties": {
+              "type": "object",
+              "required": [
+                "all",
+                "clean",
+                "noisy"
+              ],
+              "additionalProperties": {
+                "type": "object",
+                "required": [
+                  "n",
+                  "accuracy",
+                  "template_macro_f1",
+                  "invalid_rate"
+                ],
+                "properties": {
+                  "n": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "accuracy": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "template_macro_f1": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "invalid_rate": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

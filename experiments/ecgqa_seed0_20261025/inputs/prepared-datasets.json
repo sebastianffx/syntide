@@ -1,0 +1,1459 @@
+{
+  "schema": "syntide.ecgqa-prepared-external-inputs@1",
+  "note": "Derived compact manifest summaries, not byte-exact original manifests. Original manifest file hashes, logical content hashes, and data-file hashes are distinct. External data files and full lineage manifests are excluded.",
+  "arms": {
+    "real_qa": {
+      "original_manifest": {
+        "bytes": 12857,
+        "sha256": "c77ab178b55a652282fbdfbaf729cc4a1ccb19ec75f67482cf7ee761900fe513",
+        "path": "baseline-archive/prepared/manifest.json",
+        "verified_against_collection_inventory": false
+      },
+      "manifest_content_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+      "files": {
+        "records.json": {
+          "bytes": 135138,
+          "sha256": "9baf7280d527066bb6c05911701161c64bcdaa796a87b045f7d93538ef3a7778"
+        },
+        "selection.parquet": {
+          "bytes": 422799,
+          "sha256": "29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1"
+        },
+        "signals.npy": {
+          "bytes": 483600128,
+          "sha256": "cb7a49e091d03bb2582334885ec48ce0a959bb1e02319cf030ce85f68079a034"
+        },
+        "test.parquet": {
+          "bytes": 5225886,
+          "sha256": "74c3d3cba2ae7dc9da8f24ca58d55a21d13b6dba2403acec66efe89448dd18f0"
+        },
+        "train.parquet": {
+          "bytes": 15839766,
+          "sha256": "e150bb0ec1564a8aa7aa7506c62e22b79ad243ea63950c7b8a03756fcd74219a"
+        },
+        "validation.parquet": {
+          "bytes": 5286092,
+          "sha256": "2a7986686787ebc45a2887c388229350258ee552855fedaec0efbe66d9b6e65c"
+        }
+      },
+      "signal": {
+        "dtype": "float32",
+        "fs_hz": 100,
+        "leads": [
+          "I",
+          "II",
+          "III",
+          "AVR",
+          "AVL",
+          "AVF",
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "V5",
+          "V6"
+        ],
+        "normalization": "none; trainer applies per-lead normalization",
+        "shape": [
+          10075,
+          12,
+          1000
+        ],
+        "units": "mV"
+      },
+      "source": {
+        "dataset": "physionet/ecg-qa-cot",
+        "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+        "signals": {
+          "dataset": "physionet/ptb-xl",
+          "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+          "version": "1.0.3"
+        },
+        "version": "1.0.0"
+      },
+      "source_manifest": {
+        "challenge_id": "ecgqa-artifact-50/pool50",
+        "file_sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8",
+        "sha256": "6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4",
+        "spec": {
+          "id": "ecgqa-artifact-50",
+          "pool_fraction": 0.5,
+          "pool_fractions": [
+            0.5,
+            1.0
+          ],
+          "retain": 0.1,
+          "seed": 0,
+          "test_folds": [
+            10
+          ],
+          "train_folds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "val_folds": [
+            9
+          ]
+        }
+      },
+      "preparation": {
+        "evaluation_deduplication": "record_id,question; lowest lexicographic task_id",
+        "selection_algorithm": "balanced-template-noise-patient-round-robin-v1",
+        "selection_answer_blind": true,
+        "selection_seed": 0,
+        "selection_size_requested": 2000,
+        "train_deduplication": "none; preserve every real question/rationale row",
+        "train_role": "pool"
+      },
+      "splits": {
+        "selection": {
+          "noisy_questions": 935,
+          "noisy_records": 328,
+          "patients": 794,
+          "questions": 2000,
+          "records": 850,
+          "task_ids_sha256": "a7db00b89b46846ed722bca28e7efa615f32fb629a6e7b68dc6785fe929aba13",
+          "tasks_sha256": "f249e81f1c938f6536ba6b41facbc13ff89a749786da6b6f84bba097a0dbea6f",
+          "templates": 42
+        },
+        "test": {
+          "noisy_questions": 8036,
+          "noisy_records": 513,
+          "patients": 1873,
+          "questions": 26841,
+          "records": 2154,
+          "task_ids_sha256": "fe837e05c5c3a301517f3ac5d0fe1bc8d8541d8a40955573475c9ff68eb23945",
+          "tasks_sha256": "56a1c0deba264249b3f9a2608b374289590a24e0dde8d45b49d938179d676c2c",
+          "templates": 42
+        },
+        "train": {
+          "noisy_questions": 20270,
+          "noisy_records": 1091,
+          "patients": 5266,
+          "questions": 82829,
+          "records": 5778,
+          "task_ids_sha256": "e44c09e93469172c0e1be95d6c2d4279a7af7754ab1b3acb38aaa29ecd9503b2",
+          "tasks_sha256": "def70839e01e011ba724aea629c49f2feeec50cfc69ebe525d834b0287a5ba6e",
+          "templates": 42
+        },
+        "validation": {
+          "noisy_questions": 8712,
+          "noisy_records": 528,
+          "patients": 1915,
+          "questions": 27264,
+          "records": 2143,
+          "task_ids_sha256": "fc4ab7a34b311c8be12eab082f7e75d604b66e04a0d5547fe5c52dca40d94e8f",
+          "tasks_sha256": "78d75817115727f1d133b5add0c5b67999aafa59e6b05bf76dbdfe7c7edfa226",
+          "templates": 42
+        }
+      },
+      "qa_export": {},
+      "source_questions_dropped": {
+        "ecg_not_a_labelled_ptbxl_record": 2482
+      },
+      "bindings_verified_against_archived_training_config": true
+    },
+    "paraphrase": {
+      "original_manifest": {
+        "bytes": 14868,
+        "sha256": "73a51f7bb5dda760c8994e56193aeaee8340a3cf656fd0c8300004ad47c745d0",
+        "path": "runs/ecgqa-data-paraphrase/manifest.json",
+        "verified_against_collection_inventory": false
+      },
+      "manifest_content_sha256": "6757fff9e668a2d2e501286c9b5171e38ece3745382664b826c4833faad62445",
+      "files": {
+        "records.json": {
+          "bytes": 135138,
+          "sha256": "9baf7280d527066bb6c05911701161c64bcdaa796a87b045f7d93538ef3a7778"
+        },
+        "selection.parquet": {
+          "bytes": 422799,
+          "sha256": "29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1"
+        },
+        "signals.npy": {
+          "bytes": 483600128,
+          "sha256": "cb7a49e091d03bb2582334885ec48ce0a959bb1e02319cf030ce85f68079a034"
+        },
+        "test.parquet": {
+          "bytes": 5225886,
+          "sha256": "74c3d3cba2ae7dc9da8f24ca58d55a21d13b6dba2403acec66efe89448dd18f0"
+        },
+        "train.parquet": {
+          "bytes": 33341168,
+          "sha256": "cf25a2c1881485ce5ce6ed38eb16b915e5914d236509e544b7d1abc38660be62"
+        },
+        "validation.parquet": {
+          "bytes": 5286092,
+          "sha256": "2a7986686787ebc45a2887c388229350258ee552855fedaec0efbe66d9b6e65c"
+        }
+      },
+      "signal": {
+        "dtype": "float32",
+        "fs_hz": 100,
+        "leads": [
+          "I",
+          "II",
+          "III",
+          "AVR",
+          "AVL",
+          "AVF",
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "V5",
+          "V6"
+        ],
+        "normalization": "none; trainer applies per-lead normalization",
+        "shape": [
+          10075,
+          12,
+          1000
+        ],
+        "units": "mV"
+      },
+      "source": {
+        "dataset": "physionet/ecg-qa-cot",
+        "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+        "signals": {
+          "dataset": "physionet/ptb-xl",
+          "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+          "version": "1.0.3"
+        },
+        "version": "1.0.0"
+      },
+      "source_manifest": {
+        "challenge_id": "ecgqa-artifact-50/pool50",
+        "file_sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8",
+        "sha256": "6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4",
+        "spec": {
+          "id": "ecgqa-artifact-50",
+          "pool_fraction": 0.5,
+          "pool_fractions": [
+            0.5,
+            1.0
+          ],
+          "retain": 0.1,
+          "seed": 0,
+          "test_folds": [
+            10
+          ],
+          "train_folds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "val_folds": [
+            9
+          ]
+        }
+      },
+      "preparation": {
+        "evaluation_deduplication": "record_id,question; lowest lexicographic task_id",
+        "selection_algorithm": "balanced-template-noise-patient-round-robin-v1",
+        "selection_answer_blind": true,
+        "selection_seed": 0,
+        "selection_size_requested": 2000,
+        "train_deduplication": "none; preserve every real question/rationale row",
+        "train_role": "pool"
+      },
+      "splits": {
+        "selection": {
+          "noisy_questions": 935,
+          "noisy_records": 328,
+          "patients": 794,
+          "questions": 2000,
+          "records": 850,
+          "task_ids_sha256": "a7db00b89b46846ed722bca28e7efa615f32fb629a6e7b68dc6785fe929aba13",
+          "tasks_sha256": "f249e81f1c938f6536ba6b41facbc13ff89a749786da6b6f84bba097a0dbea6f",
+          "templates": 42
+        },
+        "test": {
+          "noisy_questions": 8036,
+          "noisy_records": 513,
+          "patients": 1873,
+          "questions": 26841,
+          "records": 2154,
+          "task_ids_sha256": "fe837e05c5c3a301517f3ac5d0fe1bc8d8541d8a40955573475c9ff68eb23945",
+          "tasks_sha256": "56a1c0deba264249b3f9a2608b374289590a24e0dde8d45b49d938179d676c2c",
+          "templates": 42
+        },
+        "train": {
+          "noisy_questions": 40540,
+          "noisy_records": 1091,
+          "patients": 5266,
+          "questions": 165658,
+          "records": 5778,
+          "task_ids_sha256": "164af02cc969da043162392662426b1c2458a3de35ca3686325d3505fbfa585f",
+          "tasks_sha256": "8ba16e15c9ee5a9656a0f2ff1bdf5c1ebc219636c41ec06158f5416fbb105568",
+          "templates": 42
+        },
+        "validation": {
+          "noisy_questions": 8712,
+          "noisy_records": 528,
+          "patients": 1915,
+          "questions": 27264,
+          "records": 2143,
+          "task_ids_sha256": "fc4ab7a34b311c8be12eab082f7e75d604b66e04a0d5547fe5c52dca40d94e8f",
+          "tasks_sha256": "78d75817115727f1d133b5add0c5b67999aafa59e6b05bf76dbdfe7c7edfa226",
+          "templates": 42
+        }
+      },
+      "qa_export": {
+        "added_training_rows": 82829,
+        "baseline_rows_preserved": 82829,
+        "baseline_signal_prefix": 10075,
+        "corpora": [
+          {
+            "corpus_id": "corpus-2d045095c1af506b20423127",
+            "counts": {
+              "empty_options_tasks": 0,
+              "exported_tasks": 82829,
+              "input_tasks": 82829,
+              "numeric_tasks": 0
+            },
+            "excluded": {}
+          }
+        ],
+        "evaluation_policy": "selection/validation/test copied byte-for-byte; labels not parsed",
+        "identity": {
+          "baseline_manifest_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+          "context_policy": "ecgqa-cot-baseline@1",
+          "corpus_ids": [
+            "corpus-2d045095c1af506b20423127"
+          ],
+          "numeric_options_policy": "preserve empty options; unchanged trainer prompt",
+          "signal_policy": "unchanged baseline prefix; append exact 12x1000, 100 Hz, mV signals only",
+          "training_policy": "baseline original rows followed by unique compatible corpus tasks",
+          "version": "syntide.qa-baseline-export@1"
+        },
+        "lineage_check": "all roots and patients exactly match baseline training rows",
+        "synthetic_template_ids": {
+          "acquisition.duration@1": 1000,
+          "acquisition.flat_leads@1": 1001,
+          "artifact.max_noise_lead@1": 1002,
+          "artifact.max_wander_lead@1": 1003,
+          "artifact.wander_in_lead@1": 1004,
+          "compare.attribute@1": 1005,
+          "compose.rate_and_wander@1": 1006,
+          "diagnosis.superclass@1": 1007,
+          "interval.measurement@1": 1008,
+          "quality.noise_annotation@1": 1009,
+          "reason.support_refute@1": 1010,
+          "rhythm.beat_count@1": 1011,
+          "rhythm.heart_rate@1": 1012,
+          "rhythm.rate_band@1": 1013,
+          "rhythm.regularity@1": 1014,
+          "situation.lead_subset@1": 1015,
+          "situation.supplied_rule@1": 1016
+        },
+        "training_slice_metadata": "strat_fold/is_artifact/artifact_types inherited from first root"
+      },
+      "source_questions_dropped": {
+        "ecg_not_a_labelled_ptbxl_record": 2482
+      },
+      "bindings_verified_against_archived_training_config": true
+    },
+    "grounded": {
+      "original_manifest": {
+        "bytes": 15671,
+        "sha256": "fc861d048b09f7054464e1ba4024a5e6099aa22ad63f0caf4b7b384ab385a195",
+        "path": "runs/ecgqa-data-grounded/manifest.json",
+        "verified_against_collection_inventory": false
+      },
+      "manifest_content_sha256": "0bbf9e36a278b037d18403954df30b88293a6b7a18cd98ce49a24b0d77c0d4e8",
+      "files": {
+        "records.json": {
+          "bytes": 135138,
+          "sha256": "9baf7280d527066bb6c05911701161c64bcdaa796a87b045f7d93538ef3a7778"
+        },
+        "selection.parquet": {
+          "bytes": 422799,
+          "sha256": "29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1"
+        },
+        "signals.npy": {
+          "bytes": 483600128,
+          "sha256": "cb7a49e091d03bb2582334885ec48ce0a959bb1e02319cf030ce85f68079a034"
+        },
+        "test.parquet": {
+          "bytes": 5225886,
+          "sha256": "74c3d3cba2ae7dc9da8f24ca58d55a21d13b6dba2403acec66efe89448dd18f0"
+        },
+        "train.parquet": {
+          "bytes": 17982998,
+          "sha256": "1dd0963ffb60090703b713624b159defb7ca88b44c38c0a70fd7a9ed0ca29dca"
+        },
+        "validation.parquet": {
+          "bytes": 5286092,
+          "sha256": "2a7986686787ebc45a2887c388229350258ee552855fedaec0efbe66d9b6e65c"
+        }
+      },
+      "signal": {
+        "dtype": "float32",
+        "fs_hz": 100,
+        "leads": [
+          "I",
+          "II",
+          "III",
+          "AVR",
+          "AVL",
+          "AVF",
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "V5",
+          "V6"
+        ],
+        "normalization": "none; trainer applies per-lead normalization",
+        "shape": [
+          10075,
+          12,
+          1000
+        ],
+        "units": "mV"
+      },
+      "source": {
+        "dataset": "physionet/ecg-qa-cot",
+        "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+        "signals": {
+          "dataset": "physionet/ptb-xl",
+          "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+          "version": "1.0.3"
+        },
+        "version": "1.0.0"
+      },
+      "source_manifest": {
+        "challenge_id": "ecgqa-artifact-50/pool50",
+        "file_sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8",
+        "sha256": "6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4",
+        "spec": {
+          "id": "ecgqa-artifact-50",
+          "pool_fraction": 0.5,
+          "pool_fractions": [
+            0.5,
+            1.0
+          ],
+          "retain": 0.1,
+          "seed": 0,
+          "test_folds": [
+            10
+          ],
+          "train_folds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "val_folds": [
+            9
+          ]
+        }
+      },
+      "preparation": {
+        "evaluation_deduplication": "record_id,question; lowest lexicographic task_id",
+        "selection_algorithm": "balanced-template-noise-patient-round-robin-v1",
+        "selection_answer_blind": true,
+        "selection_seed": 0,
+        "selection_size_requested": 2000,
+        "train_deduplication": "none; preserve every real question/rationale row",
+        "train_role": "pool"
+      },
+      "splits": {
+        "selection": {
+          "noisy_questions": 935,
+          "noisy_records": 328,
+          "patients": 794,
+          "questions": 2000,
+          "records": 850,
+          "task_ids_sha256": "a7db00b89b46846ed722bca28e7efa615f32fb629a6e7b68dc6785fe929aba13",
+          "tasks_sha256": "f249e81f1c938f6536ba6b41facbc13ff89a749786da6b6f84bba097a0dbea6f",
+          "templates": 42
+        },
+        "test": {
+          "noisy_questions": 8036,
+          "noisy_records": 513,
+          "patients": 1873,
+          "questions": 26841,
+          "records": 2154,
+          "task_ids_sha256": "fe837e05c5c3a301517f3ac5d0fe1bc8d8541d8a40955573475c9ff68eb23945",
+          "tasks_sha256": "56a1c0deba264249b3f9a2608b374289590a24e0dde8d45b49d938179d676c2c",
+          "templates": 42
+        },
+        "train": {
+          "noisy_questions": 33352,
+          "noisy_records": 1091,
+          "patients": 5266,
+          "questions": 152118,
+          "records": 5778,
+          "task_ids_sha256": "f190f89f0bbc2d8d7fd60a8a7c1c4a93afd38786f276bf35763ae9d4caa4ce0e",
+          "tasks_sha256": "0847aa23099879754ef02e6d9efaca92b819e1ab2e37b79b3406f9d0c3f7a94b",
+          "templates": 56
+        },
+        "validation": {
+          "noisy_questions": 8712,
+          "noisy_records": 528,
+          "patients": 1915,
+          "questions": 27264,
+          "records": 2143,
+          "task_ids_sha256": "fc4ab7a34b311c8be12eab082f7e75d604b66e04a0d5547fe5c52dca40d94e8f",
+          "tasks_sha256": "78d75817115727f1d133b5add0c5b67999aafa59e6b05bf76dbdfe7c7edfa226",
+          "templates": 42
+        }
+      },
+      "qa_export": {
+        "added_training_rows": 69289,
+        "baseline_rows_preserved": 82829,
+        "baseline_signal_prefix": 10075,
+        "corpora": [
+          {
+            "corpus_id": "corpus-52daac927b9ea8c6db1a4ae0",
+            "counts": {
+              "empty_options_tasks": 29318,
+              "exported_tasks": 69289,
+              "input_tasks": 71088,
+              "numeric_tasks": 27666
+            },
+            "excluded": {
+              "multiple_ecg_inputs": 1799
+            }
+          }
+        ],
+        "evaluation_policy": "selection/validation/test copied byte-for-byte; labels not parsed",
+        "identity": {
+          "baseline_manifest_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+          "context_policy": "ecgqa-cot-baseline@1",
+          "corpus_ids": [
+            "corpus-52daac927b9ea8c6db1a4ae0"
+          ],
+          "numeric_options_policy": "preserve empty options; unchanged trainer prompt",
+          "signal_policy": "unchanged baseline prefix; append exact 12x1000, 100 Hz, mV signals only",
+          "training_policy": "baseline original rows followed by unique compatible corpus tasks",
+          "version": "syntide.qa-baseline-export@1"
+        },
+        "lineage_check": "all roots and patients exactly match baseline training rows",
+        "synthetic_template_ids": {
+          "acquisition.duration@1": 1000,
+          "acquisition.flat_leads@1": 1001,
+          "artifact.max_noise_lead@1": 1002,
+          "artifact.max_wander_lead@1": 1003,
+          "artifact.wander_in_lead@1": 1004,
+          "compare.attribute@1": 1005,
+          "compose.rate_and_wander@1": 1006,
+          "diagnosis.superclass@1": 1007,
+          "interval.measurement@1": 1008,
+          "quality.noise_annotation@1": 1009,
+          "reason.support_refute@1": 1010,
+          "rhythm.beat_count@1": 1011,
+          "rhythm.heart_rate@1": 1012,
+          "rhythm.rate_band@1": 1013,
+          "rhythm.regularity@1": 1014,
+          "situation.lead_subset@1": 1015,
+          "situation.supplied_rule@1": 1016
+        },
+        "training_slice_metadata": "strat_fold/is_artifact/artifact_types inherited from first root"
+      },
+      "source_questions_dropped": {
+        "ecg_not_a_labelled_ptbxl_record": 2482
+      },
+      "bindings_verified_against_archived_training_config": true
+    },
+    "grounded_acq": {
+      "original_manifest": {
+        "bytes": 9314286,
+        "sha256": "92c24581601b01879737b8382d98379628a66d61264768c87b2c52cc4f7815eb",
+        "path": "runs/ecgqa-data-grounded_acq/manifest.json",
+        "verified_against_collection_inventory": false
+      },
+      "manifest_content_sha256": "6e48bb03e80bc89e7df70dc7b3524fc6e53bc1d7fedbbd941cb2cef882387f43",
+      "files": {
+        "records.json": {
+          "bytes": 265278,
+          "sha256": "d23c666836fea141eae6480209fe6bc3e0df40d44d625485aa1484eda9ac5f85"
+        },
+        "selection.parquet": {
+          "bytes": 422799,
+          "sha256": "29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1"
+        },
+        "signals.npy": {
+          "bytes": 714960128,
+          "sha256": "f1bc51ce719634c4584014c088fc3be9054832dfefdc3607188a2621555a6194"
+        },
+        "test.parquet": {
+          "bytes": 5225886,
+          "sha256": "74c3d3cba2ae7dc9da8f24ca58d55a21d13b6dba2403acec66efe89448dd18f0"
+        },
+        "train.parquet": {
+          "bytes": 19900450,
+          "sha256": "47a189fb50a3fc913badb9a68cb8382c4abeb60da56ce73d905b7bf396db28e8"
+        },
+        "validation.parquet": {
+          "bytes": 5286092,
+          "sha256": "2a7986686787ebc45a2887c388229350258ee552855fedaec0efbe66d9b6e65c"
+        }
+      },
+      "signal": {
+        "dtype": "float32",
+        "fs_hz": 100,
+        "leads": [
+          "I",
+          "II",
+          "III",
+          "AVR",
+          "AVL",
+          "AVF",
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "V5",
+          "V6"
+        ],
+        "normalization": "none; trainer applies per-lead normalization",
+        "shape": [
+          14895,
+          12,
+          1000
+        ],
+        "units": "mV"
+      },
+      "source": {
+        "dataset": "physionet/ecg-qa-cot",
+        "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+        "signals": {
+          "dataset": "physionet/ptb-xl",
+          "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+          "version": "1.0.3"
+        },
+        "version": "1.0.0"
+      },
+      "source_manifest": {
+        "challenge_id": "ecgqa-artifact-50/pool50",
+        "file_sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8",
+        "sha256": "6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4",
+        "spec": {
+          "id": "ecgqa-artifact-50",
+          "pool_fraction": 0.5,
+          "pool_fractions": [
+            0.5,
+            1.0
+          ],
+          "retain": 0.1,
+          "seed": 0,
+          "test_folds": [
+            10
+          ],
+          "train_folds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "val_folds": [
+            9
+          ]
+        }
+      },
+      "preparation": {
+        "evaluation_deduplication": "record_id,question; lowest lexicographic task_id",
+        "selection_algorithm": "balanced-template-noise-patient-round-robin-v1",
+        "selection_answer_blind": true,
+        "selection_seed": 0,
+        "selection_size_requested": 2000,
+        "train_deduplication": "none; preserve every real question/rationale row",
+        "train_role": "pool"
+      },
+      "splits": {
+        "selection": {
+          "noisy_questions": 935,
+          "noisy_records": 328,
+          "patients": 794,
+          "questions": 2000,
+          "records": 850,
+          "task_ids_sha256": "a7db00b89b46846ed722bca28e7efa615f32fb629a6e7b68dc6785fe929aba13",
+          "tasks_sha256": "f249e81f1c938f6536ba6b41facbc13ff89a749786da6b6f84bba097a0dbea6f",
+          "templates": 42
+        },
+        "test": {
+          "noisy_questions": 8036,
+          "noisy_records": 513,
+          "patients": 1873,
+          "questions": 26841,
+          "records": 2154,
+          "task_ids_sha256": "fe837e05c5c3a301517f3ac5d0fe1bc8d8541d8a40955573475c9ff68eb23945",
+          "tasks_sha256": "56a1c0deba264249b3f9a2608b374289590a24e0dde8d45b49d938179d676c2c",
+          "templates": 42
+        },
+        "train": {
+          "noisy_questions": 44111,
+          "noisy_records": 1992,
+          "patients": 5266,
+          "questions": 209722,
+          "records": 10598,
+          "task_ids_sha256": "69567f08c011ae0fe37e63bc13149f0b93b3d8a7245e15365ef1900aa0d9a7a9",
+          "tasks_sha256": "d1a3d07245da7c16d0fc17d07a86a3861ee81210006d9bdcef2c1020b7cf7b84",
+          "templates": 56
+        },
+        "validation": {
+          "noisy_questions": 8712,
+          "noisy_records": 528,
+          "patients": 1915,
+          "questions": 27264,
+          "records": 2143,
+          "task_ids_sha256": "fc4ab7a34b311c8be12eab082f7e75d604b66e04a0d5547fe5c52dca40d94e8f",
+          "tasks_sha256": "78d75817115727f1d133b5add0c5b67999aafa59e6b05bf76dbdfe7c7edfa226",
+          "templates": 42
+        }
+      },
+      "qa_export": {
+        "added_training_rows": 126893,
+        "baseline_rows_preserved": 82829,
+        "baseline_signal_prefix": 10075,
+        "corpora": [
+          {
+            "corpus_id": "corpus-52daac927b9ea8c6db1a4ae0",
+            "counts": {
+              "empty_options_tasks": 29318,
+              "exported_tasks": 69289,
+              "input_tasks": 71088,
+              "numeric_tasks": 27666
+            },
+            "excluded": {
+              "multiple_ecg_inputs": 1799
+            }
+          },
+          {
+            "corpus_id": "corpus-13e878b64fa1a2dfdebdd6e3",
+            "counts": {
+              "empty_options_tasks": 24377,
+              "exported_tasks": 57604,
+              "input_tasks": 70201,
+              "numeric_tasks": 21820
+            },
+            "excluded": {
+              "incompatible_signal_length": 11264,
+              "multiple_ecg_inputs": 1333
+            }
+          }
+        ],
+        "evaluation_policy": "selection/validation/test copied byte-for-byte; labels not parsed",
+        "identity": {
+          "baseline_manifest_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+          "context_policy": "ecgqa-cot-baseline@1",
+          "corpus_ids": [
+            "corpus-52daac927b9ea8c6db1a4ae0",
+            "corpus-13e878b64fa1a2dfdebdd6e3"
+          ],
+          "numeric_options_policy": "preserve empty options; unchanged trainer prompt",
+          "signal_policy": "unchanged baseline prefix; append exact 12x1000, 100 Hz, mV signals only",
+          "training_policy": "baseline original rows followed by unique compatible corpus tasks",
+          "version": "syntide.qa-baseline-export@1"
+        },
+        "lineage_check": "all roots and patients exactly match baseline training rows",
+        "synthetic_template_ids": {
+          "acquisition.duration@1": 1000,
+          "acquisition.flat_leads@1": 1001,
+          "artifact.max_noise_lead@1": 1002,
+          "artifact.max_wander_lead@1": 1003,
+          "artifact.wander_in_lead@1": 1004,
+          "compare.attribute@1": 1005,
+          "compose.rate_and_wander@1": 1006,
+          "diagnosis.superclass@1": 1007,
+          "interval.measurement@1": 1008,
+          "quality.noise_annotation@1": 1009,
+          "reason.support_refute@1": 1010,
+          "rhythm.beat_count@1": 1011,
+          "rhythm.heart_rate@1": 1012,
+          "rhythm.rate_band@1": 1013,
+          "rhythm.regularity@1": 1014,
+          "situation.lead_subset@1": 1015,
+          "situation.supplied_rule@1": 1016
+        },
+        "training_slice_metadata": "strat_fold/is_artifact/artifact_types inherited from first root"
+      },
+      "source_questions_dropped": {
+        "ecg_not_a_labelled_ptbxl_record": 2482
+      },
+      "bindings_verified_against_archived_training_config": true
+    },
+    "diffusets3030_stack": {
+      "original_manifest": {
+        "bytes": 18659173,
+        "sha256": "355f67dfd7ae2f9a264b14a9a3ee4e9a12f462115233fa86b2d88972048517fc",
+        "archive": "diffusets",
+        "path": "snapshot3030/prepared/manifest.json",
+        "verified_against_collection_inventory": true
+      },
+      "manifest_content_sha256": "d0d919378f3aa659ecb872b48a92297c635081b45537d48d5ac159a0ebcc0d6d",
+      "files": {
+        "records.json": {
+          "bytes": 525858,
+          "sha256": "7d2eb8c5d567dc6eecf9186802ddd27047270983efda2ea1434d2249ff87e106"
+        },
+        "selection.parquet": {
+          "bytes": 422799,
+          "sha256": "29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1"
+        },
+        "signals.npy": {
+          "bytes": 860400128,
+          "sha256": "ad212bbbf3ab8d1b60d75fa602a53ff48bcc44452f659e6ea8f997a43af8e465"
+        },
+        "test.parquet": {
+          "bytes": 5225886,
+          "sha256": "74c3d3cba2ae7dc9da8f24ca58d55a21d13b6dba2403acec66efe89448dd18f0"
+        },
+        "train.parquet": {
+          "bytes": 20262051,
+          "sha256": "259c5765694f5a3e1f825f86d9edc9c66edaed22d64fc54524f6bf2702d0a0b7"
+        },
+        "validation.parquet": {
+          "bytes": 5286092,
+          "sha256": "2a7986686787ebc45a2887c388229350258ee552855fedaec0efbe66d9b6e65c"
+        }
+      },
+      "signal": {
+        "dtype": "float32",
+        "fs_hz": 100,
+        "leads": [
+          "I",
+          "II",
+          "III",
+          "AVR",
+          "AVL",
+          "AVF",
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "V5",
+          "V6"
+        ],
+        "normalization": "none; trainer applies per-lead normalization",
+        "shape": [
+          17925,
+          12,
+          1000
+        ],
+        "units": "mV"
+      },
+      "source": {
+        "dataset": "physionet/ecg-qa-cot",
+        "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+        "signals": {
+          "dataset": "physionet/ptb-xl",
+          "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+          "version": "1.0.3"
+        },
+        "version": "1.0.0"
+      },
+      "source_manifest": {
+        "challenge_id": "ecgqa-artifact-50/pool50",
+        "file_sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8",
+        "sha256": "6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4",
+        "spec": {
+          "id": "ecgqa-artifact-50",
+          "pool_fraction": 0.5,
+          "pool_fractions": [
+            0.5,
+            1.0
+          ],
+          "retain": 0.1,
+          "seed": 0,
+          "test_folds": [
+            10
+          ],
+          "train_folds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "val_folds": [
+            9
+          ]
+        }
+      },
+      "preparation": {
+        "evaluation_deduplication": "record_id,question; lowest lexicographic task_id",
+        "selection_algorithm": "balanced-template-noise-patient-round-robin-v1",
+        "selection_answer_blind": true,
+        "selection_seed": 0,
+        "selection_size_requested": 2000,
+        "train_deduplication": "none; preserve every real question/rationale row",
+        "train_role": "pool"
+      },
+      "splits": {
+        "selection": {
+          "noisy_questions": 935,
+          "noisy_records": 328,
+          "patients": 794,
+          "questions": 2000,
+          "records": 850,
+          "task_ids_sha256": "a7db00b89b46846ed722bca28e7efa615f32fb629a6e7b68dc6785fe929aba13",
+          "tasks_sha256": "f249e81f1c938f6536ba6b41facbc13ff89a749786da6b6f84bba097a0dbea6f",
+          "templates": 42
+        },
+        "test": {
+          "noisy_questions": 8036,
+          "noisy_records": 513,
+          "patients": 1873,
+          "questions": 26841,
+          "records": 2154,
+          "task_ids_sha256": "fe837e05c5c3a301517f3ac5d0fe1bc8d8541d8a40955573475c9ff68eb23945",
+          "tasks_sha256": "56a1c0deba264249b3f9a2608b374289590a24e0dde8d45b49d938179d676c2c",
+          "templates": 42
+        },
+        "train": {
+          "noisy_questions": 46232,
+          "noisy_records": 2546,
+          "patients": 5266,
+          "questions": 221394,
+          "records": 13628,
+          "task_ids_sha256": "916ec96d5f9c8e17d618cf98e229267fd61e008c9f065382361fe5b57cc7ef23",
+          "tasks_sha256": "8b9475e0981772b63371b0ca5f2c643330acfd9a6215f4edd5b729db354f5cd4",
+          "templates": 56
+        },
+        "validation": {
+          "noisy_questions": 8712,
+          "noisy_records": 528,
+          "patients": 1915,
+          "questions": 27264,
+          "records": 2143,
+          "task_ids_sha256": "fc4ab7a34b311c8be12eab082f7e75d604b66e04a0d5547fe5c52dca40d94e8f",
+          "tasks_sha256": "78d75817115727f1d133b5add0c5b67999aafa59e6b05bf76dbdfe7c7edfa226",
+          "templates": 42
+        }
+      },
+      "qa_export": {
+        "added_training_rows": 138565,
+        "baseline_rows_preserved": 82829,
+        "baseline_signal_prefix": 10075,
+        "corpora": [
+          {
+            "corpus_id": "corpus-52daac927b9ea8c6db1a4ae0",
+            "counts": {
+              "empty_options_tasks": 29318,
+              "exported_tasks": 69289,
+              "input_tasks": 71088,
+              "numeric_tasks": 27666
+            },
+            "excluded": {
+              "multiple_ecg_inputs": 1799
+            }
+          },
+          {
+            "corpus_id": "corpus-13e878b64fa1a2dfdebdd6e3",
+            "counts": {
+              "empty_options_tasks": 24377,
+              "exported_tasks": 57604,
+              "input_tasks": 70201,
+              "numeric_tasks": 21820
+            },
+            "excluded": {
+              "incompatible_signal_length": 11264,
+              "multiple_ecg_inputs": 1333
+            }
+          },
+          {
+            "corpus_id": "corpus-0172ff51a3ea48d72957b917",
+            "counts": {
+              "empty_options_tasks": 6060,
+              "exported_tasks": 11672,
+              "input_tasks": 11672,
+              "numeric_tasks": 6060
+            },
+            "excluded": {}
+          }
+        ],
+        "evaluation_policy": "selection/validation/test copied byte-for-byte; labels not parsed",
+        "identity": {
+          "baseline_manifest_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+          "context_policy": "ecgqa-cot-baseline@1",
+          "corpus_ids": [
+            "corpus-52daac927b9ea8c6db1a4ae0",
+            "corpus-13e878b64fa1a2dfdebdd6e3",
+            "corpus-0172ff51a3ea48d72957b917"
+          ],
+          "numeric_options_policy": "preserve empty options; unchanged trainer prompt",
+          "signal_policy": "unchanged baseline prefix; append exact 12x1000, 100 Hz, mV signals only",
+          "training_policy": "baseline original rows followed by unique compatible corpus tasks",
+          "version": "syntide.qa-baseline-export@1"
+        },
+        "lineage_check": "all roots and patients exactly match baseline training rows",
+        "synthetic_template_ids": {
+          "acquisition.duration@1": 1000,
+          "acquisition.flat_leads@1": 1001,
+          "artifact.max_noise_lead@1": 1002,
+          "artifact.max_wander_lead@1": 1003,
+          "artifact.wander_in_lead@1": 1004,
+          "compare.attribute@1": 1005,
+          "compose.rate_and_wander@1": 1006,
+          "diagnosis.superclass@1": 1007,
+          "interval.measurement@1": 1008,
+          "quality.noise_annotation@1": 1009,
+          "reason.support_refute@1": 1010,
+          "rhythm.beat_count@1": 1011,
+          "rhythm.heart_rate@1": 1012,
+          "rhythm.rate_band@1": 1013,
+          "rhythm.regularity@1": 1014,
+          "situation.lead_subset@1": 1015,
+          "situation.supplied_rule@1": 1016
+        },
+        "training_slice_metadata": "strat_fold/is_artifact/artifact_types inherited from first root"
+      },
+      "source_questions_dropped": {
+        "ecg_not_a_labelled_ptbxl_record": 2482
+      },
+      "bindings_verified_against_archived_training_config": true
+    },
+    "diffusets_full_stack": {
+      "original_manifest": {
+        "bytes": 23168903,
+        "sha256": "e70f729b8e68c0cb7c9484feb396b11e34e5c413cf2a77d7c77bb244474efa4c",
+        "archive": "diffusets",
+        "path": "prepared/manifest.json",
+        "verified_against_collection_inventory": true
+      },
+      "manifest_content_sha256": "b138302c838c3a97286f8769c86c9263ae8d56b485b25b5d903acbca37a3e463",
+      "files": {
+        "records.json": {
+          "bytes": 653568,
+          "sha256": "e94a6a313f5d6baf21e1ae6fa5e4dd7b222e3ad8f743ebed54a0cb6bc688d464"
+        },
+        "selection.parquet": {
+          "bytes": 422799,
+          "sha256": "29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1"
+        },
+        "signals.npy": {
+          "bytes": 931680128,
+          "sha256": "cde68ae2fa916c9b59657f4031d707142d4538e517a54d0cc32baf122cb34bd3"
+        },
+        "test.parquet": {
+          "bytes": 5225886,
+          "sha256": "74c3d3cba2ae7dc9da8f24ca58d55a21d13b6dba2403acec66efe89448dd18f0"
+        },
+        "train.parquet": {
+          "bytes": 20425989,
+          "sha256": "ef6815eb94b1153c1f66a13f382355af48a5c982d2fb3608f2a2defdcc7eab5b"
+        },
+        "validation.parquet": {
+          "bytes": 5286092,
+          "sha256": "2a7986686787ebc45a2887c388229350258ee552855fedaec0efbe66d9b6e65c"
+        }
+      },
+      "signal": {
+        "dtype": "float32",
+        "fs_hz": 100,
+        "leads": [
+          "I",
+          "II",
+          "III",
+          "AVR",
+          "AVL",
+          "AVF",
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "V5",
+          "V6"
+        ],
+        "normalization": "none; trainer applies per-lead normalization",
+        "shape": [
+          19410,
+          12,
+          1000
+        ],
+        "units": "mV"
+      },
+      "source": {
+        "dataset": "physionet/ecg-qa-cot",
+        "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+        "signals": {
+          "dataset": "physionet/ptb-xl",
+          "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+          "version": "1.0.3"
+        },
+        "version": "1.0.0"
+      },
+      "source_manifest": {
+        "challenge_id": "ecgqa-artifact-50/pool50",
+        "file_sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8",
+        "sha256": "6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4",
+        "spec": {
+          "id": "ecgqa-artifact-50",
+          "pool_fraction": 0.5,
+          "pool_fractions": [
+            0.5,
+            1.0
+          ],
+          "retain": 0.1,
+          "seed": 0,
+          "test_folds": [
+            10
+          ],
+          "train_folds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "val_folds": [
+            9
+          ]
+        }
+      },
+      "preparation": {
+        "evaluation_deduplication": "record_id,question; lowest lexicographic task_id",
+        "selection_algorithm": "balanced-template-noise-patient-round-robin-v1",
+        "selection_answer_blind": true,
+        "selection_seed": 0,
+        "selection_size_requested": 2000,
+        "train_deduplication": "none; preserve every real question/rationale row",
+        "train_role": "pool"
+      },
+      "splits": {
+        "selection": {
+          "noisy_questions": 935,
+          "noisy_records": 328,
+          "patients": 794,
+          "questions": 2000,
+          "records": 850,
+          "task_ids_sha256": "a7db00b89b46846ed722bca28e7efa615f32fb629a6e7b68dc6785fe929aba13",
+          "tasks_sha256": "f249e81f1c938f6536ba6b41facbc13ff89a749786da6b6f84bba097a0dbea6f",
+          "templates": 42
+        },
+        "test": {
+          "noisy_questions": 8036,
+          "noisy_records": 513,
+          "patients": 1873,
+          "questions": 26841,
+          "records": 2154,
+          "task_ids_sha256": "fe837e05c5c3a301517f3ac5d0fe1bc8d8541d8a40955573475c9ff68eb23945",
+          "tasks_sha256": "56a1c0deba264249b3f9a2608b374289590a24e0dde8d45b49d938179d676c2c",
+          "templates": 42
+        },
+        "train": {
+          "noisy_questions": 47455,
+          "noisy_records": 2860,
+          "patients": 5266,
+          "questions": 227231,
+          "records": 15113,
+          "task_ids_sha256": "1f07f0e74f758c86c18b372fdde85f4570c9be87612c1df2c7e76097e3c0644a",
+          "tasks_sha256": "1544d273ea5dd7e1fb09b9b3a0109f443538ea50bbff6eff1112c98ae5353030",
+          "templates": 56
+        },
+        "validation": {
+          "noisy_questions": 8712,
+          "noisy_records": 528,
+          "patients": 1915,
+          "questions": 27264,
+          "records": 2143,
+          "task_ids_sha256": "fc4ab7a34b311c8be12eab082f7e75d604b66e04a0d5547fe5c52dca40d94e8f",
+          "tasks_sha256": "78d75817115727f1d133b5add0c5b67999aafa59e6b05bf76dbdfe7c7edfa226",
+          "templates": 42
+        }
+      },
+      "qa_export": {
+        "added_training_rows": 144402,
+        "baseline_rows_preserved": 82829,
+        "baseline_signal_prefix": 10075,
+        "corpora": [
+          {
+            "corpus_id": "corpus-52daac927b9ea8c6db1a4ae0",
+            "counts": {
+              "empty_options_tasks": 29318,
+              "exported_tasks": 69289,
+              "input_tasks": 71088,
+              "numeric_tasks": 27666
+            },
+            "excluded": {
+              "multiple_ecg_inputs": 1799
+            }
+          },
+          {
+            "corpus_id": "corpus-13e878b64fa1a2dfdebdd6e3",
+            "counts": {
+              "empty_options_tasks": 24377,
+              "exported_tasks": 57604,
+              "input_tasks": 70201,
+              "numeric_tasks": 21820
+            },
+            "excluded": {
+              "incompatible_signal_length": 11264,
+              "multiple_ecg_inputs": 1333
+            }
+          },
+          {
+            "corpus_id": "corpus-390748ae482389f7c78240a2",
+            "counts": {
+              "empty_options_tasks": 9030,
+              "exported_tasks": 17509,
+              "input_tasks": 17509,
+              "numeric_tasks": 9030
+            },
+            "excluded": {}
+          }
+        ],
+        "evaluation_policy": "selection/validation/test copied byte-for-byte; labels not parsed",
+        "identity": {
+          "baseline_manifest_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+          "context_policy": "ecgqa-cot-baseline@1",
+          "corpus_ids": [
+            "corpus-52daac927b9ea8c6db1a4ae0",
+            "corpus-13e878b64fa1a2dfdebdd6e3",
+            "corpus-390748ae482389f7c78240a2"
+          ],
+          "numeric_options_policy": "preserve empty options; unchanged trainer prompt",
+          "signal_policy": "unchanged baseline prefix; append exact 12x1000, 100 Hz, mV signals only",
+          "training_policy": "baseline original rows followed by unique compatible corpus tasks",
+          "version": "syntide.qa-baseline-export@1"
+        },
+        "lineage_check": "all roots and patients exactly match baseline training rows",
+        "synthetic_template_ids": {
+          "acquisition.duration@1": 1000,
+          "acquisition.flat_leads@1": 1001,
+          "artifact.max_noise_lead@1": 1002,
+          "artifact.max_wander_lead@1": 1003,
+          "artifact.wander_in_lead@1": 1004,
+          "compare.attribute@1": 1005,
+          "compose.rate_and_wander@1": 1006,
+          "diagnosis.superclass@1": 1007,
+          "interval.measurement@1": 1008,
+          "quality.noise_annotation@1": 1009,
+          "reason.support_refute@1": 1010,
+          "rhythm.beat_count@1": 1011,
+          "rhythm.heart_rate@1": 1012,
+          "rhythm.rate_band@1": 1013,
+          "rhythm.regularity@1": 1014,
+          "situation.lead_subset@1": 1015,
+          "situation.supplied_rule@1": 1016
+        },
+        "training_slice_metadata": "strat_fold/is_artifact/artifact_types inherited from first root"
+      },
+      "source_questions_dropped": {
+        "ecg_not_a_labelled_ptbxl_record": 2482
+      },
+      "bindings_verified_against_archived_training_config": true
+    },
+    "exposure_matched": {
+      "original_manifest": {
+        "bytes": 9351455,
+        "sha256": "636ecd055c2179b8f03f5b7b1e2de99598cc3865b562709d85c01c75005927f4",
+        "archive": "diffusets",
+        "path": "exposure3030/prepared/manifest.json",
+        "verified_against_collection_inventory": true
+      },
+      "manifest_content_sha256": "533e115899b25e409f332cbe7f9b05046b970ff3ea0f2442e1cab64032ff45ae",
+      "files": {
+        "records.json": {
+          "bytes": 395718,
+          "sha256": "c41a873dd2a7ac0859eea6bdf47825804cf85429c9082fadb055d0cfc444e578"
+        },
+        "selection.parquet": {
+          "bytes": 422799,
+          "sha256": "29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1"
+        },
+        "signals.npy": {
+          "bytes": 629040128,
+          "sha256": "de53af2029c360ddbc4afe0d763e089f6d9c3f1b5572c47780e79c48942dbcb4"
+        },
+        "test.parquet": {
+          "bytes": 5225886,
+          "sha256": "74c3d3cba2ae7dc9da8f24ca58d55a21d13b6dba2403acec66efe89448dd18f0"
+        },
+        "train.parquet": {
+          "bytes": 16194595,
+          "sha256": "00e4eedcd0f2bf7943e37051fb58947dc9344e4c844bcea8d0aa13f02c84aca2"
+        },
+        "validation.parquet": {
+          "bytes": 5286092,
+          "sha256": "2a7986686787ebc45a2887c388229350258ee552855fedaec0efbe66d9b6e65c"
+        }
+      },
+      "signal": {
+        "dtype": "float32",
+        "fs_hz": 100,
+        "leads": [
+          "I",
+          "II",
+          "III",
+          "AVR",
+          "AVL",
+          "AVF",
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "V5",
+          "V6"
+        ],
+        "normalization": "none; trainer applies per-lead normalization",
+        "shape": [
+          13105,
+          12,
+          1000
+        ],
+        "units": "mV"
+      },
+      "source": {
+        "dataset": "physionet/ecg-qa-cot",
+        "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+        "signals": {
+          "dataset": "physionet/ptb-xl",
+          "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+          "version": "1.0.3"
+        },
+        "version": "1.0.0"
+      },
+      "source_manifest": {
+        "challenge_id": "ecgqa-artifact-50/pool50",
+        "file_sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8",
+        "sha256": "6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4",
+        "spec": {
+          "id": "ecgqa-artifact-50",
+          "pool_fraction": 0.5,
+          "pool_fractions": [
+            0.5,
+            1.0
+          ],
+          "retain": 0.1,
+          "seed": 0,
+          "test_folds": [
+            10
+          ],
+          "train_folds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "val_folds": [
+            9
+          ]
+        }
+      },
+      "preparation": {
+        "evaluation_deduplication": "record_id,question; lowest lexicographic task_id",
+        "selection_algorithm": "balanced-template-noise-patient-round-robin-v1",
+        "selection_answer_blind": true,
+        "selection_seed": 0,
+        "selection_size_requested": 2000,
+        "train_deduplication": "none; preserve every real question/rationale row",
+        "train_role": "pool"
+      },
+      "splits": {
+        "selection": {
+          "noisy_questions": 935,
+          "noisy_records": 328,
+          "patients": 794,
+          "questions": 2000,
+          "records": 850,
+          "task_ids_sha256": "a7db00b89b46846ed722bca28e7efa615f32fb629a6e7b68dc6785fe929aba13",
+          "tasks_sha256": "f249e81f1c938f6536ba6b41facbc13ff89a749786da6b6f84bba097a0dbea6f",
+          "templates": 42
+        },
+        "test": {
+          "noisy_questions": 8036,
+          "noisy_records": 513,
+          "patients": 1873,
+          "questions": 26841,
+          "records": 2154,
+          "task_ids_sha256": "fe837e05c5c3a301517f3ac5d0fe1bc8d8541d8a40955573475c9ff68eb23945",
+          "tasks_sha256": "56a1c0deba264249b3f9a2608b374289590a24e0dde8d45b49d938179d676c2c",
+          "templates": 42
+        },
+        "train": {
+          "noisy_questions": 22391,
+          "noisy_records": 1645,
+          "patients": 5266,
+          "questions": 94501,
+          "records": 8808,
+          "task_ids_sha256": "d3b2b885b0bc6dc363aa3125bb5de44bdaf94d3d85d64ff3c1ce87649f4d5ed2",
+          "tasks_sha256": "844de2ac89792f3d8da5134fb5c3950eba22376d0e406c3e96bbac081f5795cf",
+          "templates": 46
+        },
+        "validation": {
+          "noisy_questions": 8712,
+          "noisy_records": 528,
+          "patients": 1915,
+          "questions": 27264,
+          "records": 2143,
+          "task_ids_sha256": "fc4ab7a34b311c8be12eab082f7e75d604b66e04a0d5547fe5c52dca40d94e8f",
+          "tasks_sha256": "78d75817115727f1d133b5add0c5b67999aafa59e6b05bf76dbdfe7c7edfa226",
+          "templates": 42
+        }
+      },
+      "qa_export": {
+        "added_training_rows": 11672,
+        "baseline_rows_preserved": 82829,
+        "baseline_signal_prefix": 10075,
+        "corpora": [
+          {
+            "corpus_id": "corpus-0172ff51a3ea48d72957b917",
+            "counts": {
+              "empty_options_tasks": 6060,
+              "exported_tasks": 11672,
+              "input_tasks": 11672,
+              "numeric_tasks": 6060
+            },
+            "excluded": {}
+          }
+        ],
+        "evaluation_policy": "selection/validation/test copied byte-for-byte; labels not parsed",
+        "identity": {
+          "baseline_manifest_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+          "context_policy": "ecgqa-cot-baseline@1",
+          "corpus_ids": [
+            "corpus-0172ff51a3ea48d72957b917"
+          ],
+          "source_prepared_manifest_sha256": "d0d919378f3aa659ecb872b48a92297c635081b45537d48d5ac159a0ebcc0d6d",
+          "version": "syntide.qa-exposure-subset@1"
+        },
+        "lineage_check": "all generated roots and patients match accepted snapshot and original baseline training rows",
+        "synthetic_template_ids": {
+          "rhythm.beat_count@1": 1011,
+          "rhythm.heart_rate@1": 1012,
+          "rhythm.rate_band@1": 1013,
+          "rhythm.regularity@1": 1014
+        },
+        "training_slice_metadata": "strat_fold/is_artifact/artifact_types inherited from first root"
+      },
+      "source_questions_dropped": {
+        "ecg_not_a_labelled_ptbxl_record": 2482
+      },
+      "bindings_verified_against_archived_training_config": true
+    }
+  }
+}

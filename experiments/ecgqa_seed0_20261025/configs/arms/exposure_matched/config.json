@@ -1,0 +1,140 @@
+{
+  "base_revision": "9b0cfec892e2bc2afd938c98eabe4e4a7b1e0ca1",
+  "baseline_config_sha256": "000374029d4b0ab78c52cb97b587ccd79c2b6145811cf565dfcd4d7271525078",
+  "baseline_trainer_source_sha256": "16bf861ea252e68dd2adc452bab6abfa0d37e29103337c2cab0d94bd3c075128",
+  "batch_size": 8,
+  "checkpoint_policy": "fixed_original_exposure",
+  "data_files": {
+    "records.json": "c41a873dd2a7ac0859eea6bdf47825804cf85429c9082fadb055d0cfc444e578",
+    "selection.parquet": "29d7b99ec0c610054f2bac21a124ca49ebf10d367b497ede300aef481e3835b1",
+    "signals.npy": "de53af2029c360ddbc4afe0d763e089f6d9c3f1b5572c47780e79c48942dbcb4",
+    "train.parquet": "00e4eedcd0f2bf7943e37051fb58947dc9344e4c844bcea8d0aa13f02c84aca2"
+  },
+  "effective_batch_size": 18,
+  "eval_batch_size": 256,
+  "exposure_helper_sha256": "d8d0c3807e292f6c075c74f245fe7ed6adda55e7ac6a636335988e0448662585",
+  "generated_batch_size": 2,
+  "generated_forward_rng": "fork CPU/current CUDA RNG; manual_seed(1000000+step); restore original states",
+  "gpu": "NVIDIA A40",
+  "gradient_accumulation": 2,
+  "gradient_clip": 1.0,
+  "init_sha256": "6c7ef8101d69ea50576bd4b401f88582415e6450e52f8ef0cb10e28b7b9b0791",
+  "learning_rate": 0.0002,
+  "learning_rate_schedule_steps": 15531,
+  "loss_weighting": "existing token-normalized original microbatches weighted 8/18 each; generated microbatch 2/18",
+  "manifest_sha256": "533e115899b25e409f332cbe7f9b05046b970ff3ea0f2442e1cab64032ff45ae",
+  "max_length": 1536,
+  "max_new_tokens": 384,
+  "max_steps": 12000,
+  "metrics_source_sha256": "e71f882ef9a0b2cf71bde6d2aeab0c9bd2d61bd7cd0d86e8bf1b8a606583f8aa",
+  "model": "google/gemma-3-270m",
+  "opentslm_commit": "2968f4b891baab4307f7e9d0043e87677b593a30",
+  "original_effective_batch_size": 16,
+  "packages": {
+    "numpy": "2.2.6",
+    "open-flamingo": "2.0.1",
+    "opentslm": "source@2968f4b891baab4307f7e9d0043e87677b593a30",
+    "pyarrow": "21.0.0",
+    "torch": "2.8.0.dev20250319+cu128",
+    "transformers": "4.53.3"
+  },
+  "precision": "bf16 autocast; frozen base bf16; trainable weights fp32",
+  "primary_generated_draws": 24000,
+  "primary_original_draws": 192000,
+  "prompt_version": "ecgqa-cot-single-joint-media-v1",
+  "python": "3.11.11 (main, Dec  4 2024, 08:55:07) [GCC 11.4.0]",
+  "sampling": "independent NumPy default_rng(0) permutation-and-wrap stream per source",
+  "seed": 0,
+  "selection_limit": 0,
+  "selection_method": "option-nll",
+  "selection_policy": "diagnostic only; never chooses an earlier primary checkpoint",
+  "selection_questions": 2000,
+  "source_manifest": {
+    "baseline_manifest": {
+      "content_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+      "file_sha256": "c77ab178b55a652282fbdfbaf729cc4a1ccb19ec75f67482cf7ee761900fe513"
+    },
+    "builder_sha256": "7ea3cb5af2d95dc94b2ebd1ad894e5b5a0d48f10d4c4813d36fd3ef957ea9e14",
+    "generated": {
+      "count": 11672,
+      "start": 82829,
+      "task_ids_sha256": "24fdae071c3c78f82beb89cf5d67c45671e4647355c8ca4fa85dba2a269b527d"
+    },
+    "generated_rows_before_signal_remap_sha256": "99433dde47b9855be684250140490a0ad1d0bf44f3829e6177955aa70be18c0c",
+    "original": {
+      "count": 82829,
+      "start": 0,
+      "task_ids_sha256": "ceee2844e0830380b0cece4bddcdc65e078dbcd9bf869d5333eb37d4c526a63b"
+    },
+    "original_rows_sha256": "def70839e01e011ba724aea629c49f2feeec50cfc69ebe525d834b0287a5ba6e",
+    "original_train_parquet_sha256": "e150bb0ec1564a8aa7aa7506c62e22b79ad243ea63950c7b8a03756fcd74219a",
+    "policy": "original baseline rows in original order, then existing generated rows in source prepared order; no grounded or acquisition rows",
+    "schema_version": 1,
+    "snapshot_generated_binding": {
+      "accepted_waveform_ids_sha256": "4ad86a75c8c3bfca86e523b13500704d4b248d77f2b6b53018e866b90efb0fae",
+      "accepted_waveforms": 3030,
+      "corpus_id": "corpus-0172ff51a3ea48d72957b917",
+      "corpus_manifest_file_sha256": "372c82f822edad87d161b90ffd0063b9451f2b00cfe124d88d90262ad257de22",
+      "family_counts": {
+        "rhythm.beat_count": 3030,
+        "rhythm.heart_rate": 3030,
+        "rhythm.rate_band": 2582,
+        "rhythm.regularity": 3030
+      },
+      "generation_id": "bb68a35b6430053d2c9d2993a0c5ab45c2f6b775a78c53f773674fd98f1b522e",
+      "ledger_sha256": "901835b5a3f6e29e2602440c09d96e1f000aa08a913487315a6948bb9e878766",
+      "prepared_manifest_content_sha256": "d0d919378f3aa659ecb872b48a92297c635081b45537d48d5ac159a0ebcc0d6d",
+      "prepared_manifest_file_sha256": "355f67dfd7ae2f9a264b14a9a3ee4e9a12f462115233fa86b2d88972048517fc",
+      "prepared_train_parquet_sha256": "259c5765694f5a3e1f825f86d9edc9c66edaed22d64fc54524f6bf2702d0a0b7",
+      "snapshot_inventory_sha256": "1c0dab886b03b854bcfa7b2d0e45aa0d3139186d34ae572c9d1053b5bc2f0619",
+      "snapshot_manifest_file_sha256": "2e670dc7dc793c3adddffba89e73f825d0be46fb19f98f3b5e35cc7bf1c33bfd"
+    },
+    "task_id_hash_encoding": "sha256(json.dumps(ids).encode('utf-8')); Python defaults",
+    "train_task_ids_sha256": "e2b2de4dc09b009fa5d3c57d6ad3e4da38954c410ea1b61ec311b9551aef75d3",
+    "version": "syntide.qa-exposure-subset@1"
+  },
+  "source_manifest_sha256": "e75cb40a70ea9f2a0d65e3bf2b909c4903ce94961cd0c96cf7757c8b2375f800",
+  "token_lengths": {
+    "selection": {
+      "max_prompt_tokens": 842,
+      "sample_questions": 1024,
+      "target_tokens_p50_p90_p99_max": [
+        167.0,
+        203.0,
+        232.76999999999998,
+        261.0
+      ],
+      "total_tokens_p50_p90_p99_max": [
+        763.0,
+        896.0,
+        1057.77,
+        1091.0
+      ],
+      "would_truncate_rationale": 0
+    },
+    "train": {
+      "max_prompt_tokens": 844,
+      "sample_questions": 1024,
+      "target_tokens_p50_p90_p99_max": [
+        170.5,
+        209.0,
+        241.53999999999996,
+        271.0
+      ],
+      "total_tokens_p50_p90_p99_max": [
+        780.0,
+        1019.0,
+        1070.0,
+        1102.0
+      ],
+      "would_truncate_rationale": 0
+    }
+  },
+  "total_parameters": 343788580,
+  "trainable_parameters": 75688484,
+  "trainer_source_sha256": "cac7f8de478cf727e8184dcbf68a387d3729bc66c5bee2b3350bc1a9187abadb",
+  "val_every": 1000,
+  "warmup_fraction": 0.1,
+  "warmup_steps": 1554,
+  "weight_decay": 0.01
+}

@@ -1,0 +1,44 @@
+{
+  "arms": {
+    "grounded_acq_gen": {
+      "prepared": "/workspace/diffusets-study/prepared"
+    }
+  },
+  "baseline": {
+    "checkpoint_sha256": "664dc289c8713eb4b53801dc6d4000a39173abf0a6700ed3d9ca61f92eab9224",
+    "config_sha256": "000374029d4b0ab78c52cb97b587ccd79c2b6145811cf565dfcd4d7271525078",
+    "manifest_sha256": "b47801817e9661919b71ed96049d6fb473c2d63430de69434e657a7fd6c00e8f",
+    "original_study_dir": "/workspace/diffusets-study/reference",
+    "prepared": "/workspace/diffusets-inputs/real_qa",
+    "run_dir": "/workspace/diffusets-study/reference"
+  },
+  "candidate_count": 5000,
+  "candidate_plan_path": "/workspace/diffusets-study/planning/candidate-plan.json",
+  "candidate_plan_sha256": "2bc86083e7a684340bd5a10e8a4ea174671e665e3b1f5903e78a865ec3f009f4",
+  "evaluation_budget": {
+    "deadline_utc": "2026-10-25T11:12:47Z",
+    "final_reserve_seconds": 1800,
+    "initial_rate_basis": "Conservative planning assumption, about three times the observed A100 seconds/question; replace upward with measured extension validation rates.",
+    "safety_factor": 1.25,
+    "seconds_per_pass_overhead": 180,
+    "seconds_per_question": 0.3
+  },
+  "evaluation_policy": "Unchanged selection/validation/test datasets, real and zero-waveform passes, freeze before test, one seed SD null",
+  "extension_intent_sha256": "bda992ac7f8e8009048776f549a13e0951248cf96ef18b2363f3de27ce042e28",
+  "generation_batch_note": "A40 memory accommodation, unchanged greedy decoding and questions; original A100 comparison uses512.",
+  "generation_batch_size": 256,
+  "run_dir": "/workspace/diffusets-study/training",
+  "schema_version": 1,
+  "seeds": [
+    0
+  ],
+  "study_kind": "selection_tuned_diffusets_extension",
+  "training_corpora": {
+    "grounded_acq_gen": [
+      "baseline_original",
+      "grounded",
+      "acquisition",
+      "accepted_generated"
+    ]
+  }
+}

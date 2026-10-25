@@ -1,0 +1,749 @@
+{
+  "schema": "syntide.ecgqa-reproduction-provenance@1",
+  "note": "Byte-exact copies retain original file SHA256. Derived extracts have their own package SHA256 and list distinct original sources. Historic workspace paths, budget limits and dates in archived protocols identify the completed run and are not portable launch defaults. External source paths are identifiers relative to archived study roots, not publicly hosted download links.",
+  "excluded": [
+    "patient reports and demographics",
+    "per-question predictions and rationales",
+    "raw and generated waveforms",
+    "embeddings and full candidate plan",
+    "trained checkpoints",
+    "account, credentials, SSH and provisioning receipts"
+  ],
+  "sources": {
+    "outputs/qa-runs/diffusets-3030-exposure-matched/completed-comparison-20261025/comparison.json": {
+      "bytes": 82698,
+      "sha256": "87cfb612f7f923bd7679032b2e439093e2fb89595e8b56a871f9383626596e00",
+      "path": "outputs/qa-runs/diffusets-3030-exposure-matched/completed-comparison-20261025/comparison.json",
+      "verified_against_collection_inventory": false
+    },
+    "original/real_qa/summary.json": {
+      "bytes": 2050435,
+      "sha256": "1636d47c8fa0cd9f8ba7fb89970a2627f8072ac2414281ef98cc110598aac64c",
+      "archive": "original",
+      "path": "real_qa/summary.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/real_qa/seed0/config.json": {
+      "bytes": 2567,
+      "sha256": "000374029d4b0ab78c52cb97b587ccd79c2b6145811cf565dfcd4d7271525078",
+      "archive": "original",
+      "path": "real_qa/seed0/config.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/real_qa/seed0/train_result.json": {
+      "bytes": 642,
+      "sha256": "c834caec18d7bbe59a48bfe079bdecb7035e33611720d035dfdd34f73769494a",
+      "archive": "original",
+      "path": "real_qa/seed0/train_result.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/real_qa/run_audit.json": {
+      "bytes": 1346,
+      "sha256": "e095c1e1d7d7a61bbfd82655c2ab84b8562824792379cea2780481495f9159ad",
+      "archive": "original",
+      "path": "real_qa/run_audit.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/paraphrase/summary.json": {
+      "bytes": 2048558,
+      "sha256": "ba42f3df2c35c658f68cee6317c64e5196c38c4ba1d5ca041cc20d3000c61fe0",
+      "archive": "original",
+      "path": "paraphrase/summary.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/paraphrase/seed0/config.json": {
+      "bytes": 2580,
+      "sha256": "9f2b936010b69b193fb82ebf4083ed83632d9d848689dda1cacdb052c1a2bd52",
+      "archive": "original",
+      "path": "paraphrase/seed0/config.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/paraphrase/seed0/train_result.json": {
+      "bytes": 644,
+      "sha256": "28b8b6916357efdc3a0e0c86dd04a8555e4f4166204ba09e5d0d8b47d91a5533",
+      "archive": "original",
+      "path": "paraphrase/seed0/train_result.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/paraphrase/run_audit.json": {
+      "bytes": 1371,
+      "sha256": "40498990bb14596907f944e4d21ef8fd294070db28fb1e9bd39f2aa40f8f7177",
+      "archive": "original",
+      "path": "paraphrase/run_audit.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/grounded/summary.json": {
+      "bytes": 2049810,
+      "sha256": "ae4eb0f23f3a2c66e5be6e3fd71a687068a89c06607709a41958a3785cd39028",
+      "archive": "original",
+      "path": "grounded/summary.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/grounded/seed0/config.json": {
+      "bytes": 2591,
+      "sha256": "ebeabe15a3b999cccc3ee4ecbc30356d357a3d5dd05c9a5dad744b4acab29e51",
+      "archive": "original",
+      "path": "grounded/seed0/config.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/grounded/seed0/train_result.json": {
+      "bytes": 642,
+      "sha256": "30f631042cfbf783b2bea3ee05ae4a6d57e85489b4b5cb51a5bfbc55e026b5e9",
+      "archive": "original",
+      "path": "grounded/seed0/train_result.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/grounded/run_audit.json": {
+      "bytes": 1369,
+      "sha256": "c0c6d75147a3887130dbabb300f0643f4a7f2e45f5d380c4950f4e9386e4320a",
+      "archive": "original",
+      "path": "grounded/run_audit.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/grounded_acq/summary.json": {
+      "bytes": 2050974,
+      "sha256": "ce7d086f0ad96ae814ab355ff08466d0f083a897c11ed21b20b8a52081424e44",
+      "archive": "original",
+      "path": "grounded_acq/summary.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/grounded_acq/seed0/config.json": {
+      "bytes": 2577,
+      "sha256": "3f1d7adbfe27e9f9b4c84de19d5ad31a24b80f898f8c03eeb7e08e675e66e3bd",
+      "archive": "original",
+      "path": "grounded_acq/seed0/config.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/grounded_acq/seed0/train_result.json": {
+      "bytes": 643,
+      "sha256": "87312bf128c009add6124768f84e0ff9593c397a67da85a912ce62e2c61a7867",
+      "archive": "original",
+      "path": "grounded_acq/seed0/train_result.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/grounded_acq/run_audit.json": {
+      "bytes": 1410,
+      "sha256": "d6d3184567e09be4ee53b037e8e0124506ba937c20fde1a30571cb373d13de18",
+      "archive": "original",
+      "path": "grounded_acq/run_audit.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/snapshot3030/training/grounded_acq_gen/summary.json": {
+      "bytes": 2049510,
+      "sha256": "d3d633be0d0a9029f65043531142e49af77885e514f07a46e9ae7de08d833c4c",
+      "archive": "diffusets",
+      "path": "snapshot3030/training/grounded_acq_gen/summary.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/snapshot3030/training/grounded_acq_gen/seed0/config.json": {
+      "bytes": 2578,
+      "sha256": "3e2e61559341566792a10ce3c2e9df742376b3e6de74cefed1a3c91d3ab86ab4",
+      "archive": "diffusets",
+      "path": "snapshot3030/training/grounded_acq_gen/seed0/config.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/snapshot3030/training/grounded_acq_gen/seed0/train_result.json": {
+      "bytes": 644,
+      "sha256": "df286e699b79d95ed50736a8984df88359ac7098ef5bcfb72c57bee6ea814401",
+      "archive": "diffusets",
+      "path": "snapshot3030/training/grounded_acq_gen/seed0/train_result.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/snapshot3030/training/grounded_acq_gen/run_audit.json": {
+      "bytes": 1398,
+      "sha256": "de4c48f122cda935c830a2e494f0c8af4298ecded530f16ba8ec242089b31ef3",
+      "archive": "diffusets",
+      "path": "snapshot3030/training/grounded_acq_gen/run_audit.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/training/grounded_acq_gen/summary.json": {
+      "bytes": 2054064,
+      "sha256": "37a005f6a00b0547d42fe79cc59b61eb287d96c16ecce741c8e75d31b1c698d5",
+      "archive": "diffusets",
+      "path": "training/grounded_acq_gen/summary.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/training/grounded_acq_gen/seed0/config.json": {
+      "bytes": 2567,
+      "sha256": "d5e6ea92d780d3ec4c4a7c2b8b785cd9dd02a7acf71b43cff2ec127d82fe4376",
+      "archive": "diffusets",
+      "path": "training/grounded_acq_gen/seed0/config.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/training/grounded_acq_gen/seed0/train_result.json": {
+      "bytes": 642,
+      "sha256": "394d8c823bcc8e341135f581123080cc0661d8e6896fffa832e91f4e3b30357d",
+      "archive": "diffusets",
+      "path": "training/grounded_acq_gen/seed0/train_result.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/training/grounded_acq_gen/run_audit.json": {
+      "bytes": 1399,
+      "sha256": "3f6332ea8a6e9251f979c4686dada0be4eea7ea141c1eefee65cf9f44f5a5360",
+      "archive": "diffusets",
+      "path": "training/grounded_acq_gen/run_audit.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/exposure3030/training/summary.json": {
+      "bytes": 2847309,
+      "sha256": "4294b4bd85d324db3b31da0192e232eef5c4ca5f260e471876c21b4577c0ed20",
+      "archive": "diffusets",
+      "path": "exposure3030/training/summary.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/exposure3030/training/seed0/config.json": {
+      "bytes": 6216,
+      "sha256": "9d7c49dfd469973235bb5121e4e1f553333b437878d5c22a832414b8a82583fc",
+      "archive": "diffusets",
+      "path": "exposure3030/training/seed0/config.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/exposure3030/training/seed0/train_result.json": {
+      "bytes": 3637,
+      "sha256": "0e7610efb7a79a1cf962e82fb3bf3e698bdf6280c758818afd6ad7be5a46415e",
+      "archive": "diffusets",
+      "path": "exposure3030/training/seed0/train_result.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/exposure3030/training/run_audit.json": {
+      "bytes": 923,
+      "sha256": "35d425f7b1a2ce154f4b367411053f086147eaa1d92cd25f0764135f7fb0160a",
+      "archive": "diffusets",
+      "path": "exposure3030/training/run_audit.json",
+      "verified_against_collection_inventory": true
+    },
+    "original/protocol.json": {
+      "bytes": 1152,
+      "sha256": "9062b7c29e649bdff3b7e3c3920b458d978cd3e3eb6543019da92fa4f4f09ed2",
+      "archive": "original",
+      "path": "protocol.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/training/protocol.json": {
+      "bytes": 1871,
+      "sha256": "2f4b0e1afa3a25ae3dd0834a7ceaa1c2f97bf90d292ddf6f97cb4f9fb6473ed3",
+      "archive": "diffusets",
+      "path": "training/protocol.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/snapshot3030/training/protocol.json": {
+      "bytes": 3163,
+      "sha256": "eef0fea26c80ee00cefeaeb10c9cb6324e72c3163ac85c4d9dcde900ccd250c9",
+      "archive": "diffusets",
+      "path": "snapshot3030/training/protocol.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/exposure3030/protocol.json": {
+      "bytes": 5296,
+      "sha256": "1c1fac6f0faf244412122ca8ade51a622c64d115e68d0e445415b84c5180062e",
+      "archive": "diffusets",
+      "path": "exposure3030/protocol.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/exposure3030/prepared/source-manifest.json": {
+      "bytes": 2493,
+      "sha256": "e75cb40a70ea9f2a0d65e3bf2b909c4903ce94961cd0c96cf7757c8b2375f800",
+      "archive": "diffusets",
+      "path": "exposure3030/prepared/source-manifest.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/exposure3030/prepared/builder-audit.json": {
+      "bytes": 813,
+      "sha256": "68ccec533991e8d35c07ca0437cda7571f54556f2dcf4b1b4624bd8b8d089b8d",
+      "archive": "diffusets",
+      "path": "exposure3030/prepared/builder-audit.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/generation/identity.json": {
+      "bytes": 4525,
+      "sha256": "8333a3ad0c2138b64cbd210f0d68957d47bdbd5c13ec71267020b4a8f29f64f2",
+      "archive": "diffusets",
+      "path": "generation/identity.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/generation/measurement-summary.json": {
+      "bytes": 3952,
+      "sha256": "038238e1ef8e066ee90b094cb7e037f8ebade408a8304c878f4197b5f78aab3d",
+      "archive": "diffusets",
+      "path": "generation/measurement-summary.json",
+      "verified_against_collection_inventory": true
+    },
+    "baseline-archive/prepared/manifest.json": {
+      "bytes": 12857,
+      "sha256": "c77ab178b55a652282fbdfbaf729cc4a1ccb19ec75f67482cf7ee761900fe513",
+      "path": "baseline-archive/prepared/manifest.json",
+      "verified_against_collection_inventory": false
+    },
+    "runs/ecgqa-data-paraphrase/manifest.json": {
+      "bytes": 14868,
+      "sha256": "73a51f7bb5dda760c8994e56193aeaee8340a3cf656fd0c8300004ad47c745d0",
+      "path": "runs/ecgqa-data-paraphrase/manifest.json",
+      "verified_against_collection_inventory": false
+    },
+    "runs/ecgqa-data-grounded/manifest.json": {
+      "bytes": 15671,
+      "sha256": "fc861d048b09f7054464e1ba4024a5e6099aa22ad63f0caf4b7b384ab385a195",
+      "path": "runs/ecgqa-data-grounded/manifest.json",
+      "verified_against_collection_inventory": false
+    },
+    "runs/ecgqa-data-grounded_acq/manifest.json": {
+      "bytes": 9314286,
+      "sha256": "92c24581601b01879737b8382d98379628a66d61264768c87b2c52cc4f7815eb",
+      "path": "runs/ecgqa-data-grounded_acq/manifest.json",
+      "verified_against_collection_inventory": false
+    },
+    "diffusets/snapshot3030/prepared/manifest.json": {
+      "bytes": 18659173,
+      "sha256": "355f67dfd7ae2f9a264b14a9a3ee4e9a12f462115233fa86b2d88972048517fc",
+      "archive": "diffusets",
+      "path": "snapshot3030/prepared/manifest.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/prepared/manifest.json": {
+      "bytes": 23168903,
+      "sha256": "e70f729b8e68c0cb7c9484feb396b11e34e5c413cf2a77d7c77bb244474efa4c",
+      "archive": "diffusets",
+      "path": "prepared/manifest.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/exposure3030/prepared/manifest.json": {
+      "bytes": 9351455,
+      "sha256": "636ecd055c2179b8f03f5b7b1e2de99598cc3865b562709d85c01c75005927f4",
+      "archive": "diffusets",
+      "path": "exposure3030/prepared/manifest.json",
+      "verified_against_collection_inventory": true
+    },
+    "outputs/qa/paraphrase/corpus.json": {
+      "bytes": 862033,
+      "sha256": "33733badedf5c6ffc157eb6080ad3763d85860a695a5e81ee4251dc79ef09d2c",
+      "path": "outputs/qa/paraphrase/corpus.json",
+      "verified_against_collection_inventory": false
+    },
+    "outputs/qa/grounded/corpus.json": {
+      "bytes": 861486,
+      "sha256": "b5fa69862edf8e437a660fb3e291fe21361bcb453addc9047b0c2ff0b9d46825",
+      "path": "outputs/qa/grounded/corpus.json",
+      "verified_against_collection_inventory": false
+    },
+    "outputs/qa/acquisition/corpus.json": {
+      "bytes": 1254771,
+      "sha256": "fa931ee40f9afbbd3a79feb321bf3c06a91ebeed68374b666f6ca73c98a76913",
+      "path": "outputs/qa/acquisition/corpus.json",
+      "verified_against_collection_inventory": false
+    },
+    "diffusets/planning/candidate-plan.json": {
+      "bytes": 5090721,
+      "sha256": "2bc86083e7a684340bd5a10e8a4ea174671e665e3b1f5903e78a865ec3f009f4",
+      "archive": "diffusets",
+      "path": "planning/candidate-plan.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/generation/summary.json": {
+      "bytes": 629306,
+      "sha256": "e7dc8e22829eb40d088801bc33093f5a9ceb48d71f5631a1354bcd0e88dd3c38",
+      "archive": "diffusets",
+      "path": "generation/summary.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/conditioning/embedding-index.json": {
+      "bytes": 2525340,
+      "sha256": "4f2ed3dd9763ae04b9b996b42d659800bd8648275b871d8a0581303293520767",
+      "archive": "diffusets",
+      "path": "conditioning/embedding-index.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/snapshot3030/snapshot/snapshot_manifest.json": {
+      "bytes": 5079200,
+      "sha256": "2e670dc7dc793c3adddffba89e73f825d0be46fb19f98f3b5e35cc7bf1c33bfd",
+      "archive": "diffusets",
+      "path": "snapshot3030/snapshot/snapshot_manifest.json",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/setup/baseline-pip-freeze.txt": {
+      "bytes": 4007,
+      "sha256": "8d2f778abef523dc3ef46425e6f826b14455747e394061b76fa7e53deccc0c26",
+      "archive": "diffusets",
+      "path": "setup/baseline-pip-freeze.txt",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/setup/generation-pip-freeze.txt": {
+      "bytes": 3734,
+      "sha256": "123cbc3002579dcfbe7dba595737f136fd1750f125a563f4ea4a5155bfb8c1c2",
+      "archive": "diffusets",
+      "path": "setup/generation-pip-freeze.txt",
+      "verified_against_collection_inventory": true
+    },
+    "diffusets/setup/generation-environment.json": {
+      "bytes": 407,
+      "sha256": "b7c517e6e54bea0df2676f943bfa9e319b8014a120ccbae0119901a35f0d0634",
+      "archive": "diffusets",
+      "path": "setup/generation-environment.json",
+      "verified_against_collection_inventory": true
+    }
+  },
+  "package_files": {
+    "configs/arms/real_qa/config.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/real_qa/seed0/config.json"
+      ],
+      "bytes": 2567,
+      "sha256": "000374029d4b0ab78c52cb97b587ccd79c2b6145811cf565dfcd4d7271525078"
+    },
+    "configs/arms/real_qa/train_result.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/real_qa/seed0/train_result.json"
+      ],
+      "bytes": 642,
+      "sha256": "c834caec18d7bbe59a48bfe079bdecb7035e33611720d035dfdd34f73769494a"
+    },
+    "configs/arms/real_qa/run_audit.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/real_qa/run_audit.json"
+      ],
+      "bytes": 1346,
+      "sha256": "e095c1e1d7d7a61bbfd82655c2ab84b8562824792379cea2780481495f9159ad"
+    },
+    "configs/arms/paraphrase/config.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/paraphrase/seed0/config.json"
+      ],
+      "bytes": 2580,
+      "sha256": "9f2b936010b69b193fb82ebf4083ed83632d9d848689dda1cacdb052c1a2bd52"
+    },
+    "configs/arms/paraphrase/train_result.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/paraphrase/seed0/train_result.json"
+      ],
+      "bytes": 644,
+      "sha256": "28b8b6916357efdc3a0e0c86dd04a8555e4f4166204ba09e5d0d8b47d91a5533"
+    },
+    "configs/arms/paraphrase/run_audit.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/paraphrase/run_audit.json"
+      ],
+      "bytes": 1371,
+      "sha256": "40498990bb14596907f944e4d21ef8fd294070db28fb1e9bd39f2aa40f8f7177"
+    },
+    "configs/arms/grounded/config.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/grounded/seed0/config.json"
+      ],
+      "bytes": 2591,
+      "sha256": "ebeabe15a3b999cccc3ee4ecbc30356d357a3d5dd05c9a5dad744b4acab29e51"
+    },
+    "configs/arms/grounded/train_result.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/grounded/seed0/train_result.json"
+      ],
+      "bytes": 642,
+      "sha256": "30f631042cfbf783b2bea3ee05ae4a6d57e85489b4b5cb51a5bfbc55e026b5e9"
+    },
+    "configs/arms/grounded/run_audit.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/grounded/run_audit.json"
+      ],
+      "bytes": 1369,
+      "sha256": "c0c6d75147a3887130dbabb300f0643f4a7f2e45f5d380c4950f4e9386e4320a"
+    },
+    "configs/arms/grounded_acq/config.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/grounded_acq/seed0/config.json"
+      ],
+      "bytes": 2577,
+      "sha256": "3f1d7adbfe27e9f9b4c84de19d5ad31a24b80f898f8c03eeb7e08e675e66e3bd"
+    },
+    "configs/arms/grounded_acq/train_result.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/grounded_acq/seed0/train_result.json"
+      ],
+      "bytes": 643,
+      "sha256": "87312bf128c009add6124768f84e0ff9593c397a67da85a912ce62e2c61a7867"
+    },
+    "configs/arms/grounded_acq/run_audit.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/grounded_acq/run_audit.json"
+      ],
+      "bytes": 1410,
+      "sha256": "d6d3184567e09be4ee53b037e8e0124506ba937c20fde1a30571cb373d13de18"
+    },
+    "configs/arms/diffusets3030_stack/config.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/snapshot3030/training/grounded_acq_gen/seed0/config.json"
+      ],
+      "bytes": 2578,
+      "sha256": "3e2e61559341566792a10ce3c2e9df742376b3e6de74cefed1a3c91d3ab86ab4"
+    },
+    "configs/arms/diffusets3030_stack/train_result.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/snapshot3030/training/grounded_acq_gen/seed0/train_result.json"
+      ],
+      "bytes": 644,
+      "sha256": "df286e699b79d95ed50736a8984df88359ac7098ef5bcfb72c57bee6ea814401"
+    },
+    "configs/arms/diffusets3030_stack/run_audit.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/snapshot3030/training/grounded_acq_gen/run_audit.json"
+      ],
+      "bytes": 1398,
+      "sha256": "de4c48f122cda935c830a2e494f0c8af4298ecded530f16ba8ec242089b31ef3"
+    },
+    "configs/arms/diffusets_full_stack/config.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/training/grounded_acq_gen/seed0/config.json"
+      ],
+      "bytes": 2567,
+      "sha256": "d5e6ea92d780d3ec4c4a7c2b8b785cd9dd02a7acf71b43cff2ec127d82fe4376"
+    },
+    "configs/arms/diffusets_full_stack/train_result.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/training/grounded_acq_gen/seed0/train_result.json"
+      ],
+      "bytes": 642,
+      "sha256": "394d8c823bcc8e341135f581123080cc0661d8e6896fffa832e91f4e3b30357d"
+    },
+    "configs/arms/diffusets_full_stack/run_audit.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/training/grounded_acq_gen/run_audit.json"
+      ],
+      "bytes": 1399,
+      "sha256": "3f6332ea8a6e9251f979c4686dada0be4eea7ea141c1eefee65cf9f44f5a5360"
+    },
+    "configs/arms/exposure_matched/config.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/exposure3030/training/seed0/config.json"
+      ],
+      "bytes": 6216,
+      "sha256": "9d7c49dfd469973235bb5121e4e1f553333b437878d5c22a832414b8a82583fc"
+    },
+    "configs/arms/exposure_matched/train_result.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/exposure3030/training/seed0/train_result.json"
+      ],
+      "bytes": 3637,
+      "sha256": "0e7610efb7a79a1cf962e82fb3bf3e698bdf6280c758818afd6ad7be5a46415e"
+    },
+    "configs/arms/exposure_matched/run_audit.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/exposure3030/training/run_audit.json"
+      ],
+      "bytes": 923,
+      "sha256": "35d425f7b1a2ce154f4b367411053f086147eaa1d92cd25f0764135f7fb0160a"
+    },
+    "evidence/results.json": {
+      "kind": "derived_extract",
+      "sources": [
+        "outputs/qa-runs/diffusets-3030-exposure-matched/completed-comparison-20261025/comparison.json",
+        "original/real_qa/summary.json",
+        "original/paraphrase/summary.json",
+        "original/grounded/summary.json",
+        "original/grounded_acq/summary.json",
+        "diffusets/snapshot3030/training/grounded_acq_gen/summary.json",
+        "diffusets/training/grounded_acq_gen/summary.json",
+        "diffusets/exposure3030/training/summary.json"
+      ],
+      "bytes": 63648,
+      "sha256": "765da73f1c58f1a12df68c84877f246e4df43cc45c98cb749c5aaa145352c79b"
+    },
+    "configs/protocols/original_four_arms.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "original/protocol.json"
+      ],
+      "bytes": 1152,
+      "sha256": "9062b7c29e649bdff3b7e3c3920b458d978cd3e3eb6543019da92fa4f4f09ed2"
+    },
+    "configs/protocols/diffusets_full_stack.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/training/protocol.json"
+      ],
+      "bytes": 1871,
+      "sha256": "2f4b0e1afa3a25ae3dd0834a7ceaa1c2f97bf90d292ddf6f97cb4f9fb6473ed3"
+    },
+    "configs/protocols/diffusets3030_stack.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/snapshot3030/training/protocol.json"
+      ],
+      "bytes": 3163,
+      "sha256": "eef0fea26c80ee00cefeaeb10c9cb6324e72c3163ac85c4d9dcde900ccd250c9"
+    },
+    "configs/protocols/exposure_matched.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/exposure3030/protocol.json"
+      ],
+      "bytes": 5296,
+      "sha256": "1c1fac6f0faf244412122ca8ade51a622c64d115e68d0e445415b84c5180062e"
+    },
+    "inputs/exposure3030/source-manifest.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/exposure3030/prepared/source-manifest.json"
+      ],
+      "bytes": 2493,
+      "sha256": "e75cb40a70ea9f2a0d65e3bf2b909c4903ce94961cd0c96cf7757c8b2375f800"
+    },
+    "inputs/exposure3030/builder-audit.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/exposure3030/prepared/builder-audit.json"
+      ],
+      "bytes": 813,
+      "sha256": "68ccec533991e8d35c07ca0437cda7571f54556f2dcf4b1b4624bd8b8d089b8d"
+    },
+    "configs/diffusets-generation-identity.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/generation/identity.json"
+      ],
+      "bytes": 4525,
+      "sha256": "8333a3ad0c2138b64cbd210f0d68957d47bdbd5c13ec71267020b4a8f29f64f2"
+    },
+    "evidence/diffusets-measurement-summary.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/generation/measurement-summary.json"
+      ],
+      "bytes": 3952,
+      "sha256": "038238e1ef8e066ee90b094cb7e037f8ebade408a8304c878f4197b5f78aab3d"
+    },
+    "inputs/prepared-datasets.json": {
+      "kind": "derived_extract",
+      "sources": [
+        "baseline-archive/prepared/manifest.json",
+        "runs/ecgqa-data-paraphrase/manifest.json",
+        "runs/ecgqa-data-grounded/manifest.json",
+        "runs/ecgqa-data-grounded_acq/manifest.json",
+        "diffusets/snapshot3030/prepared/manifest.json",
+        "diffusets/prepared/manifest.json",
+        "diffusets/exposure3030/prepared/manifest.json"
+      ],
+      "bytes": 50991,
+      "sha256": "0102c45bb28f3067c3b66c379709b93f1252d253be2768b55558fc3a44540eec"
+    },
+    "configs/corpora/paraphrase.json": {
+      "kind": "derived_extract",
+      "sources": [
+        "outputs/qa/paraphrase/corpus.json"
+      ],
+      "bytes": 3462,
+      "sha256": "dba15661859678009008da3b39665263a33e31cad411ab4c96702e808dbdb9c8"
+    },
+    "configs/corpora/grounded.json": {
+      "kind": "derived_extract",
+      "sources": [
+        "outputs/qa/grounded/corpus.json"
+      ],
+      "bytes": 3429,
+      "sha256": "6aea283c359021496047686135f712477d4a335b352ac8ba15dd0a96fc960efd"
+    },
+    "configs/corpora/acquisition.json": {
+      "kind": "derived_extract",
+      "sources": [
+        "outputs/qa/acquisition/corpus.json"
+      ],
+      "bytes": 3434,
+      "sha256": "a3cc2c1cdc67d52a46f103bd3735e843492d23279cc5121b165655083f750c5d"
+    },
+    "inputs/qa-corpora.json": {
+      "kind": "derived_extract",
+      "sources": [
+        "outputs/qa/paraphrase/corpus.json",
+        "outputs/qa/grounded/corpus.json",
+        "outputs/qa/acquisition/corpus.json"
+      ],
+      "bytes": 30513,
+      "sha256": "de6765353e5e77b5d674180bfef303b1a4879bbab2f21b93e027aa9bc41731bf"
+    },
+    "inputs/candidate-slots.csv": {
+      "kind": "derived_extract",
+      "sources": [
+        "diffusets/planning/candidate-plan.json",
+        "diffusets/generation/summary.json"
+      ],
+      "bytes": 479797,
+      "sha256": "42be8c4d5df37819f11cf10351825403e5fd1a7076440ca0d2e09e05dcdf325d"
+    },
+    "inputs/diffusets-inputs.json": {
+      "kind": "derived_extract",
+      "sources": [
+        "diffusets/planning/candidate-plan.json",
+        "diffusets/generation/summary.json"
+      ],
+      "bytes": 4631,
+      "sha256": "bc5a756fa1e0718e12f7e300fe93ec6b71a0765c2ce41022ea05cef7a73f47de"
+    },
+    "configs/runtime/baseline-pip-freeze.txt": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/setup/baseline-pip-freeze.txt"
+      ],
+      "bytes": 4007,
+      "sha256": "8d2f778abef523dc3ef46425e6f826b14455747e394061b76fa7e53deccc0c26"
+    },
+    "configs/runtime/generation-pip-freeze.txt": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/setup/generation-pip-freeze.txt"
+      ],
+      "bytes": 3734,
+      "sha256": "123cbc3002579dcfbe7dba595737f136fd1750f125a563f4ea4a5155bfb8c1c2"
+    },
+    "configs/runtime/generation-environment.json": {
+      "kind": "byte_exact_source_copy",
+      "sources": [
+        "diffusets/setup/generation-environment.json"
+      ],
+      "bytes": 407,
+      "sha256": "b7c517e6e54bea0df2676f943bfa9e319b8014a120ccbae0119901a35f0d0634"
+    },
+    "configs/runtime/training-environment.json": {
+      "kind": "derived_extract",
+      "sources": [
+        "original/real_qa/seed0/config.json"
+      ],
+      "bytes": 1467,
+      "sha256": "5b3cc211b7fca0dd42050a3454ef4e82d61b1c6783eb21e55aebc39326866d68"
+    },
+    "inputs/checkpoint-artifacts.json": {
+      "kind": "derived_extract",
+      "sources": [],
+      "bytes": 3298,
+      "sha256": "cc2dd7d5b874f92295bc0a1cde5e3274f289746957351d0542e00c25b7cf45f6"
+    },
+    "evidence/results.schema.json": {
+      "kind": "schema",
+      "sources": [],
+      "bytes": 2218,
+      "sha256": "869e39e491295f90fc61d86252022340b4b3181c9fc4eee28c042954f4226492"
+    },
+    "evidence/collection-inventory-extracts.json": {
+      "kind": "derived_extract",
+      "sources": [],
+      "bytes": 10798,
+      "sha256": "6f82f56a39db271b1a398ade967726f378eb8bc47488e5e976140f79ec0c9530"
+    }
+  }
+}

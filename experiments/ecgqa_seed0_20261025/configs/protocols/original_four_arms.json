@@ -1,0 +1,47 @@
+{
+  "arms": {
+    "grounded": {
+      "prepared": "/workspace/qa-data/grounded",
+      "training": "seed0"
+    },
+    "grounded_acq": {
+      "prepared": "/workspace/qa-data/grounded_acq",
+      "training": "seed0"
+    },
+    "paraphrase": {
+      "prepared": "/workspace/qa-data/paraphrase",
+      "training": "seed0"
+    },
+    "real_qa": {
+      "prepared": "/workspace/qa-data/real_qa",
+      "training": "existing_baseline"
+    }
+  },
+  "evaluation_policy": "fixed original baseline selection/validation/test; no synthetic test substitution; all checkpoints frozen before any test scoring",
+  "excluded_inputs": [
+    "multiple_ecg_inputs",
+    "incompatible_signal_length"
+  ],
+  "generation_batch_size": 512,
+  "model_policy": "unchanged archived baseline trainer and pinned environment; seed 0",
+  "run_dir": "/workspace/qa-study",
+  "schema_version": 1,
+  "seeds": [
+    0
+  ],
+  "training_corpora": {
+    "grounded": [
+      "baseline_original",
+      "grounded"
+    ],
+    "grounded_acq": [
+      "baseline_original",
+      "grounded",
+      "acquisition"
+    ],
+    "paraphrase": [
+      "baseline_original",
+      "paraphrase"
+    ]
+  }
+}

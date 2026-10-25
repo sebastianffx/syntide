@@ -1,0 +1,96 @@
+{
+  "schema": "syntide.ecgqa-external-checkpoints@1",
+  "note": "Checkpoint files are excluded from Git. Sizes and SHA256 values are copied from the verified collection inventory. Original six arms evaluate best.pt; exposure_matched evaluates fixed-update primary.pt.",
+  "arms": {
+    "real_qa": {
+      "archive": "original",
+      "primary_evaluated_filename": "best.pt",
+      "files": {
+        "real_qa/seed0/best.pt": {
+          "bytes": 302833885,
+          "sha256": "664dc289c8713eb4b53801dc6d4000a39173abf0a6700ed3d9ca61f92eab9224"
+        }
+      }
+    },
+    "paraphrase": {
+      "archive": "original",
+      "primary_evaluated_filename": "best.pt",
+      "files": {
+        "paraphrase/seed0/best.pt": {
+          "bytes": 302833885,
+          "sha256": "004679931dda7f2f612b809eea9a6399bc1b070c9c0bd97ef8b0e209b2d15222"
+        },
+        "paraphrase/seed0/final.pt": {
+          "bytes": 302834163,
+          "sha256": "afd198dbada3cc1e29815ca6968f26e66b8d1c7cb69f1e9df405f2d42101e2a9"
+        }
+      }
+    },
+    "grounded": {
+      "archive": "original",
+      "primary_evaluated_filename": "best.pt",
+      "files": {
+        "grounded/seed0/best.pt": {
+          "bytes": 302833885,
+          "sha256": "63ccdab993178277936ac175f558c125f2e58bf427c29877b172ec2de4f3d84c"
+        },
+        "grounded/seed0/final.pt": {
+          "bytes": 302834163,
+          "sha256": "afd39a9e5dccffd6aa6f820d12236d1cff74a75958101b3a247f350c7c3cb2a1"
+        }
+      }
+    },
+    "grounded_acq": {
+      "archive": "original",
+      "primary_evaluated_filename": "best.pt",
+      "files": {
+        "grounded_acq/seed0/best.pt": {
+          "bytes": 302833885,
+          "sha256": "1d9fd9d2f6609450e4c8a7c57b5ed8e1e8bf94071cd6ec7d1ade684c493787e9"
+        },
+        "grounded_acq/seed0/final.pt": {
+          "bytes": 302834163,
+          "sha256": "a4e0e243258af76fb9054b5afb8663a9fc7be18dfbdb0ff7a4480e208bc57053"
+        }
+      }
+    },
+    "diffusets3030_stack": {
+      "archive": "diffusets",
+      "primary_evaluated_filename": "best.pt",
+      "files": {
+        "snapshot3030/training/grounded_acq_gen/seed0/best.pt": {
+          "bytes": 302833885,
+          "sha256": "8c62f5373b52680b5852ba004845e47d43ffc4b904b2e3d7541feffecf6cb7c4"
+        },
+        "snapshot3030/training/grounded_acq_gen/seed0/final.pt": {
+          "bytes": 302834163,
+          "sha256": "269c652fa17c3a7f3b082262a60f548b190539a7d721803bfb4c5b27bca0a673"
+        }
+      }
+    },
+    "diffusets_full_stack": {
+      "archive": "diffusets",
+      "primary_evaluated_filename": "best.pt",
+      "files": {
+        "training/grounded_acq_gen/seed0/best.pt": {
+          "bytes": 302833885,
+          "sha256": "c1b86485d0d0018a8fde37e0d79af71184f0dd8725df1e92f6c9a017cd8b15f2"
+        },
+        "training/grounded_acq_gen/seed0/final.pt": {
+          "bytes": 302834163,
+          "sha256": "4f4daf921d506b7d8af4a995246a22d569c982bee77583f9705b686ad03d92df"
+        }
+      }
+    },
+    "exposure_matched": {
+      "archive": "diffusets",
+      "primary_evaluated_filename": "primary.pt",
+      "files": {
+        "exposure3030/training/seed0/primary.pt": {
+          "bytes": 302853087,
+          "sha256": "eb86770299cc1f91332a1aecfd5c4cef4eaa4eb86336293b2b2fdbc377a1da32"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "baseline_config_sha256": "000374029d4b0ab78c52cb97b587ccd79c2b6145811cf565dfcd4d7271525078",
+  "checkpoint_policy": "fixed_original_exposure",
+  "draw_order_verified": true,
+  "generated_draws": 24000,
+  "intentional_differences": [
+    "Add only 11,672 frozen DiffuSETS QA rows to original 82,829 baseline rows; exclude grounded and acquisition corpora.",
+    "16 original plus2 generated examples per optimizer update; effective batch18 instead of16. Existing token-normalized microbatch losses weighted8/18,8/18,2/18.",
+    "Stop at fixed original update12000, matching baseline selected192000 original draws; LR horizon15531 and warmup1554 retained. Option-NLL selection is diagnostic only.",
+    "A40 hardware and generated-evaluation batch256; four original comparators are reused from saved results."
+  ],
+  "original_draws": 192000,
+  "primary_step": 12000,
+  "status": "passed",
+  "truncated_rationales": 0
+}

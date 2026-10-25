@@ -1,0 +1,18 @@
+{
+  "best_before_80_percent": true,
+  "best_checkpoint_sha256": "1d9fd9d2f6609450e4c8a7c57b5ed8e1e8bf94071cd6ec7d1ade684c493787e9",
+  "best_selection_accuracy": 0.4695,
+  "best_step": 12000,
+  "distinct_seen_training_questions": 209722,
+  "distinct_truncated_rationales": 0,
+  "manifest_sha256": "6e48bb03e80bc89e7df70dc7b3524fc6e53bc1d7fedbbd941cb2cef882387f43",
+  "max_steps": 15531,
+  "mean_step_seconds": 0.5609042022527984,
+  "peak_memory_gb": 32.169537024,
+  "seed": 0,
+  "selection_seconds": 2379.093477671966,
+  "smoke_only": false,
+  "status": "trained",
+  "training_seconds": 8711.40316518821,
+  "wall_seconds": 11181.079499715997
+}

@@ -1,0 +1,1234 @@
+{
+  "archives": {
+    "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz": {
+      "bytes": 546572,
+      "sha256": "e95882aac0bc725868f83b8ed54963047b5f961f084875cb2de25a1840b946cb"
+    },
+    "outputs/qa-runs/qa-export-and-orchestration-source.tar.gz": {
+      "bytes": 218012,
+      "sha256": "2e0a0c03c20a975ff8120bf5dfafc003cd5c673d57ef68954b3e630b9a2ab7b9"
+    },
+    "outputs/qa-runs/study/runtime-source.tar.gz": {
+      "bytes": 195762,
+      "sha256": "6055bfbbfab7e585f25140edc0845f5cffdfa262571206c4b1645e30fcd8c1ac"
+    }
+  },
+  "files": [
+    {
+      "bytes": 5014,
+      "destination": "baseline_runtime/manifests/ecgqa-artifact-50/counts.json",
+      "sha256": "fa12c25eccbf5ea78177caf83564a438f5cf2e6e156dd4906680ee3bc015bee9",
+      "source_path": "outputs/qa-runs/runtime/manifests/ecgqa-artifact-50/counts.json",
+      "source_sha256": "fa12c25eccbf5ea78177caf83564a438f5cf2e6e156dd4906680ee3bc015bee9"
+    },
+    {
+      "bytes": 460056,
+      "destination": "baseline_runtime/manifests/ecgqa-artifact-50/pool50.json",
+      "sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8",
+      "source_path": "outputs/qa-runs/runtime/manifests/ecgqa-artifact-50/pool50.json",
+      "source_sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8"
+    },
+    {
+      "bytes": 4007,
+      "destination": "baseline_runtime/runtime-pip-freeze.txt",
+      "sha256": "8d2f778abef523dc3ef46425e6f826b14455747e394061b76fa7e53deccc0c26",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/setup/baseline-pip-freeze.txt",
+      "source_sha256": "8d2f778abef523dc3ef46425e6f826b14455747e394061b76fa7e53deccc0c26"
+    },
+    {
+      "bytes": 462,
+      "destination": "baseline_runtime/scripts/runpod/requirements.txt",
+      "sha256": "4420c32f3c2a701cc5fd8f983027f814952d09e353f4f04a08c6b7b902efbb11",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "scripts/runpod/requirements.txt",
+      "source_sha256": "4420c32f3c2a701cc5fd8f983027f814952d09e353f4f04a08c6b7b902efbb11"
+    },
+    {
+      "bytes": 17147,
+      "destination": "baseline_runtime/scripts/runpod/run_baseline.py",
+      "sha256": "32ce7d567f4ec0ba52a4f21ac70945cce826bcce21337a1356816b6f39a4b8f3",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "scripts/runpod/run_baseline.py",
+      "source_sha256": "32ce7d567f4ec0ba52a4f21ac70945cce826bcce21337a1356816b6f39a4b8f3"
+    },
+    {
+      "bytes": 79,
+      "destination": "baseline_runtime/src/syntide/__init__.py",
+      "sha256": "d0694dca6e4c5064cbd2d41e84c546dcf8becfd43f9ef0688dddbb5660fa8100",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/__init__.py",
+      "source_sha256": "d0694dca6e4c5064cbd2d41e84c546dcf8becfd43f9ef0688dddbb5660fa8100"
+    },
+    {
+      "bytes": 172,
+      "destination": "baseline_runtime/src/syntide/baseline/__init__.py",
+      "sha256": "73974a61c1f2379b9436396ed437161d35eae53322e0f914f5dfed0dd9fc4bd5",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/baseline/__init__.py",
+      "source_sha256": "73974a61c1f2379b9436396ed437161d35eae53322e0f914f5dfed0dd9fc4bd5"
+    },
+    {
+      "bytes": 17567,
+      "destination": "baseline_runtime/src/syntide/baseline/data.py",
+      "sha256": "22cc1afd1fb80b02d2b9d8726faa065a58d2b522a4aa2fe2f95636c3433c96aa",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/baseline/data.py",
+      "source_sha256": "22cc1afd1fb80b02d2b9d8726faa065a58d2b522a4aa2fe2f95636c3433c96aa"
+    },
+    {
+      "bytes": 10174,
+      "destination": "baseline_runtime/src/syntide/baseline/metrics.py",
+      "sha256": "e71f882ef9a0b2cf71bde6d2aeab0c9bd2d61bd7cd0d86e8bf1b8a606583f8aa",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/baseline/metrics.py",
+      "source_sha256": "e71f882ef9a0b2cf71bde6d2aeab0c9bd2d61bd7cd0d86e8bf1b8a606583f8aa"
+    },
+    {
+      "bytes": 21333,
+      "destination": "baseline_runtime/src/syntide/baseline/report.py",
+      "sha256": "8b24a84c8e0ac5686eb64970803b9c2768cd3f2f067b6df926e9e401b560c1c7",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/baseline/report.py",
+      "source_sha256": "8b24a84c8e0ac5686eb64970803b9c2768cd3f2f067b6df926e9e401b560c1c7"
+    },
+    {
+      "bytes": 137,
+      "destination": "baseline_runtime/src/syntide/data/__init__.py",
+      "sha256": "de093c5552cb547f2b59c15a09d1129305fd24f6ea9a687d354645e18cb75af3",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/__init__.py",
+      "source_sha256": "de093c5552cb547f2b59c15a09d1129305fd24f6ea9a687d354645e18cb75af3"
+    },
+    {
+      "bytes": 2350,
+      "destination": "baseline_runtime/src/syntide/data/__main__.py",
+      "sha256": "f6d742ad9ec34f8c08259cf5841afaa0645417163979067313fdf381a102d13b",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/__main__.py",
+      "source_sha256": "f6d742ad9ec34f8c08259cf5841afaa0645417163979067313fdf381a102d13b"
+    },
+    {
+      "bytes": 6185,
+      "destination": "baseline_runtime/src/syntide/data/adapter.py",
+      "sha256": "04b76c523c7ecdcc2914dff78bd8e73d1e1e1e391098c231bf36746b37d1aec6",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/adapter.py",
+      "source_sha256": "04b76c523c7ecdcc2914dff78bd8e73d1e1e1e391098c231bf36746b37d1aec6"
+    },
+    {
+      "bytes": 6500,
+      "destination": "baseline_runtime/src/syntide/data/challenge.py",
+      "sha256": "da9c6abd4a3be80ca77ec69190cfe089bdfc03d52f996c9141fb37113d3b9680",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/challenge.py",
+      "source_sha256": "da9c6abd4a3be80ca77ec69190cfe089bdfc03d52f996c9141fb37113d3b9680"
+    },
+    {
+      "bytes": 94,
+      "destination": "baseline_runtime/src/syntide/data/ecgqa/__init__.py",
+      "sha256": "a23dd935f5ddb01e3600485113e75f2e7e56cca53a088398f703f2e3917a516b",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/ecgqa/__init__.py",
+      "source_sha256": "a23dd935f5ddb01e3600485113e75f2e7e56cca53a088398f703f2e3917a516b"
+    },
+    {
+      "bytes": 6549,
+      "destination": "baseline_runtime/src/syntide/data/ecgqa/__main__.py",
+      "sha256": "d26616de93bcec6b33e49ad6d9aaa5f6c462ea9e422a8aa602c2a2a7888f7622",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/ecgqa/__main__.py",
+      "source_sha256": "d26616de93bcec6b33e49ad6d9aaa5f6c462ea9e422a8aa602c2a2a7888f7622"
+    },
+    {
+      "bytes": 7818,
+      "destination": "baseline_runtime/src/syntide/data/ecgqa/adapter.py",
+      "sha256": "995306f1e633e55f73dda6e3b27d8335a2e0fa4aa3b1abb311c26220a05bc09a",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/ecgqa/adapter.py",
+      "source_sha256": "995306f1e633e55f73dda6e3b27d8335a2e0fa4aa3b1abb311c26220a05bc09a"
+    },
+    {
+      "bytes": 2264,
+      "destination": "baseline_runtime/src/syntide/data/ecgqa/connector.py",
+      "sha256": "554883a0109256b7bbdf47a350aabb1476e424ddc81a39bf5113b165971f6586",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/ecgqa/connector.py",
+      "source_sha256": "554883a0109256b7bbdf47a350aabb1476e424ddc81a39bf5113b165971f6586"
+    },
+    {
+      "bytes": 2596,
+      "destination": "baseline_runtime/src/syntide/data/ecgqa/signals.py",
+      "sha256": "2ab99b206da194f559e1cd85ef41e760b50a595e43c439b07373b9fa208a7379",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/ecgqa/signals.py",
+      "source_sha256": "2ab99b206da194f559e1cd85ef41e760b50a595e43c439b07373b9fa208a7379"
+    },
+    {
+      "bytes": 7070,
+      "destination": "baseline_runtime/src/syntide/data/leakage.py",
+      "sha256": "1bdc9b4279f93fc1bdf9f0a2a4e0d2d5f42a7e28762f030b97dbf505f388d398",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/leakage.py",
+      "source_sha256": "1bdc9b4279f93fc1bdf9f0a2a4e0d2d5f42a7e28762f030b97dbf505f388d398"
+    },
+    {
+      "bytes": 217,
+      "destination": "baseline_runtime/src/syntide/data/ptbxl/__init__.py",
+      "sha256": "8f1c5f264f0ea3ed4984ad7f69b882085c67c94ff204172c23c75404a5ddcd1b",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/ptbxl/__init__.py",
+      "source_sha256": "8f1c5f264f0ea3ed4984ad7f69b882085c67c94ff204172c23c75404a5ddcd1b"
+    },
+    {
+      "bytes": 5901,
+      "destination": "baseline_runtime/src/syntide/data/ptbxl/connector.py",
+      "sha256": "a04dccf039ed869b6b8663e8b8b3e94c9b6e68b89919a7b37a306643eb5025b1",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/ptbxl/connector.py",
+      "source_sha256": "a04dccf039ed869b6b8663e8b8b3e94c9b6e68b89919a7b37a306643eb5025b1"
+    },
+    {
+      "bytes": 2044,
+      "destination": "baseline_runtime/src/syntide/data/schema.py",
+      "sha256": "42cf8fc7eca49c758ca97f25cb19634765bedb1e70294e191f1de8611cf23644",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/data/schema.py",
+      "source_sha256": "42cf8fc7eca49c758ca97f25cb19634765bedb1e70294e191f1de8611cf23644"
+    },
+    {
+      "bytes": 95,
+      "destination": "baseline_runtime/src/syntide/eval/__init__.py",
+      "sha256": "08680db4addf8190a9afd1d3959da41861c3c8a713503ab77a6bbc6609f600cc",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/__init__.py",
+      "source_sha256": "08680db4addf8190a9afd1d3959da41861c3c8a713503ab77a6bbc6609f600cc"
+    },
+    {
+      "bytes": 4693,
+      "destination": "baseline_runtime/src/syntide/eval/__main__.py",
+      "sha256": "e4a140baed260d9b46f534c23ce93969adf56b4c25ee6fd7434d712b8320b486",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/__main__.py",
+      "source_sha256": "e4a140baed260d9b46f534c23ce93969adf56b4c25ee6fd7434d712b8320b486"
+    },
+    {
+      "bytes": 15427,
+      "destination": "baseline_runtime/src/syntide/eval/analysis.py",
+      "sha256": "97d78007e2c541233796b85d9bc5d4ad29e559d544795caaf9feca70c1b2da6e",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/analysis.py",
+      "source_sha256": "97d78007e2c541233796b85d9bc5d4ad29e559d544795caaf9feca70c1b2da6e"
+    },
+    {
+      "bytes": 15176,
+      "destination": "baseline_runtime/src/syntide/eval/arms_figure.py",
+      "sha256": "aa91d255639b7e482383e6c05af7b6d332637a8551f9ceb8510813b56bb8b5aa",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/arms_figure.py",
+      "source_sha256": "aa91d255639b7e482383e6c05af7b6d332637a8551f9ceb8510813b56bb8b5aa"
+    },
+    {
+      "bytes": 12272,
+      "destination": "baseline_runtime/src/syntide/eval/audit.py",
+      "sha256": "532e169ea2a79e8db8b43db2e4cbc3b9a14759fef7ecd00f1334052435cb4d90",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/audit.py",
+      "source_sha256": "532e169ea2a79e8db8b43db2e4cbc3b9a14759fef7ecd00f1334052435cb4d90"
+    },
+    {
+      "bytes": 14003,
+      "destination": "baseline_runtime/src/syntide/eval/contrasts.py",
+      "sha256": "25710cc6fd3e325a02a3b8c56006fc2bba80bf8c8388f10c969cbbc032586fb8",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/contrasts.py",
+      "source_sha256": "25710cc6fd3e325a02a3b8c56006fc2bba80bf8c8388f10c969cbbc032586fb8"
+    },
+    {
+      "bytes": 5093,
+      "destination": "baseline_runtime/src/syntide/eval/freeze.py",
+      "sha256": "feeb999c21792a531e568bec95bb0ce5993f5711040f30a782db3b2a899655e7",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/freeze.py",
+      "source_sha256": "feeb999c21792a531e568bec95bb0ce5993f5711040f30a782db3b2a899655e7"
+    },
+    {
+      "bytes": 10879,
+      "destination": "baseline_runtime/src/syntide/eval/holdout.py",
+      "sha256": "b65f23d3cfa228e1baf9b360357894ef3ba51c131eab50663fc1e01ae7095228",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/holdout.py",
+      "source_sha256": "b65f23d3cfa228e1baf9b360357894ef3ba51c131eab50663fc1e01ae7095228"
+    },
+    {
+      "bytes": 14060,
+      "destination": "baseline_runtime/src/syntide/eval/report.py",
+      "sha256": "4ba0db3ca5bda0366b626064611391f189d2d2c7e595f5beafe3e94e5a396e32",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/report.py",
+      "source_sha256": "4ba0db3ca5bda0366b626064611391f189d2d2c7e595f5beafe3e94e5a396e32"
+    },
+    {
+      "bytes": 10024,
+      "destination": "baseline_runtime/src/syntide/eval/runs.py",
+      "sha256": "6077c4a1fe655bf99e2161a7c913cb043afcbfad946aa209e869e2f166bd5629",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/runs.py",
+      "source_sha256": "6077c4a1fe655bf99e2161a7c913cb043afcbfad946aa209e869e2f166bd5629"
+    },
+    {
+      "bytes": 2381,
+      "destination": "baseline_runtime/src/syntide/eval/stats.py",
+      "sha256": "36483ba2d08a68234a8db60dad1c17e181b40de611d5f92b6aff84148bd0ade9",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/stats.py",
+      "source_sha256": "36483ba2d08a68234a8db60dad1c17e181b40de611d5f92b6aff84148bd0ade9"
+    },
+    {
+      "bytes": 6428,
+      "destination": "baseline_runtime/src/syntide/eval/tracking.py",
+      "sha256": "d0203dd5afbdb785474aae0502568afd1f130b631c0f18097c4a4c2fd37e67c8",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/tracking.py",
+      "source_sha256": "d0203dd5afbdb785474aae0502568afd1f130b631c0f18097c4a4c2fd37e67c8"
+    },
+    {
+      "bytes": 12149,
+      "destination": "baseline_runtime/src/syntide/eval/views.py",
+      "sha256": "6cbd4b6a87a715f80a826c71891ff94ca81ed6948132b92dcfcbae78e67ed4b2",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/eval/views.py",
+      "source_sha256": "6cbd4b6a87a715f80a826c71891ff94ca81ed6948132b92dcfcbae78e67ed4b2"
+    },
+    {
+      "bytes": 186,
+      "destination": "baseline_runtime/src/syntide/generate/__init__.py",
+      "sha256": "061116e3a40c69789fc3360ba31474206cacc43a33357faa365ab57b809cec12",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/__init__.py",
+      "source_sha256": "061116e3a40c69789fc3360ba31474206cacc43a33357faa365ab57b809cec12"
+    },
+    {
+      "bytes": 6894,
+      "destination": "baseline_runtime/src/syntide/generate/__main__.py",
+      "sha256": "999e09bbe7366d8f647bf384f15cf789b2901a8bffb9afbd4f13621734661942",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/__main__.py",
+      "source_sha256": "999e09bbe7366d8f647bf384f15cf789b2901a8bffb9afbd4f13621734661942"
+    },
+    {
+      "bytes": 5473,
+      "destination": "baseline_runtime/src/syntide/generate/descriptors.py",
+      "sha256": "645a4dece00192846dfb884f1426b948a8b0ae79c5d42cc8b04cdf7008526118",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/descriptors.py",
+      "source_sha256": "645a4dece00192846dfb884f1426b948a8b0ae79c5d42cc8b04cdf7008526118"
+    },
+    {
+      "bytes": 7025,
+      "destination": "baseline_runtime/src/syntide/generate/editor.py",
+      "sha256": "ea2be4ec2e077c871104562b4563f0ae5a700ace7aeb56ab22d851d1f218d2f0",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/editor.py",
+      "source_sha256": "ea2be4ec2e077c871104562b4563f0ae5a700ace7aeb56ab22d851d1f218d2f0"
+    },
+    {
+      "bytes": 9267,
+      "destination": "baseline_runtime/src/syntide/generate/gate.py",
+      "sha256": "4f97b8097a08b17cdb20b0bb8963f035f25ad9c02d6c3addd00cf0e50c51793d",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/gate.py",
+      "source_sha256": "4f97b8097a08b17cdb20b0bb8963f035f25ad9c02d6c3addd00cf0e50c51793d"
+    },
+    {
+      "bytes": 2425,
+      "destination": "baseline_runtime/src/syntide/generate/generic.py",
+      "sha256": "17e36298a31ba545416e2b003d867843fa652c764c401a3d9e2d0df8dcf4cb70",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/generic.py",
+      "source_sha256": "17e36298a31ba545416e2b003d867843fa652c764c401a3d9e2d0df8dcf4cb70"
+    },
+    {
+      "bytes": 5454,
+      "destination": "baseline_runtime/src/syntide/generate/ledger.py",
+      "sha256": "40c0202bec3b8ea75051fb8e9829e972e4ea1c411eee9b5246eea739c98289d8",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/ledger.py",
+      "source_sha256": "40c0202bec3b8ea75051fb8e9829e972e4ea1c411eee9b5246eea739c98289d8"
+    },
+    {
+      "bytes": 13758,
+      "destination": "baseline_runtime/src/syntide/generate/plan.py",
+      "sha256": "6f826b4185124bb5ec03defd76dfe18a6d06e344072156d7afa694dda9af0fec",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/plan.py",
+      "source_sha256": "6f826b4185124bb5ec03defd76dfe18a6d06e344072156d7afa694dda9af0fec"
+    },
+    {
+      "bytes": 9433,
+      "destination": "baseline_runtime/src/syntide/generate/policy.py",
+      "sha256": "2a624fa2f16719a2f2cd9ee7c8c31b4a3dbfee5b6623084ed0c24ee0c5dc4071",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/policy.py",
+      "source_sha256": "2a624fa2f16719a2f2cd9ee7c8c31b4a3dbfee5b6623084ed0c24ee0c5dc4071"
+    },
+    {
+      "bytes": 11399,
+      "destination": "baseline_runtime/src/syntide/generate/stream.py",
+      "sha256": "08a1160c05c66b571296cfb701c9d46e32c16f8b022c317182f59a76f390184d",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/stream.py",
+      "source_sha256": "08a1160c05c66b571296cfb701c9d46e32c16f8b022c317182f59a76f390184d"
+    },
+    {
+      "bytes": 3959,
+      "destination": "baseline_runtime/src/syntide/generate/validate.py",
+      "sha256": "d5225ffea9f7ce7042b8a5a7e6811b82d86c6bd50da2f9b1a47d98086a98d3b5",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/generate/validate.py",
+      "source_sha256": "d5225ffea9f7ce7042b8a5a7e6811b82d86c6bd50da2f9b1a47d98086a98d3b5"
+    },
+    {
+      "bytes": 10985,
+      "destination": "baseline_runtime/src/syntide/qa_baseline_audit.py",
+      "sha256": "86c1cffa93a5af89b790163b3288a9822ff7b1d4af32d83bc6ec197fcfe617a3",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/qa_baseline_audit.py",
+      "source_sha256": "86c1cffa93a5af89b790163b3288a9822ff7b1d4af32d83bc6ec197fcfe617a3"
+    },
+    {
+      "bytes": 20531,
+      "destination": "baseline_runtime/src/syntide/trial.py",
+      "sha256": "398bac00a3c4043914886e57630c43dd3b1d577debb94eeed7e0d5179521bb64",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "src/syntide/trial.py",
+      "source_sha256": "398bac00a3c4043914886e57630c43dd3b1d577debb94eeed7e0d5179521bb64"
+    },
+    {
+      "bytes": 12419,
+      "destination": "baseline_runtime/tests/baseline/test_data.py",
+      "sha256": "f6861ffe4207e2bfa902d08882ac18a394156861b3198dad626fa27f49ba65c9",
+      "source_path": "outputs/qa-runs/runtime/tests/baseline/test_data.py",
+      "source_sha256": "f6861ffe4207e2bfa902d08882ac18a394156861b3198dad626fa27f49ba65c9"
+    },
+    {
+      "bytes": 3541,
+      "destination": "baseline_runtime/tests/baseline/test_metrics.py",
+      "sha256": "f9a35cb78471ca14e0e4f1649cd17fdf1974bd5e83315837df7596d96acbbdda",
+      "source_path": "outputs/qa-runs/runtime/tests/baseline/test_metrics.py",
+      "source_sha256": "f9a35cb78471ca14e0e4f1649cd17fdf1974bd5e83315837df7596d96acbbdda"
+    },
+    {
+      "bytes": 5066,
+      "destination": "baseline_runtime/tests/baseline/test_report.py",
+      "sha256": "375504c72c68be997200d64a334a320ded363a691ae5647403f3ffbfa74acce5",
+      "source_path": "outputs/qa-runs/runtime/tests/baseline/test_report.py",
+      "source_sha256": "375504c72c68be997200d64a334a320ded363a691ae5647403f3ffbfa74acce5"
+    },
+    {
+      "bytes": 9815,
+      "destination": "baseline_runtime/tests/baseline/test_runpod.py",
+      "sha256": "59cd05de7b45ca972466f056bf8f1245f7a52b7d9b7da2fef195461e08f62c67",
+      "source_path": "outputs/qa-runs/runtime/tests/baseline/test_runpod.py",
+      "source_sha256": "59cd05de7b45ca972466f056bf8f1245f7a52b7d9b7da2fef195461e08f62c67"
+    },
+    {
+      "bytes": 4571,
+      "destination": "baseline_runtime/tests/conftest.py",
+      "sha256": "f636a83044b7d30aefd8c756cacf165b210c75408bfef9da83611e55b7966e86",
+      "source_path": "outputs/qa-runs/runtime/tests/conftest.py",
+      "source_sha256": "f636a83044b7d30aefd8c756cacf165b210c75408bfef9da83611e55b7966e86"
+    },
+    {
+      "bytes": 8807,
+      "destination": "baseline_runtime/tests/test_qa_baseline_audit.py",
+      "sha256": "65729a5cc6f09c2f39986df6bfe53c9ce5bf426300df2c4cad4f45c8a1d58400",
+      "source_path": "tests/test_qa_baseline_audit.py",
+      "source_sha256": "65729a5cc6f09c2f39986df6bfe53c9ce5bf426300df2c4cad4f45c8a1d58400"
+    },
+    {
+      "bytes": 350,
+      "destination": "baseline_runtime/trainers/src/syntide_trainers/__init__.py",
+      "sha256": "3df309f736920319d5eabbe0c2eadb9c679b7808da34355c98da2d29cc31d4dc",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "trainers/src/syntide_trainers/__init__.py",
+      "source_sha256": "3df309f736920319d5eabbe0c2eadb9c679b7808da34355c98da2d29cc31d4dc"
+    },
+    {
+      "bytes": 42763,
+      "destination": "baseline_runtime/trainers/src/syntide_trainers/opentslm_loop.py",
+      "sha256": "16bf861ea252e68dd2adc452bab6abfa0d37e29103337c2cab0d94bd3c075128",
+      "source_archive": "outputs/qa-runs/study/runtime-source.tar.gz",
+      "source_path": "trainers/src/syntide_trainers/opentslm_loop.py",
+      "source_sha256": "16bf861ea252e68dd2adc452bab6abfa0d37e29103337c2cab0d94bd3c075128"
+    },
+    {
+      "bytes": 3877,
+      "destination": "baseline_runtime/trainers/tests/test_opentslm_recovery.py",
+      "sha256": "c18caa40999f3876966b3f8f0b606472c64316495ad4545ef626a338e3311f42",
+      "source_path": "outputs/qa-runs/runtime/trainers/tests/test_opentslm_recovery.py",
+      "source_sha256": "c18caa40999f3876966b3f8f0b606472c64316495ad4545ef626a338e3311f42"
+    },
+    {
+      "bytes": 11149,
+      "destination": "exposure/fixtures/snapshot-preflight.json",
+      "sha256": "3e7621b2074895e29bcc84d500531780205484ff0a218f2b9f4c69ded8953b4f",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/snapshot3030/training/preflight.json",
+      "source_sha256": "3e7621b2074895e29bcc84d500531780205484ff0a218f2b9f4c69ded8953b4f"
+    },
+    {
+      "bytes": 25719,
+      "destination": "exposure/prepare_exposure_data.py",
+      "sha256": "7ea3cb5af2d95dc94b2ebd1ad894e5b5a0d48f10d4c4813d36fd3ef957ea9e14",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/exposure3030/prepare_exposure_data.py",
+      "source_sha256": "7ea3cb5af2d95dc94b2ebd1ad894e5b5a0d48f10d4c4813d36fd3ef957ea9e14"
+    },
+    {
+      "bytes": 16636,
+      "destination": "exposure/run_exposure_ablation.py",
+      "sha256": "83bc225e572a869216b01c5e8509217d06f52220b22f87e9e6b691b123900111",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/exposure3030/run_exposure_ablation.py",
+      "source_sha256": "83bc225e572a869216b01c5e8509217d06f52220b22f87e9e6b691b123900111"
+    },
+    {
+      "bytes": 13660,
+      "destination": "exposure/test_prepare_exposure_data.py",
+      "sha256": "22b263bcbdf236cfb0365968632f8a11b1cc248eaee22d0f4f1dbd855e5b937f",
+      "source_path": "outputs/qa-runs/diffusets-3030-exposure-matched/test_prepare_exposure_data.py",
+      "source_sha256": "22b263bcbdf236cfb0365968632f8a11b1cc248eaee22d0f4f1dbd855e5b937f"
+    },
+    {
+      "bytes": 17636,
+      "destination": "exposure/test_run_exposure_ablation.py",
+      "sha256": "015976c5f35e8e1a0b6bfdbc8331e439c49eda8d61bfcd5ecd2a9954a36bca42",
+      "source_path": "outputs/qa-runs/diffusets-3030-exposure-matched/test_run_exposure_ablation.py",
+      "source_sha256": "015976c5f35e8e1a0b6bfdbc8331e439c49eda8d61bfcd5ecd2a9954a36bca42"
+    },
+    {
+      "bytes": 8372,
+      "destination": "exposure/trainer/exposure_protocol.py",
+      "sha256": "d8d0c3807e292f6c075c74f245fe7ed6adda55e7ac6a636335988e0448662585",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/exposure3030/trainer/exposure_protocol.py",
+      "source_sha256": "d8d0c3807e292f6c075c74f245fe7ed6adda55e7ac6a636335988e0448662585"
+    },
+    {
+      "bytes": 46297,
+      "destination": "exposure/trainer/opentslm_exposure.py",
+      "sha256": "cac7f8de478cf727e8184dcbf68a387d3729bc66c5bee2b3350bc1a9187abadb",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/exposure3030/trainer/opentslm_exposure.py",
+      "source_sha256": "cac7f8de478cf727e8184dcbf68a387d3729bc66c5bee2b3350bc1a9187abadb"
+    },
+    {
+      "bytes": 2027,
+      "destination": "exposure/trainer/source-audit.json",
+      "sha256": "d6ac879e403760c3fb4665c3ba18361fa0fd109bbd00ca3725a8828b86ffbeb3",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/exposure3030/trainer/source-audit.json",
+      "source_sha256": "d6ac879e403760c3fb4665c3ba18361fa0fd109bbd00ca3725a8828b86ffbeb3"
+    },
+    {
+      "bytes": 9332,
+      "destination": "exposure/trainer/test_exposure_protocol.py",
+      "sha256": "88e440478797204deaaa71ce28ad81cd3edc0b8cae26cdcfc79db85e8c5c83a9",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/exposure3030/trainer/test_exposure_protocol.py",
+      "source_sha256": "88e440478797204deaaa71ce28ad81cd3edc0b8cae26cdcfc79db85e8c5c83a9"
+    },
+    {
+      "bytes": 631,
+      "destination": "generation_runtime/conf/qa/corpus_acquisition.yaml",
+      "sha256": "7364b4a83bf32e46b367f5f69eb75a591de6b80ed9a72902835cf1b285bc96dd",
+      "source_path": "conf/qa/corpus_acquisition.yaml",
+      "source_sha256": "7364b4a83bf32e46b367f5f69eb75a591de6b80ed9a72902835cf1b285bc96dd"
+    },
+    {
+      "bytes": 848,
+      "destination": "generation_runtime/conf/qa/corpus_generated.yaml",
+      "sha256": "040a3c3d6cd2a622e2d97e10610387b4afeabd265f3878d9dd962e01e9107153",
+      "source_path": "conf/qa/corpus_generated.yaml",
+      "source_sha256": "040a3c3d6cd2a622e2d97e10610387b4afeabd265f3878d9dd962e01e9107153"
+    },
+    {
+      "bytes": 1114,
+      "destination": "generation_runtime/conf/qa/corpus_grounded.yaml",
+      "sha256": "a271d78fd2fac64256e5647786355f0d4645c52aa7831ae0ef2963e83ddb863c",
+      "source_path": "conf/qa/corpus_grounded.yaml",
+      "source_sha256": "a271d78fd2fac64256e5647786355f0d4645c52aa7831ae0ef2963e83ddb863c"
+    },
+    {
+      "bytes": 885,
+      "destination": "generation_runtime/conf/qa/corpus_paraphrase.yaml",
+      "sha256": "20840d62a7e9c7bf22ced3ddb1f83ad430b35b455aadd0b5cfcb5110485f176e",
+      "source_path": "conf/qa/corpus_paraphrase.yaml",
+      "source_sha256": "20840d62a7e9c7bf22ced3ddb1f83ad430b35b455aadd0b5cfcb5110485f176e"
+    },
+    {
+      "bytes": 796,
+      "destination": "generation_runtime/conf/qa/corpus_real_qa.yaml",
+      "sha256": "3e723e2f902040c1a0bacec2774cf6360147d85dfc49eb26b8faa1fd7c0c88fc",
+      "source_path": "conf/qa/corpus_real_qa.yaml",
+      "source_sha256": "3e723e2f902040c1a0bacec2774cf6360147d85dfc49eb26b8faa1fd7c0c88fc"
+    },
+    {
+      "bytes": 5014,
+      "destination": "generation_runtime/manifests/ecgqa-artifact-50/counts.json",
+      "sha256": "fa12c25eccbf5ea78177caf83564a438f5cf2e6e156dd4906680ee3bc015bee9",
+      "source_path": "manifests/ecgqa-artifact-50/counts.json",
+      "source_sha256": "fa12c25eccbf5ea78177caf83564a438f5cf2e6e156dd4906680ee3bc015bee9"
+    },
+    {
+      "bytes": 460056,
+      "destination": "generation_runtime/manifests/ecgqa-artifact-50/pool50.json",
+      "sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8",
+      "source_path": "manifests/ecgqa-artifact-50/pool50.json",
+      "source_sha256": "a431b4f519acd10c0ff0a6b39f84d976f0d8f2e9b5b909a035af4105253f1db8"
+    },
+    {
+      "bytes": 26191,
+      "destination": "generation_runtime/original_qa_overrides/src/syntide/generate/qa/build.py",
+      "sha256": "0b04f8878e7e0b319d1279f71ef7cf5822218989fd75adb4ed046b5e067af2d2",
+      "source_archive": "outputs/qa-runs/qa-export-and-orchestration-source.tar.gz",
+      "source_path": "src/syntide/generate/qa/build.py",
+      "source_sha256": "0b04f8878e7e0b319d1279f71ef7cf5822218989fd75adb4ed046b5e067af2d2"
+    },
+    {
+      "bytes": 18859,
+      "destination": "generation_runtime/planning/build_plan.py",
+      "sha256": "d56758e71fbaa88ea9ccd087eb073a834969107793434948e47f0521c91fc65a",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/planning/build_plan.py",
+      "source_sha256": "d56758e71fbaa88ea9ccd087eb073a834969107793434948e47f0521c91fc65a"
+    },
+    {
+      "bytes": 3734,
+      "destination": "generation_runtime/runtime-pip-freeze.txt",
+      "sha256": "123cbc3002579dcfbe7dba595737f136fd1750f125a563f4ea4a5155bfb8c1c2",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/setup/generation-pip-freeze.txt",
+      "source_sha256": "123cbc3002579dcfbe7dba595737f136fd1750f125a563f4ea4a5155bfb8c1c2"
+    },
+    {
+      "bytes": 9706,
+      "destination": "generation_runtime/scripts/executed_full5000/qa_preflight.py",
+      "sha256": "3a370b4a7340787329a9753794ad7baba3067d72903ade626f17da15c23f0a01",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/operations/deadline-extension-20261023/qa_preflight.py",
+      "source_sha256": "3a370b4a7340787329a9753794ad7baba3067d72903ade626f17da15c23f0a01"
+    },
+    {
+      "bytes": 22254,
+      "destination": "generation_runtime/scripts/executed_full5000/run_diffusets_arm.py",
+      "sha256": "a8becf48dbdd2f13b09773b5e892751d907849692a40a2c95645db5da76a3d29",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/operations/deadline-extension-20261023/run_diffusets_arm.py",
+      "source_sha256": "a8becf48dbdd2f13b09773b5e892751d907849692a40a2c95645db5da76a3d29"
+    },
+    {
+      "bytes": 27793,
+      "destination": "generation_runtime/scripts/executed_full5000/run_diffusets_pipeline.py",
+      "sha256": "df6d8671b56339eae98f834c609419fa749cd9d2f4c13d153238575be4efccd5",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/operations/deadline-extension-20261023/run_diffusets_pipeline.py",
+      "source_sha256": "df6d8671b56339eae98f834c609419fa749cd9d2f4c13d153238575be4efccd5"
+    },
+    {
+      "bytes": 17721,
+      "destination": "generation_runtime/scripts/executed_full5000/run_qa_arms.py",
+      "sha256": "37b6a7887213c252365caddb0abbabfae53075457cdafd0e7aecb0787afae39b",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/operations/deadline-extension-20261023/run_qa_arms.py",
+      "source_sha256": "37b6a7887213c252365caddb0abbabfae53075457cdafd0e7aecb0787afae39b"
+    },
+    {
+      "bytes": 16092,
+      "destination": "generation_runtime/scripts/executed_snapshot3030/frozen_evaluation.py",
+      "sha256": "ba3498a11912d3a283fcb0c32670d32257597c677eb59b180ccf748e030c93f5",
+      "source_path": "outputs/qa-runs/diffusets-3030/operations/timing-review-20261024/frozen_evaluation.py",
+      "source_sha256": "ba3498a11912d3a283fcb0c32670d32257597c677eb59b180ccf748e030c93f5"
+    },
+    {
+      "bytes": 9706,
+      "destination": "generation_runtime/scripts/executed_snapshot3030/qa_preflight.py",
+      "sha256": "3a370b4a7340787329a9753794ad7baba3067d72903ade626f17da15c23f0a01",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/snapshot3030/runner/qa_preflight.py",
+      "source_sha256": "3a370b4a7340787329a9753794ad7baba3067d72903ade626f17da15c23f0a01"
+    },
+    {
+      "bytes": 24943,
+      "destination": "generation_runtime/scripts/executed_snapshot3030/run_diffusets_arm.py",
+      "sha256": "a36d43b84f77ff0898d0479fd94d4fb75fa796b721073c49af48a498af56bede",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/snapshot3030/runner/run_diffusets_arm.py",
+      "source_sha256": "a36d43b84f77ff0898d0479fd94d4fb75fa796b721073c49af48a498af56bede"
+    },
+    {
+      "bytes": 27793,
+      "destination": "generation_runtime/scripts/executed_snapshot3030/run_diffusets_pipeline.py",
+      "sha256": "df6d8671b56339eae98f834c609419fa749cd9d2f4c13d153238575be4efccd5",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/snapshot3030/runner/run_diffusets_pipeline.py",
+      "source_sha256": "df6d8671b56339eae98f834c609419fa749cd9d2f4c13d153238575be4efccd5"
+    },
+    {
+      "bytes": 17721,
+      "destination": "generation_runtime/scripts/executed_snapshot3030/run_qa_arms.py",
+      "sha256": "37b6a7887213c252365caddb0abbabfae53075457cdafd0e7aecb0787afae39b",
+      "source_path": "outputs/qa-runs/diffusets-extension/study/snapshot3030/runner/run_qa_arms.py",
+      "source_sha256": "37b6a7887213c252365caddb0abbabfae53075457cdafd0e7aecb0787afae39b"
+    },
+    {
+      "bytes": 17144,
+      "destination": "generation_runtime/scripts/prepare_snapshot_qa.py",
+      "sha256": "71b8bcc59933ebcc2f628db56e5ec7426ad692d2d6bb8142cf45a7ecee39e8a9",
+      "source_path": "outputs/qa-runs/diffusets-3030/prepare_snapshot_qa.py",
+      "source_sha256": "71b8bcc59933ebcc2f628db56e5ec7426ad692d2d6bb8142cf45a7ecee39e8a9"
+    },
+    {
+      "bytes": 4960,
+      "destination": "generation_runtime/scripts/runpod/diffusets_embeddings.py",
+      "sha256": "7cd52ac1fd686eaa0abff56080ccff6632daab3e61b594d860e3daa816b4926d",
+      "source_path": "scripts/runpod/diffusets_embeddings.py",
+      "source_sha256": "7cd52ac1fd686eaa0abff56080ccff6632daab3e61b594d860e3daa816b4926d"
+    },
+    {
+      "bytes": 30859,
+      "destination": "generation_runtime/scripts/runpod/diffusets_generate.py",
+      "sha256": "fd4161d29c85d50fe8905b628e92c963a40b49ca5ae29d92bde013ce33df696b",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/scripts/runpod/diffusets_generate.py",
+      "source_sha256": "fd4161d29c85d50fe8905b628e92c963a40b49ca5ae29d92bde013ce33df696b"
+    },
+    {
+      "bytes": 9706,
+      "destination": "generation_runtime/scripts/runpod/qa_preflight.py",
+      "sha256": "3a370b4a7340787329a9753794ad7baba3067d72903ade626f17da15c23f0a01",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/scripts/runpod/qa_preflight.py",
+      "source_sha256": "3a370b4a7340787329a9753794ad7baba3067d72903ade626f17da15c23f0a01"
+    },
+    {
+      "bytes": 20927,
+      "destination": "generation_runtime/scripts/runpod/run_diffusets_arm.py",
+      "sha256": "b7d880d823cd7ab1b4d2c5d6a5756b967f09626f7fc81c9798d179cb726f5957",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/scripts/runpod/run_diffusets_arm.py",
+      "source_sha256": "b7d880d823cd7ab1b4d2c5d6a5756b967f09626f7fc81c9798d179cb726f5957"
+    },
+    {
+      "bytes": 13975,
+      "destination": "generation_runtime/scripts/runpod/run_diffusets_pipeline.py",
+      "sha256": "832b6c8bba54929b41e42e27add4ab5db733cde720389f40d3671edacca501db",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/scripts/runpod/run_diffusets_pipeline.py",
+      "source_sha256": "832b6c8bba54929b41e42e27add4ab5db733cde720389f40d3671edacca501db"
+    },
+    {
+      "bytes": 17721,
+      "destination": "generation_runtime/scripts/runpod/run_qa_arms.py",
+      "sha256": "37b6a7887213c252365caddb0abbabfae53075457cdafd0e7aecb0787afae39b",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/scripts/runpod/run_qa_arms.py",
+      "source_sha256": "37b6a7887213c252365caddb0abbabfae53075457cdafd0e7aecb0787afae39b"
+    },
+    {
+      "bytes": 79,
+      "destination": "generation_runtime/src/syntide/__init__.py",
+      "sha256": "d0694dca6e4c5064cbd2d41e84c546dcf8becfd43f9ef0688dddbb5660fa8100",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/__init__.py",
+      "source_sha256": "d0694dca6e4c5064cbd2d41e84c546dcf8becfd43f9ef0688dddbb5660fa8100"
+    },
+    {
+      "bytes": 137,
+      "destination": "generation_runtime/src/syntide/data/__init__.py",
+      "sha256": "de093c5552cb547f2b59c15a09d1129305fd24f6ea9a687d354645e18cb75af3",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/data/__init__.py",
+      "source_sha256": "de093c5552cb547f2b59c15a09d1129305fd24f6ea9a687d354645e18cb75af3"
+    },
+    {
+      "bytes": 6185,
+      "destination": "generation_runtime/src/syntide/data/adapter.py",
+      "sha256": "04b76c523c7ecdcc2914dff78bd8e73d1e1e1e391098c231bf36746b37d1aec6",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/data/adapter.py",
+      "source_sha256": "04b76c523c7ecdcc2914dff78bd8e73d1e1e1e391098c231bf36746b37d1aec6"
+    },
+    {
+      "bytes": 6500,
+      "destination": "generation_runtime/src/syntide/data/challenge.py",
+      "sha256": "da9c6abd4a3be80ca77ec69190cfe089bdfc03d52f996c9141fb37113d3b9680",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/data/challenge.py",
+      "source_sha256": "da9c6abd4a3be80ca77ec69190cfe089bdfc03d52f996c9141fb37113d3b9680"
+    },
+    {
+      "bytes": 8415,
+      "destination": "generation_runtime/src/syntide/data/leakage.py",
+      "sha256": "ac9534ca8d4ceb9c2ac91a6266c6f62cc5618d6733acefe1d430226bfc25a125",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/data/leakage.py",
+      "source_sha256": "ac9534ca8d4ceb9c2ac91a6266c6f62cc5618d6733acefe1d430226bfc25a125"
+    },
+    {
+      "bytes": 217,
+      "destination": "generation_runtime/src/syntide/data/ptbxl/__init__.py",
+      "sha256": "8f1c5f264f0ea3ed4984ad7f69b882085c67c94ff204172c23c75404a5ddcd1b",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/data/ptbxl/__init__.py",
+      "source_sha256": "8f1c5f264f0ea3ed4984ad7f69b882085c67c94ff204172c23c75404a5ddcd1b"
+    },
+    {
+      "bytes": 5901,
+      "destination": "generation_runtime/src/syntide/data/ptbxl/connector.py",
+      "sha256": "a04dccf039ed869b6b8663e8b8b3e94c9b6e68b89919a7b37a306643eb5025b1",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/data/ptbxl/connector.py",
+      "source_sha256": "a04dccf039ed869b6b8663e8b8b3e94c9b6e68b89919a7b37a306643eb5025b1"
+    },
+    {
+      "bytes": 16464,
+      "destination": "generation_runtime/src/syntide/data/qa.py",
+      "sha256": "209295f584baf17f7c5f97b2c2782090276ab42122109f8cf0ee8ad5e5f90978",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/data/qa.py",
+      "source_sha256": "209295f584baf17f7c5f97b2c2782090276ab42122109f8cf0ee8ad5e5f90978"
+    },
+    {
+      "bytes": 2044,
+      "destination": "generation_runtime/src/syntide/data/schema.py",
+      "sha256": "42cf8fc7eca49c758ca97f25cb19634765bedb1e70294e191f1de8611cf23644",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/data/schema.py",
+      "source_sha256": "42cf8fc7eca49c758ca97f25cb19634765bedb1e70294e191f1de8611cf23644"
+    },
+    {
+      "bytes": 95,
+      "destination": "generation_runtime/src/syntide/eval/__init__.py",
+      "sha256": "08680db4addf8190a9afd1d3959da41861c3c8a713503ab77a6bbc6609f600cc",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/eval/__init__.py",
+      "source_sha256": "08680db4addf8190a9afd1d3959da41861c3c8a713503ab77a6bbc6609f600cc"
+    },
+    {
+      "bytes": 13062,
+      "destination": "generation_runtime/src/syntide/eval/qa_metrics.py",
+      "sha256": "daa891eccab1d5a3fadbc165c070fdb3664a80a8039b82f09ec76c5854c624df",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/eval/qa_metrics.py",
+      "source_sha256": "daa891eccab1d5a3fadbc165c070fdb3664a80a8039b82f09ec76c5854c624df"
+    },
+    {
+      "bytes": 2381,
+      "destination": "generation_runtime/src/syntide/eval/stats.py",
+      "sha256": "36483ba2d08a68234a8db60dad1c17e181b40de611d5f92b6aff84148bd0ade9",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/eval/stats.py",
+      "source_sha256": "36483ba2d08a68234a8db60dad1c17e181b40de611d5f92b6aff84148bd0ade9"
+    },
+    {
+      "bytes": 6428,
+      "destination": "generation_runtime/src/syntide/eval/tracking.py",
+      "sha256": "d0203dd5afbdb785474aae0502568afd1f130b631c0f18097c4a4c2fd37e67c8",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/eval/tracking.py",
+      "source_sha256": "d0203dd5afbdb785474aae0502568afd1f130b631c0f18097c4a4c2fd37e67c8"
+    },
+    {
+      "bytes": 242,
+      "destination": "generation_runtime/src/syntide/explore/__init__.py",
+      "sha256": "f1a99f0776cc44c5550d8e83e4aeec773a544267d027f003cf40293a803a7889",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/explore/__init__.py",
+      "source_sha256": "f1a99f0776cc44c5550d8e83e4aeec773a544267d027f003cf40293a803a7889"
+    },
+    {
+      "bytes": 8899,
+      "destination": "generation_runtime/src/syntide/explore/plans.py",
+      "sha256": "e6814a0b5745c16f6a7aae8b2429bf4f192de68e830a7b59ea189dff5e116eee",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/explore/plans.py",
+      "source_sha256": "e6814a0b5745c16f6a7aae8b2429bf4f192de68e830a7b59ea189dff5e116eee"
+    },
+    {
+      "bytes": 7352,
+      "destination": "generation_runtime/src/syntide/explore/qa.py",
+      "sha256": "3ae79405fe81cf2645c88f5fed18713443ea6af1098223b7d18b4015b2c60cf9",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/explore/qa.py",
+      "source_sha256": "3ae79405fe81cf2645c88f5fed18713443ea6af1098223b7d18b4015b2c60cf9"
+    },
+    {
+      "bytes": 186,
+      "destination": "generation_runtime/src/syntide/generate/__init__.py",
+      "sha256": "061116e3a40c69789fc3360ba31474206cacc43a33357faa365ab57b809cec12",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/__init__.py",
+      "source_sha256": "061116e3a40c69789fc3360ba31474206cacc43a33357faa365ab57b809cec12"
+    },
+    {
+      "bytes": 6894,
+      "destination": "generation_runtime/src/syntide/generate/__main__.py",
+      "sha256": "999e09bbe7366d8f647bf384f15cf789b2901a8bffb9afbd4f13621734661942",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/__main__.py",
+      "source_sha256": "999e09bbe7366d8f647bf384f15cf789b2901a8bffb9afbd4f13621734661942"
+    },
+    {
+      "bytes": 5473,
+      "destination": "generation_runtime/src/syntide/generate/descriptors.py",
+      "sha256": "645a4dece00192846dfb884f1426b948a8b0ae79c5d42cc8b04cdf7008526118",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/descriptors.py",
+      "source_sha256": "645a4dece00192846dfb884f1426b948a8b0ae79c5d42cc8b04cdf7008526118"
+    },
+    {
+      "bytes": 7025,
+      "destination": "generation_runtime/src/syntide/generate/editor.py",
+      "sha256": "ea2be4ec2e077c871104562b4563f0ae5a700ace7aeb56ab22d851d1f218d2f0",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/editor.py",
+      "source_sha256": "ea2be4ec2e077c871104562b4563f0ae5a700ace7aeb56ab22d851d1f218d2f0"
+    },
+    {
+      "bytes": 356,
+      "destination": "generation_runtime/src/syntide/generate/full/__init__.py",
+      "sha256": "2a8d1fc55a694bd46e3cdd259c52f05a128f31b984ce1776ef1a6c2a3ad07db6",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/full/__init__.py",
+      "source_sha256": "2a8d1fc55a694bd46e3cdd259c52f05a128f31b984ce1776ef1a6c2a3ad07db6"
+    },
+    {
+      "bytes": 1776,
+      "destination": "generation_runtime/src/syntide/generate/full/__main__.py",
+      "sha256": "4dc21bd1e4efd81de66c0ceda58fc8d43bae0abb356b56eefed974d57dd07572",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/full/__main__.py",
+      "source_sha256": "4dc21bd1e4efd81de66c0ceda58fc8d43bae0abb356b56eefed974d57dd07572"
+    },
+    {
+      "bytes": 3655,
+      "destination": "generation_runtime/src/syntide/generate/full/api.py",
+      "sha256": "7b7b14e4ed71960dba309af0e9d603835d9e95190f815e4eb801706a735fb06e",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/full/api.py",
+      "source_sha256": "7b7b14e4ed71960dba309af0e9d603835d9e95190f815e4eb801706a735fb06e"
+    },
+    {
+      "bytes": 10403,
+      "destination": "generation_runtime/src/syntide/generate/full/assets.py",
+      "sha256": "882394b4fa5d024d013c3c51a1056592d57c318be74a1dc13642b2b8babb9a9a",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/full/assets.py",
+      "source_sha256": "882394b4fa5d024d013c3c51a1056592d57c318be74a1dc13642b2b8babb9a9a"
+    },
+    {
+      "bytes": 16910,
+      "destination": "generation_runtime/src/syntide/generate/full/diffusets.py",
+      "sha256": "cf2d963a5f37e8dac43625ee6964b205726a246db65fb2151a30ec8ccefc6b5f",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/full/diffusets.py",
+      "source_sha256": "cf2d963a5f37e8dac43625ee6964b205726a246db65fb2151a30ec8ccefc6b5f"
+    },
+    {
+      "bytes": 2325,
+      "destination": "generation_runtime/src/syntide/generate/full/registry.py",
+      "sha256": "d2cbfba35d2567ec7e9997519940da07144871d9e95e7e99afc706453b8b1c56",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/full/registry.py",
+      "source_sha256": "d2cbfba35d2567ec7e9997519940da07144871d9e95e7e99afc706453b8b1c56"
+    },
+    {
+      "bytes": 12464,
+      "destination": "generation_runtime/src/syntide/generate/full/runner.py",
+      "sha256": "1d9c9aa503337616552e9354b2ab4e4b403aa2f1e7a5fab52300526426cd7958",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/full/runner.py",
+      "source_sha256": "1d9c9aa503337616552e9354b2ab4e4b403aa2f1e7a5fab52300526426cd7958"
+    },
+    {
+      "bytes": 9267,
+      "destination": "generation_runtime/src/syntide/generate/gate.py",
+      "sha256": "4f97b8097a08b17cdb20b0bb8963f035f25ad9c02d6c3addd00cf0e50c51793d",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/gate.py",
+      "source_sha256": "4f97b8097a08b17cdb20b0bb8963f035f25ad9c02d6c3addd00cf0e50c51793d"
+    },
+    {
+      "bytes": 2425,
+      "destination": "generation_runtime/src/syntide/generate/generic.py",
+      "sha256": "17e36298a31ba545416e2b003d867843fa652c764c401a3d9e2d0df8dcf4cb70",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/generic.py",
+      "source_sha256": "17e36298a31ba545416e2b003d867843fa652c764c401a3d9e2d0df8dcf4cb70"
+    },
+    {
+      "bytes": 5454,
+      "destination": "generation_runtime/src/syntide/generate/ledger.py",
+      "sha256": "40c0202bec3b8ea75051fb8e9829e972e4ea1c411eee9b5246eea739c98289d8",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/ledger.py",
+      "source_sha256": "40c0202bec3b8ea75051fb8e9829e972e4ea1c411eee9b5246eea739c98289d8"
+    },
+    {
+      "bytes": 13758,
+      "destination": "generation_runtime/src/syntide/generate/plan.py",
+      "sha256": "6f826b4185124bb5ec03defd76dfe18a6d06e344072156d7afa694dda9af0fec",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/plan.py",
+      "source_sha256": "6f826b4185124bb5ec03defd76dfe18a6d06e344072156d7afa694dda9af0fec"
+    },
+    {
+      "bytes": 9433,
+      "destination": "generation_runtime/src/syntide/generate/policy.py",
+      "sha256": "2a624fa2f16719a2f2cd9ee7c8c31b4a3dbfee5b6623084ed0c24ee0c5dc4071",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/policy.py",
+      "source_sha256": "2a624fa2f16719a2f2cd9ee7c8c31b4a3dbfee5b6623084ed0c24ee0c5dc4071"
+    },
+    {
+      "bytes": 484,
+      "destination": "generation_runtime/src/syntide/generate/qa/__init__.py",
+      "sha256": "59ba2df657ee3ace851d0d3fff67984540539926cb77ce95c4f1a169a3e824f0",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/__init__.py",
+      "source_sha256": "59ba2df657ee3ace851d0d3fff67984540539926cb77ce95c4f1a169a3e824f0"
+    },
+    {
+      "bytes": 9000,
+      "destination": "generation_runtime/src/syntide/generate/qa/__main__.py",
+      "sha256": "a7e769b82d352068e469f464f94a06ab1a518f5577694ab8d63102d459831eda",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/__main__.py",
+      "source_sha256": "a7e769b82d352068e469f464f94a06ab1a518f5577694ab8d63102d459831eda"
+    },
+    {
+      "bytes": 16337,
+      "destination": "generation_runtime/src/syntide/generate/qa/acquisition.py",
+      "sha256": "4f87df411ce5f7e389c67e2ccbfa49a566c9f2506f6dd76d78e56f362ddda13e",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/acquisition.py",
+      "source_sha256": "4f87df411ce5f7e389c67e2ccbfa49a566c9f2506f6dd76d78e56f362ddda13e"
+    },
+    {
+      "bytes": 10499,
+      "destination": "generation_runtime/src/syntide/generate/qa/allocation.py",
+      "sha256": "1054f032f8d59b321eca8a6ab5d6d594faeae3ff64b7824209a01ac6210bb271",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/allocation.py",
+      "source_sha256": "1054f032f8d59b321eca8a6ab5d6d594faeae3ff64b7824209a01ac6210bb271"
+    },
+    {
+      "bytes": 26432,
+      "destination": "generation_runtime/src/syntide/generate/qa/build.py",
+      "sha256": "f2363dff12be826cb073146f32076bd1eb20116d576a14ece4cb99800733e15e",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/build.py",
+      "source_sha256": "f2363dff12be826cb073146f32076bd1eb20116d576a14ece4cb99800733e15e"
+    },
+    {
+      "bytes": 25462,
+      "destination": "generation_runtime/src/syntide/generate/qa/corpus.py",
+      "sha256": "699b97622971fe4b756d0de72e701f9d64f6cea8e5a48ae603f17af0fc02d46e",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/corpus.py",
+      "source_sha256": "699b97622971fe4b756d0de72e701f9d64f6cea8e5a48ae603f17af0fc02d46e"
+    },
+    {
+      "bytes": 8410,
+      "destination": "generation_runtime/src/syntide/generate/qa/curriculum.py",
+      "sha256": "72d820ebc909a8a5ad02747cc33725cea71ca0fccc1ce1ccddd1999d400cedbc",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/curriculum.py",
+      "source_sha256": "72d820ebc909a8a5ad02747cc33725cea71ca0fccc1ce1ccddd1999d400cedbc"
+    },
+    {
+      "bytes": 24460,
+      "destination": "generation_runtime/src/syntide/generate/qa/evidence.py",
+      "sha256": "8d334edc332ec11397836e1d00f225d6e9cecf929178180dc9e9092198d17517",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/evidence.py",
+      "source_sha256": "8d334edc332ec11397836e1d00f225d6e9cecf929178180dc9e9092198d17517"
+    },
+    {
+      "bytes": 11321,
+      "destination": "generation_runtime/src/syntide/generate/qa/evol.py",
+      "sha256": "e7269319366ef4e76aee313c85042f21eb41f12901c7917e24450308cd7cd52d",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/evol.py",
+      "source_sha256": "e7269319366ef4e76aee313c85042f21eb41f12901c7917e24450308cd7cd52d"
+    },
+    {
+      "bytes": 17312,
+      "destination": "generation_runtime/src/syntide/generate/qa/export.py",
+      "sha256": "051bbcfb4c4467f8a475550e7ee04986c34fd29843bb1d743492b5503cbdae6f",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/export.py",
+      "source_sha256": "051bbcfb4c4467f8a475550e7ee04986c34fd29843bb1d743492b5503cbdae6f"
+    },
+    {
+      "bytes": 10308,
+      "destination": "generation_runtime/src/syntide/generate/qa/generated.py",
+      "sha256": "cb12da4d315203fae02270abc7d6564e4dd46a55ad3477a7b17e2841671f04de",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/generated.py",
+      "source_sha256": "cb12da4d315203fae02270abc7d6564e4dd46a55ad3477a7b17e2841671f04de"
+    },
+    {
+      "bytes": 9243,
+      "destination": "generation_runtime/src/syntide/generate/qa/pairs.py",
+      "sha256": "296426f13700ff3215d282df2ebfdd3178ff511c553b34a1618115990172344d",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/pairs.py",
+      "source_sha256": "296426f13700ff3215d282df2ebfdd3178ff511c553b34a1618115990172344d"
+    },
+    {
+      "bytes": 18405,
+      "destination": "generation_runtime/src/syntide/generate/qa/sources.py",
+      "sha256": "9036acf111f685853cc65962ff4c4d744d7753345e24e6524ff0c977a7f26cb0",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/sources.py",
+      "source_sha256": "9036acf111f685853cc65962ff4c4d744d7753345e24e6524ff0c977a7f26cb0"
+    },
+    {
+      "bytes": 11023,
+      "destination": "generation_runtime/src/syntide/generate/qa/teacher.py",
+      "sha256": "ed0cef4890a10c182a4a7d3d168ae63683c99c5309b3a0f4f78b57a3e892a3a7",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/teacher.py",
+      "source_sha256": "ed0cef4890a10c182a4a7d3d168ae63683c99c5309b3a0f4f78b57a3e892a3a7"
+    },
+    {
+      "bytes": 25112,
+      "destination": "generation_runtime/src/syntide/generate/qa/templates.py",
+      "sha256": "b8e1f9e146f3afcbed31a9dc3d9d4b7f19a6e18c40b0598926e3ab7b1332cba5",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/templates.py",
+      "source_sha256": "b8e1f9e146f3afcbed31a9dc3d9d4b7f19a6e18c40b0598926e3ab7b1332cba5"
+    },
+    {
+      "bytes": 8757,
+      "destination": "generation_runtime/src/syntide/generate/qa/verify.py",
+      "sha256": "13cacae2774471b75aaea4a5f2e8b210a2655ec941aec6a2ef2fb427857714dc",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/qa/verify.py",
+      "source_sha256": "13cacae2774471b75aaea4a5f2e8b210a2655ec941aec6a2ef2fb427857714dc"
+    },
+    {
+      "bytes": 11399,
+      "destination": "generation_runtime/src/syntide/generate/stream.py",
+      "sha256": "08a1160c05c66b571296cfb701c9d46e32c16f8b022c317182f59a76f390184d",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/stream.py",
+      "source_sha256": "08a1160c05c66b571296cfb701c9d46e32c16f8b022c317182f59a76f390184d"
+    },
+    {
+      "bytes": 3959,
+      "destination": "generation_runtime/src/syntide/generate/validate.py",
+      "sha256": "d5225ffea9f7ce7042b8a5a7e6811b82d86c6bd50da2f9b1a47d98086a98d3b5",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/generate/validate.py",
+      "source_sha256": "d5225ffea9f7ce7042b8a5a7e6811b82d86c6bd50da2f9b1a47d98086a98d3b5"
+    },
+    {
+      "bytes": 10985,
+      "destination": "generation_runtime/src/syntide/qa_baseline_audit.py",
+      "sha256": "86c1cffa93a5af89b790163b3288a9822ff7b1d4af32d83bc6ec197fcfe617a3",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/qa_baseline_audit.py",
+      "source_sha256": "86c1cffa93a5af89b790163b3288a9822ff7b1d4af32d83bc6ec197fcfe617a3"
+    },
+    {
+      "bytes": 24996,
+      "destination": "generation_runtime/src/syntide/qa_trial.py",
+      "sha256": "cc11c255dd64208f9cb38e5b61301a4669ed4e58c3b701186308b9f737b1329a",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/qa_trial.py",
+      "source_sha256": "cc11c255dd64208f9cb38e5b61301a4669ed4e58c3b701186308b9f737b1329a"
+    },
+    {
+      "bytes": 20531,
+      "destination": "generation_runtime/src/syntide/trial.py",
+      "sha256": "398bac00a3c4043914886e57630c43dd3b1d577debb94eeed7e0d5179521bb64",
+      "source_archive": "outputs/qa-runs/diffusets-extension/study/setup/frozen-code.tar.gz",
+      "source_path": "diffusets-code/src/syntide/trial.py",
+      "source_sha256": "398bac00a3c4043914886e57630c43dd3b1d577debb94eeed7e0d5179521bb64"
+    },
+    {
+      "bytes": 4290,
+      "destination": "generation_runtime/tests/qa/fixtures.py",
+      "sha256": "310d9c3507dd6058b4106067ed83f607b6dab953951a5d3a5efed8422a824684",
+      "source_path": "tests/qa/fixtures.py",
+      "source_sha256": "310d9c3507dd6058b4106067ed83f607b6dab953951a5d3a5efed8422a824684"
+    },
+    {
+      "bytes": 7934,
+      "destination": "generation_runtime/tests/qa/test_evidence_and_tasks.py",
+      "sha256": "1a58ba25b33d8ae84951b1312343da01a3fa798030d8f410eb137804fc3c17be",
+      "source_path": "tests/qa/test_evidence_and_tasks.py",
+      "source_sha256": "1a58ba25b33d8ae84951b1312343da01a3fa798030d8f410eb137804fc3c17be"
+    },
+    {
+      "bytes": 9711,
+      "destination": "generation_runtime/tests/qa/test_export.py",
+      "sha256": "195687d1188869674253d3112d4cc548cd0b95f3114bb97cc6ba9780fcded86b",
+      "source_path": "tests/qa/test_export.py",
+      "source_sha256": "195687d1188869674253d3112d4cc548cd0b95f3114bb97cc6ba9780fcded86b"
+    },
+    {
+      "bytes": 8888,
+      "destination": "generation_runtime/tests/qa/test_generated.py",
+      "sha256": "962d401cb5df14557166cbfe439509f2aa4da5660d0f34828f13f671629be354",
+      "source_path": "tests/qa/test_generated.py",
+      "source_sha256": "962d401cb5df14557166cbfe439509f2aa4da5660d0f34828f13f671629be354"
+    },
+    {
+      "bytes": 11065,
+      "destination": "generation_runtime/tests/test_diffusets_generate.py",
+      "sha256": "5281acbc6d18d2fc136584d341c47221edffb5f71fb5ab94522ed12b22f0ef14",
+      "source_path": "tests/test_diffusets_generate.py",
+      "source_sha256": "5281acbc6d18d2fc136584d341c47221edffb5f71fb5ab94522ed12b22f0ef14"
+    },
+    {
+      "bytes": 4163,
+      "destination": "generation_runtime/tests/test_qa_preflight.py",
+      "sha256": "bac50b8a27a15cb577a00902cbc53c67601029d24afc36cfa9a06336820ea4e3",
+      "source_path": "tests/test_qa_preflight.py",
+      "source_sha256": "bac50b8a27a15cb577a00902cbc53c67601029d24afc36cfa9a06336820ea4e3"
+    },
+    {
+      "bytes": 14841,
+      "destination": "generation_runtime/tests/test_run_qa_arms.py",
+      "sha256": "ad7e489fb1451a9f16e3ec973cc661fa5e9f82e83e145d2afc86f3e6d6dc5304",
+      "source_path": "tests/test_run_qa_arms.py",
+      "source_sha256": "ad7e489fb1451a9f16e3ec973cc661fa5e9f82e83e145d2afc86f3e6d6dc5304"
+    }
+  ],
+  "generated_helpers": [
+    {
+      "bytes": 1724,
+      "destination": "exposure/run_cpu_tests.py",
+      "purpose": "Portable launcher; redirects only the archived tests preflight and baseline-source fixture locations.",
+      "sha256": "167aeb229130917fc8e203b4ee702fdd1e399c35003979a79c3343ca457cc92c"
+    }
+  ],
+  "purpose": "Byte-exact scientific sources for the seven seed-0 ECG-QA experiments; no cloud account or process controllers.",
+  "runtime_notes": {
+    "corpus_configs": "The bundled corpus YAML files preserve the original repository-relative dataset, manifest and output paths. Run from a prepared workspace with those paths, or record a relocated copy changing only source.registry, source.manifest, build.cache_dir and build.teacher.store. Keep the manifest logical SHA, build parameters and seed unchanged. Generated corpora in the experiments used diffusets_generate.py prepare rather than the generic example corpus_generated.yaml.",
+    "embedding_preparation": "scripts/runpod/diffusets_embeddings.py is the existing local extraction implementation, captured by file SHA here (not independently bound in the collected remote source archive). It extracts the selected reports from the pinned published CSV and verifies the frozen plan and original metadata; it makes no embedding API calls. The frozen plan carries the original absolute metadata CSV path. Restore it or record a separately adapted path mapping; changing the plan changes its checksum.",
+    "exclusions": "No checkpoints, raw ECGs, generated signal bundles, cloud credentials, pod/account receipts, process supervisors, queues, guards, collectors, caches or AppleDouble metadata.",
+    "exposure_pythonpath": [
+      "exposure/trainer",
+      "baseline_runtime/src",
+      "baseline_runtime/trainers/src",
+      "EXTERNAL_OPENTSLM_CHECKOUT/src"
+    ],
+    "external_dependencies": "OpenTSLM source, pretrained model assets, PTB-XL/ECG-QA-CoT data, TimeNet 0.11.0 and timenet-connectors 0.11.0, and frozen prepared datasets/generation bundles are external. Exact observed packages are in each runtime-pip-freeze.txt; baseline requirements are in baseline_runtime/scripts/runpod/requirements.txt. Original CUDA torch was 2.8.0.dev20250319+cu128; open-flamingo 2.0.1 was installed with --no-deps.",
+    "gemma_model": "google/gemma-3-270m",
+    "gemma_revision": "9b0cfec892e2bc2afd938c98eabe4e4a7b1e0ca1",
+    "generation_pythonpath": [
+      "generation_runtime/src"
+    ],
+    "namespace_warning": "Use separate generation and training Python environments. syntide is a regular package, so listing both src trees on PYTHONPATH does not merge them. The exact qa_baseline_audit module is copied into the training tree as deployed.",
+    "opentslm_commit": "2968f4b891baab4307f7e9d0043e87677b593a30",
+    "original_qa_overrides": "Only QA build.py differs between the initial QA export archive and the later DiffuSETS frozen source. Apply original_qa_overrides/src into a separate copy of generation_runtime/src to rebuild those original corpora. All other archived QA Python modules, including evidence.py, match the later frozen source; do not overwrite the later DiffuSETS source.",
+    "planner": "generation_runtime/planning/build_plan.py is byte-exact historical provenance, with local absolute source paths and output location; it is not a portable fresh-run CLI. Restore the pinned candidate plan for exact generation. Any adapted planner must change paths in a separate copy, record its source/config hashes, and preserve TRAIN/selection-only allocation and slot ordering.",
+    "runner_history": "generation_runtime/scripts/runpod contains the originally pinned scripts; executed_full5000 and executed_snapshot3030 preserve the exact later scientific runners. frozen_evaluation.py is the snapshot selection-calibrated continuation. They contain expired absolute deadlines/paths and are archival execution evidence, not fresh cloud launch commands. Reproduction needs new output paths and a separately recorded operational configuration.",
+    "tests": "Baseline tests use synthetic data/artifacts. Generation tests use fake generation/evaluation. exposure/run_cpu_tests.py runs the unchanged exposure tests and redirects only their archived preflight and baseline-source fixture lookups to the included scientific files; it does not train or evaluate held-out data.",
+    "training_pythonpath": [
+      "baseline_runtime/src",
+      "baseline_runtime/trainers/src",
+      "EXTERNAL_OPENTSLM_CHECKOUT/src"
+    ]
+  },
+  "schema_version": 1
+}

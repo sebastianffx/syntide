@@ -1,0 +1,17 @@
+{
+  "python": "3.11.11 (main, Dec  4 2024, 08:55:07) [GCC 11.4.0]",
+  "torch": "2.8.0.dev20250319+cu128",
+  "cuda": "12.8",
+  "gpu": "NVIDIA A40",
+  "packages": {
+    "numpy": "2.2.6",
+    "scipy": "1.16.2",
+    "pandas": "2.3.3",
+    "diffusers": "0.35.1",
+    "huggingface-hub": "0.35.3",
+    "wfdb": "4.3.0",
+    "pyarrow": "21.0.0"
+  },
+  "pinned_assets_verified": true,
+  "generation_started": false
+}

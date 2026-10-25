@@ -1,0 +1,44 @@
+{
+  "baseline_trainer": "outputs/qa-runs/runtime/trainers/src/syntide_trainers/opentslm_loop.py",
+  "baseline_trainer_sha256": "16bf861ea252e68dd2adc452bab6abfa0d37e29103337c2cab0d94bd3c075128",
+  "changed_functions": [
+    "train",
+    "evaluate",
+    "main"
+  ],
+  "changes": {
+    "evaluate": "Uses primary.pt at fixed12000 and validates actual192000+24000 source draws; verifies helper SHA in addition to derivative/metrics SHA; diagnostic selection argmax does not control evaluation. Prediction generation, parsing, scoring and recovery functions unchanged.",
+    "main": "Requires baseline-config and source-manifest on train; retains evaluate CLI.",
+    "train": "Two independent source streams; 16 original+2 generated; weighted token-normalized losses; synthetic torch RNG isolated; fixed12000 primary checkpoint; original15531 LR horizon; initialization/package/data fingerprints verified before update; actual source draw hashes logged."
+  },
+  "derivative_trainer_sha256": "cac7f8de478cf727e8184dcbf68a387d3729bc66c5bee2b3350bc1a9187abadb",
+  "helper_sha256": "d8d0c3807e292f6c075c74f245fe7ed6adda55e7ac6a636335988e0448662585",
+  "local_test_environment": {
+    "note": "CPU tests; production pinned NumPy2.2.6/Torch2.8 environment must rerun these before launch. No GPU model training or evaluation performed.",
+    "python": "3.13.13 (main, May 10 2026, 19:20:37) [Clang 22.1.3 ]"
+  },
+  "tests_sha256": "88e440478797204deaaa71ce28ad81cd3edc0b8cae26cdcfc79db85e8c5c83a9",
+  "unchanged_eval_generation_and_scoring": true,
+  "unchanged_functions_and_classes": [
+    "write_json",
+    "sha256",
+    "package_version",
+    "require_cuda",
+    "seed_everything",
+    "Prepared",
+    "make_prompt",
+    "target_text",
+    "Collator",
+    "token_length_summary",
+    "answer_losses",
+    "upstream_source_commit",
+    "load_model",
+    "parameter_fingerprint",
+    "save_checkpoint",
+    "restore_checkpoint",
+    "generate_predictions",
+    "option_predictions",
+    "signal_probe",
+    "read_saved_predictions"
+  ]
+}

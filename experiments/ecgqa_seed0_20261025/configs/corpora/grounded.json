@@ -1,0 +1,183 @@
+{
+  "acquisition": {
+    "crop_s": [
+      5.0
+    ],
+    "editor": {
+      "alignment_tol": 0.15,
+      "density_floor": 1.0,
+      "envelope": {
+        "baseline_drift": {
+          "amplitude_mv": [
+            0.1,
+            3.5
+          ],
+          "freq_hz": [
+            0.1,
+            0.4
+          ]
+        },
+        "burst_noise": {
+          "amplitude_mv": [
+            0.01,
+            0.6
+          ],
+          "duration_s": [
+            0.5,
+            3.0
+          ]
+        },
+        "static_noise": {
+          "amplitude_mv": [
+            0.005,
+            0.1
+          ]
+        }
+      },
+      "max_retries": 5,
+      "mv_limit": 10.0,
+      "type_smoothing": 0.1
+    },
+    "gains": [
+      0.5,
+      2.0
+    ],
+    "highpass_hz": [
+      0.67
+    ],
+    "lead_masks": [
+      [
+        "V1",
+        "V2",
+        "V3",
+        "V4",
+        "V5",
+        "V6"
+      ],
+      [
+        "I",
+        "II",
+        "III",
+        "AVR",
+        "AVL",
+        "AVF"
+      ],
+      [
+        "V2"
+      ]
+    ],
+    "lowpass_hz": [
+      25.0,
+      35.0
+    ],
+    "mv_limit": 10.0,
+    "operations": [
+      "resample",
+      "lowpass",
+      "crop",
+      "lead_mask",
+      "gain",
+      "electrode_artifact"
+    ],
+    "per_waveform": 1,
+    "resample_rates_hz": [
+      50.0
+    ]
+  },
+  "cache_dir": null,
+  "components": [
+    "grounded"
+  ],
+  "evol": {
+    "evolutions": 4,
+    "insufficient_fraction": 0.25,
+    "max_paraphrases": 1,
+    "max_per_family": 3,
+    "max_seed_tasks": 8,
+    "operators": [
+      "breadth",
+      "depth",
+      "reasoning",
+      "situation"
+    ],
+    "paraphrase_fraction": 0.0,
+    "rationale_fraction": 0.0,
+    "seed_templates": [
+      "acquisition.duration@1",
+      "acquisition.flat_leads@1",
+      "artifact.wander_in_lead@1",
+      "artifact.max_wander_lead@1",
+      "rhythm.heart_rate@1",
+      "rhythm.beat_count@1",
+      "rhythm.regularity@1",
+      "rhythm.rate_band@1",
+      "quality.noise_annotation@1",
+      "diagnosis.superclass@1",
+      "interval.measurement@1"
+    ]
+  },
+  "exclude_corpora": [],
+  "extractor": {
+    "annotations": true,
+    "beats": {
+      "band_hz": [
+        5.0,
+        15.0
+      ],
+      "height": 0.3,
+      "integrate_s": 0.1,
+      "irregular_cv": 0.15,
+      "match_s": 0.06,
+      "min_agreement": 0.6,
+      "min_beats": 4,
+      "refractory_s": 0.25,
+      "regular_cv": 0.08,
+      "rr_range_s": [
+        0.25,
+        2.5
+      ]
+    },
+    "flat_mv": 0.005,
+    "localization_floor_mv": 0.05,
+    "localization_margin": 1.25,
+    "sidecar": null
+  },
+  "generated": {
+    "allow_resample": false,
+    "bundles": [],
+    "heart_rate_pairs": true,
+    "min_confidence": 0.8,
+    "required": [
+      "heart_rate_bpm",
+      "beat_count",
+      "rr_regularity"
+    ],
+    "templates": [
+      "rhythm.heart_rate@1",
+      "rhythm.beat_count@1",
+      "rhythm.regularity@1",
+      "rhythm.rate_band@1",
+      "acquisition.duration@1",
+      "acquisition.flat_leads@1"
+    ]
+  },
+  "max_records": null,
+  "name": "ecgqa-cot-grounded",
+  "pairs": {
+    "natural_per_unit": 32,
+    "variation_fraction": 0.25,
+    "variations": [
+      "amplitude_up@1",
+      "wander_up@1"
+    ]
+  },
+  "paraphrase_fraction": 1.0,
+  "purpose": "training",
+  "seed": 0,
+  "source_dedupe": false,
+  "suite_role": null,
+  "task_ids_file": null,
+  "task_ids_sha256": null,
+  "teacher": {},
+  "unit_size": 256
+}

@@ -1,0 +1,28 @@
+# Arm 3 data: evidence-grounded seed tasks + TSEvol evolutions + natural comparisons on the same pool ECGs.
+source:
+  registry: datasets/timenet-registry
+  manifest: manifests/ecgqa-artifact-50/pool50.json
+  manifest_sha256: 6c46d78a53838895c076f66c5a2006753c50dcfbbfed081f19dc7dd4f42726c4
+  role: pool
+build:
+  name: ecgqa-cot-grounded
+  components: [grounded]
+  seed: 0
+  unit_size: 256
+  evol:
+    max_seed_tasks: 8
+    evolutions: 4
+    max_per_family: 3
+    insufficient_fraction: 0.25
+    rationale_fraction: 0.0   # >0 lets the teacher reword verified rationales (re-checked against evidence)
+  pairs:
+    natural_per_unit: 32
+  # extractor:                # PTB-XL+ intervals: add a checksummed sidecar (values are verified per file sha)
+  #   sidecar:
+  #     path: datasets/raw/ptb-xl-plus/features/12sl_features.csv
+  #     sha256: <sha256 of that file>
+  #     id_column: ecg_id
+  #     extractor: GE 12SL
+  #     extractor_version: <as published>
+  #     columns: {qrs_duration_ms: [<column>, ms], pr_interval_ms: [<column>, ms], qt_interval_ms: [<column>, ms]}
+  cache_dir: outputs/qa/evidence-cache
