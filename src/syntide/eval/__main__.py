@@ -19,8 +19,9 @@ from pathlib import Path
 
 import hydra
 from hydra.core.config_store import ConfigStore
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 
+from syntide.config import as_dataclass
 from syntide.eval.analysis import AnalysisConfig, RulesError, check_rules
 from syntide.eval.freeze import FreezeError, freeze_rules, verify_frozen
 from syntide.eval.tracking import TrackerConfig
@@ -50,7 +51,7 @@ ConfigStore.instance().store(name="evaluate_schema", node=EvaluateConfig)
 
 @hydra.main(version_base=None, config_path="../../../conf", config_name="evaluate")
 def main(cfg: DictConfig) -> None:
-    config: EvaluateConfig = OmegaConf.to_object(cfg)
+    config = as_dataclass(EvaluateConfig, cfg)
     for name, value, choices in (
         ("mode", config.mode, MODES),
         ("split", config.split, SPLITS),

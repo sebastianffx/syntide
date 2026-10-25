@@ -186,9 +186,7 @@ def test_portable_browser_plan_matches_python_even_with_exponents(bundle, backen
 
 
 def test_malformed_generation_requests_are_rejected_in_python_and_browser():
-    analysis = seal_analysis(
-        {"records": [{"record_id": "r1", "cluster": 0}], "provenance": {"source": {}}}
-    )
+    analysis = seal_analysis({"records": [{"record_id": "r1", "cluster": 0}], "provenance": {"source": {}}})
     invalid = [
         None,
         [],

@@ -131,6 +131,33 @@ def test_a_run_whose_outputs_were_changed_is_refused(protocol_dir, tamper, messa
         load_run(run_dir, "val")
 
 
+def test_a_validation_report_waits_for_a_seed_both_compared_arms_finished(
+    tmp_path, make_samples, make_test_spec, editor_calibration
+):
+    """Mid-training, A3 and A1 can each have finished runs, but on different seeds (parallel pods, a failed
+    run): the report says the contrast waits for a common seed instead of failing."""
+    protocol_dir = tmp_path / "runs" / "test-protocol"
+    val, parents = make_samples(60, seed=1, prefix="val"), make_samples(20)
+    entries = [
+        _train(
+            protocol_dir,
+            make_test_spec(arm, replicate_seed=seed),
+            val,
+            parents,
+            editor_calibration if arm == "A3" else None,
+        )
+        for arm, seed in (("A0", 0), ("A0", 1), ("A1", 1), ("A3", 0), ("C1", 0), ("C1", 1))
+    ]
+    (protocol_dir / "plan.json").write_text(json.dumps({"protocol": "test-protocol", "trials": entries}))
+
+    out = write_report(protocol_dir, PROTOCOL, RULES, "val", "best", TrackerConfig("files"))
+    results = json.loads((out / "comparisons.json").read_text())
+    assert results["chain"][0]["missing"] == ["A3 and A1 on a common seed"]
+    a3 = next(row for row in results["table"] if row["label"] == "A3")
+    assert a3["delta"] == {"against": "A1", "unpaired": "no finished seed in common"}
+    assert "no finished runs for A3 and A1 on a common seed" in (out / "results.md").read_text()
+
+
 def test_validation_report_then_test_report_after_freeze_and_scoring(protocol_dir, make_samples):
     out = write_report(protocol_dir, PROTOCOL, RULES, "val", "best", TrackerConfig("files"))
     results = json.loads((out / "comparisons.json").read_text())

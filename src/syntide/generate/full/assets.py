@@ -31,9 +31,7 @@ WEIGHTS_REPOSITORY = "Laiyf/DiffuSETS"
 WEIGHTS_REVISION = "80b04013aef594c7c3012a8b932e5e09524e581a"
 # The spelling is the upstream filename, not a typo in this integration.
 ARCHIVE_FILENAME = "prerequsites_for_inference.zip"
-ARCHIVE_URL = (
-    f"https://huggingface.co/{WEIGHTS_REPOSITORY}/resolve/{WEIGHTS_REVISION}/{ARCHIVE_FILENAME}"
-)
+ARCHIVE_URL = f"https://huggingface.co/{WEIGHTS_REPOSITORY}/resolve/{WEIGHTS_REVISION}/{ARCHIVE_FILENAME}"
 ARCHIVE_SIZE = 1_485_588_360
 ARCHIVE_SHA256 = "3402ccad9459bd8e03d55f031dbcf02e65c9e5d5deee706c33ab39c7dbabf1e9"
 CHECKPOINT_HASHES = {
@@ -54,12 +52,20 @@ class ZipMember:
 
 CHECKPOINT_MEMBERS = {
     "unet_all.pth": ZipMember(
-        "prerequisites/unet_all.pth", 1_279_583_212, 52_543_856, 56_979_194,
-        3_594_820_265, CHECKPOINT_HASHES["unet_all.pth"],
+        "prerequisites/unet_all.pth",
+        1_279_583_212,
+        52_543_856,
+        56_979_194,
+        3_594_820_265,
+        CHECKPOINT_HASHES["unet_all.pth"],
     ),
     "vae_model.pth": ZipMember(
-        "prerequisites/vae_model.pth", 1_332_127_152, 109_233_202, 118_289_354,
-        2_678_760_136, CHECKPOINT_HASHES["vae_model.pth"],
+        "prerequisites/vae_model.pth",
+        1_332_127_152,
+        109_233_202,
+        118_289_354,
+        2_678_760_136,
+        CHECKPOINT_HASHES["vae_model.pth"],
     ),
 }
 
@@ -108,7 +114,12 @@ def _read_range(url: str, start: int, size: int, total: int, timeout: float) -> 
 
 
 def _download_member(
-    url: str, member: ZipMember, destination: Path, *, archive_size: int, timeout: float = 60,
+    url: str,
+    member: ZipMember,
+    destination: Path,
+    *,
+    archive_size: int,
+    timeout: float = 60,
 ) -> None:
     if _cached(destination, member.sha256, member.size):
         return
@@ -117,8 +128,12 @@ def _download_member(
         struct.unpack("<4s5H3L2H", header)
     )
     if (
-        signature != b"PK\x03\x04" or flags != 0 or method != 8
-        or crc != member.crc32 or compressed != member.compressed_size or size != member.size
+        signature != b"PK\x03\x04"
+        or flags != 0
+        or method != 8
+        or crc != member.crc32
+        or compressed != member.compressed_size
+        or size != member.size
     ):
         raise ValueError("DiffuSETS ZIP member header does not match the pinned checkpoint")
     name_and_extra = _read_range(url, member.offset + 30, name_len + extra_len, archive_size, timeout)
@@ -196,7 +211,11 @@ def prepare_assets(output: Path, *, timeout: float = 60) -> dict:
         _download_source(path, sha256, output / "source" / path, timeout)
     for name, member in CHECKPOINT_MEMBERS.items():
         _download_member(
-            ARCHIVE_URL, member, output / "checkpoints" / name, archive_size=ARCHIVE_SIZE, timeout=timeout,
+            ARCHIVE_URL,
+            member,
+            output / "checkpoints" / name,
+            archive_size=ARCHIVE_SIZE,
+            timeout=timeout,
         )
     manifest = {
         "schema_version": 1,

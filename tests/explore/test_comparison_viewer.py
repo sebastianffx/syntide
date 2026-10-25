@@ -85,9 +85,7 @@ def test_overlay_preserves_amplitudes_and_actual_seconds():
 
 def test_channels_align_by_name_and_incompatible_units_are_not_overlaid():
     real = _record("real-1", [[-1, 1], [-5, 5]], channels=("I", "II"), units=["mV", "mV"])
-    synthetic = _record(
-        "generated-1", [[-3, 3], [-7, 7]], channels=("II", "I"), units=["mV", "V"]
-    )
+    synthetic = _record("generated-1", [[-3, 3], [-7, 7]], channels=("II", "I"), units=["mV", "V"])
     result = _javascript(
         {"records": [real, synthetic]},
         'waveformComparison(p.records[0], p.records[1], ["I", "II"])',

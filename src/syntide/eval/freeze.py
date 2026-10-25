@@ -14,9 +14,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from omegaconf import OmegaConf
-
 from syntide import __version__
+from syntide.config import load_dataclass
 from syntide.eval.analysis import AnalysisConfig
 
 RULES_FILE = "eval/rules.json"
@@ -93,9 +92,7 @@ def verify_frozen(protocol_dir: str | Path, rules: AnalysisConfig, *, claimed: b
 
 def _frozen_sha256(frozen: dict[str, Any]) -> str:
     """The frozen rules read through today's schema, so a field added later with a default still matches."""
-    schema = OmegaConf.structured(AnalysisConfig)
-    rules: AnalysisConfig = OmegaConf.to_object(OmegaConf.merge(schema, frozen["rules"]))
-    return rules.sha256
+    return load_dataclass(AnalysisConfig, frozen["rules"]).sha256
 
 
 def _diff(frozen: dict[str, Any], current: dict[str, Any]) -> str:

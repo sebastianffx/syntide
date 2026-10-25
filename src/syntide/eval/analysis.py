@@ -197,7 +197,8 @@ class Analysis:
         return self._cache[cache]
 
     def judged(self, spec: ContrastSpec) -> dict[str, Any]:
-        """A contrast on every slice, with the findings flags; ``missing`` names arms without runs."""
+        """A contrast on every slice, with the findings flags; ``missing`` names what has no paired run yet:
+        an arm without runs, or both arms when they finished only on different seeds."""
         missing = [self.label(key) for key in (spec.a, spec.b) if not self.groups.get(key)]
         entry: dict[str, Any] = {
             "role": spec.role,
@@ -206,7 +207,13 @@ class Analysis:
         }
         if missing:
             return entry
-        reports = {name: self.contrast(spec.a, spec.b, name) for name in SLICES}
+        reports: dict[str, UtilityReport] = {}
+        for name in SLICES:
+            report = self.contrast(spec.a, spec.b, name)
+            if report is None:  # both arms have runs, but no seed in common yet
+                entry["missing"] = [f"{self.label(spec.a)} and {self.label(spec.b)} on a common seed"]
+                return entry
+            reports[name] = report
         unpaired = sorted(set(self.groups[spec.a]) ^ set(self.groups[spec.b]))
         entry.update({name: report.to_dict() for name, report in reports.items()})
         entry["unpaired_seeds"] = unpaired
@@ -318,11 +325,17 @@ def _delta(analysis: Analysis, key: tuple[str, str]) -> dict[str, Any] | None:
         reference = arm_key(rules.reference, rules.regime)
     if key == reference or not analysis.groups.get(reference):
         return None
-    try:
-        reports = {name: analysis.contrast(key, reference, name) for name in ("artifact", "clean")}
-    except PairingError as error:
-        return {"against": analysis.label(reference), "unpaired": str(error)}
-    return {"against": analysis.label(reference), **{name: r.to_dict() for name, r in reports.items()}}
+    against = analysis.label(reference)
+    deltas: dict[str, Any] = {"against": against}
+    for name in ("artifact", "clean"):
+        try:
+            report = analysis.contrast(key, reference, name)
+        except PairingError as error:
+            return {"against": against, "unpaired": str(error)}
+        if report is None:  # both arms have runs, but no seed in common yet
+            return {"against": against, "unpaired": "no finished seed in common"}
+        deltas[name] = report.to_dict()
+    return deltas
 
 
 def _ratio(analysis, key, baseline, target, gated: bool, gate: dict[str, Any]) -> float | None:

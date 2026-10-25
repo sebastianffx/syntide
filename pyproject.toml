@@ -33,6 +33,8 @@ diffusets = [
 dev = [
     "pytest>=9.1",
     "ruff>=0.14",
+    # Pinned: a new pyright release can report new errors on unchanged code. [nodejs] bundles Node.
+    "pyright[nodejs]==1.1.414",
     "wfdb>=4.3",
     # The reference trainer, so `uv sync` and `uv run pytest` cover it. syntide never imports it.
     "syntide-trainers",
@@ -63,3 +65,10 @@ select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
 [tool.pytest.ini_options]
 testpaths = ["tests", "trainers/tests"]
 addopts = "-ra --strict-markers --import-mode=importlib"
+
+# Type checking starts with the evaluation code and the trial contract it reads; widen `include` as other
+# modules are cleaned up. Run it with `uvx nox -s typecheck` (or `uv run pyright`).
+[tool.pyright]
+include = ["src/syntide/eval", "src/syntide/trial.py", "src/syntide/qa_trial.py", "src/syntide/config.py"]
+pythonVersion = "3.13"
+typeCheckingMode = "basic"

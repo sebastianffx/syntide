@@ -119,7 +119,7 @@ def _style() -> None:
     )
 
 
-def _panel(ax, rows, regime, arms, reference, split, part, title) -> None:
+def _panel(ax, rows, regime, arms, reference: tuple[str, str], split, part, title) -> None:
     ref_mean, ref_sd = _mean_sd(_values(rows, *reference, split, part))
     ax.axhspan(ref_mean - ref_sd, ref_mean + ref_sd, color=REFERENCE_COLOR, alpha=0.10, lw=0, zorder=1)
     ax.axhline(ref_mean, color=REFERENCE_COLOR, lw=2, zorder=2)
@@ -151,7 +151,7 @@ def _panel(ax, rows, regime, arms, reference, split, part, title) -> None:
     ax.tick_params(axis="x", length=0)
 
 
-def _share_y(axes, rows, regime, arms, reference, split_parts) -> None:
+def _share_y(axes, rows, regime, arms, reference: tuple[str, str], split_parts) -> None:
     values = []
     for split, part in split_parts:
         for arm in [*arms, None]:

@@ -130,6 +130,7 @@ def load_run(run_dir: str | Path, split: str) -> Run:
         elif not all(np.array_equal(block[k], records[k]) for k in ("record_id", "labels", "is_artifact")):
             raise RunError(f"{path}: the checkpoints were scored on different records")
         probs[name], steps[name] = block["probs"], block["step"]
+    assert records is not None  # CHECKPOINTS[split] is never empty
 
     run = Run(
         run_dir=run_dir,

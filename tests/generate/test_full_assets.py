@@ -30,8 +30,12 @@ def archive():
     with zipfile.ZipFile(io.BytesIO(data)) as zipped:
         info = zipped.getinfo("prerequisites/unet_all.pth")
     member = assets.ZipMember(
-        info.filename, info.header_offset, info.compress_size, info.file_size,
-        info.CRC, hashlib.sha256(content).hexdigest(),
+        info.filename,
+        info.header_offset,
+        info.compress_size,
+        info.file_size,
+        info.CRC,
+        hashlib.sha256(content).hexdigest(),
     )
     return data, content, member
 
@@ -43,7 +47,7 @@ def mock_http(monkeypatch, archive_bytes: bytes, *, mode: str | None = None):
         assert timeout > 0
         start, end = map(int, request.get_header("Range").removeprefix("bytes=").split("-"))
         calls.append((start, end))
-        payload = archive_bytes[start:end + 1]
+        payload = archive_bytes[start : end + 1]
         headers = {
             "Content-Range": f"bytes {start}-{end}/{len(archive_bytes)}",
             "Content-Length": str(end - start + 1),
@@ -100,7 +104,10 @@ def test_checkpoint_rejects_wrong_member_identity(tmp_path, monkeypatch, archive
     target = tmp_path / "checkpoint.pth"
     with pytest.raises(ValueError, match=match):
         assets._download_member(
-            "https://example.invalid/a.zip", replace(member, **change), target, archive_size=len(data),
+            "https://example.invalid/a.zip",
+            replace(member, **change),
+            target,
+            archive_size=len(data),
         )
     assert not target.exists()
     assert not list(tmp_path.glob(".diffusets-*"))

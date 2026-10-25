@@ -1,0 +1,38 @@
+# The same checks as `uvx nox` locally, one job per nox session (see noxfile.py). Tests use synthetic
+# fixtures, so no PTB-XL download, model weights or GPU are needed.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  nox:
+    name: ${{ matrix.session }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        session: [lint, typecheck, test_core, test_all]
+    steps:
+      # Actions are pinned to commit SHAs; the comment names the release.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
+        with:
+          version: "0.11.14"
+          python-version: "3.13"
+          cache-suffix: ${{ matrix.session }}
+      - name: nox -s ${{ matrix.session }}
+        run: uvx nox@2026.8.17 -s ${{ matrix.session }}

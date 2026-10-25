@@ -39,6 +39,7 @@ import pyarrow.parquet as pq
 from omegaconf import OmegaConf
 
 from syntide import __version__
+from syntide.config import load_dataclass
 from syntide.data.qa import QATask
 from syntide.eval import qa_metrics
 from syntide.explore.plans import content_id
@@ -72,7 +73,7 @@ class QAEvalRules:
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> QAEvalRules:
-        return OmegaConf.to_object(OmegaConf.merge(OmegaConf.structured(cls), OmegaConf.load(path)))
+        return load_dataclass(cls, OmegaConf.load(path))
 
     @property
     def sha256(self) -> str:

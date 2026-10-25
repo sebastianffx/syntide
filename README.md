@@ -175,7 +175,10 @@ unsupported, the corpus guarantees and the experiment that measures validation a
 ```bash
 uv run --extra explore --extra diffusets pytest
 uv run ruff check src tests trainers
+uvx nox                 # every CI check: ruff, pyright type checking and tests (uvx nox -s typecheck for one)
 ```
+
+Type checking covers the paths under `[tool.pyright]` in `pyproject.toml`, starting with `syntide.eval`.
 
 Tests use synthetic fixtures and do not require a PTB-XL download or cloud GPU.
 

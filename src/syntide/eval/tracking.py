@@ -16,6 +16,8 @@ from typing import Any, Protocol
 
 from omegaconf import OmegaConf
 
+from syntide.config import load_dataclass
+
 BACKENDS = ("files", "tensorboard", "wandb")
 
 
@@ -31,7 +33,7 @@ class TrackerConfig:
     @classmethod
     def from_yaml(cls, path: str | Path) -> "TrackerConfig":
         """Load ``conf/tracker/<backend>.yaml`` without Hydra (for trainers)."""
-        return OmegaConf.to_object(OmegaConf.merge(OmegaConf.structured(cls), OmegaConf.load(path)))
+        return load_dataclass(cls, OmegaConf.load(path))
 
 
 class Tracker(Protocol):
@@ -126,6 +128,9 @@ class WandbTracker:
     def __init__(
         self, cfg: TrackerConfig, log_dir: Path, run_name: str, group: str, config: Mapping[str, Any]
     ) -> None:
+        mode = cfg.mode
+        if mode not in ("online", "offline", "disabled"):
+            raise ValueError(f"unknown W&B mode {mode!r}; choose online, offline or disabled")
         import wandb
 
         self._wandb = wandb
@@ -136,7 +141,7 @@ class WandbTracker:
             name=run_name,
             dir=str(log_dir),
             config=dict(config),
-            mode=cfg.mode,
+            mode=mode,
         )
 
     def log_scalars(self, values: Mapping[str, float], step: int) -> None:
