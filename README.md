@@ -1,15 +1,8 @@
-<h1 align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/syntide-logo-light.png">
-    <img src="docs/brand/syntide-logo.png" alt="Syntide" width="420">
-  </picture>
-</h1>
+# Syntide
 
 Syntide helps researchers decide **what synthetic time-series data to generate**, create it,
 and measure whether it improves downstream models. It starts with PTB-XL ECGs and supports
 exploring custom `(time_series, text)` and `(time_series, question, answer)` datasets.
-
-![Amber synthetic time-series trajectories gradually approach the structure of a continuous teal real-data signal.](docs/brand/syntide-convergence.png)
 
 ## Workflow
 
