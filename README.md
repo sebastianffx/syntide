@@ -19,50 +19,6 @@ exploring custom `(time_series, text)` and `(time_series, question, answer)` dat
 Training lives in the separate `trainers/` package. Syntide supplies its data stream and checks
 the trial contract; other trainers can implement the same interface.
 
-## Reproduce the presentation experiments
-
-The experiment reference is `../syntide.key`. It presents PTB-XL classification
-and seven ECG question-answering comparisons. Start with the saved experiment
-packages when reproducing the reported results:
-
-| Experiment | Reproduction package | Contents |
-|---|---|---|
-| PTB-XL classification | [Classification reproduction](experiments/ptbxl_classification_20261026/README.md) | Data scaling, artifact editing, augmentation sweeps, and DiffuSETS comparisons |
-| ECG question answering | [Question-answering reproduction](experiments/ecgqa_seed0_20261025/README.md) | Seven training mixes, original software, input fingerprints, and saved metrics |
-
-Verify both packages and print their saved results without downloading data or
-training a model:
-
-```bash
-python3 experiments/ptbxl_classification_20261026/reproduce.py verify
-python3 experiments/ptbxl_classification_20261026/reproduce.py table
-python3 experiments/ecgqa_seed0_20261025/reproduce.py verify
-python3 experiments/ecgqa_seed0_20261025/reproduce.py table
-```
-
-The packages preserve historical source bytes because the experiments recorded
-their hashes. The maintained code in `src/`, `trainers/`, and `scripts/` follows
-the current style checks; archived source is excluded from formatting. Use each
-package's instructions and recorded environment for an exact historical rerun.
-The commands above check saved evidence; they do not rerun model inference.
-
-Raw recordings, prepared datasets, generated signals, model weights, and
-checkpoints remain in the local ignored `datasets/`, `outputs/`, and `runs/`
-directories. They are useful experiment inputs and evidence. A fresh clone needs
-the external inputs described in each package before training. The slide
-companion at `../output/ecgqa-slide-kit/` lives outside this repository.
-
-For new classification runs, the [augmentation guide](docs/augmentation_sweep.md)
-provides the sweep and lead-reconstruction commands. The real-data scaling check
-uses:
-
-```bash
-uv run python -m syntide.data challenge.id=ptbxl-scaling \
-  'challenge.pool_fractions=[0.1,0.2,0.3,0.5,0.7,1.0]'
-uv run python -m syntide.generate protocol=ptbxl_scaling mode=plan
-uv run python -m syntide_trainers.torch_loop "runs/ptbxl-scaling/*/*/seed*"
-```
-
 ## Setup
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and run commands from this
@@ -241,3 +197,13 @@ in configurations and saved records so existing experiments remain readable.
 - [Augmentation experiments](docs/augmentation_sweep.md): settings, commands, and reported comparisons.
 - [Evidence-grounded QA generation](docs/qa_generation.md): ECG-QA-CoT corpora, QA trials and frozen QA evaluation.
 - [Architecture](docs/SYNTIDE_Architecture.md) and [experiment design](docs/SYNTIDE_MVE.md).
+
+## Reproduce the presentation experiments
+
+See the saved experiment packages for results, verification commands, and rerun instructions:
+
+- [PTB-XL classification](experiments/ptbxl_classification_20261026/README.md)
+- [ECG question answering](experiments/ecgqa_seed0_20261025/README.md)
+
+The `verify` and `table` commands inspect saved results without training. Full reruns require
+each package’s documented data, model assets, and environment.
