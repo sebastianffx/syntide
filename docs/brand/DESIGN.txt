@@ -1,0 +1,50 @@
+SYNTIDE — SIGNAL CONVERGENCE
+
+Concept
+Amber synthetic trajectories approach the shape of a teal real-data reference.
+The compact mark distills this relationship into three flowing wave strokes.
+The companion sculpture expands it into a dimensional field of signals.
+These are conceptual illustrations, not measured data or claims of equivalence.
+
+Palette
+Real signal: #087F8C
+Synthetic signals: #BD6A20
+Deep ink: #192E3B
+Light paper: #F4F7F8
+The Blender materials use brighter illuminated variants of these colors.
+
+Files
+syntide-mark.png — transparent square symbol / avatar
+syntide-mark-source.png — original generated pixels before PhotoCraft edge cleanup
+syntide-logo.png — transparent lockup with ink wordmark for light backgrounds
+syntide-logo-light.png — transparent lockup with white wordmark for dark backgrounds
+syntide-logo.pcraft / syntide-logo.psd — layered PhotoCraft master
+syntide-convergence.png — text-free 2400 x 1350 companion image
+syntide-convergence.blend — editable Blender scene
+syntide-cover.png — repository cover composed in PhotoCraft
+syntide-cover.pcraft — editable cover
+generate_convergence.py — procedural Blender scene source
+build_logo.sh — PhotoCraft composition and export commands
+
+Typography
+Inter SemiBold (600). Wordmark is editable in PhotoCraft.
+Keep clear space around the mark and preserve its proportions.
+
+Workflow
+The symbol was generated using Codex's built-in image_gen tool (not CLI fallback).
+The wordmark and cover were assembled with the installed PhotoCraft CLI.
+The companion image was modeled and rendered using installed Blender 5.1.1.
+The raster mark is embedded in the editable logo; the wordmark remains live type.
+
+Regeneration
+Run Blender in background with generate_convergence.py, then build_logo.sh.
+The script uses the installed PhotoCraft CLI and local Inter fonts.
+The exact final symbol generation prompt follows.
+
+FINAL LOGO PROMPT
+Use case: logo-brand
+Asset type: finished original logo symbol for Syntide, synthetic time-series research software.
+Design an exceptionally simple and memorable compact waveform mark: three smooth continuous rounded strokes flow from left to right in a single rising-and-falling wave. Initially offset and independent, the two warm amber synthetic traces gently approach a thicker rich teal reference trace toward their right ends, leaving precise negative space. The overall silhouette subtly suggests a lowercase flowing s/tidal wave, but remains ONE coherent compact symbol. No separate top/bottom swooshes.
+Visual style: calm modern Swiss identity design, geometric monoline construction, generous deliberate gaps, perfectly smooth round caps, flat solid colors, uniform-weight strokes, understated sophisticated proportions. Much simpler and less aggressive than a sports logo. No sharp blade tips. One teal stroke #087F8C; two amber strokes #BD6A20. Pure crisp vector-like artwork without any shading, gradients, textured edges or noise.
+Centered square canvas, symbol uses 72 percent of width and about 52 percent of height with roomy transparent margins. No text at all, no mockup, no 3D, no shadows, no circles, no badge, no arrow, no infinity loop, no heartbeat spike, no axes. Truly transparent background. One logo, no variations sheet.
+
