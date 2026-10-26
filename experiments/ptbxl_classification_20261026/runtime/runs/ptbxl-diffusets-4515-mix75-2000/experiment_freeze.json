@@ -1,0 +1,31 @@
+{
+  "protocol_sha256": "0bb4e5f44b9e06b80251e9cac952f582a40ee1ee505389a3dc4e0208ef285c9e",
+  "plan_sha256": "835e9a771ab173b034bf3d4aa10fddd8dc66466c770c4dfb7a74c0d819a11d66",
+  "inputs_sha256": {
+    "data/conditioning_labels.json": "cc6db4e2fede7b1f8cb60c137d82536fcec7089ebbfddf5d04d674697a70e855",
+    "data/generated.npz": "b27c7658249a72884c7073b255bfcf3e98f69c1a9dff7ea5669ec9d5ec48feb2",
+    "data/manifest.json": "a2ffde2934dd0ebedaca299cd2ef774228b925ec2b348129fac20d5f01ce7c8f",
+    "data/provenance.json": "98c8f69d165e669ae4120bfbc07b10450d8bc52aae14a46ae93a404d9434b50f"
+  },
+  "code_sha256": {
+    "runs/ptbxl-diffusets-4515-mix75-2000/run_experiment.py": "12bc173f81129c2fb2b804a30bbd93acd03826bfa70a64679be10dba4f6b32d8",
+    "runs/ptbxl-diffusets-4515-mix75-2000/mixed_stream.py": "3365b0bab12ae4ffca31518c0f26be8245ceeb223689071aa9e62235b354ef0b",
+    "runs/ptbxl-diffusets-4515-mix75-2000/prepare_data.py": "61a8fe8f6b20ae4e6aecd9781e8f7fc6ae5de28e078c797d462483d0a4337c37",
+    "trainers/src/syntide_trainers/torch_loop.py": "def4501896609c2d931e0de068e61e50be152758404404b065b69d75f6f70af7",
+    "src/syntide/trial.py": "398bac00a3c4043914886e57630c43dd3b1d577debb94eeed7e0d5179521bb64",
+    "src/syntide/eval/stats.py": "36483ba2d08a68234a8db60dad1c17e181b40de611d5f92b6aff84148bd0ade9",
+    "src/syntide/eval/holdout.py": "b65f23d3cfa228e1baf9b360357894ef3ba51c131eab50663fc1e01ae7095228"
+  },
+  "baseline_files_sha256": {
+    "runs/ptbxl-scaling/pool50/real/seed0/events.out.tfevents.1792623571.MacBookPro.95199.7": "48e7db9b7d6c6995faf8f2e59228067cfc9c207bddd3bdf91c4275aab57fcacd",
+    "runs/ptbxl-scaling/pool50/real/seed0/result.json": "dc63398b6c5704c95c85fa9c69d5ee4b34e77d709c97fa76a9f406a1ec63f766",
+    "runs/ptbxl-scaling/pool50/real/seed0/predictions_val.parquet": "2c58076a4f4853bb9a8eb0beba0755affe9a8b3c46bbe1bdbd6bd23b892af33b",
+    "runs/ptbxl-scaling/pool50/real/seed0/best.pt": "4be4bd485bc3fe34c6b32d8e0bd4803ab5f413342115f1c845c38d925d4b8404",
+    "runs/ptbxl-scaling/pool50/real/seed0/events.out.tfevents.1792623195.MacBookPro.95199.6": "8b80aa3da274b3ad58ee067bd1cb00fd6c32e0b64baa244c77cd6cd4a07e0b59",
+    "runs/ptbxl-scaling/pool50/real/seed0/final.pt": "e4c82b3a7b848498382557b15ab279b1706a022ce43ff732ed36c6c65b5541e4",
+    "runs/ptbxl-scaling/pool50/real/seed0/exposure.json": "fb22e4916cca883efaddb5213ff523276b8b35f7bff71c06c6cd5e91df13e783",
+    "runs/ptbxl-scaling/pool50/real/seed0/trial.json": "dca6ae088866d904f54baa38afb4f31ee811223a79dbbb1364c1b8dcdc826897",
+    "runs/ptbxl-scaling/pool50/real/seed0/recipes.parquet": "9ca0563c93d292de31433fda1855ba0f16217eff60e7c4369950dbcc32d15f29"
+  },
+  "frozen_at": "2026-10-26T08:27:05.020436+00:00"
+}

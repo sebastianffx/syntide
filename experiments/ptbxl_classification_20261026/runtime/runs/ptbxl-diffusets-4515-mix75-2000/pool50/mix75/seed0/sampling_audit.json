@@ -1,0 +1,35 @@
+{
+  "all_rows_seen": true,
+  "every_batch_has_exact_mix": true,
+  "exposure": {
+    "accepted": 0,
+    "candidates": 0,
+    "distinct_generated_records": 4515,
+    "distinct_real_records": 8579,
+    "distinct_recipes": 0,
+    "exhausted_slots": 0,
+    "generated_presentations": 32000,
+    "presentations": 128000,
+    "real_presentations": 96000,
+    "rejected": 0,
+    "steps": 2000,
+    "transform_slots": 0
+  },
+  "files_sha256": {
+    "batch_composition.csv": "1529824f22b39eb0dc97bc8a2c533fac370a7a5c0d435adea2af19d74180ff39",
+    "row_exposure.csv": "a3b40ade9babf6811ca908202ee40e11839b6ef52a55b4577805f5957e45c2ed",
+    "sampling_trace.npz": "01b6af007afd0b70575e8a1f79aa23f0525e3a2f0d47df496c0db3a69b429238"
+  },
+  "generated_per_batch": 16,
+  "generated_presentations_per_record_max": 8,
+  "generated_presentations_per_record_min": 7,
+  "n_generated": 4515,
+  "n_real": 8579,
+  "policy": "independent shuffled exhaustive cycles; exact source quota; shuffled batch positions",
+  "real_per_batch": 48,
+  "real_presentations_per_record_max": 12,
+  "real_presentations_per_record_min": 11,
+  "rng_key": "numpy.default_rng([seed,4515,source,pass]); source=0 real,1 generated,2 batch shuffle",
+  "schema_version": "ptbxl-offline-mixed-sampling@1",
+  "seed": 0
+}

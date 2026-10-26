@@ -1,22 +1,18 @@
-"""The QA trainer seam, next to the classification seam ``syntide.trial`` (unchanged).
+"""Prepare question-answer training trials and validate their results.
 
-A QA trial (``schema_version: syntide.qa-trial@1``) trains on published QA corpora through a frozen
-curriculum and selects its checkpoint on a frozen selection suite. ``load_any_spec`` dispatches on the
-``trial.json`` shape: a file without ``schema_version`` is a classification trial and goes to
-``syntide.trial.load_spec`` exactly as before, so legacy files load with their original ids.
+Each trial uses published training collections, a fixed sampling schedule,
+and a fixed checkpoint-selection collection. ``load_any_spec`` reads the
+schema version in ``trial.json`` to choose question-answer or classification
+loading. Existing classification files retain their original identities.
 
-    if not is_qa_complete(run_dir, trainer):
-        with prepare_qa(run_dir, tracker=tracker_cfg) as trial:
-            seed the model with trial.spec.init_seed and hash its initial state
-            for batch in trial.batches():           # exactly max_steps QABatch objects
-                loss on each example's target (only the target span; the student fields are the input)
-                every val_every steps: outputs = predict(trial.selection_examples()); keep the best
-            trial.finish(trainer, best, final, val_history, val_outputs, init_sha256, wall_time_s)
+A trainer initializes its model with ``trial.spec.init_seed``, consumes each
+batch once, and evaluates the selection collection every ``val_every``
+steps. ``QAExample.student`` contains only inputs the model may read:
+signals, question, options, and permitted context. ``QAExample.target``
+contains the answer and any explanation used for training.
 
-``QAExample.student`` is everything a model may read (signals, question, options, permitted context);
-``QAExample.target`` is the privileged supervision, and nothing in ``student`` depends on it.
-``finish`` re-parses the saved outputs with the frozen parser, recomputes every reported score and
-refuses a run whose best checkpoint is not the first argmax of ``val/qa_accuracy``.
+``finish`` parses the saved model outputs again, recomputes reported scores,
+and requires the earliest checkpoint with the highest selection accuracy.
 """
 
 from __future__ import annotations
@@ -65,7 +61,9 @@ class QATrialSpec:
     arm: str
     supervision: str  # answer_only | rationale
     replicate_seed: int
-    corpora: list[dict[str, str]]  # [{label, corpus_id, path}], training corpora
+    corpora: list[
+        dict[str, str]
+    ]  # [{label, corpus_id, path}], training corpora
     selection: dict[str, str]  # {corpus_id, path}: the frozen selection suite
     curriculum: dict[str, Any]
     curriculum_sha256: str  # the frozen curriculum and its exact pools
@@ -74,9 +72,13 @@ class QATrialSpec:
     val_every: int
     metric: dict[str, str]  # name, direction, tie_break
     parser: str
-    decoding: dict[str, Any]  # frozen generation / option-scoring settings the trainer must use
+    decoding: dict[
+        str, Any
+    ]  # frozen generation / option-scoring settings the trainer must use
     context_policy: str
-    budget: dict[str, Any]  # primary budget declaration (e.g. updates x examples) and its notes
+    budget: dict[
+        str, Any
+    ]  # primary budget declaration (e.g. updates x examples) and its notes
     init_seed: int
     syntide_version: str
     trial_id: str
@@ -90,15 +92,21 @@ class QATrialSpec:
 
 
 def _identity(content: Mapping[str, Any]) -> dict[str, Any]:
-    """Paths say where inputs live, not what they are, so they stay out of the id."""
+    """Exclude storage paths from the content used to identify a trial."""
     out = {k: v for k, v in content.items() if k != "trial_id"}
-    out["corpora"] = [{k: v for k, v in c.items() if k != "path"} for c in out["corpora"]]
-    out["selection"] = {k: v for k, v in out["selection"].items() if k != "path"}
+    out["corpora"] = [
+        {k: v for k, v in c.items() if k != "path"} for c in out["corpora"]
+    ]
+    out["selection"] = {
+        k: v for k, v in out["selection"].items() if k != "path"
+    }
     return out
 
 
 def _trial_id(content: Mapping[str, Any]) -> str:
-    canonical = json.dumps(_identity(content), sort_keys=True, separators=(",", ":"))
+    canonical = json.dumps(
+        _identity(content), sort_keys=True, separators=(",", ":")
+    )
     return hashlib.sha256(canonical.encode()).hexdigest()
 
 
@@ -119,20 +127,35 @@ def make_qa_spec(**content: Any) -> QATrialSpec:
 def load_qa_spec(run_dir: str | Path) -> QATrialSpec:
     path = Path(run_dir) / TRIAL_FILE
     if not path.exists():
-        raise TrialError(f"{path} does not exist; plan it with python -m syntide.generate.qa plan")
+        raise TrialError(
+            f"{path} does not exist; plan it with python -m "
+            "syntide.generate.qa plan"
+        )
     payload = json.loads(path.read_text(encoding="utf-8"))
     expected = {f.name for f in fields(QATrialSpec)}
-    if payload.get("schema_version") != QA_TRIAL_SCHEMA or set(payload) != expected:
+    if (
+        payload.get("schema_version") != QA_TRIAL_SCHEMA
+        or set(payload) != expected
+    ):
         raise TrialError(f"{path} is not a {QA_TRIAL_SCHEMA} trial")
     if _trial_id(payload) != payload["trial_id"]:
-        raise TrialError(f"{path} does not match its trial_id; re-plan it instead of editing it")
+        raise TrialError(
+            f"{path} does not match its trial_id; re-plan it instead of "
+            "editing it"
+        )
     return QATrialSpec(**payload)
 
 
 def load_any_spec(run_dir: str | Path) -> TrialSpec | QATrialSpec:
-    """A classification ``TrialSpec`` (legacy shape, unchanged) or a ``QATrialSpec``, by schema."""
-    payload = json.loads((Path(run_dir) / TRIAL_FILE).read_text(encoding="utf-8"))
-    return load_qa_spec(run_dir) if payload.get("schema_version") == QA_TRIAL_SCHEMA else load_spec(run_dir)
+    """Load a trial according to its declared schema."""
+    payload = json.loads(
+        (Path(run_dir) / TRIAL_FILE).read_text(encoding="utf-8")
+    )
+    return (
+        load_qa_spec(run_dir)
+        if payload.get("schema_version") == QA_TRIAL_SCHEMA
+        else load_spec(run_dir)
+    )
 
 
 def write_qa_spec(run_dir: str | Path, spec: QATrialSpec) -> bool:
@@ -140,7 +163,10 @@ def write_qa_spec(run_dir: str | Path, spec: QATrialSpec) -> bool:
     if path.exists():
         existing = load_any_spec(run_dir)
         if existing.trial_id != spec.trial_id:
-            raise TrialError(f"{path} already holds trial {existing.trial_id[:12]}, not {spec.trial_id[:12]}")
+            raise TrialError(
+                f"{path} already holds trial {existing.trial_id[:12]}, not "
+                f"{spec.trial_id[:12]}"
+            )
         return False
     path.parent.mkdir(parents=True, exist_ok=True)
     _write_json(path, spec.to_dict())
@@ -150,10 +176,11 @@ def write_qa_spec(run_dir: str | Path, spec: QATrialSpec) -> bool:
 @dataclass(frozen=True)
 class QAExample:
     task_id: str
-    student: dict[
-        str, Any
-    ]  # signals [(channels, T) float32 per input], input ids, question, options, context
-    target: str  # privileged: the supervised text (answer line, with the rationale in rationale mode)
+    # Model inputs: signals, recording references, question, options, context.
+    student: dict[str, Any]
+    # privileged: the supervised text (answer line, with the rationale in
+    # rationale mode)
+    target: str
     target_mode: str
     family: str
     stage: str
@@ -167,8 +194,10 @@ class QABatch:
 
 
 class QAPredictor(Protocol):
-    def __call__(self, checkpoint: Checkpoint, examples: Sequence[QAExample], device: str) -> list[str]:
-        """Return one raw output text per example (ending in an ``Answer:`` line)."""
+    def __call__(
+        self, checkpoint: Checkpoint, examples: Sequence[QAExample], device: str
+    ) -> list[str]:
+        """Return one output per example, ending with an Answer: line."""
         ...
 
 
@@ -181,10 +210,16 @@ def example(
     corpus: str = "",
     signals: Sequence[np.ndarray] | None = None,
 ) -> QAExample:
-    """An example; ``target_mode=None`` gives a student-only example (no target, for prediction)."""
+    """Build model inputs and, optionally, a training target.
+
+    Set target_mode to None when preparing inputs for prediction without
+    answers.
+    """
     view = task.student_view()
     view["signals"] = (
-        list(signals) if signals is not None else [signal_of(ref.waveform_id) for ref in task.inputs]
+        list(signals)
+        if signals is not None
+        else [signal_of(ref.waveform_id) for ref in task.inputs]
     )
     return QAExample(
         task.task_id,
@@ -203,46 +238,66 @@ def is_qa_complete(run_dir: str | Path, trainer: TrainerInfo) -> bool:
         return False
     result = json.loads(path.read_text(encoding="utf-8"))
     spec = load_qa_spec(run_dir)
-    if result["trial_id"] != spec.trial_id or result["trainer"]["fingerprint"] != trainer.fingerprint:
-        raise TrialError(f"{path} belongs to another trial or trainer; use a new runs_dir")
+    if (
+        result["trial_id"] != spec.trial_id
+        or result["trainer"]["fingerprint"] != trainer.fingerprint
+    ):
+        raise TrialError(
+            f"{path} belongs to another trial or trainer; use a new runs_dir"
+        )
     return result.get("status") == "complete"
 
 
 def prepare_qa(run_dir: str | Path, *, tracker: TrackerConfig) -> QATrial:
-    """Verify the planned corpora, selection suite and curriculum, then open the trial."""
+    """Validate collections and open a question-answer trial."""
     from syntide.generate.qa.corpus import load_corpus
 
     run_dir = Path(run_dir)
     spec = load_qa_spec(run_dir)
     if spec.syntide_version != __version__:
-        raise TrialError(f"{run_dir} was planned with syntide {spec.syntide_version}, this is {__version__}")
+        raise TrialError(
+            f"{run_dir} was planned with syntide {spec.syntide_version}, "
+            f"this is {__version__}"
+        )
     if (run_dir / RESULT_FILE).exists():
-        raise TrialError(f"{run_dir} is already finished; results are never overwritten")
+        raise TrialError(
+            f"{run_dir} is already finished; results are never overwritten"
+        )
     corpora = {}
     for entry in spec.corpora:
         corpus = load_corpus(entry["path"])
         if corpus.corpus_id != entry["corpus_id"]:
             raise TrialError(
-                f"{entry['path']} holds {corpus.corpus_id}, not the planned {entry['corpus_id']}"
+                f"{entry['path']} holds {corpus.corpus_id}, not the "
+                f"planned {entry['corpus_id']}"
             )
         corpora[entry["label"]] = corpus
     selection = load_corpus(spec.selection["path"])
     if selection.corpus_id != spec.selection["corpus_id"]:
         raise TrialError(
-            f"{spec.selection['path']} holds {selection.corpus_id}, not {spec.selection['corpus_id']}"
+            f"{spec.selection['path']} holds {selection.corpus_id}, not "
+            f"{spec.selection['corpus_id']}"
         )
-    board = make_tracker(tracker, run_dir, spec.run_name, spec.protocol, spec.to_dict())
+    board = make_tracker(
+        tracker, run_dir, spec.run_name, spec.protocol, spec.to_dict()
+    )
     return open_qa_trial(spec, corpora, selection, board, run_dir)
 
 
 def check_trial_inputs(corpora: Mapping[str, Any], selection: Any) -> None:
-    """Training corpora are training-only; the selection suite is a selection suite; no shared patient."""
+    """Validate collection roles and patient separation.
+
+    Training collections must permit training. The selection collection must
+    be reserved for checkpoint selection and share no patient with training
+    data.
+    """
     from syntide.data.leakage import check_disjoint_subjects
 
     for label, corpus in corpora.items():
         if corpus.purpose != "training":
             raise TrialError(
-                f"corpus {label} ({corpus.corpus_id}) is a {corpus.purpose} corpus; it cannot train"
+                f"corpus {label} ({corpus.corpus_id}) is a {corpus.purpose}"
+                " corpus; it cannot train"
             )
     if (
         selection.purpose != "evaluation"
@@ -250,26 +305,42 @@ def check_trial_inputs(corpora: Mapping[str, Any], selection: Any) -> None:
     ):
         raise TrialError(f"{selection.corpus_id} is not a selection suite")
     subjects = {
-        label: {s for ref in c.inputs.values() for s in ref.root_subject_uids} for label, c in corpora.items()
+        label: {s for ref in c.inputs.values() for s in ref.root_subject_uids}
+        for label, c in corpora.items()
     }
     train = set().union(*subjects.values())
     check_disjoint_subjects(
         {
             "training corpora": train,
-            "selection suite": {s for ref in selection.inputs.values() for s in ref.root_subject_uids},
+            "selection suite": {
+                s
+                for ref in selection.inputs.values()
+                for s in ref.root_subject_uids
+            },
         }
     )
 
 
 def open_qa_trial(
-    spec: QATrialSpec, corpora: Mapping[str, Any], selection: Any, tracker: Tracker, run_dir: str | Path
+    spec: QATrialSpec,
+    corpora: Mapping[str, Any],
+    selection: Any,
+    tracker: Tracker,
+    run_dir: str | Path,
 ) -> QATrial:
-    """Open a trial for already-loaded corpora (tests call it directly)."""
-    from syntide.generate.qa.curriculum import Curriculum, CurriculumConfig, StageConfig
+    """Open a trial from collections already loaded into memory."""
+    from syntide.generate.qa.curriculum import (
+        Curriculum,
+        CurriculumConfig,
+        StageConfig,
+    )
 
     check_trial_inputs(corpora, selection)
     cfg = CurriculumConfig(
-        **{**spec.curriculum, "stages": [StageConfig(**s) for s in spec.curriculum["stages"]]}
+        **{
+            **spec.curriculum,
+            "stages": [StageConfig(**s) for s in spec.curriculum["stages"]],
+        }
     )
     curriculum = Curriculum(
         cfg,
@@ -279,7 +350,9 @@ def open_qa_trial(
         supervision=spec.supervision,
     )
     if curriculum.sha256 != spec.curriculum_sha256:
-        raise TrialError("the curriculum or its corpora changed since the trial was planned")
+        raise TrialError(
+            "the curriculum or its corpora changed since the trial was planned"
+        )
     return QATrial(spec, corpora, selection, curriculum, tracker, Path(run_dir))
 
 
@@ -293,9 +366,18 @@ class QATrial:
         tracker: Tracker,
         run_dir: Path,
     ) -> None:
-        self.spec, self.corpora, self.selection, self.curriculum = spec, dict(corpora), selection, curriculum
+        self.spec, self.corpora, self.selection, self.curriculum = (
+            spec,
+            dict(corpora),
+            selection,
+            curriculum,
+        )
         self.tracker, self.run_dir = tracker, run_dir
-        self._tasks = {t.task_id: (label, t) for label, c in self.corpora.items() for t in c.tasks}
+        self._tasks = {
+            t.task_id: (label, t)
+            for label, c in self.corpora.items()
+            for t in c.tasks
+        }
         self._slots: list[Any] = []
         self._started = False
         self.steps_served = 0
@@ -306,8 +388,11 @@ class QATrial:
         return list(self.selection.tasks)
 
     def selection_examples(self) -> list[QAExample]:
-        """Student-only examples of the selection suite, in its fixed order."""
-        return [example(t, self.selection.signal, target_mode=None) for t in self.selection.tasks]
+        """Return selection inputs without answers, in their fixed order."""
+        return [
+            example(t, self.selection.signal, target_mode=None)
+            for t in self.selection.tasks
+        ]
 
     def batches(self) -> Iterator[QABatch]:
         if self._started:
@@ -332,14 +417,18 @@ class QATrial:
             self._slots.extend(slots)
             self.steps_served = slots[0].step
             if slots[0].step % self.spec.val_every == 0:
-                self.tracker.log_scalars({"budget/examples": len(self._slots)}, slots[0].step)
+                self.tracker.log_scalars(
+                    {"budget/examples": len(self._slots)}, slots[0].step
+                )
             yield QABatch(slots[0].step, examples)
 
     @property
     def exposure(self) -> dict[str, Any]:
         from syntide.generate.qa.curriculum import exposure
 
-        return exposure(self._slots, {tid: task for tid, (_, task) in self._tasks.items()})
+        return exposure(
+            self._slots, {tid: task for tid, (_, task) in self._tasks.items()}
+        )
 
     def __enter__(self) -> QATrial:
         return self
@@ -360,26 +449,43 @@ class QATrial:
         wall_time_s: float,
         token_counts: Mapping[str, int] | None = None,
     ) -> dict[str, Any]:
-        """Check the trainer's results against the protocol, then write the run outputs."""
+        """Validate trainer results and save the completed run."""
         if not self._open:
             raise TrialError("this trial is already closed")
         spec, history = self.spec, [dict(entry) for entry in val_history]
         result_path = self.run_dir / RESULT_FILE
         if result_path.exists():
-            raise TrialError(f"{self.run_dir} is already finished; results are never overwritten")
+            raise TrialError(
+                f"{self.run_dir} is already finished; results are never "
+                "overwritten"
+            )
         if self.steps_served != spec.max_steps:
-            raise TrialError(f"the trainer consumed {self.steps_served} of {spec.max_steps} batches")
+            raise TrialError(
+                f"the trainer consumed {self.steps_served} of "
+                f"{spec.max_steps} batches"
+            )
         if final.step != spec.max_steps:
-            raise TrialError(f"the final checkpoint is at step {final.step}, not max_steps={spec.max_steps}")
+            raise TrialError(
+                f"the final checkpoint is at step {final.step}, not "
+                f"max_steps={spec.max_steps}"
+            )
         steps = [int(e["step"]) for e in history]
-        if steps != list(range(spec.val_every, spec.max_steps + 1, spec.val_every)):
-            raise TrialError(f"validation must run every {spec.val_every} steps; got {steps[:8]}")
+        if steps != list(
+            range(spec.val_every, spec.max_steps + 1, spec.val_every)
+        ):
+            raise TrialError(
+                f"validation must run every {spec.val_every} steps; got "
+                f"{steps[:8]}"
+            )
         metric = spec.metric["name"]
         scores = [e[metric] for e in history]
-        best_step = steps[int(np.argmax(scores))]  # first argmax: ties go to the earliest step
+        best_step = steps[
+            int(np.argmax(scores))
+        ]  # first argmax: ties go to the earliest step
         if best.step != best_step:
             raise TrialError(
-                f"the best checkpoint is at step {best.step}, but the first argmax of {metric} is {best_step}"
+                f"the best checkpoint is at step {best.step}, but the "
+                f"first argmax of {metric} is {best_step}"
             )
         if set(val_outputs) != {"best", "final"}:
             raise TrialError("val_outputs needs exactly 'best' and 'final'")
@@ -390,16 +496,27 @@ class QATrial:
             recomputed = qa_metrics.val_scores(tasks, outputs)
             reported = history[steps.index(checkpoint.step)]
             for key, value in recomputed.items():
-                if key not in reported or not math.isclose(reported[key], value, rel_tol=1e-9, abs_tol=1e-12):
+                if key not in reported or not math.isclose(
+                    reported[key], value, rel_tol=1e-9, abs_tol=1e-12
+                ):
                     raise TrialError(
-                        f"{name} outputs give {key}={value:.6f}, the history reports {reported.get(key)}"
+                        f"{name} outputs give {key}={value:.6f}, the "
+                        f"history reports {reported.get(key)}"
                     )
             if not Path(checkpoint.path).is_file():
-                raise TrialError(f"the {name} checkpoint {checkpoint.path} does not exist")
+                raise TrialError(
+                    f"the {name} checkpoint {checkpoint.path} does not exist"
+                )
             rows[name] = qa_metrics.score_outputs(tasks, outputs)
         if not re.fullmatch(r"[0-9a-f]{64}", init_sha256):
-            raise TrialError("init_sha256 must be the sha256 hex digest of the initial model state")
-        exposure = {**self.exposure, "trainer_token_counts": dict(token_counts or {})}
+            raise TrialError(
+                "init_sha256 must be the sha256 hex digest of the "
+                "initial model state"
+            )
+        exposure = {
+            **self.exposure,
+            "trainer_token_counts": dict(token_counts or {}),
+        }
         _write_json(self.run_dir / EXPOSURE_FILE, exposure)
         self._write_predictions(rows, {"best": best, "final": final})
         result = {
@@ -416,7 +533,11 @@ class QATrial:
             "metric": spec.metric,
             "val_history": history,
             "exposure": exposure,
-            "trainer": {**asdict(trainer), "fingerprint": trainer.fingerprint, "init_sha256": init_sha256},
+            "trainer": {
+                **asdict(trainer),
+                "fingerprint": trainer.fingerprint,
+                "init_sha256": init_sha256,
+            },
             "wall_time_s": float(wall_time_s),
             "provenance": {
                 "corpora": spec.corpora,
@@ -436,15 +557,24 @@ class QATrial:
         }
         _write_json(result_path, result)
         self.tracker.log_summary(
-            {"arm": spec.arm, "supervision": spec.supervision, "seed": spec.replicate_seed},
-            {"summary/best_val_qa_accuracy": result["best_val"], "summary/best_step": best.step},
+            {
+                "arm": spec.arm,
+                "supervision": spec.supervision,
+                "seed": spec.replicate_seed,
+            },
+            {
+                "summary/best_val_qa_accuracy": result["best_val"],
+                "summary/best_step": best.step,
+            },
         )
         self.tracker.close()
         self._open = False
         return result
 
     def _write_predictions(
-        self, rows: Mapping[str, list[dict[str, Any]]], checkpoints: Mapping[str, Checkpoint]
+        self,
+        rows: Mapping[str, list[dict[str, Any]]],
+        checkpoints: Mapping[str, Checkpoint],
     ) -> None:
         columns: dict[str, list] = {"checkpoint": [], "step": []}
         for name, block in rows.items():
@@ -463,19 +593,28 @@ class QATrial:
                 **{k: pa.array(v) for k, v in columns.items()},
             }
         )
-        pq.write_table(table, self.run_dir / PREDICTIONS_FILE, compression="zstd")
+        pq.write_table(
+            table, self.run_dir / PREDICTIONS_FILE, compression="zstd"
+        )
 
 
-def recompute_from_predictions(run_dir: str | Path, tasks: Sequence[QATask]) -> dict[str, dict[str, float]]:
-    """Re-parse a finished run's saved outputs with the frozen parser: scores per checkpoint."""
+def recompute_from_predictions(
+    run_dir: str | Path, tasks: Sequence[QATask]
+) -> dict[str, dict[str, float]]:
+    """Recompute checkpoint scores from saved outputs using the fixed parser."""
     table = pq.read_table(Path(run_dir) / PREDICTIONS_FILE).to_pylist()
     by_id = {t.task_id: t for t in tasks}
     out = {}
     for name in ("best", "final"):
         block = [row for row in table if row["checkpoint"] == name]
         if [row["task_id"] for row in block] != [t.task_id for t in tasks]:
-            raise TrialError(f"{run_dir}: the {name} predictions do not cover the selection suite in order")
-        out[name] = qa_metrics.val_scores([by_id[r["task_id"]] for r in block], [r["output"] for r in block])
+            raise TrialError(
+                f"{run_dir}: the {name} predictions do not cover the "
+                "selection suite in order"
+            )
+        out[name] = qa_metrics.val_scores(
+            [by_id[r["task_id"]] for r in block], [r["output"] for r in block]
+        )
     return out
 
 
@@ -489,15 +628,19 @@ def _relative(run_dir: Path, path: str | Path) -> str:
 
 @dataclass
 class QAArmConfig:
-    corpora: list[str] = field(default_factory=list)  # labels of the protocol's corpora
+    corpora: list[str] = field(
+        default_factory=list
+    )  # labels of the protocol's corpora
 
 
 @dataclass
 class QAProtocolConfig:
-    """Schema of ``conf/qa/protocol_*.yaml``. One budget and one curriculum for every arm."""
+    """Shared training budget and sampling schedule."""
 
     id: str = "ecgqa-cot-qa"
-    corpora: dict[str, str] = field(default_factory=dict)  # label -> published corpus path
+    corpora: dict[str, str] = field(
+        default_factory=dict
+    )  # label -> published corpus path
     selection: str = ""  # published selection suite path
     arms: dict[str, QAArmConfig] = field(default_factory=dict)
     supervision: list[str] = field(default_factory=lambda: ["rationale"])
@@ -506,7 +649,11 @@ class QAProtocolConfig:
     max_steps: int = 15531
     val_every: int = 1000
     curriculum: dict[str, Any] = field(
-        default_factory=lambda: {"name": "uniform-passes@1", "seed": 0, "stages": [{"name": "all"}]}
+        default_factory=lambda: {
+            "name": "uniform-passes@1",
+            "seed": 0,
+            "stages": [{"name": "all"}],
+        }
     )
     decoding: dict[str, Any] = field(default_factory=dict)
     budget: dict[str, Any] = field(default_factory=dict)
@@ -519,12 +666,22 @@ def plan_qa_trials(
     arms: Sequence[str] | None = None,
     seeds: Sequence[int] | None = None,
 ) -> list[Path]:
-    """Load and check every corpus once, then write one frozen trial.json per (arm, supervision, seed)."""
+    """Validate collections and save the planned trial specifications.
+
+    Create one trial.json for each treatment, supervision mode, and random
+    seed.
+    """
     from syntide.generate.qa.corpus import load_corpus
-    from syntide.generate.qa.curriculum import Curriculum, CurriculumConfig, StageConfig
+    from syntide.generate.qa.curriculum import (
+        Curriculum,
+        CurriculumConfig,
+        StageConfig,
+    )
     from syntide.generate.qa.verify import CONTEXT_POLICY
 
-    loaded = {label: load_corpus(path) for label, path in protocol.corpora.items()}
+    loaded = {
+        label: load_corpus(path) for label, path in protocol.corpora.items()
+    }
     selection = load_corpus(protocol.selection)
     written = []
     entries = []
@@ -532,7 +689,10 @@ def plan_qa_trials(
         labels = protocol.arms[arm].corpora
         unknown = set(labels) - set(loaded)
         if not labels or unknown:
-            raise TrialError(f"arm {arm}: corpora {sorted(unknown) or labels} are not in the protocol")
+            raise TrialError(
+                f"arm {arm}: corpora {sorted(unknown) or labels} are not "
+                "in the protocol"
+            )
         corpora = {label: loaded[label] for label in labels}
         check_trial_inputs(corpora, selection)
         for supervision in protocol.supervision:
@@ -552,11 +712,21 @@ def plan_qa_trials(
                     supervision=supervision,
                     replicate_seed=seed,
                     corpora=[
-                        {"label": label, "corpus_id": c.corpus_id, "path": str(c.path)}
+                        {
+                            "label": label,
+                            "corpus_id": c.corpus_id,
+                            "path": str(c.path),
+                        }
                         for label, c in corpora.items()
                     ],
-                    selection={"corpus_id": selection.corpus_id, "path": str(selection.path)},
-                    curriculum={**protocol.curriculum, "stages": [asdict(s) for s in stages]},
+                    selection={
+                        "corpus_id": selection.corpus_id,
+                        "path": str(selection.path),
+                    },
+                    curriculum={
+                        **protocol.curriculum,
+                        "stages": [asdict(s) for s in stages],
+                    },
                     curriculum_sha256=curriculum.sha256,
                     batch_size=protocol.batch_size,
                     max_steps=protocol.max_steps,
@@ -573,12 +743,20 @@ def plan_qa_trials(
                     context_policy=CONTEXT_POLICY,
                     budget=dict(protocol.budget),
                 )
-                run_dir = Path(runs_dir) / protocol.id / arm / supervision / f"seed{seed}"
+                run_dir = (
+                    Path(runs_dir)
+                    / protocol.id
+                    / arm
+                    / supervision
+                    / f"seed{seed}"
+                )
                 if write_qa_spec(run_dir, spec):
                     written.append(run_dir)
                 entries.append(
                     {
-                        "run_dir": str(run_dir.relative_to(Path(runs_dir) / protocol.id)),
+                        "run_dir": str(
+                            run_dir.relative_to(Path(runs_dir) / protocol.id)
+                        ),
                         "trial_id": spec.trial_id,
                         "arm": arm,
                         "supervision": supervision,
@@ -586,7 +764,11 @@ def plan_qa_trials(
                     }
                 )
     plan_path = Path(runs_dir) / protocol.id / "plan.json"
-    existing = json.loads(plan_path.read_text())["trials"] if plan_path.exists() else []
+    existing = (
+        json.loads(plan_path.read_text())["trials"]
+        if plan_path.exists()
+        else []
+    )
     merged = {e["run_dir"]: e for e in [*existing, *entries]}
     _write_json(
         plan_path,

@@ -1,4 +1,4 @@
-"""Small, modality-neutral contracts for complete time-series generation."""
+"""Define requests and results for complete time-series generation."""
 
 from dataclasses import asdict, dataclass
 from typing import Any, Protocol
@@ -10,18 +10,22 @@ from syntide.explore.plans import content_id
 
 def _name(value: Any, field: str) -> str:
     if not isinstance(value, str) or not value or value != value.strip():
-        raise ValueError(f"{field} must be a non-empty string without surrounding whitespace")
+        raise ValueError(
+            f"{field} must be a non-empty string without surrounding whitespace"
+        )
     return value
 
 
 def json_object(value: Any, field: str) -> dict:
-    """Check JSON/hash compatibility before any output is created."""
+    """Validate and copy a finite JSON object for content checksumming."""
     if not isinstance(value, dict):
         raise ValueError(f"{field} must be a JSON object")
     try:
         content_id(value)
     except (AttributeError, TypeError, ValueError, OverflowError) as error:
-        raise ValueError(f"{field} must contain finite, JSON-compatible values: {error}") from error
+        raise ValueError(
+            f"{field} must contain finite, JSON-compatible values: {error}"
+        ) from error
     return value
 
 
@@ -62,10 +66,19 @@ class SignalSpec:
     @classmethod
     def from_dict(cls, value: dict) -> "SignalSpec":
         json_object(value, "signal")
-        expected = {"modality", "channels", "sample_rate", "num_samples", "units"}
+        expected = {
+            "modality",
+            "channels",
+            "sample_rate",
+            "num_samples",
+            "units",
+        }
         unknown, missing = set(value) - expected, expected - set(value)
         if unknown or missing:
-            raise ValueError(f"signal fields: unknown={sorted(unknown)}, missing={sorted(missing)}")
+            raise ValueError(
+                f"signal fields: unknown={sorted(unknown)}, "
+                f"missing={sorted(missing)}"
+            )
         return cls(**value)
 
     def to_dict(self) -> dict:
@@ -79,7 +92,11 @@ class GenerationRequest:
     conditioning: dict
 
     def __post_init__(self) -> None:
-        if isinstance(self.seed, bool) or not isinstance(self.seed, int) or not 0 <= self.seed < 2**32:
+        if (
+            isinstance(self.seed, bool)
+            or not isinstance(self.seed, int)
+            or not 0 <= self.seed < 2**32
+        ):
             raise ValueError("seed must be an integer in [0, 2**32)")
         if not isinstance(self.signal, SignalSpec):
             raise ValueError("signal must be a SignalSpec")
@@ -94,7 +111,7 @@ class GeneratedSignal:
 
 
 class GeneratorBackend(Protocol):
-    """Constructors and validate_request must not load model weights."""
+    """Signal generator interface with validation before model loading."""
 
     def validate_request(self, request: GenerationRequest) -> None: ...
 

@@ -1,0 +1,2 @@
+# TensorBoard event files in each run directory. View with: uv run tensorboard --logdir runs
+backend: tensorboard

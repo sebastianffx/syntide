@@ -1,0 +1,64 @@
+# SIMVEA_h (arm T6), added to the augmentation sweep after its test claim. Design: docs/augmentation_sweep.md.
+#
+# The sweep's test fold is claimed for its 42 trials, and a claim never takes another trial, so T6 gets its own
+# protocol. Everything but the arm is the sweep's: data, pool, model, optimizer, batch, seeds, validation
+# cadence and the 10,000-step budget. SYNTIDE's random streams are keyed by seed, step and slot, never by arm
+# or protocol, so T6's seed s starts from the same weights as the sweep's seed s and sees the same ECGs in the
+# same order, with the same transform slots as A1 and T1-T5. T6 is therefore paired with the sweep's finished
+# A0, A1 and target runs, which are not re-run.
+#
+# Reported, written before training: T6 - A0 and T6 - A1 on all, noisy and clean records, per class, on
+# validation and test, with CIs from the sweep's frozen bootstrap (rules 7329468ebc8d: 2,000 draws, seed 0).
+# Diagnostics, like every other technique: the test fold was viewed before, so nothing here is a fresh claim.
+#
+# Plan:   python -m syntide.generate protocol=ptbxl_aug_simvea mode=plan
+# Train:  python -m syntide_trainers.torch_loop "runs/ptbxl-aug-simvea/*/*/seed*"            (about 18 min on MPS)
+# Test:   python -m syntide.eval.holdout runs/ptbxl-aug-simvea                              (claims T6's 3 trials)
+# CIs:    python -m syntide.eval.across runs/ptbxl-aug-sweep runs/ptbxl-aug-simvea --split val|test \
+#             --contrast T6-A0 --contrast T6-A1
+# Plot:   python -m syntide.eval.aug_figure runs/ptbxl-aug-sweep runs/ptbxl-aug-simvea --split val|test --hide S4
+#         python -m syntide.eval.arms_figure runs/ptbxl-aug-sweep runs/ptbxl-aug-simvea --hide S4
+id: ptbxl-aug-simvea
+registry: datasets/timenet-registry
+dataset: physionet/ptb-xl@1.0.3
+
+batch_size: 64
+val_every: 100
+transform_fraction: 0.5    # T6 augments A1's half of the batch, the same slots as T1-T5
+
+# The sweep's envelopes, unchanged. No arm here uses them; they keep the protocol checks identical.
+generic:
+  gain: [0.9, 1.1]
+  max_shift_s: 0.5
+  noise_rms_mv: [0.0, 0.1]
+  wander_mv: [0.0, 3.5]
+  wander_hz: [0.05, 0.7]
+editor:
+  mv_limit: 10.0
+  alignment_tol: 0.15
+  max_retries: 5
+  type_smoothing: 0.1
+  density_floor: 1.0
+  envelope:
+    baseline_drift: {amplitude_mv: [0.1, 3.5], freq_hz: [0.1, 0.4]}
+    static_noise: {amplitude_mv: [0.005, 0.1]}
+    burst_noise: {amplitude_mv: [0.01, 0.6], duration_s: [0.5, 3.0]}
+
+arms:
+  # SIMVEA_h (Lim et al. 2025) with the paper's random hyperparameters: in each augmented ECG, each of V2-V5 is
+  # replaced with probability 1/2 by alpha * (beta * X_j + (2 - beta) * X_z), a pair (j, z) of chest leads on
+  # either side of it, alpha in {0.1, ..., 1.0}, beta in {0.0, ..., 2.0}. Labels unchanged.
+  # Expected benefit: robustness to chest-electrode placement. Risk: MI, which is read from chest-lead patterns.
+  T6:
+    source_role: depleted
+    transform_family: simvea
+    sampling_policy: fixed
+    simvea: {alpha: [0.1, 1.0], beta: [0.0, 2.0], step: 0.1, lead_p: 0.5}
+
+regimes:
+  scarcity50:
+    manifest: manifests/ptbxl-artifact-50/pool50.json
+    max_steps: 10000
+    arms: [T6]
+
+seeds: [0, 1, 2]

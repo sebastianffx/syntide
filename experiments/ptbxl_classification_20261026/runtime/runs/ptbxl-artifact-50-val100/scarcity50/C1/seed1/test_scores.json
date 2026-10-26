@@ -1,0 +1,15 @@
+{
+ "trial_id": "1104eb8738c24be3a5d0d4d8ac7c028cb5eee5c35303e1473c0941eb18332d67",
+ "regime": "scarcity50",
+ "arm": "C1",
+ "seed": 1,
+ "checkpoint": "best",
+ "step": 1100,
+ "n_test": 2158,
+ "n_test_artifact": 513,
+ "test/auroc_overall": 0.9113435775526574,
+ "test/auroc_artifact": 0.9027145828055861,
+ "test/auroc_clean": 0.9143283163173104,
+ "test/loss": 0.3104873494673209,
+ "scored_at": "2026-10-23T14:16:17+00:00"
+}

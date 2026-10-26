@@ -1,9 +1,9 @@
-"""The experiment protocol and the trial planner (``python -m syntide.generate mode=plan``).
+"""Convert an experiment protocol into validated training trial files.
 
-The protocol YAML is the whole experiment: arms, regimes, seeds and budgets. Planning turns a
-selection of it into one frozen ``trial.json`` per (regime, arm, seed) before anything trains
-(training doc §4D). Nothing is written unless every selected trial passes the leakage gate and the
-semantic checks below. Trainers then only read these files; they never see the protocol.
+A protocol describes experiment treatments, data conditions, random seeds, and
+training budgets. Planning checks data separation and configuration consistency
+before writing one ``trial.json`` for each selected combination. Trainers read
+these saved files rather than the original protocol.
 """
 
 import hashlib
@@ -24,9 +24,11 @@ from syntide.generate.policy import CalibrationError, load_calibration
 from syntide.generate.simvea import SimveaConfig
 from syntide.trial import TrialSpec, load_spec, make_spec, write_spec
 
-# Roles an arm may train on. val, test, withheld and unused never feed a training stream.
+# Roles an arm may train on. val, test, withheld and unused never feed a
+# training stream.
 TRAIN_ROLES = ("depleted", "natural_mix", "pool")
-# Transform family -> (allowed sampling policies, generator id, blocking validators).
+# Transform family -> (allowed sampling policies, generator id, blocking
+# validators).
 FAMILIES = {
     "none": (("none",), None, ()),
     "generic": (("fixed",), f"{generic.GENERATOR}@{generic.VERSION}", ()),
@@ -45,26 +47,38 @@ class ArmConfig:
     source_role: str = "depleted"
     transform_family: str = "none"
     sampling_policy: str = "none"
-    # Dose arms (ptbxl_aug_sweep) set their own share of transformed slots and their own envelope.
-    # Unset, an arm takes the protocol's transform_fraction and generic envelope.
+    # Dose arms (ptbxl_aug_sweep) set their own share of transformed slots and
+    # their own envelope.
+    # Unset, an arm takes the protocol's transform_fraction and generic
+    # envelope.
     transform_fraction: float | None = None
     generic: GenericAugConfig | None = None  # generic arms only
-    ecg_aug: EcgAugConfig | None = None  # required by ecg_aug arms: the operations they switch on
-    simvea: SimveaConfig | None = None  # required by simvea arms: SIMVEA_h's settings
+    ecg_aug: EcgAugConfig | None = (
+        None  # required by ecg_aug arms: the operations they switch on
+    )
+    simvea: SimveaConfig | None = (
+        None  # required by simvea arms: SIMVEA_h's settings
+    )
 
 
 @dataclass
 class RegimeConfig:
     manifest: str = MISSING
     calibration: str | None = None  # Phase 2B: required by editor arms
-    generator_gate: str | None = None  # Phase 2B: Gate 4 result; editor arms need "passed": true
-    max_steps: int | None = None  # set from the pilot; planning refuses a regime without it
-    arms: list[str] | None = None  # the arms this regime runs; None = every arm of the protocol
+    generator_gate: str | None = (
+        None  # Phase 2B: Gate 4 result; editor arms need "passed": true
+    )
+    max_steps: int | None = (
+        None  # set from the pilot; planning refuses a regime without it
+    )
+    arms: list[str] | None = (
+        None  # the arms this regime runs; None = every arm of the protocol
+    )
 
 
 @dataclass
 class ProtocolConfig:
-    """Schema of ``conf/protocol/*.yaml``. Budgets live in the regime, so arms within it match."""
+    """Experiment treatments and data conditions with matched budgets."""
 
     id: str = MISSING
     registry: str = "datasets/timenet-registry"
@@ -81,7 +95,7 @@ class ProtocolConfig:
 
 @dataclass
 class Selection:
-    """Which part of the protocol to plan; None plans all of it."""
+    """Protocol subset to plan; an unspecified field selects all its values."""
 
     arms: list[str] | None = None
     regimes: list[str] | None = None
@@ -89,79 +103,149 @@ class Selection:
 
 
 class PlanError(ValueError):
-    """The protocol, or the selected part of it, cannot be planned as written."""
+    """The requested experiment cannot be planned with these settings."""
 
 
 def plan_trials(
-    protocol: ProtocolConfig, select: Selection, *, index: pa.Table, source: dict[str, str]
+    protocol: ProtocolConfig,
+    select: Selection,
+    *,
+    index: pa.Table,
+    source: dict[str, str],
 ) -> list[TrialSpec]:
-    """Check the selection and build its trial specs. Writes nothing."""
+    """Validate the selected experiment and build its trial specifications.
+
+    Args:
+        protocol: Complete experiment configuration.
+        select: Treatments, data conditions, and seeds to include.
+        index: Dataset index used to check record and patient separation.
+        source: Dataset source metadata required by the manifest checks.
+
+    Returns:
+        Trial specifications ready to be written. This function writes no
+        files.
+
+    Raises:
+        PlanError: The selection or experiment settings are inconsistent.
+    """
     arms = _chosen("arm", select.arms, list(protocol.arms))
     regimes = _chosen("regime", select.regimes, list(protocol.regimes))
     seeds = _chosen("seed", select.seeds, list(protocol.seeds))
     if len(set(protocol.seeds)) != len(protocol.seeds):
         raise PlanError(f"protocol seeds {protocol.seeds} repeat a seed")
-    _check_fraction("protocol", protocol.transform_fraction, protocol.batch_size)
+    _check_fraction(
+        "protocol", protocol.transform_fraction, protocol.batch_size
+    )
     for name in arms:
         _check_arm(name, protocol.arms[name])
         if protocol.arms[name].transform_fraction is not None:
-            _check_fraction(f"arm {name}", protocol.arms[name].transform_fraction, protocol.batch_size)
+            _check_fraction(
+                f"arm {name}",
+                protocol.arms[name].transform_fraction,
+                protocol.batch_size,
+            )
     _check_shared_envelope(protocol)
     # A regime runs the selected arms it lists (all of them when it lists none).
-    runs = {name: [arm for arm in arms if arm in regime_arms(protocol, name)] for name in regimes}
+    runs = {
+        name: [arm for arm in arms if arm in regime_arms(protocol, name)]
+        for name in regimes
+    }
     if not any(runs.values()):
-        raise PlanError(f"no selected regime runs any of the selected arms {arms}")
+        raise PlanError(
+            f"no selected regime runs any of the selected arms {arms}"
+        )
 
     specs = []
     for regime_name in regimes:
         if not runs[regime_name]:
             continue
         regime = protocol.regimes[regime_name]
-        manifest = _checked_manifest(regime_name, regime, protocol, index, source)
+        manifest = _checked_manifest(
+            regime_name, regime, protocol, index, source
+        )
         for arm_name in runs[regime_name]:
             arm = protocol.arms[arm_name]
             if arm.source_role not in manifest.roles:
-                raise PlanError(f"arm {arm_name}: {regime.manifest} has no role {arm.source_role!r}")
+                raise PlanError(
+                    f"arm {arm_name}: {regime.manifest} has no role "
+                    f"{arm.source_role!r}"
+                )
             calibration = (
-                _editor_calibration(arm_name, regime_name, regime, manifest, protocol.editor)
+                _editor_calibration(
+                    arm_name, regime_name, regime, manifest, protocol.editor
+                )
                 if arm.transform_family == "editor"
                 else None
             )
             for seed in seeds:
-                specs.append(_spec(protocol, regime_name, regime, manifest, arm_name, arm, seed, calibration))
+                specs.append(
+                    _spec(
+                        protocol,
+                        regime_name,
+                        regime,
+                        manifest,
+                        arm_name,
+                        arm,
+                        seed,
+                        calibration,
+                    )
+                )
     return specs
 
 
 def regime_arms(protocol: ProtocolConfig, name: str) -> list[str]:
-    """The arms regime ``name`` runs: the ones it lists, or every arm of the protocol."""
+    """Return the experiment treatments enabled for the named data condition."""
     listed = protocol.regimes[name].arms
     if listed is None:
         return list(protocol.arms)
     unknown = sorted(set(listed) - set(protocol.arms))
     if unknown:
-        raise PlanError(f"regime {name} lists unknown arms {unknown}; the protocol has {list(protocol.arms)}")
+        raise PlanError(
+            f"regime {name} lists unknown arms {unknown}; the "
+            f"protocol has {list(protocol.arms)}"
+        )
     return list(listed)
 
 
 def write_plan(specs: list[TrialSpec], runs_dir: str | Path) -> list[Path]:
-    """Write one ``trial.json`` per spec and update ``<runs_dir>/<protocol>/plan.json``.
+    """Write trial specifications and update the experiment index.
 
-    Every spec is checked against what is already on disk first, so a conflict writes nothing.
-    Returns the run directories that were newly planned.
+    Existing trial files are checked before any writes, so a conflict leaves
+    the
+    saved experiment unchanged.
+
+    Args:
+        specs: Validated trial specifications.
+        runs_dir: Directory containing experiment runs.
+
+    Returns:
+        Run directories created for newly planned trials.
     """
     runs_dir = Path(runs_dir)
     run_dirs = [run_dir_for(runs_dir, spec) for spec in specs]
     conflicts = [
-        f"{run_dir}: holds {load_spec(run_dir).trial_id[:12]}, the plan has {spec.trial_id[:12]}"
+        (
+            f"{run_dir}: holds {load_spec(run_dir).trial_id[:12]}, the "
+            f"plan has {spec.trial_id[:12]}"
+        )
         for run_dir, spec in zip(run_dirs, specs, strict=True)
-        if (run_dir / "trial.json").exists() and load_spec(run_dir).trial_id != spec.trial_id
+        if (run_dir / "trial.json").exists()
+        and load_spec(run_dir).trial_id != spec.trial_id
     ]
     if conflicts:
         raise PlanError(
-            "these run directories hold different trials; plan into a new runs_dir, or delete them on "
-            "purpose:\n  " + "\n  ".join(conflicts)
+            (
+                "these run directories hold different trials; plan into "
+                "a new runs_dir, or delete them on "
+                "purpose:\n  "
+            )
+            + "\n  ".join(conflicts)
         )
-    written = [run_dir for run_dir, spec in zip(run_dirs, specs, strict=True) if write_spec(run_dir, spec)]
+    written = [
+        run_dir
+        for run_dir, spec in zip(run_dirs, specs, strict=True)
+        if write_spec(run_dir, spec)
+    ]
 
     by_protocol: dict[str, list[tuple[Path, TrialSpec]]] = {}
     for run_dir, spec in zip(run_dirs, specs, strict=True):
@@ -170,7 +254,10 @@ def write_plan(specs: list[TrialSpec], runs_dir: str | Path) -> list[Path]:
         index_path = runs_dir / protocol / "plan.json"
         entries = {}
         if index_path.exists():
-            entries = {entry["run_dir"]: entry for entry in json.loads(index_path.read_text())["trials"]}
+            entries = {
+                entry["run_dir"]: entry
+                for entry in json.loads(index_path.read_text())["trials"]
+            }
         for run_dir, spec in planned:
             key = str(run_dir.relative_to(runs_dir / protocol))
             entries[key] = {
@@ -180,13 +267,24 @@ def write_plan(specs: list[TrialSpec], runs_dir: str | Path) -> list[Path]:
                 "arm": spec.arm,
                 "seed": spec.replicate_seed,
             }
-        payload = {"protocol": protocol, "trials": [entries[key] for key in sorted(entries)]}
-        index_path.write_text(json.dumps(payload, indent=1) + "\n", encoding="utf-8")
+        payload = {
+            "protocol": protocol,
+            "trials": [entries[key] for key in sorted(entries)],
+        }
+        index_path.write_text(
+            json.dumps(payload, indent=1) + "\n", encoding="utf-8"
+        )
     return written
 
 
 def run_dir_for(runs_dir: Path, spec: TrialSpec) -> Path:
-    return Path(runs_dir) / spec.protocol / spec.regime / spec.arm / f"seed{spec.replicate_seed}"
+    return (
+        Path(runs_dir)
+        / spec.protocol
+        / spec.regime
+        / spec.arm
+        / f"seed{spec.replicate_seed}"
+    )
 
 
 def _chosen(kind: str, chosen: list | None, available: list) -> list:
@@ -196,42 +294,68 @@ def _chosen(kind: str, chosen: list | None, available: list) -> list:
         return available
     unknown = [item for item in chosen if item not in available]
     if unknown:
-        raise PlanError(f"unknown {kind}s {unknown}; the protocol has {available}")
+        raise PlanError(
+            f"unknown {kind}s {unknown}; the protocol has {available}"
+        )
     return list(chosen)
 
 
 def _check_fraction(where: str, fraction: float, batch_size: int) -> None:
     if not 0 <= fraction <= 1:
-        raise PlanError(f"{where}: transform_fraction must be in [0, 1], got {fraction}")
+        raise PlanError(
+            f"{where}: transform_fraction must be in [0, 1], got {fraction}"
+        )
     if not (fraction * batch_size).is_integer():
         raise PlanError(
-            f"{where}: transform_fraction {fraction} x batch_size {batch_size} is not a whole number of slots"
+            f"{where}: transform_fraction {fraction} x batch_size "
+            f"{batch_size} is not a whole number of slots"
         )
 
 
 def _check_arm(name: str, arm: ArmConfig) -> None:
     if arm.source_role not in TRAIN_ROLES:
-        raise PlanError(f"arm {name}: source_role {arm.source_role!r} is not one of {TRAIN_ROLES}")
+        raise PlanError(
+            f"arm {name}: source_role {arm.source_role!r} is not one "
+            f"of {TRAIN_ROLES}"
+        )
     if arm.transform_family not in FAMILIES:
-        raise PlanError(f"arm {name}: unknown transform_family {arm.transform_family!r}")
+        raise PlanError(
+            f"arm {name}: unknown transform_family {arm.transform_family!r}"
+        )
     policies = FAMILIES[arm.transform_family][0]
     if arm.sampling_policy not in policies:
-        raise PlanError(f"arm {name}: {arm.transform_family} arms take sampling_policy in {policies}")
+        raise PlanError(
+            f"arm {name}: {arm.transform_family} arms take "
+            f"sampling_policy in {policies}"
+        )
     if arm.transform_family != "none" and arm.source_role != "depleted":
-        raise PlanError(f"arm {name}: a {arm.transform_family} transform must start from depleted parents")
+        raise PlanError(
+            f"arm {name}: a {arm.transform_family} transform must "
+            f"start from depleted parents"
+        )
     if arm.transform_fraction is not None and arm.source_role != "depleted":
-        raise PlanError(f"arm {name}: only depleted arms have transform slots to set a fraction for")
+        raise PlanError(
+            f"arm {name}: only depleted arms have transform slots to "
+            f"set a fraction for"
+        )
     if arm.generic is not None and arm.transform_family != "generic":
-        raise PlanError(f"arm {name}: a generic envelope applies to generic arms only")
+        raise PlanError(
+            f"arm {name}: a generic envelope applies to generic arms only"
+        )
     if (arm.ecg_aug is not None) != (arm.transform_family == "ecg_aug"):
-        raise PlanError(f"arm {name}: ecg_aug arms, and only they, set the ecg_aug operations")
+        raise PlanError(
+            f"arm {name}: ecg_aug arms, and only they, set the "
+            f"ecg_aug operations"
+        )
     if arm.ecg_aug is not None:
         try:
             ecg_aug.check(arm.ecg_aug)
         except ValueError as error:
             raise PlanError(f"arm {name}: {error}") from error
     if (arm.simvea is not None) != (arm.transform_family == "simvea"):
-        raise PlanError(f"arm {name}: simvea arms, and only they, set the simvea settings")
+        raise PlanError(
+            f"arm {name}: simvea arms, and only they, set the simvea settings"
+        )
     if arm.simvea is not None:
         try:
             simvea.check(arm.simvea)
@@ -240,9 +364,10 @@ def _check_arm(name: str, arm: ArmConfig) -> None:
 
 
 def _check_shared_envelope(protocol: ProtocolConfig) -> None:
-    """A1 and the editor must allow the same worst severity (MVE: "same severity envelope").
+    """Require comparable severity limits for standard augmentation and editing.
 
-    Arms with their own ``generic`` envelope are dose arms: their envelope is the treatment, so it is exempt.
+    Treatments with an explicit augmentation range are exempt because their
+    purpose is to compare different augmentation strengths.
     """
     envelope = protocol.editor.envelope
     pairs = (
@@ -262,21 +387,28 @@ def _check_shared_envelope(protocol: ProtocolConfig) -> None:
     for name, generic_range, kind, editor_range in pairs:
         if generic_range[1] != editor_range[1]:
             raise PlanError(
-                f"{name} tops out at {generic_range[1]} mV but the editor's {kind} at {editor_range[1]} mV; "
+                f"{name} tops out at {generic_range[1]} mV but the "
+                f"editor's {kind} at {editor_range[1]} mV; "
                 "A1 and A2/A3 must share one severity envelope"
             )
 
 
 def _checked_manifest(
-    name: str, regime: RegimeConfig, protocol: ProtocolConfig, index: pa.Table, source: dict
+    name: str,
+    regime: RegimeConfig,
+    protocol: ProtocolConfig,
+    index: pa.Table,
+    source: dict,
 ) -> Manifest:
     if regime.max_steps is None:
         raise PlanError(
-            f"regime {name} has no max_steps; run the pilot and set protocol.regimes.{name}.max_steps"
+            f"regime {name} has no max_steps; run the pilot and set "
+            f"protocol.regimes.{name}.max_steps"
         )
     if regime.max_steps <= 0 or regime.max_steps % protocol.val_every:
         raise PlanError(
-            f"regime {name}: max_steps {regime.max_steps} must be a positive multiple of val_every "
+            f"regime {name}: max_steps {regime.max_steps} must be a "
+            f"positive multiple of val_every "
             f"{protocol.val_every}"
         )
     manifest = load_manifest(Path(regime.manifest))
@@ -285,9 +417,13 @@ def _checked_manifest(
 
 
 def _editor_calibration(
-    arm: str, regime_name: str, regime: RegimeConfig, manifest: Manifest, cfg: EditorConfig
+    arm: str,
+    regime_name: str,
+    regime: RegimeConfig,
+    manifest: Manifest,
+    cfg: EditorConfig,
 ) -> tuple[str, str]:
-    """The regime's calibration path and file sha, once Gate 4 passed on exactly that file."""
+    """Return the path and checksum of a validated calibration."""
     where = f"arm {arm} in {regime_name}"
     missing = [
         key
@@ -296,28 +432,40 @@ def _editor_calibration(
     ]
     if missing:
         raise PlanError(
-            f"{where} edits ECGs and needs the regime's {' and '.join(missing)}; run the generator "
+            f"{where} edits ECGs and needs the regime's "
+            f"{' and '.join(missing)}; run the generator "
             "calibration (python -m syntide.generate mode=calibrate) first"
         )
     gate = json.loads(Path(regime.generator_gate).read_text(encoding="utf-8"))
     if gate.get("passed") is not True:
-        raise PlanError(f"{where}: the generator gate {regime.generator_gate} did not pass")
+        raise PlanError(
+            f"{where}: the generator gate {regime.generator_gate} did not pass"
+        )
     digest = hashlib.sha256(Path(regime.calibration).read_bytes()).hexdigest()
     if gate.get("calibration_sha256") != digest:
-        raise PlanError(f"{where}: {regime.generator_gate} was run on another calibration; rerun the gate")
+        raise PlanError(
+            f"{where}: {regime.generator_gate} was run on another "
+            f"calibration; rerun the gate"
+        )
     try:
         calibration = load_calibration(regime.calibration, digest)
     except CalibrationError as error:
         raise PlanError(f"{where}: {error}") from error
     if calibration["manifest_sha256"] != manifest.sha256:
-        raise PlanError(f"{where}: {regime.calibration} was fit on another manifest than {regime.manifest}")
+        raise PlanError(
+            f"{where}: {regime.calibration} was fit on another "
+            f"manifest than {regime.manifest}"
+        )
     settings = {
         "envelope": asdict(cfg.envelope),
         "type_smoothing": cfg.type_smoothing,
         "density_floor": cfg.density_floor,
     }
     if {key: calibration[key] for key in settings} != settings:
-        raise PlanError(f"{where}: {regime.calibration} was fit with other editor settings; recalibrate")
+        raise PlanError(
+            f"{where}: {regime.calibration} was fit with other editor "
+            f"settings; recalibrate"
+        )
     return regime.calibration, digest
 
 
@@ -339,7 +487,11 @@ def _spec(
         "ecg_aug": asdict(arm.ecg_aug) if arm.ecg_aug is not None else {},
         "simvea": asdict(arm.simvea) if arm.simvea is not None else {},
     }
-    fraction = protocol.transform_fraction if arm.transform_fraction is None else arm.transform_fraction
+    fraction = (
+        protocol.transform_fraction
+        if arm.transform_fraction is None
+        else arm.transform_fraction
+    )
     return make_spec(
         protocol=protocol.id,
         regime=regime_name,
@@ -358,7 +510,8 @@ def _spec(
         batch_size=protocol.batch_size,
         max_steps=regime.max_steps,
         val_every=protocol.val_every,
-        # A0-A3 share one slot schedule (A0's slots hold unchanged parents); C1 and C2 have none.
+        # Augmentation treatments share transformation positions; real-data
+        # controls have none.
         transform_fraction=fraction if arm.source_role == "depleted" else 0.0,
         registry=protocol.registry,
         manifest=regime.manifest,

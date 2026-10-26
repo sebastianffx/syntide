@@ -1,5 +1,4 @@
-"""Recording-level coverage discovery and reproducible generation intentions.
+"""Inspect dataset coverage and prepare reproducible generation plans.
 
-This package is independent of the frozen trial/trainer protocol. Model libraries
-are imported only when embedding is requested (``uv sync --extra explore``).
+Optional model libraries load only when embeddings are requested.
 """

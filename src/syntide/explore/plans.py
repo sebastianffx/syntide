@@ -1,4 +1,4 @@
-"""Validated, content-addressed generation plans; exporting never generates data."""
+"""Validate and save generation plans identified by a hash of their contents."""
 
 import hashlib
 import json
@@ -13,7 +13,9 @@ METHODS = {
     "editing": "ecg.electrode_artifact@1.0.0",
     "diffusion": "diffusets@1",
 }
-GENERATOR_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]*@[A-Za-z0-9][A-Za-z0-9_.+-]*")
+GENERATOR_ID = re.compile(
+    r"[A-Za-z0-9][A-Za-z0-9_.-]*@[A-Za-z0-9][A-Za-z0-9_.+-]*"
+)
 
 
 def _string_order(value: str) -> bytes:
@@ -27,17 +29,19 @@ def _normalize(value: Any) -> Any:
         return [_normalize(v) for v in value]
     if isinstance(value, float):
         if not math.isfinite(value):
-            raise ValueError("Non-finite numbers cannot appear in a reproducible artifact")
+            raise ValueError(
+                "Non-finite numbers cannot appear in a reproducible artifact"
+            )
         return int(value) if value.is_integer() else value
     return value
 
 
 def canonical_json(value: Any) -> str:
-    """Cross-runtime hash encoding (typed JSON, big-endian binary64 numbers).
+    """Encode values identically for Python and JavaScript content hashes.
 
-    Python and JavaScript spell small decimal exponents differently. Hash their
-    actual numeric bits instead, and tag all types to prevent object/array collisions.
-    Integers must be exactly representable in JavaScript's safe integer range.
+    Numbers use their exact 64-bit floating-point representation. Type
+    markers keep objects and arrays distinct. Integers must fit JavaScript's
+    exact integer range.
     """
 
     def encode(item: Any) -> list:
@@ -48,9 +52,17 @@ def canonical_json(value: Any) -> str:
         if isinstance(item, str):
             return ["string", item]
         if isinstance(item, int | float):
-            if not math.isfinite(item) or (float(item).is_integer() and abs(item) > 2**53 - 1):
-                raise ValueError("Artifact numbers must be finite and integers must be JavaScript-safe")
-            return ["number", struct.pack(">d", float(item) if item else 0.0).hex()]
+            if not math.isfinite(item) or (
+                float(item).is_integer() and abs(item) > 2**53 - 1
+            ):
+                raise ValueError(
+                    "Artifact numbers must be finite and integers "
+                    "must be JavaScript-safe"
+                )
+            return [
+                "number",
+                struct.pack(">d", float(item) if item else 0.0).hex(),
+            ]
         if isinstance(item, dict):
             keys = sorted(item, key=lambda key: key.encode("utf-16-be"))
             return ["object", [[key, encode(item[key])] for key in keys]]
@@ -58,7 +70,12 @@ def canonical_json(value: Any) -> str:
             return ["array", [encode(child) for child in item]]
         raise ValueError(f"Unsupported artifact value: {type(item).__name__}")
 
-    return json.dumps(encode(value), ensure_ascii=False, separators=(",", ":"), allow_nan=False)
+    return json.dumps(
+        encode(value),
+        ensure_ascii=False,
+        separators=(",", ":"),
+        allow_nan=False,
+    )
 
 
 def content_id(value: Any) -> str:
@@ -72,25 +89,37 @@ def seal_analysis(analysis: dict) -> dict:
 
 def verify_analysis(analysis: dict) -> None:
     if seal_analysis(analysis)["analysis_id"] != analysis.get("analysis_id"):
-        raise ValueError("Analysis checksum does not match; rebuild the analysis instead of editing its JSON")
+        raise ValueError(
+            "Analysis checksum does not match; rebuild the analysis "
+            "instead of editing its JSON"
+        )
 
 
 def verify_plan(plan: dict) -> None:
-    """Verify the exported plan's schema and content; execution validates its recipes."""
-    if not isinstance(plan, dict) or plan.get("schema_version") != "syntide.generation-plan@1":
-        raise ValueError("Unsupported generation plan schema; expected syntide.generation-plan@1")
+    """Validate the exported plan before checking generator settings."""
+    if (
+        not isinstance(plan, dict)
+        or plan.get("schema_version") != "syntide.generation-plan@1"
+    ):
+        raise ValueError(
+            "Unsupported generation plan schema; expected "
+            "syntide.generation-plan@1"
+        )
     body = {key: value for key, value in plan.items() if key != "plan_id"}
     if content_id(body) != plan.get("plan_id"):
-        raise ValueError("Plan checksum does not match; export a new plan instead of editing its JSON")
+        raise ValueError(
+            "Plan checksum does not match; export a new plan instead "
+            "of editing its JSON"
+        )
 
 
 def make_plan(analysis: dict, selection: dict) -> dict:
-    """Freeze exact parent/text IDs, evidence, seed and each method's requested count.
+    """Save the inputs, seeds, and counts requested for generation.
 
-    Parameters are intentions, not validated generator recipes. In particular a
-    diffusion defaults to DiffuSETS for ECG but may name another versioned plugin
-    and modality. QA label effects still require review.
-    This distinction is explicit in every exported plan.
+    These requests describe intended generation. The selected generator must
+    validate its own settings before execution, and generated labels still
+    require review. Diffusion requests default to DiffuSETS for
+    electrocardiograms but may name another versioned model and signal type.
     """
     verify_analysis(analysis)
     records = {r["record_id"]: r for r in analysis["records"]}
@@ -101,7 +130,11 @@ def make_plan(analysis: dict, selection: dict) -> dict:
     if unknown:
         raise ValueError(f"Unknown recording IDs: {sorted(unknown)[:5]}")
     seed = selection.get("seed", 42)
-    if isinstance(seed, bool) or not isinstance(seed, int) or not 0 <= seed < 2**32:
+    if (
+        isinstance(seed, bool)
+        or not isinstance(seed, int)
+        or not 0 <= seed < 2**32
+    ):
         raise ValueError("seed must be an integer in [0, 2**32)")
     requests = selection.get("requests", [])
     if not isinstance(requests, list) or not requests:
@@ -112,7 +145,9 @@ def make_plan(analysis: dict, selection: dict) -> dict:
             raise ValueError("Every method request must be a JSON object")
         method, count = request.get("method"), request.get("count")
         if not isinstance(method, str) or method not in METHODS:
-            raise ValueError(f"Unknown method {method!r}; choose {', '.join(METHODS)}")
+            raise ValueError(
+                f"Unknown method {method!r}; choose {', '.join(METHODS)}"
+            )
         if isinstance(count, bool) or not isinstance(count, int) or count <= 0:
             raise ValueError("Every method needs a positive integer count")
         parameters = request.get("parameters", {})
@@ -129,23 +164,38 @@ def make_plan(analysis: dict, selection: dict) -> dict:
         }
         if method == "diffusion":
             generator = request.get("generator", METHODS[method])
-            if not isinstance(generator, str) or not GENERATOR_ID.fullmatch(generator):
-                raise ValueError("Diffusion generator must be a versioned ID such as diffusets@1")
+            if not isinstance(generator, str) or not GENERATOR_ID.fullmatch(
+                generator
+            ):
+                raise ValueError(
+                    "Diffusion generator must be a versioned ID such "
+                    "as diffusets@1"
+                )
             modality = request.get("modality", "ecg")
             if not isinstance(modality, str) or not modality.strip():
                 raise ValueError("Diffusion modality must be a nonempty string")
-            normalized_request.update(generator=generator, modality=modality.strip())
+            normalized_request.update(
+                generator=generator, modality=modality.strip()
+            )
         elif "generator" in request or "modality" in request:
-            raise ValueError("Generator and modality overrides are supported only for diffusion requests")
+            raise ValueError(
+                "Generator and modality overrides are supported only "
+                "for diffusion requests"
+            )
         normalized.append(normalized_request)
     text_ids = selection.get("text_ids")
     available_texts = {
-        t["text_id"] for record_id in ids for t in records[record_id].get("texts", []) if t.get("text_id")
+        t["text_id"]
+        for record_id in ids
+        for t in records[record_id].get("texts", [])
+        if t.get("text_id")
     }
     if text_ids is None:
         text_ids = sorted(available_texts, key=_string_order)
     elif set(text_ids) - available_texts:
-        raise ValueError("Selected texts must belong to the selected recordings")
+        raise ValueError(
+            "Selected texts must belong to the selected recordings"
+        )
     body = {
         "schema_version": "syntide.generation-plan@1",
         "analysis_id": analysis["analysis_id"],
@@ -158,33 +208,62 @@ def make_plan(analysis: dict, selection: dict) -> dict:
             "record_ids": ids,
             "text_ids": sorted(set(text_ids), key=_string_order),
             "labels": sorted(
-                {label for record_id in ids for label in records[record_id].get("labels", [])},
+                {
+                    label
+                    for record_id in ids
+                    for label in records[record_id].get("labels", [])
+                },
                 key=_string_order,
             ),
-            "clusters": sorted({records[record_id]["cluster"] for record_id in ids}),
+            "clusters": sorted(
+                {records[record_id]["cluster"] for record_id in ids}
+            ),
             "criteria": selection.get("criteria", {}),
         },
         "requests": normalized,
         "total_requested": sum(r["count"] for r in normalized),
-        "status": "intent_only_requires_generator_configuration_and_label_review",
+        ("status"): (
+            "intent_only_requires_generator_configuration_and_label_review"
+        ),
         "requirements": [
-            "Resolve and pin every generator, checkpoint and control configuration before execution.",
-            "Validate generated signals; record accepted/rejected recipes and exact seeds in a ledger.",
-            "Review label effects per method; augmentation/editing cannot imply a new diagnosis.",
-            "Review text, answer and rationale validity after every signal change; "
-            "never inherit them blindly.",
-            "Keep selected source roles and held-out patients separate under the experiment protocol.",
+            (
+                "Resolve and pin every generator, checkpoint and control "
+                "configuration before execution."
+            ),
+            (
+                "Validate generated signals; record accepted/rejected "
+                "recipes and exact seeds in a ledger."
+            ),
+            (
+                "Review label effects per method; augmentation/editing "
+                "cannot imply a new diagnosis."
+            ),
+            (
+                "Review text, answer and rationale validity after every "
+                "signal change; never inherit them blindly."
+            ),
+            (
+                "Keep selected source roles and held-out patients "
+                "separate under the experiment protocol."
+            ),
         ],
     }
     return {**body, "plan_id": content_id(body)}
 
 
 def write_frozen(path: Path, value: dict) -> None:
-    payload = json.dumps(_normalize(value), indent=2, ensure_ascii=False, allow_nan=False) + "\n"
+    payload = (
+        json.dumps(
+            _normalize(value), indent=2, ensure_ascii=False, allow_nan=False
+        )
+        + "\n"
+    )
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists():
         if json.loads(path.read_text()) != _normalize(value):
-            raise FileExistsError(f"Refusing to replace a different artifact: {path}")
+            raise FileExistsError(
+                f"Refusing to replace a different artifact: {path}"
+            )
         return
     with path.open("x") as stream:
         stream.write(payload)

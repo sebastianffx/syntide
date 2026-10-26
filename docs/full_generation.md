@@ -168,3 +168,69 @@ constraints. Choose its versioned ID and modality in the explorer's full-generat
 then provide its execution configuration. The engine, seed derivation, ledger and JSONL output
 do not need to change for another modality. Tests include a non-ECG PPG backend exercising this
 same workflow.
+
+## Fixed 5,000-candidate QA extension
+
+`scripts/runpod/diffusets_generate.py` runs the frozen seed-0 allocation in
+`outputs/qa-runs/diffusets-extension/planning/candidate-plan.json`. This is a separate,
+selection-tuned exploratory extension. The plan contains exactly 5,000 ordered slots with unique
+seeds and training-pool source records. A rejected candidate consumes its slot; there is no top-up.
+
+The driver uses the pinned original DiffuSETS backend, float32, batch size one and 1,000 diffusion
+steps, with explicit output resampling to 12 × 1,000 samples at 100 Hz. It makes no embedding API
+calls. `--embedding-index` points to JSON with `entries` keyed by source record ID. Each entry binds
+its exact source `report`, `age`, `sex`, `subject_uid`, `text_embedding_model`, vector path (relative
+to the index), vector SHA256, and provenance. Published legacy vectors must declare
+`embedding_source` and `prompt_provenance: unknown_legacy_input`; they must not invent an
+`embedding_input`. The index's `source_csv_sha256` must match the frozen plan's PTB-XL metadata file.
+
+For example, from the generation checkout with its compatible dependencies installed:
+
+```sh
+PYTHONPATH=src python scripts/runpod/diffusets_generate.py validate \
+  --plan /workspace/diffusets-study/planning/candidate-plan.json \
+  --plan-sha256 2bc86083e7a684340bd5a10e8a4ea174671e665e3b1f5903e78a865ec3f009f4 \
+  --manifest manifests/ecgqa-artifact-50/pool50.json \
+  --embedding-index /workspace/diffusets-study/conditioning/embedding-index.json \
+  --output /workspace/diffusets-study/generated
+```
+
+Use the same arguments with `generate`, plus `--assets /workspace/diffusets-assets --device cuda`,
+to execute the plan. Whole-output locking prevents concurrent writers. Each candidate gets a durable
+claim followed by an atomically published, checksummed bundle. Rerunning the command verifies and
+reuses completed slots, including rejected slots; an interrupted slot retries the same seed and
+condition. Thus retries do not increase the number of unique candidate slots, although interrupted
+computation may be repeated. Existing published artifacts, plan identity, model/runtime provenance,
+measurement code and QA policy cannot change during resume.
+
+Acceptance requires usable measured heart rate, beat count and RR regularity at confidence ≥ 0.8,
+plus measured amplitude 0.2–10 mV. Conditioning reports and requested HR remain lineage, not answers.
+`acceptance.json` saves the full measured evidence per candidate. After all slots finish,
+`summary.json` records accepted/rejected counts and checksums; `measurement-summary.json` reports
+requested versus realized HR, regularity, per-record maximum wander/high-frequency/burst descriptors,
+and acceptance by the allocation's parent strata. Those descriptors do not establish a noise or
+clinical diagnosis.
+
+After completion, `prepare` uses the same `--plan`, `--plan-sha256`, `--manifest` and `--output`, plus:
+
+```sh
+  --registry datasets/timenet-registry \
+  --qa-output outputs/qa/generated-5000-seed0 \
+  --baseline-prepared /workspace/qa-data/real_qa \
+  --grounded outputs/qa/grounded --acquisition outputs/qa/acquisition \
+  --prepared-output /workspace/qa-data/grounded_acq_gen
+```
+
+Run preparation in the same measurement environment as generation. It freezes the complete QA config
+and input fingerprints, remeasures accepted ECGs, and exports the original baseline rows plus the
+unchanged grounded/acquisition corpora and new generated QA. The baseline selection file stays
+byte-identical. QA uses only the four rhythm templates (heart rate, beat count, regularity and rate
+band), without evolutions or comparison pairs. Each accepted ECG supplies **3–4 QA rows**: rate-band
+questions abstain within 3 bpm of 60 or 100 bpm. Regularity rationales may cite measured RR coefficient
+of variation, which supports the already accepted regularity measurement. Original diagnosis labels,
+constant duration and missing-lead questions are not added to this extension.
+
+Training runs separately in the unchanged baseline runtime; the generation environment and dependencies
+must never replace that runtime. The project's default `uv` environment is Python 3.13, while this
+driver and its required TimeNet 0.11 APIs also run on Python 3.11 with explicitly compatible installed
+dependencies and the checkout supplied through `PYTHONPATH`.

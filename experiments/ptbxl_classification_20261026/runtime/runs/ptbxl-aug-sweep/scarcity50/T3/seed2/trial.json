@@ -1,0 +1,35 @@
+{
+ "protocol": "ptbxl-aug-sweep",
+ "regime": "scarcity50",
+ "arm": "T3",
+ "replicate_seed": 2,
+ "source_role": "depleted",
+ "transform_family": "ecg_aug",
+ "sampling_policy": "fixed",
+ "generator": "ecg_aug@1",
+ "validators": [],
+ "transform": {
+  "stretch": null,
+  "scale": [
+   0.7,
+   1.43
+  ],
+  "time_mask_s": null,
+  "lead_dropout": null,
+  "mixup_alpha": null
+ },
+ "dataset": "physionet/ptb-xl@1.0.3",
+ "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+ "manifest_sha256": "af56199d780e8ca529c1191c8ab4201dcbfaa301362e9b99d8949838b5230c50",
+ "calibration_sha256": null,
+ "batch_size": 64,
+ "max_steps": 10000,
+ "val_every": 100,
+ "transform_fraction": 0.5,
+ "init_seed": 745470182815633045,
+ "syntide_version": "0.1.0",
+ "registry": "datasets/timenet-registry",
+ "manifest": "manifests/ptbxl-artifact-50/pool50.json",
+ "calibration": null,
+ "trial_id": "1a8d742bf3c07756027f3fa2400abee8730b854f730568876cb4566625940ebd"
+}

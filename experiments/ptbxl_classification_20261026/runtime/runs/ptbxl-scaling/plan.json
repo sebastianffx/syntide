@@ -1,0 +1,47 @@
+{
+ "protocol": "ptbxl-scaling",
+ "trials": [
+  {
+   "run_dir": "pool10/real/seed0",
+   "trial_id": "6c6ba59a4af3509c76074a7b6d37ec75dd587064edcd48f838c4f0508a41ef7e",
+   "regime": "pool10",
+   "arm": "real",
+   "seed": 0
+  },
+  {
+   "run_dir": "pool100/real/seed0",
+   "trial_id": "b443ff5561d779a5b7096e8f82a5d68d768c025622e951668a6e01d5f4986253",
+   "regime": "pool100",
+   "arm": "real",
+   "seed": 0
+  },
+  {
+   "run_dir": "pool20/real/seed0",
+   "trial_id": "fd80e63b1336f96a174910b19d19ef3bd4828cf5532fd6b12a5c7c74bdd0b672",
+   "regime": "pool20",
+   "arm": "real",
+   "seed": 0
+  },
+  {
+   "run_dir": "pool30/real/seed0",
+   "trial_id": "2a4bcb28e1f6a80207328b1944a41eb6c6771529685ca76d4f2cd32d2e6536a3",
+   "regime": "pool30",
+   "arm": "real",
+   "seed": 0
+  },
+  {
+   "run_dir": "pool50/real/seed0",
+   "trial_id": "aad0da4088f0cbab402622107efc152244212e99b29c3e3c1840171a79423057",
+   "regime": "pool50",
+   "arm": "real",
+   "seed": 0
+  },
+  {
+   "run_dir": "pool70/real/seed0",
+   "trial_id": "32cf6569ceea349e9082033a2de05c2c22157d3b9ab77b4e997e810ef5c0c420",
+   "regime": "pool70",
+   "arm": "real",
+   "seed": 0
+  }
+ ]
+}

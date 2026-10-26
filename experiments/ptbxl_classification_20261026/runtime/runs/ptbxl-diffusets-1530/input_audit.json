@@ -1,0 +1,27 @@
+{
+  "real_records": 8579,
+  "extra_records": 1530,
+  "total_training_rows": 10109,
+  "extra_distinct_parent_records": 1260,
+  "extra_rows_with_parent_outside_pool": 717,
+  "extra_distinct_parents_outside_pool": 605,
+  "conditioning_lineage_roles": [
+    "pool",
+    "unused"
+  ],
+  "label_policy": "provisional_conditioning_parent_superclasses",
+  "synthetic_artifact_flags": "unknown; all-false training placeholders only",
+  "diagnostic_labels_verified_on_generated_signals": false,
+  "sample_rate_hz": 100,
+  "duration_seconds": 10,
+  "units": "mV",
+  "classes": [
+    "CD",
+    "HYP",
+    "MI",
+    "NORM",
+    "STTC"
+  ],
+  "validation_ecgs": 2146,
+  "test_ecgs": 2158
+}

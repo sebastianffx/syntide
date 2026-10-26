@@ -1,7 +1,7 @@
-"""A small synthetic PTB-XL + ECG-QA-CoT registry built through the production TimeNet pipeline.
+"""Build small synthetic recording and question datasets with TimeNet.
 
-Twenty-four 10 s, 100 Hz records over ten folds, with known heart rates (``tests/qa/fixtures.py``).
-They are test fixtures, not clinically validated ECGs. No real PTB-XL or ECG-QA bytes are used.
+The 24 ten-second recordings span ten patient folds with known heart rates.
+These are software test fixtures, not clinically validated recordings.
 """
 
 from __future__ import annotations
@@ -15,7 +15,10 @@ import pytest
 import wfdb
 from tests.qa.fixtures import fixture_ecg
 from timenet.engine import run_pipeline
-from timenet_connectors.datasets.physionet.ecg_qa_cot.connector import EcgQaCotConnector, EcgQaCotSource
+from timenet_connectors.datasets.physionet.ecg_qa_cot.connector import (
+    EcgQaCotConnector,
+    EcgQaCotSource,
+)
 
 from syntide.data.challenge import ChallengeSpec, build_manifest, save_manifest
 from syntide.data.ptbxl.connector import PtbXlConnector, PtbXlSource
@@ -45,7 +48,9 @@ def _record_rows() -> list[dict]:
                 "patient": patient,
                 "fold": fold,
                 "drift": drift,
-                "codes": {"NORM": 100.0} if ecg_id % 3 else {"IMI": 100.0, "NDT": 50.0},
+                "codes": {"NORM": 100.0}
+                if ecg_id % 3
+                else {"IMI": 100.0, "NDT": 50.0},
                 "rate": RATES[ecg_id % len(RATES)],
             }
         )
@@ -57,7 +62,11 @@ def _write_ptbxl(root: Path) -> dict[str, float]:
     bucket.mkdir(parents=True)
     rates = {}
     for row in _record_rows():
-        x = fixture_ecg(row["rate"], seed=row["ecg_id"], wander=0.8 if row["drift"] else 0.05)
+        x = fixture_ecg(
+            row["rate"],
+            seed=row["ecg_id"],
+            wander=0.8 if row["drift"] else 0.05,
+        )
         wfdb.wrsamp(
             f"{row['ecg_id']:05d}_lr",
             fs=100,
@@ -99,7 +108,13 @@ def _write_ptbxl(root: Path) -> dict[str, float]:
     with (root / "scp_statements.csv").open("w", newline="") as handle:
         writer = csv.writer(handle)
         writer.writerow(["", "diagnostic", "diagnostic_class"])
-        writer.writerows([("NORM", "1.0", "NORM"), ("IMI", "1.0", "MI"), ("NDT", "1.0", "STTC")])
+        writer.writerows(
+            [
+                ("NORM", "1.0", "NORM"),
+                ("IMI", "1.0", "MI"),
+                ("NDT", "1.0", "STTC"),
+            ]
+        )
     return rates
 
 
@@ -121,15 +136,28 @@ def _write_ecgqa(root: Path) -> tuple[Path, Path, list[tuple[str, Path]]]:
     with answers.open("w", newline="") as stream:
         writer = csv.writer(stream)
         writer.writerow(["template_id", "classes"])
-        writer.writerows([(4, "['none', 'myocardial infarction']"), (27, "['no', 'yes']")])
-    fields = ["ecg_id", "template_id", "question_type", "question", "answer", "rationale", "clinical_context"]
+        writer.writerows(
+            [(4, "['none', 'myocardial infarction']"), (27, "['no', 'yes']")]
+        )
+    fields = [
+        "ecg_id",
+        "template_id",
+        "question_type",
+        "question",
+        "answer",
+        "rationale",
+        "clinical_context",
+    ]
     path = root / "train.csv"
     with path.open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fields)
         writer.writeheader()
         for row in _record_rows():
             quality = "baseline drift noted" if row["drift"] else "no noise"
-            context = f"{40 + row['ecg_id']}-year-old patient. 12-lead ECG. Signal quality: {quality}."
+            context = (
+                f"{40 + row['ecg_id']}-year-old patient. "
+                f"12-lead ECG. Signal quality: {quality}."
+            )
             drift = "yes" if row["drift"] else "no"
             mi = "myocardial infarction" if "IMI" in row["codes"] else "none"
             writer.writerow(
@@ -139,8 +167,11 @@ def _write_ecgqa(root: Path) -> tuple[Path, Path, list[tuple[str, Path]]]:
                     "question_type": "single-verify",
                     "question": "Does this ECG show baseline drift?",
                     "answer": drift,
-                    "rationale": f"The baseline looks {'unstable' if drift == 'yes' else 'stable'}."
-                    f"\nAnswer: {drift}",
+                    "rationale": (
+                        "The baseline looks "
+                        f"{'unstable' if drift == 'yes' else 'stable'}."
+                        f"\nAnswer: {drift}"
+                    ),
                     "clinical_context": context,
                 }
             )
@@ -171,16 +202,35 @@ def qa_registry(tmp_path_factory) -> QARegistry:
         return [PtbXlSource(root=tree)]
 
     async def cot_download(self, cache_dir):
-        return [EcgQaCotSource(records_root=records500, answers_path=answers, cot_csvs=tuple(cot))]
+        return [
+            EcgQaCotSource(
+                records_root=records500,
+                answers_path=answers,
+                cot_csvs=tuple(cot),
+            )
+        ]
 
     with pytest.MonkeyPatch.context() as patch:
         patch.setattr(PtbXlConnector, "download_async", ptbxl_download)
         patch.setattr(EcgQaCotConnector, "download_async", cot_download)
-        run_pipeline(PtbXlConnector(), registry, cache_dir=base / "cache1", keep_cache=True)
-        run_pipeline(EcgQaCotConnector(), registry, cache_dir=base / "cache2", keep_cache=True)
+        run_pipeline(
+            PtbXlConnector(),
+            registry,
+            cache_dir=base / "cache1",
+            keep_cache=True,
+        )
+        run_pipeline(
+            EcgQaCotConnector(),
+            registry,
+            cache_dir=base / "cache2",
+            keep_cache=True,
+        )
     view = EcgQaView(registry)
     manifest = build_manifest(
-        view.index(), ChallengeSpec(id="qa-test", pool_fractions=[1.0]), 1.0, view.source()
+        view.index(),
+        ChallengeSpec(id="qa-test", pool_fractions=[1.0]),
+        1.0,
+        view.source(),
     )
     path = base / "manifests" / "pool100.json"
     save_manifest(manifest, path)

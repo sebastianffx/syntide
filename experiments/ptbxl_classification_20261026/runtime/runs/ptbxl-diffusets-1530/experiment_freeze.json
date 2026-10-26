@@ -1,0 +1,77 @@
+{
+  "schema_version": "ptbxl-classification-freeze@1",
+  "protocol_sha256": "195b07f1b7ee8c30a148ce39bf555e848be31c51244255b1ebb58219b3534be9",
+  "runner_sha256": "54930c293dabe31e711088d465ab59166c7abcd8a213894d6268bdf8c4e7db48",
+  "plan_sha256": "4011a713e9f01b82bce433269d94e80a9b59f85898875f17f7aa39ec022137cf",
+  "input_files_sha256": {
+    "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-1530/data/manifest.json": "7572f8a05f94c5a3825b8e855f4f2759eb064176e52106e643423fcb606be0b2",
+    "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-1530/data/conditioning_labels.json": "6b3db4dfc045c3679ea3255367e744dfae693743835e39843a66a7f86a3542c3",
+    "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-1530/data/provenance.json": "6abb95388d3adc382098e264463bba60c09a81cc069622511b7c63cbe2ed5a14",
+    "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-1530/data/G1.npz": "4e89669215a224ee04e04b00ac959c51a2534b5328daf9f7fb4aa7eb51de8890",
+    "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-1530/data/R1.npz": "2b0e4ab5d168428498e9c8e7bed864fb61b2042223923249213fa69741a7721f"
+  },
+  "original_files_sha256": {
+    "runs/ptbxl-artifact-50-val100/plan.json": "ee4d89d23cc90d8a01abb35af79c43c9bdb99353d5facaf816e49d307f4bc200",
+    "runs/ptbxl-artifact-50-val100/test_claim.json": "a16b082825078aad7f88ebed06f9d30a1ce291d5d628d8584513f6297f422d2e",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/trial.json": "d1870f07fb25db5bbc855687d049467e48350b6ba3e2010d8f5b1b7b925aa0a4",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/result.json": "47b8e1ec9e9490637bb81b8c4449565608fccfd7879213a40a40da159b9e2b52",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/test_scores.json": "4a7a2a3fa4b3ea37313a3d2d9ceffbe00c8c05917688506de59509a39b468e07",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/best.pt": "d44ec036a90e9e069eb37f06a5f7a14d8e8c46d11689c12eb94834c3821cda7f",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/final.pt": "e8ef3b0363ae487dfab54a2a2b984505b4b8d4306f108f602d5fe36d044fbe30",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/predictions_val.parquet": "0a1ce87c151dfa3b454df078274e5401d7d70fda4faef7c0b7868e55b25ef6f9",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/predictions_test.parquet": "4ac28c09a1b412b5e683245699a08dc33468693c7130a2dd50aec48e42983db2",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed1/trial.json": "f13f0ff914f193da634c3b4e7e14f30cdfc0aa8839f5268a944e6433ea0261dc",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed1/result.json": "e0dbe150f742e49a9e733e3eb18ef98736ae942314966229eae46545a4c14597",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed1/test_scores.json": "7a83ab4f756acd6e12519cf465f668ecbbb433636be3c102294db1b5a560c8ba",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed1/best.pt": "97b88c6ded6c87ca05d608cd0826a5b05a8862cc8b7bfabca482d1ec668c1e57",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed1/final.pt": "32c003fa52e9b84167d63991ff40897a43118ebb377161707a316de6f2f60031",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed1/predictions_val.parquet": "bb8403d45e6dbdc43367a3ec89b04337a453f852e05ac82f008c1525a4fe84cb",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed1/predictions_test.parquet": "1021fac2d1c4e6f9249b4beab2078ca4e60974099cbc75d20c5820d0c1412ad9",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed2/trial.json": "f901bdeb7751c57e75b2b9eb93c506fb1d27436031103408bbbba96a3cbccc87",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed2/result.json": "3b10c0b15bc07253e5aaf2abfbee04941594a8f475216e61a96eba81918103bd",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed2/test_scores.json": "7047e1e5ddfe2eb69d37bc01972ebd4219ca56490197f78358be2aa6d1dcf4ec",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed2/best.pt": "69022a60dcb6f3e3c1d92e8128a7d3a0d8d45ffb3f7902ed96f0acab53d221f3",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed2/final.pt": "919eafe868a0b4e60dab741411200ff53db17fd004727a3c661e24d63203622d",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed2/predictions_val.parquet": "4c93d73bf5ff330c8cf0509b3ebe5dc28986f3bc929a208b4bb29d2f946ac3fc",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed2/predictions_test.parquet": "6ceb7b6fabb1d6f67ea47c56b0b7fa3e35f7bd04e323aa7a6cad05b217b0e0f0"
+  },
+  "analysis": {
+    "bootstrap_seed": 0,
+    "ci_level": 0.95,
+    "contrasts": [
+      [
+        "G1",
+        "C2"
+      ],
+      [
+        "G1",
+        "R1"
+      ],
+      [
+        "R1",
+        "C2"
+      ]
+    ],
+    "diagnostic": [
+      "R1",
+      "C2"
+    ],
+    "key_control": [
+      "G1",
+      "R1"
+    ],
+    "n_boot": 2000,
+    "primary": [
+      "G1",
+      "C2"
+    ],
+    "slices": [
+      "overall",
+      "clean",
+      "artifact"
+    ]
+  },
+  "label_policy": "provisional_conditioning_parent_superclasses",
+  "test_interpretation": "exploratory extension; original PTB-XL test results already viewed",
+  "frozen_at": "2026-10-23T23:00:40+00:00"
+}

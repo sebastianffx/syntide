@@ -1,0 +1,42 @@
+PTB-XL + DiffuSETS classification trial — 26 October 2026
+
+Completed 2,000 optimizer steps; seed 0; 8,579 real ECGs + all 4,515 accepted generated ECGs.
+Every batch: 48 real + 16 generated. Total draws: 96,000 real + 32,000 generated.
+Every real ECG was used 11–12 times and every generated ECG 7–8 times.
+Same ResNet1d, AdamW (lr .001, weight decay .01), BCE loss and initial weights as scaling seed 0.
+Five multi-label targets: CD, HYP, MI, NORM, STTC. Generated targets are provisional conditioning-parent labels.
+Validation every 100 steps on 2,146 ECGs; best overall validation AUROC selects step 1,700.
+Test uses 2,158 ECGs, including 513 artifact-bearing and 1,645 clean records.
+
+Split       Slice       Real 50%     + DiffuSETS    Difference
+validation  overall     0.919566     0.922215      +0.002649
+validation  artifact    0.914440     0.917737      +0.003297
+validation  clean       0.921889     0.924056      +0.002167
+test        overall     0.915709     0.911187      -0.004522
+test        artifact    0.912231     0.899025      -0.013206
+test        clean       0.917184     0.914840      -0.002344
+
+Final step 2,000 validation AUROC: 0.915196.
+Training wall time: 68.5 seconds on MPS.
+The validation gain did not carry over to the test fold. This is one seed; no variance or significance claim.
+
+Interpretation:
+- Acceptance checked technical quality and rhythm, not the five diagnostic labels.
+- 2,212 generated ECGs use conditioning parents outside the 50% real pool (1,794 distinct records / 1,765 patients); all are from training folds 1–8.
+- No conditioning record or patient overlaps validation/test. Generator pretraining membership cannot be independently audited.
+- This is exploratory: the test fold was viewed in earlier experiments.
+- Original scaling runs trained 12,000 steps. The budget-matched plot limits selection to the first 2,000; real50 already peaks at step 1,200.
+- Real50 test scores reuse an existing checkpoint with exactly identical model tensors; baseline_checkpoint_equivalence.json records the verification.
+
+Plot and data files:
+figures/scaling_saturation.png/.svg — original scaling context plus new mixed trial at 50% real patients.
+figures/scaling_saturation_budget_matched.png/.svg — checkpoint selection restricted to <=2,000 steps.
+figures/learning_curves.png/.svg — validation histories through 2,000 steps.
+figures/saturation_points.csv, validation_history.csv, comparisons.csv, per_class_metrics.csv, summary.json.
+test_and_validation_comparison.csv — baseline and mixed results by split and slice.
+pool50/mix75/seed0/ — checkpoints, metrics, validation/test predictions, and complete sampling audit.
+
+Recreate report/figures from the project root:
+.venv/bin/python runs/ptbxl-diffusets-4515-mix75-2000/plot_results.py
+.venv/bin/python runs/ptbxl-diffusets-4515-mix75-2000/build_report.py
+Preparation and training scripts retain frozen input/code fingerprints and do not overwrite completed trials.

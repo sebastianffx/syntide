@@ -1,0 +1,111 @@
+{
+ "claimed_at": "2026-10-23T14:16:08+00:00",
+ "syntide_version": "0.1.0",
+ "trials": [
+  {
+   "run_dir": "full100/C2/seed0",
+   "trial_id": "dd38eebf1b861f7e8e0c01712c4fc52d875385a26cd35f24b81e8afba459a3e8",
+   "best_sha256": "8909fdc3f4288f6454d4893095df0868e092cc3780e2ecd2794aa4ef278cc4c8"
+  },
+  {
+   "run_dir": "full100/C2/seed1",
+   "trial_id": "27df44b516dd10675205bfb7a95fbe90d98e56e4e907fa2d4d66451468c40dc3",
+   "best_sha256": "22cfb00bc5e18b98baa2a73b669cd5545af89e4452778ced3976a7db4f7e99e3"
+  },
+  {
+   "run_dir": "full100/C2/seed2",
+   "trial_id": "2cfd1045add61c4b350ca8ed5220d1e51f62734744a33aa2793d01d8cb71a49c",
+   "best_sha256": "1bc5ff214a43e972ebe5a33802f57ec9496316dff76530f26c1a5aec44add275"
+  },
+  {
+   "run_dir": "scarcity50/A0/seed0",
+   "trial_id": "d1c99d504eaa09f928e8ae512eb5593e01b864ff54f32e397e512f5e17a34d82",
+   "best_sha256": "bb07466c3539e8f2a4f9b077da335d343d2a3d9ef3479d29879c5efd76f1292f"
+  },
+  {
+   "run_dir": "scarcity50/A0/seed1",
+   "trial_id": "a5e8089bdf55131616f88cbfdf8998935d7dbd124a56e172253c3422f6f86457",
+   "best_sha256": "542606c38d0fbb36b3bff0075cb2f0a356ab30f26d7575b89c44d82e10b4eabe"
+  },
+  {
+   "run_dir": "scarcity50/A0/seed2",
+   "trial_id": "b880d6c5440d0be84e40efe7922ec4311124540fdc6348b924c0fba9a2b7ff64",
+   "best_sha256": "7d1d9ff69ef7e6ec5ca72c74d41b91873d7b78e94110a00040c5276b7c85c6f8"
+  },
+  {
+   "run_dir": "scarcity50/A1/seed0",
+   "trial_id": "1114e33f8db1adfbb8ec19d6bed5d393f616dd90e33699be66eed25c2f764c37",
+   "best_sha256": "617ac5df7a15ee14d7442665d680906477434cce38dbbf9b288a068cf46aaefd"
+  },
+  {
+   "run_dir": "scarcity50/A1/seed1",
+   "trial_id": "6b7c4a575b07027fa74b5490dd84955e7f9aa914d9e26c5165e7be33d4f3ca4e",
+   "best_sha256": "4fae4270de0e0017560e47b026d37362f69000039e3144eceacec20d0867ff0c"
+  },
+  {
+   "run_dir": "scarcity50/A1/seed2",
+   "trial_id": "5d41e4292ba894d14c39557fe1d23e1aaf0e507867cebafce029d1f1f8afc8d6",
+   "best_sha256": "fe95833ca5a5f729a54e65a8a1087891b725f47395c1a617e156cfc7db2c863e"
+  },
+  {
+   "run_dir": "scarcity50/A2/seed0",
+   "trial_id": "a30daa8d5bb133b259eb1ada1854f83352deb583aab2c3c9904f5d41779099f6",
+   "best_sha256": "30576842d637c9588940ed4576e0c88d97e2f8b1863f9312a5011559493a0754"
+  },
+  {
+   "run_dir": "scarcity50/A2/seed1",
+   "trial_id": "f7213a4cba15de4b9ab3b678a358626ad09f70dc03d151f1239b2f94dfced5ff",
+   "best_sha256": "aa34ff38697cf962859605e35ce656e0945ad91d2341c86024bb2852380837be"
+  },
+  {
+   "run_dir": "scarcity50/A2/seed2",
+   "trial_id": "e70b1e7a7d06ffc741fbe786a567745fa1bc9452e419c22a30a14c47ae26bf92",
+   "best_sha256": "05b718f49030e47be056dfb2585ee878bf82c4d9f8efd842a6d278d61699558d"
+  },
+  {
+   "run_dir": "scarcity50/A3/seed0",
+   "trial_id": "58988b250a92909880b741f0567ff084e5bfa349e4019277a61117b4e8d7649c",
+   "best_sha256": "01d9fa7bf5f7521f2911a597a40f448dcbe74eb2fef85bd283f347970be03f87"
+  },
+  {
+   "run_dir": "scarcity50/A3/seed1",
+   "trial_id": "1a9113d852fa72094c18f70ad3cdb89b963e66ecb144e22619917b07552d6e01",
+   "best_sha256": "c95b861f8bdd80e18d585437132ef604403b0c0767f0b00aedccaf13687bdcfb"
+  },
+  {
+   "run_dir": "scarcity50/A3/seed2",
+   "trial_id": "4e52f2e01da67aa2d666951f838240138ded858b236f5a28cbf95d842df6907c",
+   "best_sha256": "237207fb13fe3cf86d57fc2815e5eb6bf65b7cd7c6a769521310f38d7827b41c"
+  },
+  {
+   "run_dir": "scarcity50/C1/seed0",
+   "trial_id": "c4a039ee70f8ee2b373ecbb3a950dbb2d1e8dd905eaa9dce2f89a5520807959b",
+   "best_sha256": "5eefbaa64b85d90c8ffa32ea4ff4745ddb2edd446f18b6b85077302c15469bc3"
+  },
+  {
+   "run_dir": "scarcity50/C1/seed1",
+   "trial_id": "1104eb8738c24be3a5d0d4d8ac7c028cb5eee5c35303e1473c0941eb18332d67",
+   "best_sha256": "609bf87f89ef8461a5434e689c54d238124aa7a721aea71de1e02661db2fb57a"
+  },
+  {
+   "run_dir": "scarcity50/C1/seed2",
+   "trial_id": "f0e9f9bcd428e1815a40a9493af7803deecb3f1fa8770fc50ec24e8125fc14eb",
+   "best_sha256": "5c71fba26332a17e92e137cb373ef7bd812f65b96ea9563d482304b02a79271d"
+  },
+  {
+   "run_dir": "scarcity50/C2/seed0",
+   "trial_id": "4669acb4bec32cc3cb1fc88c4f82e305218e3fc995eacc47c2f69fb5d0a6001a",
+   "best_sha256": "d44ec036a90e9e069eb37f06a5f7a14d8e8c46d11689c12eb94834c3821cda7f"
+  },
+  {
+   "run_dir": "scarcity50/C2/seed1",
+   "trial_id": "4dbe743cad4ba3e2a08bdb6f9b2ef7e7dc32af55009b35b3be2ea6e1407c79f4",
+   "best_sha256": "97b88c6ded6c87ca05d608cd0826a5b05a8862cc8b7bfabca482d1ec668c1e57"
+  },
+  {
+   "run_dir": "scarcity50/C2/seed2",
+   "trial_id": "a1ab14e317cac9e7fec969df1c212522c7251ace90f3286c6289d6da904b0984",
+   "best_sha256": "69022a60dcb6f3e3c1d92e8128a7d3a0d8d45ffb3f7902ed96f0acab53d221f3"
+  }
+ ]
+}

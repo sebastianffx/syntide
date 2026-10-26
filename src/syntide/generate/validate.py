@@ -1,17 +1,12 @@
-"""Typed, versioned checks on editor candidates (timenet_syntide §2, basic subset).
+"""Check edited signals and measure the effects of each artifact.
 
-Blocking validators decide acceptance:
-- ``bounds@1``: the edit is finite, keeps the shape, and pushes no sample past ``mv_limit`` (or past
-  the parent's own peak, for the few parents that already exceed it);
-- ``alignment@1``: the severity measured on the projected residual is within ``alignment_tol``
-  (relative) of the requested amplitude.
+Acceptance requires finite values, an unchanged shape, bounded amplitude, and
+agreement between requested and measured artifact severity. Recordings already
+above the amplitude limit may keep their original peak value.
 
-``in_context@1`` is report-only: the same severity descriptor on the edited ECG, physiology included,
-which is how natural records were measured. The generator gate and the audit views use it.
-
-Realized controls are measured on the residual's strongest lead, whose coefficient is +-1. Every
-descriptor is computed per lead and scales with the coefficient's magnitude, so this equals the
-maximum over all leads, at a twelfth of the cost.
+The artifact is measured on the strongest affected lead after subtracting the
+source signal. A separate report measures the complete edited waveform,
+including normal electrical activity, for comparison with natural recordings.
 """
 
 from dataclasses import dataclass
@@ -32,18 +27,32 @@ class Check:
     blocking: bool
 
     def to_json(self) -> dict[str, Any]:
-        return {"name": self.name, "version": self.version, "value": self.value, "pass": self.passed}
+        return {
+            "name": self.name,
+            "version": self.version,
+            "value": self.value,
+            "pass": self.passed,
+        }
 
 
-def realized_controls(candidate: Candidate, controls: dict[str, Any], fs: int, *, full: bool = False) -> dict:
-    """What the edit actually did, in control units. ``full`` adds frequency, onset and duration."""
+def realized_controls(
+    candidate: Candidate,
+    controls: dict[str, Any],
+    fs: int,
+    *,
+    full: bool = False,
+) -> dict:
+    """Measure an edit, optionally including frequency, onset, and duration."""
     lead = candidate.residual[candidate.strongest_lead]
     kind = controls["artifact_type"]
     if kind == "burst_noise":
         found = descriptors.burst(lead, fs)
         realized = {"amplitude_mv": found["burst_rms_mv"]}
         if full:
-            realized |= {"onset_s": found["burst_onset_s"], "duration_s": found["burst_duration_s"]}
+            realized |= {
+                "onset_s": found["burst_onset_s"],
+                "duration_s": found["burst_duration_s"],
+            }
         return realized
     realized = {"amplitude_mv": descriptors.severity(kind, lead, fs)}
     if full and kind == "baseline_drift":
@@ -52,7 +61,7 @@ def realized_controls(candidate: Candidate, controls: dict[str, Any], fs: int, *
 
 
 def sinusoid_hz(signal: np.ndarray, fs: int) -> float:
-    """Frequency of a clean sinusoid from its interpolated zero crossings (needs one full cycle)."""
+    """Estimate sinusoid frequency from at least one complete cycle."""
     above = np.signbit(signal)
     edges = np.flatnonzero(above[1:] != above[:-1])
     if len(edges) < 2:
@@ -70,7 +79,7 @@ def evaluate(
     *,
     full: bool = False,
 ) -> tuple[list[Check], dict[str, float]]:
-    """Run the blocking validators; return the checks and the realized controls."""
+    """Return acceptance checks and measured settings for an edited signal."""
     x = candidate.x
     finite = bool(np.isfinite(x).all()) and x.shape == parent_x.shape
     peak = float(np.abs(x).max()) if finite else float("inf")
@@ -80,14 +89,26 @@ def evaluate(
     error = abs(realized["amplitude_mv"] - requested) / requested
     checks = [
         Check("bounds", "1", peak, finite and peak <= limit, blocking=True),
-        Check("alignment", "1", error, error <= cfg["alignment_tol"], blocking=True),
+        Check(
+            "alignment",
+            "1",
+            error,
+            error <= cfg["alignment_tol"],
+            blocking=True,
+        ),
     ]
     return checks, realized
 
 
 def in_context(candidate: Candidate, recipe: Recipe, fs: int) -> Check:
     kind = recipe.controls["artifact_type"]
-    return Check("in_context", "1", descriptors.severity(kind, candidate.x, fs), None, blocking=False)
+    return Check(
+        "in_context",
+        "1",
+        descriptors.severity(kind, candidate.x, fs),
+        None,
+        blocking=False,
+    )
 
 
 def accepted(checks: list[Check]) -> bool:
@@ -96,5 +117,7 @@ def accepted(checks: list[Check]) -> bool:
 
 def failed(checks: list[Check]) -> str:
     return ",".join(
-        f"{check.name}@{check.version}" for check in checks if check.blocking and not check.passed
+        f"{check.name}@{check.version}"
+        for check in checks
+        if check.blocking and not check.passed
     )

@@ -1,16 +1,14 @@
-"""``python -m syntide.eval``: judge a protocol's trials by its frozen decision rules.
+"""Evaluate a protocol using rules fixed before test access.
 
-- ``mode=audit`` checks and draws what the generator made (coverage, acceptance, signal examples, label
-  audit) from each regime's Gate 4 recipes; see ``syntide.eval.audit``.
-- ``mode=freeze`` writes ``runs/<protocol>/eval/rules.json`` (Gate 5, rules half). Run it before the test
-  fold is claimed; it needs no finished trial.
-- ``split=val`` (the default) reports on validation from each finished run's ``predictions_val.parquet``.
-  Use it while trials train; ``checkpoint=final`` gives the final-checkpoint sensitivity check.
-- ``split=test`` checks the rules were frozen before the claim, scores every frozen run on the test fold
-  once through ``syntide.eval.holdout`` (a no-op for runs already scored), then reports.
+Run with ``python -m syntide.eval`` and select the same protocol used for
+planning. ``mode=audit`` inspects generated recordings. ``mode=freeze``
+saves analysis rules before test evaluation. ``split=val`` reports available
+validation results during training; ``checkpoint=final`` selects final model
+parameters instead of the checkpoint chosen on validation.
 
-Each report goes to ``runs/<protocol>/eval/<split>[-final]/``: ``comparisons.json`` (every paired
-contrast), ``results.md``, ``figures/*.png``, and the dashboard (``tracker=files|tensorboard|wandb``).
+``split=test`` verifies the frozen rules and evaluates completed trials
+once. Reports go to ``runs/<protocol>/eval/<split>[-final]/`` and contain
+comparisons, figures, a written summary, and dashboard records.
 """
 
 import logging
@@ -40,7 +38,8 @@ class EvaluateConfig:
     checkpoint: str = "best"
     runs_dir: str = "runs"
     registry: str | None = None
-    audit_device: str = "cpu"  # where mode=audit runs A0's predictor; cpu leaves the GPU to training
+    # where mode=audit runs A0's predictor; cpu leaves the GPU to training
+    audit_device: str = "cpu"
     protocol: ProtocolConfig = field(default_factory=ProtocolConfig)
     analysis: AnalysisConfig = field(default_factory=AnalysisConfig)
     tracker: TrackerConfig = field(default_factory=TrackerConfig)
@@ -49,7 +48,9 @@ class EvaluateConfig:
 ConfigStore.instance().store(name="evaluate_schema", node=EvaluateConfig)
 
 
-@hydra.main(version_base=None, config_path="../../../conf", config_name="evaluate")
+@hydra.main(
+    version_base=None, config_path="../../../conf", config_name="evaluate"
+)
 def main(cfg: DictConfig) -> None:
     config = as_dataclass(EvaluateConfig, cfg)
     for name, value, choices in (
@@ -58,10 +59,13 @@ def main(cfg: DictConfig) -> None:
         ("checkpoint", config.checkpoint, CHECKPOINTS),
     ):
         if value not in choices:
-            raise SystemExit(f"unknown {name} {value!r}; choose one of {', '.join(choices)}")
+            raise SystemExit(
+                f"unknown {name} {value!r}; choose one of {', '.join(choices)}"
+            )
     if config.split == "test" and config.checkpoint != "best":
         raise SystemExit(
-            "the test fold is scored on the best checkpoint only; use checkpoint=final with split=val"
+            "the test fold is scored on the best checkpoint only; use "
+            "checkpoint=final with split=val"
         )
     protocol_dir = Path(config.runs_dir) / config.protocol.id
     try:
@@ -107,7 +111,12 @@ def main(cfg: DictConfig) -> None:
 
     try:
         out_dir = write_report(
-            protocol_dir, config.protocol, config.analysis, config.split, config.checkpoint, config.tracker
+            protocol_dir,
+            config.protocol,
+            config.analysis,
+            config.split,
+            config.checkpoint,
+            config.tracker,
         )
     except (RunError, PairingError) as error:
         raise SystemExit(f"no report: {error}") from error

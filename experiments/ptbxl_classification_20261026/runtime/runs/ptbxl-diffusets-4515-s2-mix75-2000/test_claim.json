@@ -1,0 +1,21 @@
+{
+ "claimed_at": "2026-10-26T08:52:16+00:00",
+ "syntide_version": "0.1.0",
+ "trials": [
+  {
+   "run_dir": "pool50/mix75_s2/seed0",
+   "trial_id": "2a2a4069fa575d7c04e06d768d56ad676d56a1e4fd5151b071c081a746c7037b",
+   "best_sha256": "98f8cd5ba51daadf9e58421fc53cf3a4c77792cc789c2cee9ceab581cbcabbf3"
+  },
+  {
+   "run_dir": "pool50/mix75_s2/seed1",
+   "trial_id": "3c59cd546864a6face232446c5135fbdd35c619acd64dc73f9518d532a4b08f9",
+   "best_sha256": "1b6b067e9dcbabc5af9997ff73cc4280e0d5c912bc4e1ea9f8577a938043e19d"
+  },
+  {
+   "run_dir": "pool50/mix75_s2/seed2",
+   "trial_id": "04749c57a888e6ef64c2219c5adf693551ce7093b01ea8b5e715cd02bbef5fbb",
+   "best_sha256": "0d0ba129626e0746dacf69ef3e6d468554c76f66851df8badc017ab4062ec6d8"
+  }
+ ]
+}

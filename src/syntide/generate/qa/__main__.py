@@ -1,16 +1,11 @@
-"""``python -m syntide.generate.qa``: build QA corpora and suites, measure coverage, allocate, plan trials.
+"""Build question-answer datasets and plan their training experiments.
 
-    build        --config conf/qa/<corpus>.yaml --output DIR [--plan PLAN] [--parent DIR] [--max-records N]
-    coverage     DIR
-    gap          --suite DIR --run RUN_DIR --protected DIR [DIR ...] --output GAP.json
-    allocate     --gap GAP.json --budget N --parent DIR --output PLAN.json [--seed S]
-    plan-trials  --protocol conf/qa/protocol_<id>.yaml [--runs-dir runs] [--arms A ...] [--seeds 0 1]
+Run ``python -m syntide.generate.qa --help`` for commands that build datasets,
+measure coverage, allocate generation counts, export training data, and plan
+trials. A corpus configuration supplies the data source and build settings.
 
-A corpus config has a ``source`` block (registry, manifest, manifest_sha256, role, questions; or
-``kind: external`` with catalog, dataset, label_mapping for an evaluation-only suite) and a ``build``
-block (``syntide.generate.qa.build.BuildConfig``). ``build`` is restartable: rerun the same command after
-an interruption and it resumes after the last committed unit. Nothing is published until every unit is
-done, and a published corpus is never overwritten.
+Interrupted builds resume after the last completed unit. A completed corpus is
+published only after all units succeed and is never overwritten.
 """
 
 from __future__ import annotations
@@ -27,25 +22,52 @@ from syntide.generate.qa.build import BuildConfig
 
 def _build_config(path: Path) -> tuple[dict, BuildConfig]:
     raw = OmegaConf.load(path)
-    build = OmegaConf.to_object(OmegaConf.merge(OmegaConf.structured(BuildConfig), raw.get("build", {})))
+    build = OmegaConf.to_object(
+        OmegaConf.merge(OmegaConf.structured(BuildConfig), raw.get("build", {}))
+    )
     return OmegaConf.to_container(raw.get("source", {}), resolve=True), build
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(prog="python -m syntide.generate.qa", description=__doc__.split("\n")[0])
+    parser = argparse.ArgumentParser(
+        prog="python -m syntide.generate.qa", description=__doc__.split("\n")[0]
+    )
     commands = parser.add_subparsers(dest="command", required=True)
     b = commands.add_parser("build")
     b.add_argument("--config", type=Path, required=True)
     b.add_argument("--output", type=Path, required=True)
     b.add_argument("--plan", type=Path)
-    b.add_argument("--parent", type=Path, help="published corpus the plan was made from")
+    b.add_argument(
+        "--parent", type=Path, help="published corpus the plan was made from"
+    )
     b.add_argument("--max-records", type=int)
-    b.add_argument("--tracker", type=Path, help="conf/tracker/<backend>.yaml for build counters")
+    b.add_argument(
+        "--tracker",
+        type=Path,
+        help="conf/tracker/<backend>.yaml for build counters",
+    )
     c = commands.add_parser("coverage")
     c.add_argument("corpus", type=Path)
+    e = commands.add_parser(
+        "export",
+        help="augment baseline prepared data for its unchanged trainer",
+    )
+    e.add_argument("--corpus", type=Path, nargs="+", required=True)
+    e.add_argument("--baseline-prepared", type=Path, required=True)
+    e.add_argument("--output", type=Path, required=True)
     g = commands.add_parser("gap")
-    g.add_argument("--suite", type=Path, required=True, help="development suite (suite_role: development)")
-    g.add_argument("--outputs", type=Path, required=True, help="parquet with task_id and output columns")
+    g.add_argument(
+        "--suite",
+        type=Path,
+        required=True,
+        help="development suite (suite_role: development)",
+    )
+    g.add_argument(
+        "--outputs",
+        type=Path,
+        required=True,
+        help="parquet with task_id and output columns",
+    )
     g.add_argument(
         "--protected",
         type=Path,
@@ -66,10 +88,17 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--arms", nargs="*")
     p.add_argument("--seeds", nargs="*", type=int)
     args = parser.parse_args(argv)
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S"
+    )
     try:
         _run(args)
-    except (ValueError, FileExistsError, PermissionError, RuntimeError) as error:
+    except (
+        ValueError,
+        FileExistsError,
+        PermissionError,
+        RuntimeError,
+    ) as error:
         raise SystemExit(str(error)) from error
 
 
@@ -85,7 +114,9 @@ def _run(args: argparse.Namespace) -> None:
             from syntide.generate.qa.sources import open_external_source
 
             source = open_external_source(
-                source_cfg["catalog"], source_cfg["dataset"], label_mapping=source_cfg.get("label_mapping")
+                source_cfg["catalog"],
+                source_cfg["dataset"],
+                label_mapping=source_cfg.get("label_mapping"),
             )
         else:
             source = open_source(
@@ -113,9 +144,37 @@ def _run(args: argparse.Namespace) -> None:
                 "qa-corpus",
                 {"name": cfg.name},
             )
-        info = build_corpus(cfg, source, args.output, plan=plan, parent_corpus_id=parent, tracker=tracker)
+        info = build_corpus(
+            cfg,
+            source,
+            args.output,
+            plan=plan,
+            parent_corpus_id=parent,
+            tracker=tracker,
+        )
         print(f"Published {info['corpus_id']} at {args.output.resolve()}")
         print(json.dumps(info["counts"], indent=1))
+    elif args.command == "export":
+        from syntide.generate.qa.export import export_prepared
+
+        info = export_prepared(args.corpus, args.baseline_prepared, args.output)
+        print(
+            json.dumps(
+                {
+                    "output": str(args.output.resolve()),
+                    "sha256": info["sha256"],
+                    "training_rows": info["splits"]["train"]["questions"],
+                    "added_training_rows": info["qa_export"][
+                        "added_training_rows"
+                    ],
+                    "appended_waveforms": len(
+                        info["qa_export"]["appended_waveforms"]
+                    ),
+                    "corpora": info["qa_export"]["corpora"],
+                },
+                indent=2,
+            )
+        )
     elif args.command == "coverage":
         from syntide.generate.qa.allocation import coverage
         from syntide.generate.qa.corpus import load_corpus
@@ -123,7 +182,11 @@ def _run(args: argparse.Namespace) -> None:
         corpus = load_corpus(args.corpus)
         print(
             json.dumps(
-                {"corpus_id": corpus.corpus_id, "coverage": coverage(corpus.tasks, corpus.evidence)}, indent=1
+                {
+                    "corpus_id": corpus.corpus_id,
+                    "coverage": coverage(corpus.tasks, corpus.evidence),
+                },
+                indent=1,
             )
         )
     elif args.command == "gap":
@@ -136,7 +199,9 @@ def _run(args: argparse.Namespace) -> None:
         suite = load_corpus(args.suite)
         table = pq.read_table(args.outputs).to_pylist()
         by_id = {t.task_id: t for t in suite.tasks}
-        rows = qa_metrics.score_outputs([by_id[r["task_id"]] for r in table], [r["output"] for r in table])
+        rows = qa_metrics.score_outputs(
+            [by_id[r["task_id"]] for r in table], [r["output"] for r in table]
+        )
         protected = {
             s
             for path in args.protected
@@ -164,15 +229,31 @@ def _run(args: argparse.Namespace) -> None:
             seed=args.seed,
         )
         write_frozen(args.output, plan)
-        print(f"Plan {plan['plan_id']}: {args.output} (builds a new corpus; nothing is executed)")
+        print(
+            f"Plan {plan['plan_id']}: {args.output} (builds a new "
+            f"corpus; nothing is executed)"
+        )
     else:
-        from syntide.qa_trial import QAArmConfig, QAProtocolConfig, plan_qa_trials
+        from syntide.qa_trial import (
+            QAArmConfig,
+            QAProtocolConfig,
+            plan_qa_trials,
+        )
 
-        raw = OmegaConf.to_container(OmegaConf.load(args.protocol), resolve=True)
-        raw["arms"] = {name: QAArmConfig(**arm) for name, arm in raw.get("arms", {}).items()}
+        raw = OmegaConf.to_container(
+            OmegaConf.load(args.protocol), resolve=True
+        )
+        raw["arms"] = {
+            name: QAArmConfig(**arm)
+            for name, arm in raw.get("arms", {}).items()
+        }
         protocol = QAProtocolConfig(**raw)
-        written = plan_qa_trials(protocol, args.runs_dir, arms=args.arms, seeds=args.seeds)
-        print(f"{len(written)} new QA trials under {args.runs_dir / protocol.id}")
+        written = plan_qa_trials(
+            protocol, args.runs_dir, arms=args.arms, seeds=args.seeds
+        )
+        print(
+            f"{len(written)} new QA trials under {args.runs_dir / protocol.id}"
+        )
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-"""The reference trainer passes SYNTIDE's checks, and its predictor reproduces what it reported."""
+"""The reference trainer reproduces its reported predictions and checkpoints."""
 
 import json
 from dataclasses import asdict
@@ -61,30 +61,56 @@ def _spec():
     )
 
 
-def test_reference_trainer_run_is_accepted_and_its_predictor_reproduces_best_probs(tmp_path):
+def test_trainer_reproduces_predictions_from_selected_checkpoint(
+    tmp_path,
+):
     spec = _spec()
     cfg = load_config(overrides=["model.width=4", "device=cpu", "log_every=5"])
     info = trainer_info(cfg)
     write_spec(tmp_path, spec)
-    tracker = make_tracker(TrackerConfig("files"), tmp_path, spec.run_name, spec.protocol, {})
+    tracker = make_tracker(
+        TrackerConfig("files"), tmp_path, spec.run_name, spec.protocol, {}
+    )
     val = _samples(40, seed=1)
-    with open_trial(spec, _samples(24, seed=0), val, tracker, tmp_path) as trial:
+    with open_trial(
+        spec, _samples(24, seed=0), val, tracker, tmp_path
+    ) as trial:
         result = fit(trial, cfg, info)
 
     assert result["final_step"] == 30
     assert torch.load(tmp_path / "final.pt", weights_only=True)["step"] == 30
     assert result["best_step"] in (10, 20, 30)
-    # Same seed, same initial weights: the hash in result.json is what init_seed produces.
+    # Reusing the initialization seed reproduces the recorded weight hash.
     torch.manual_seed(spec.init_seed)
     assert result["trainer"]["init_sha256"] == state_sha256(ResNet1d(width=4))
 
-    predictions = pq.read_table(tmp_path / "predictions_val.parquet").to_pandas()
-    reported = predictions[predictions.checkpoint == "best"].y_prob.to_numpy().reshape(len(val), -1)
+    predictions = pq.read_table(
+        tmp_path / "predictions_val.parquet"
+    ).to_pandas()
+    reported = (
+        predictions[predictions.checkpoint == "best"]
+        .y_prob.to_numpy()
+        .reshape(len(val), -1)
+    )
     assert np.array_equal(predict(tmp_path / "best.pt", val.x, "cpu"), reported)
 
-    logged = [json.loads(line) for line in (tmp_path / "metrics.jsonl").read_text().splitlines()]
-    assert [e["step"] for e in logged if "train/loss" in e] == [5, 10, 15, 20, 25, 30]
-    assert [e["step"] for e in logged if "val/auroc_overall" in e] == [10, 20, 30]
+    logged = [
+        json.loads(line)
+        for line in (tmp_path / "metrics.jsonl").read_text().splitlines()
+    ]
+    assert [e["step"] for e in logged if "train/loss" in e] == [
+        5,
+        10,
+        15,
+        20,
+        25,
+        30,
+    ]
+    assert [e["step"] for e in logged if "val/auroc_overall" in e] == [
+        10,
+        20,
+        30,
+    ]
 
-    # A finished trial is skipped without touching the data (the registry path is never opened).
+    # Finished trials are skipped without opening the data registry.
     assert train(tmp_path, cfg, TrackerConfig("files")) is None

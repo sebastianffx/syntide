@@ -1,4 +1,6 @@
-"""Phase 2: the paired training stream, the recipe ledger, the transforms and the experiment planner.
+"""Generate training examples and plan reproducible experiments.
 
-Framework-free: NumPy and pyarrow only. Nothing here imports torch or timenet.
+The package provides signal transformations, generation records, and training
+batches. The core transformation code uses NumPy and PyArrow without importing
+a training framework.
 """

@@ -1,7 +1,7 @@
-"""ECG question-answer-rationale generation grounded in verified evidence (``python -m syntide.generate.qa``).
+"""Generate electrocardiogram questions from verified evidence.
 
-``evidence`` measures waveforms; ``templates`` / ``verify`` turn evidence into checked tasks; ``evol``
-expands them (TSEvol); ``acquisition``, ``pairs`` and ``generated`` add transformed, paired and generated
-waveforms; ``allocation`` and ``curriculum`` target and order them; ``corpus`` / ``build`` publish
-immutable corpora. Nothing here imports torch or a trainer.
+Waveform measurements support question templates and answer checks. Additional
+modules create reworded questions, transformed recordings, and comparisons.
+Generation plans select tasks, training schedules order them, and corpus
+builders publish complete datasets that cannot be overwritten.
 """

@@ -1,0 +1,10 @@
+{
+ "steps": 10000,
+ "presentations": 640000,
+ "transform_slots": 0,
+ "candidates": 0,
+ "accepted": 0,
+ "rejected": 0,
+ "exhausted_slots": 0,
+ "distinct_recipes": 0
+}

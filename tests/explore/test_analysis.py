@@ -41,7 +41,12 @@ def run(x, rows=None, population=None, config=None, **kwargs):
         rows,
         population if population is not None else rows,
         signals(rows),
-        {"projection": "pca", "n_clusters": 2, "metric_neighbors": 1, **(config or {})},
+        {
+            "projection": "pca",
+            "n_clusters": 2,
+            "metric_neighbors": 1,
+            **(config or {}),
+        },
         **kwargs,
     )
 
@@ -50,17 +55,29 @@ def test_clusters_and_distances_use_normalized_embeddings_without_labels():
     x = np.array([[1, 0], [1, 0.05], [-1, 0], [-1, 0.05]])
     rows = catalog(4, [["a", "b"], ["a", "b"], ["b"], ["b"]])
     result = run(x, rows)
-    rescaled = run(x * np.arange(1, 5)[:, None], catalog(4, [["q"], [], ["r"], ["s"]]))
+    rescaled = run(
+        x * np.arange(1, 5)[:, None], catalog(4, [["q"], [], ["r"], ["s"]])
+    )
     assert [r["cluster"] for r in result["records"]] == [0, 0, 1, 1]
     assert [r["cluster"] for r in rescaled["records"]] == [0, 0, 1, 1]
     normalized = x / np.linalg.norm(x, axis=1, keepdims=True)
-    expected = np.linalg.norm(normalized[:2].mean(axis=0) - normalized[2:].mean(axis=0))
-    assert result["clusters"][0]["nearest_cluster_distance"] == pytest.approx(expected)
+    expected = np.linalg.norm(
+        normalized[:2].mean(axis=0) - normalized[2:].mean(axis=0)
+    )
+    assert result["clusters"][0]["nearest_cluster_distance"] == pytest.approx(
+        expected
+    )
     assert result["clusters"][0]["label_purity"] == 1
-    assert result["clusters"][0]["label_entropy"] == 0  # Consistent co-occurrence is pure.
+    assert (
+        result["clusters"][0]["label_entropy"] == 0
+    )  # Consistent co-occurrence is pure.
     assert result["summary"]["silhouette"]["mean"] > 0.95
-    for first, second in zip(result["records"], rescaled["records"], strict=True):
-        assert first["signal_novelty"] == pytest.approx(second["signal_novelty"])
+    for first, second in zip(
+        result["records"], rescaled["records"], strict=True
+    ):
+        assert first["signal_novelty"] == pytest.approx(
+            second["signal_novelty"]
+        )
 
 
 def test_multilabel_binary_entropy_and_labelset_purity():
@@ -71,14 +88,22 @@ def test_multilabel_binary_entropy_and_labelset_purity():
 
 
 def test_population_counts_use_distinct_recordings_and_patients():
-    population = catalog(6, [["common"], ["common"], ["common"], ["rare"], ["common"], ["common"]])
-    population += [dict(population[3])]  # Duplicate QA task must not inflate counts.
+    population = catalog(
+        6,
+        [["common"], ["common"], ["common"], ["rare"], ["common"], ["common"]],
+    )
+    population += [
+        dict(population[3])
+    ]  # Duplicate QA task must not inflate counts.
     rows = [*population[:2], population[3]]
     result = run(
         [[1, 0], [1, 1], [0, 1]],
         rows,
         population,
-        {"target_count": {"rare": 4, "absent": 2}, "target_fraction": {"rare": 0.75}},
+        {
+            "target_count": {"rare": 4, "absent": 2},
+            "target_fraction": {"rare": 0.75},
+        },
     )
     summary = {row["label"]: row for row in result["label_summary"]}
     assert result["summary"]["population_records"] == 6
@@ -87,7 +112,9 @@ def test_population_counts_use_distinct_recordings_and_patients():
     assert summary["common"]["sample_count"] == 2
     assert summary["common"]["sample_patients"] == 1
     assert summary["rare"]["relative_imbalance"] == pytest.approx(0.8)
-    assert summary["rare"]["target_fraction_count"] == 5  # Full population denominator.
+    assert (
+        summary["rare"]["target_fraction_count"] == 5
+    )  # Full population denominator.
     assert summary["rare"]["effective_target_count"] == 5
     assert summary["rare"]["deficit"] == 4
     assert summary["absent"]["population_count"] == 0
@@ -96,7 +123,9 @@ def test_population_counts_use_distinct_recordings_and_patients():
 
 def test_density_excludes_self_even_with_duplicate_vectors():
     result = run([[1, 0], [1, 0], [0, 1]])
-    assert [r["signal_novelty"] for r in result["records"]] == pytest.approx([0, 0, np.sqrt(2)])
+    assert [r["signal_novelty"] for r in result["records"]] == pytest.approx(
+        [0, 0, np.sqrt(2)]
+    )
     cluster = result["clusters"][0]
     assert cluster["intra_pairwise_rms_distance"] == 0
 
@@ -106,7 +135,9 @@ def test_pairwise_rms_is_exact_without_pairwise_matrix():
     result = run(x, config={"n_clusters": 1})
     d = pairwise_distances(x)
     expected = np.sqrt(np.square(d[np.triu_indices(3, k=1)]).mean())
-    assert result["clusters"][0]["intra_pairwise_rms_distance"] == pytest.approx(expected)
+    assert result["clusters"][0][
+        "intra_pairwise_rms_distance"
+    ] == pytest.approx(expected)
 
 
 def test_sentence_novelty_collapses_duplicates_but_retains_qa_provenance():
@@ -119,11 +150,19 @@ def test_sentence_novelty_collapses_duplicates_but_retains_qa_provenance():
             "question": "Rhythm?",
             "answer": "normal",
         },
-        {"record_id": "r1", "text": "normal rhythm", "task_id": "b", "flags": ["boilerplate"]},
+        {
+            "record_id": "r1",
+            "text": "normal rhythm",
+            "task_id": "b",
+            "flags": ["boilerplate"],
+        },
         {"record_id": "r1", "text": "sinus rhythm", "task_id": "c"},
         {"record_id": "r2", "text": "extreme tachycardia", "task_id": "d"},
     ]
-    rows[0]["texts"] = [dict(text_rows[0]), {"text": "unembedded sentence", "flags": ["excluded"]}]
+    rows[0]["texts"] = [
+        dict(text_rows[0]),
+        {"text": "unembedded sentence", "flags": ["excluded"]},
+    ]
     vectors = np.array([[1, 0], [1, 0], [1, 0.05], [-1, 0]])
     result = run(np.eye(3), rows, text_embeddings=vectors, text_rows=text_rows)
     first, second, rare = result["records"]
@@ -134,7 +173,9 @@ def test_sentence_novelty_collapses_duplicates_but_retains_qa_provenance():
     assert first["texts"][1]["novelty_status"] == "not_embedded"
     assert first["texts"][1]["flags"] == ["excluded"]
     assert second["texts"][0]["flags"] == ["boilerplate"]
-    assert first["text_novelty"] > 0  # Duplicate text is not its nearest distinct neighbour.
+    assert (
+        first["text_novelty"] > 0
+    )  # Duplicate text is not its nearest distinct neighbour.
     assert rare["text_novelty"] > 1.9
     assert first["text_novelty"] < 0.01
     assert result["summary"]["text"]["unique_sentences"] == 3
@@ -147,9 +188,16 @@ def test_only_repeated_text_and_zero_embeddings_have_no_novelty():
         {"record_id": "r1", "text": "same"},
         {"record_id": "r1", "text": "empty vector"},
     ]
-    result = run([[1, 0], [0, 1]], text_rows=text_rows, text_embeddings=np.array([[1, 0], [1, 0], [0, 0]]))
+    result = run(
+        [[1, 0], [0, 1]],
+        text_rows=text_rows,
+        text_embeddings=np.array([[1, 0], [1, 0], [0, 0]]),
+    )
     assert all(record["text_novelty"] is None for record in result["records"])
-    assert result["records"][1]["texts"][1]["novelty_status"] == "zero_norm_embedding"
+    assert (
+        result["records"][1]["texts"][1]["novelty_status"]
+        == "zero_norm_embedding"
+    )
 
 
 def test_qa_combined_embedding_fields_keep_one_tuple_per_text_id():
@@ -157,15 +205,34 @@ def test_qa_combined_embedding_fields_keep_one_tuple_per_text_id():
 
     rows = catalog(2)
     rows[0]["texts"] = [
-        {"text_id": "q1", "text": "", "question": "Rhythm?", "answer": "sinus", "rationale": "regular"},
-        {"text_id": "q2", "text": "", "question": "Diagnosis?", "answer": "rare", "flags": ["review"]},
+        {
+            "text_id": "q1",
+            "text": "",
+            "question": "Rhythm?",
+            "answer": "sinus",
+            "rationale": "regular",
+        },
+        {
+            "text_id": "q2",
+            "text": "",
+            "question": "Diagnosis?",
+            "answer": "rare",
+            "flags": ["review"],
+        },
     ]
     rows[1]["texts"] = [
-        {"text_id": "q3", "text": "recording note", "question": "Rhythm?", "answer": "sinus"},
+        {
+            "text_id": "q3",
+            "text": "recording note",
+            "question": "Rhythm?",
+            "answer": "sinus",
+        },
     ]
     embedded_rows = text_rows_for(rows, ["question", "answer", "text"])
     vectors = np.array([[1, 0], [-1, 0], [1, 0.01]])
-    result = run([[1, 0], [0, 1]], rows, text_rows=embedded_rows, text_embeddings=vectors)
+    result = run(
+        [[1, 0], [0, 1]], rows, text_rows=embedded_rows, text_embeddings=vectors
+    )
     first = result["records"][0]
     assert [text["text_id"] for text in first["texts"]] == ["q1", "q2"]
     assert first["texts"][0]["text"] == ""
@@ -174,11 +241,15 @@ def test_qa_combined_embedding_fields_keep_one_tuple_per_text_id():
     assert first["texts"][0]["rationale"] == "regular"
     assert first["texts"][1]["flags"] == ["review"]
     assert all(text["novelty_status"] == "available" for text in first["texts"])
-    assert first["text_novelty_mean"] == pytest.approx(np.mean([t["novelty"] for t in first["texts"]]))
+    assert first["text_novelty_mean"] == pytest.approx(
+        np.mean([t["novelty"] for t in first["texts"]])
+    )
     second = result["records"][1]
     assert len(second["texts"]) == 1
     assert second["texts"][0]["text"] == "recording note"
-    assert second["texts"][0]["embedding_text"] == "Rhythm?\nsinus\nrecording note"
+    assert (
+        second["texts"][0]["embedding_text"] == "Rhythm?\nsinus\nrecording note"
+    )
 
 
 def test_waveform_statistics_use_full_signal_and_json_is_finite():
@@ -220,13 +291,20 @@ def test_empty_tiny_and_identical_inputs_are_deterministic(n):
     assert result == run(np.ones((n, 4)))
     assert result["summary"]["clusters"] == min(n, 1)
     assert result["summary"]["silhouette"]["mean"] is None
-    assert all(record["coordinates"]["pca"] == [0, 0] for record in result["records"])
+    assert all(
+        record["coordinates"]["pca"] == [0, 0] for record in result["records"]
+    )
     json.dumps(result, allow_nan=False)
 
 
 def test_silhouette_subsample_is_disclosed_and_reproducible():
     rng = np.random.default_rng(3)
-    x = np.concatenate([rng.normal([1, 0], 0.05, size=(50, 2)), rng.normal([-1, 0], 0.05, size=(50, 2))])
+    x = np.concatenate(
+        [
+            rng.normal([1, 0], 0.05, size=(50, 2)),
+            rng.normal([-1, 0], 0.05, size=(50, 2)),
+        ]
+    )
     config = {"silhouette_max_samples": 20}
     result = run(x, config=config)
     assert result["summary"]["silhouette"]["sampled"] is True
@@ -251,12 +329,21 @@ def test_umap_dependency_is_explicit_and_no_silent_fallback(monkeypatch):
 def test_umap_handles_small_and_duplicate_data_if_installed():
     pytest.importorskip("umap")
     tiny = run([[1, 0], [0, 1]], config={"projection": "umap"})
-    assert tiny["summary"]["projection"]["umap_status"].startswith("unavailable_")
+    assert tiny["summary"]["projection"]["umap_status"].startswith(
+        "unavailable_"
+    )
     assert tiny["records"][0]["coordinates"]["umap"] is None
-    result = run([[1, 0], [0, 1], [-1, 0], [1, 0]], config={"projection": "umap"})
+    result = run(
+        [[1, 0], [0, 1], [-1, 0], [1, 0]], config={"projection": "umap"}
+    )
     assert result["summary"]["projection"]["umap_status"] == "available"
-    assert result["records"][0]["coordinates"]["umap"] == result["records"][3]["coordinates"]["umap"]
-    assert result == run([[1, 0], [0, 1], [-1, 0], [1, 0]], config={"projection": "umap"})
+    assert (
+        result["records"][0]["coordinates"]["umap"]
+        == result["records"][3]["coordinates"]["umap"]
+    )
+    assert result == run(
+        [[1, 0], [0, 1], [-1, 0], [1, 0]], config={"projection": "umap"}
+    )
 
 
 @pytest.mark.parametrize(

@@ -1,0 +1,64 @@
+{
+  "analysis": {
+    "bootstrap_seed": 0,
+    "ci_level": 0.95,
+    "contrasts": [
+      [
+        "G1",
+        "C2"
+      ],
+      [
+        "G1",
+        "R1"
+      ],
+      [
+        "R1",
+        "C2"
+      ]
+    ],
+    "diagnostic": [
+      "R1",
+      "C2"
+    ],
+    "key_control": [
+      "G1",
+      "R1"
+    ],
+    "n_boot": 2000,
+    "primary": [
+      "G1",
+      "C2"
+    ],
+    "slices": [
+      "overall",
+      "clean",
+      "artifact"
+    ]
+  },
+  "batch_size": 64,
+  "data_manifest": {
+    "path": "data/manifest.json",
+    "sha256": "7572f8a05f94c5a3825b8e855f4f2759eb064176e52106e643423fcb606be0b2"
+  },
+  "dataset": "physionet/ptb-xl@1.0.3",
+  "id": "ptbxl-diffusets-1530",
+  "label_policy": "provisional_conditioning_parent_superclasses",
+  "label_policy_authorization": "Run with provisional conditioning labels and the extra control",
+  "label_policy_authorized": true,
+  "lineage_allowed_roles": [
+    "pool",
+    "unused"
+  ],
+  "manifest": "manifests/ptbxl-artifact-50/pool50.json",
+  "max_steps": 6500,
+  "original_run": "runs/ptbxl-artifact-50-val100",
+  "regime": "scarcity50",
+  "registry": "datasets/timenet-registry",
+  "schema_version": "ptbxl-diffusets-classification@1",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "val_every": 100
+}

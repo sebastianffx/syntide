@@ -1,9 +1,10 @@
-"""Explore recording embeddings without using labels to fit the clusters.
+"""Inspect recording similarity without using labels to fit clusters.
 
-All signal distances and clustering use L2-normalized *original* embeddings. PCA
-and UMAP are views only. Text novelty is a separate cosine-distance calculation
-over distinct, non-empty sentence strings; repeated QA boilerplate is not a set
-of independent neighbours. The returned object can be written as strict JSON.
+Distances and clustering use original embedding vectors scaled to unit
+length. Low-dimensional projections are display aids only. Text novelty uses
+separate cosine distances over distinct nonempty sentences, so repeated
+question wording does not count as independent neighboring text. Results can
+be saved as JSON without non-finite numeric values.
 """
 
 import math
@@ -31,26 +32,37 @@ def analyze(
 
     ``rows`` and ``embeddings`` have matching order, one row per recording.
     Signals are matched by ``record_id``. Text rows have ``record_id`` and
-    ``text`` plus any task/question/answer provenance. All original text entries
-    are retained, even when their embedding or novelty cannot be computed.
+    ``text`` plus any task/question/answer provenance. All original text
+    entries are retained, even when their embedding or novelty cannot be
+    computed.
 
-    ``target_fraction`` refers to the fixed selected population, not the sample
-    and not a hypothetical population after generation. Reported deficits are
-    independent per-label targets, so multi-label deficits must not be summed.
+    ``target_fraction`` refers to the fixed selected population, not the
+    sample and not a hypothetical population after generation. Reported
+    deficits are independent per-label targets, so multi-label deficits must
+    not be summed.
     """
     cfg = _configuration(config)
     x = _matrix(embeddings, len(rows), "signal embeddings")
     ids = [str(row["record_id"]) for row in rows]
     if len(ids) != len(set(ids)):
-        raise ValueError("Sample rows must contain one row per distinct recording")
+        raise ValueError(
+            "Sample rows must contain one row per distinct recording"
+        )
     population = _population(population_rows)
     if set(ids) - set(population):
-        raise ValueError("Every sampled recording must belong to the selected population")
+        raise ValueError(
+            "Every sampled recording must belong to the selected population"
+        )
     signal_of = {str(signal["record_id"]): signal for signal in signals}
     if len(signal_of) != len(signals):
-        raise ValueError("Signals must contain one entry per distinct recording")
+        raise ValueError(
+            "Signals must contain one entry per distinct recording"
+        )
     if set(ids) - set(signal_of):
-        raise ValueError("Every sampled recording requires a signal for statistics and preview")
+        raise ValueError(
+            "Every sampled recording requires a signal for statistics "
+            "and preview"
+        )
 
     x = normalize(x) if len(x) else x
     pca, umap, projection_info = _projections(x, cfg)
@@ -58,15 +70,21 @@ def analyze(
     novelty, neighbour_count = _knn(x, cfg["metric_neighbors"], "euclidean")
     silhouette, silhouette_info = _silhouettes(x, labels, cfg)
     text_of, text_summary = _texts(rows, text_embeddings, text_rows, cfg)
-    clusters, centroid_distances = _cluster_summaries(x, labels, rows, novelty, silhouette)
+    clusters, centroid_distances = _cluster_summaries(
+        x, labels, rows, novelty, silhouette
+    )
     records = []
     for index, row in enumerate(rows):
         record_id = ids[index]
-        stats, waveform = _signal_summary(signal_of[record_id], cfg["waveform_points"])
+        stats, waveform = _signal_summary(
+            signal_of[record_id], cfg["waveform_points"]
+        )
         texts = text_of[record_id]
         scores = list(
             {
-                _sentence(text.get("embedding_text", text.get("text"))): text["novelty"]
+                _sentence(text.get("embedding_text", text.get("text"))): text[
+                    "novelty"
+                ]
                 for text in texts
                 if text.get("novelty") is not None
             }.values()
@@ -80,7 +98,10 @@ def analyze(
                 "labels": sorted(set(row.get("labels") or [])),
                 "metadata": row.get("metadata") or {},
                 "texts": texts,
-                "coordinates": {"pca": pca[index], "umap": umap[index] if umap is not None else None},
+                "coordinates": {
+                    "pca": pca[index],
+                    "umap": umap[index] if umap is not None else None,
+                },
                 "cluster": cluster,
                 "stats": stats,
                 "waveform": waveform,
@@ -99,19 +120,39 @@ def analyze(
         "sample_patients": len(_patients(rows)),
         "population_patients": len(_patients(population.values())),
         "sample_missing_patient_ids": sum(not _patients([row]) for row in rows),
-        "population_missing_patient_ids": sum(not _patients([row]) for row in population.values()),
+        "population_missing_patient_ids": sum(
+            not _patients([row]) for row in population.values()
+        ),
         "embedding_dimensions": x.shape[1],
         "zero_norm_embeddings": int(np.count_nonzero(~np.any(x, axis=1))),
         "clusters": effective_clusters,
         "metric_neighbors": neighbour_count,
         "signal_distance": "euclidean on L2-normalized original embeddings",
-        "signal_novelty_definition": "mean distance to k other sampled recording embeddings",
-        "density_definition": "mean k-neighbour distance (larger radius means lower local density)",
-        "text_novelty_definition": "maximum sentence novelty per recording; distinct-text cosine neighbours",
-        "label_purity_definition": "fraction of records having the most common complete label set",
-        "label_entropy_definition": "mean binary label-presence entropy across labels present in the sample",
-        "target_fraction_denominator": "selected population records before generation",
-        "cluster_metrics_scope": "sampled recordings; population label counts are reported separately",
+        ("signal_novelty_definition"): (
+            "mean distance to k other sampled recording embeddings"
+        ),
+        ("density_definition"): (
+            "mean k-neighbour distance (larger radius means lower local "
+            "density)"
+        ),
+        ("text_novelty_definition"): (
+            "maximum sentence novelty per recording; distinct-text cosine "
+            "neighbours"
+        ),
+        ("label_purity_definition"): (
+            "fraction of records having the most common complete label set"
+        ),
+        ("label_entropy_definition"): (
+            "mean binary label-presence entropy across labels present in "
+            "the sample"
+        ),
+        ("target_fraction_denominator"): (
+            "selected population records before generation"
+        ),
+        ("cluster_metrics_scope"): (
+            "sampled recordings; population label counts are reported "
+            "separately"
+        ),
         "projection": projection_info,
         "silhouette": silhouette_info,
         "text": text_summary,
@@ -153,12 +194,19 @@ def _configuration(config: dict) -> dict:
         "silhouette_max_samples",
     ):
         value = cfg[name]
-        if isinstance(value, bool) or not isinstance(value, (int, np.integer)) or value < 1:
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, np.integer))
+            or value < 1
+        ):
             raise ValueError(f"{name} must be a positive integer")
     if cfg["n_neighbors"] < 2:
         raise ValueError("n_neighbors must be at least 2 for UMAP")
     cfg["waveform_points"] = min(1000, cfg["waveform_points"])
-    if not math.isfinite(float(cfg["umap_min_dist"])) or not 0 <= cfg["umap_min_dist"] <= 1:
+    if (
+        not math.isfinite(float(cfg["umap_min_dist"]))
+        or not 0 <= cfg["umap_min_dist"] <= 1
+    ):
         raise ValueError("umap_min_dist must be between 0 and 1")
     for name in ("target_count", "target_fraction"):
         target = cfg[name]
@@ -166,7 +214,11 @@ def _configuration(config: dict) -> dict:
         for value in targets:
             if value is None:
                 continue
-            if isinstance(value, bool) or not math.isfinite(float(value)) or value < 0:
+            if (
+                isinstance(value, bool)
+                or not math.isfinite(float(value))
+                or value < 0
+            ):
                 raise ValueError(f"{name} must be finite and non-negative")
             if name == "target_count" and int(value) != value:
                 raise ValueError("target_count must be an integer")
@@ -178,7 +230,10 @@ def _configuration(config: dict) -> dict:
 def _matrix(values: np.ndarray, count: int, name: str) -> np.ndarray:
     x = np.asarray(values, dtype=np.float64)
     if x.ndim != 2 or x.shape[0] != count or x.shape[1] < 1:
-        raise ValueError(f"{name} must be a [rows, dimensions] matrix matching its catalog rows")
+        raise ValueError(
+            f"{name} must be a [rows, dimensions] matrix matching its "
+            "catalog rows"
+        )
     if not np.isfinite(x).all():
         raise ValueError(f"{name} contain NaN or infinite values")
     return x
@@ -194,12 +249,16 @@ def _population(rows: list[dict]) -> dict[str, dict]:
         else:
             previous = result[record_id]
             if previous.get("subject_uid") != row.get("subject_uid"):
-                raise ValueError(f"Conflicting patient ids for recording {record_id!r}")
+                raise ValueError(
+                    f"Conflicting patient ids for recording {record_id!r}"
+                )
             previous["labels"].update(row.get("labels") or [])
     return result
 
 
-def _projections(x: np.ndarray, cfg: dict) -> tuple[np.ndarray, np.ndarray | None, dict]:
+def _projections(
+    x: np.ndarray, cfg: dict
+) -> tuple[np.ndarray, np.ndarray | None, dict]:
     pca = np.zeros((len(x), 2))
     variance = []
     if len(x) > 1 and np.any(x != x[0]):
@@ -219,12 +278,14 @@ def _projections(x: np.ndarray, cfg: dict) -> tuple[np.ndarray, np.ndarray | Non
         from umap import UMAP
     except ImportError as error:
         raise ImportError(
-            "UMAP requires umap-learn. Install the explorer dependencies or select --projection pca. "
-            "No projection fallback was applied."
+            "UMAP requires umap-learn. Install the explorer "
+            "dependencies or select --projection pca. No projection "
+            "fallback was applied."
         ) from error
     # UMAP cannot form a useful neighbour graph with fewer than three distinct
     # vectors. Keep that view unavailable, with an explicit status, rather than
-    # disguising PCA coordinates as UMAP or inventing separated duplicate points.
+    # disguising PCA coordinates as UMAP or inventing separated duplicate
+    # points.
     unique, inverse = np.unique(x, axis=0, return_inverse=True)
     if len(unique) < 3:
         info["umap_status"] = "unavailable_fewer_than_three_distinct_embeddings"
@@ -241,8 +302,15 @@ def _projections(x: np.ndarray, cfg: dict) -> tuple[np.ndarray, np.ndarray | Non
         init="random",
     ).fit_transform(unique)
     if not np.isfinite(coordinates).all():
-        raise ValueError("UMAP returned non-finite coordinates; choose PCA or adjust UMAP parameters")
-    info.update(umap_status="available", umap_neighbors=neighbours, umap_unique_vectors=len(unique))
+        raise ValueError(
+            "UMAP returned non-finite coordinates; choose PCA or "
+            "adjust UMAP parameters"
+        )
+    info.update(
+        umap_status="available",
+        umap_neighbors=neighbours,
+        umap_unique_vectors=len(unique),
+    )
     return pca, coordinates[inverse], info
 
 
@@ -252,13 +320,19 @@ def _clusters(x: np.ndarray, cfg: dict) -> tuple[np.ndarray, int]:
     count = min(cfg["n_clusters"], len(np.unique(x, axis=0)))
     if count == 1:
         return np.zeros(len(x), dtype=int), 1
-    labels = KMeans(n_clusters=count, random_state=cfg["seed"], n_init=10).fit_predict(x)
+    labels = KMeans(
+        n_clusters=count, random_state=cfg["seed"], n_init=10
+    ).fit_predict(x)
     # Stable, readable ids: the cluster containing the first catalog row is 0.
-    mapping = {label: index for index, label in enumerate(dict.fromkeys(labels))}
+    mapping = {
+        label: index for index, label in enumerate(dict.fromkeys(labels))
+    }
     return np.array([mapping[label] for label in labels]), len(mapping)
 
 
-def _knn(x: np.ndarray, neighbours: int, metric: str) -> tuple[list[float | None], int]:
+def _knn(
+    x: np.ndarray, neighbours: int, metric: str
+) -> tuple[list[float | None], int]:
     if len(x) < 2:
         return [None] * len(x), 0
     k = min(neighbours, len(x) - 1)
@@ -268,12 +342,16 @@ def _knn(x: np.ndarray, neighbours: int, metric: str) -> tuple[list[float | None
     # column zero would occasionally discard a duplicate while retaining self.
     scores = [
         float(np.mean(distance[index != i][:k]))
-        for i, (distance, index) in enumerate(zip(distances, indices, strict=True))
+        for i, (distance, index) in enumerate(
+            zip(distances, indices, strict=True)
+        )
     ]
     return scores, k
 
 
-def _silhouettes(x: np.ndarray, labels: np.ndarray, cfg: dict) -> tuple[list, dict]:
+def _silhouettes(
+    x: np.ndarray, labels: np.ndarray, cfg: dict
+) -> tuple[list, dict]:
     scores = [None] * len(x)
     info = {
         "mean": None,
@@ -286,7 +364,9 @@ def _silhouettes(x: np.ndarray, labels: np.ndarray, cfg: dict) -> tuple[list, di
     indices = np.arange(len(x))
     if len(x) > cfg["silhouette_max_samples"]:
         indices = np.sort(
-            np.random.default_rng(cfg["seed"]).choice(len(x), cfg["silhouette_max_samples"], replace=False)
+            np.random.default_rng(cfg["seed"]).choice(
+                len(x), cfg["silhouette_max_samples"], replace=False
+            )
         )
         info["sampled"] = True
     if not 1 < len(set(labels[indices])) < len(indices):
@@ -295,29 +375,51 @@ def _silhouettes(x: np.ndarray, labels: np.ndarray, cfg: dict) -> tuple[list, di
     values = silhouette_samples(x[indices], labels[indices], metric="euclidean")
     for index, value in zip(indices, values, strict=True):
         scores[index] = float(value)
-    info.update(mean=float(values.mean()), evaluated_records=len(indices), status="available")
+    info.update(
+        mean=float(values.mean()),
+        evaluated_records=len(indices),
+        status="available",
+    )
     return scores, info
 
 
 def _cluster_summaries(x, assignments, rows, novelty, silhouette):
-    all_labels = sorted({label for row in rows for label in row.get("labels") or []})
+    all_labels = sorted(
+        {label for row in rows for label in row.get("labels") or []}
+    )
     cluster_ids = sorted(set(assignments))
-    centroids = np.array([x[assignments == cluster].mean(axis=0) for cluster in cluster_ids])
-    distances = pairwise_distances(centroids) if len(centroids) else np.empty((0, 0))
+    centroids = np.array(
+        [x[assignments == cluster].mean(axis=0) for cluster in cluster_ids]
+    )
+    distances = (
+        pairwise_distances(centroids) if len(centroids) else np.empty((0, 0))
+    )
     result, record_distances = [], np.zeros(len(x))
     for cluster in cluster_ids:
         indices = np.flatnonzero(assignments == cluster)
         members = [rows[index] for index in indices]
         count = len(indices)
-        counts = Counter(label for row in members for label in set(row.get("labels") or []))
-        sets = Counter(tuple(sorted(set(row.get("labels") or []))) for row in members)
+        counts = Counter(
+            label for row in members for label in set(row.get("labels") or [])
+        )
+        sets = Counter(
+            tuple(sorted(set(row.get("labels") or []))) for row in members
+        )
         entropy = []
         for label in all_labels:
             p = counts[label] / count
-            entropy.append(-p * math.log2(p) - (1 - p) * math.log2(1 - p) if 0 < p < 1 else 0.0)
+            entropy.append(
+                -p * math.log2(p) - (1 - p) * math.log2(1 - p)
+                if 0 < p < 1
+                else 0.0
+            )
         intra = np.linalg.norm(x[indices] - centroids[cluster], axis=1)
         record_distances[indices] = intra
-        other = [(int(c), float(distances[cluster, c])) for c in cluster_ids if c != cluster]
+        other = [
+            (int(c), float(distances[cluster, c]))
+            for c in cluster_ids
+            if c != cluster
+        ]
         other.sort(key=lambda item: (item[1], item[0]))
         scores = [silhouette[i] for i in indices if silhouette[i] is not None]
         novelties = [novelty[i] for i in indices if novelty[i] is not None]
@@ -329,27 +431,37 @@ def _cluster_summaries(x, assignments, rows, novelty, silhouette):
                 "patients": len(_patients(members)),
                 "centroid": centroids[cluster],
                 "label_counts": dict(sorted(counts.items())),
-                "label_fractions": {label: counts[label] / count for label in sorted(counts)},
+                "label_fractions": {
+                    label: counts[label] / count for label in sorted(counts)
+                },
                 "label_purity": max(sets.values()) / count if counts else None,
                 "label_entropy": float(np.mean(entropy)) if entropy else None,
                 "label_sets": [
                     {"labels": list(labels), "count": n}
-                    for labels, n in sorted(sets.items(), key=lambda item: (-item[1], item[0]))
+                    for labels, n in sorted(
+                        sets.items(), key=lambda item: (-item[1], item[0])
+                    )
                 ],
                 "intra_distance": float(intra.mean()),
                 "intra_distance_mean": float(intra.mean()),
                 "intra_distance_std": float(intra.std()),
                 "intra_distance_max": float(intra.max()),
-                "intra_pairwise_rms_distance": float(np.sqrt(2 * np.sum(intra**2) / (count - 1)))
+                "intra_pairwise_rms_distance": float(
+                    np.sqrt(2 * np.sum(intra**2) / (count - 1))
+                )
                 if count > 1
                 else None,
                 "nearest_cluster": other[0][0] if other else None,
                 "nearest_cluster_id": other[0][0] if other else None,
                 "nearest_cluster_distance": other[0][1] if other else None,
-                "centroid_distances": [{"cluster": c, "distance": d} for c, d in other],
+                "centroid_distances": [
+                    {"cluster": c, "distance": d} for c, d in other
+                ],
                 "silhouette": float(np.mean(scores)) if scores else None,
                 "silhouette_evaluated_records": len(scores),
-                "signal_novelty_mean": float(np.mean(novelties)) if novelties else None,
+                "signal_novelty_mean": float(np.mean(novelties))
+                if novelties
+                else None,
             }
         )
     return result, record_distances
@@ -359,7 +471,8 @@ def _patients(rows) -> set:
     return {
         str(row["subject_uid"])
         for row in rows
-        if row.get("subject_uid") is not None and str(row["subject_uid"]).strip()
+        if row.get("subject_uid") is not None
+        and str(row["subject_uid"]).strip()
     }
 
 
@@ -368,16 +481,26 @@ def _label_summary(sample, population, cfg):
     for key in ("target_count", "target_fraction"):
         if isinstance(cfg[key], Mapping):
             labels.update(cfg[key])
-    population_counts = Counter(label for row in population for label in set(row.get("labels") or []))
+    population_counts = Counter(
+        label for row in population for label in set(row.get("labels") or [])
+    )
     largest = max(population_counts.values(), default=0)
     result = []
     for label in sorted(labels):
-        pop_members = [row for row in population if label in (row.get("labels") or [])]
-        sample_members = [row for row in sample if label in (row.get("labels") or [])]
+        pop_members = [
+            row for row in population if label in (row.get("labels") or [])
+        ]
+        sample_members = [
+            row for row in sample if label in (row.get("labels") or [])
+        ]
         count, sample_count = len(pop_members), len(sample_members)
         target_count = _target(cfg["target_count"], label)
         target_fraction = _target(cfg["target_fraction"], label)
-        fraction_count = math.ceil(target_fraction * len(population)) if target_fraction is not None else None
+        fraction_count = (
+            math.ceil(target_fraction * len(population))
+            if target_fraction is not None
+            else None
+        )
         targets = [n for n in (target_count, fraction_count) if n is not None]
         target = max(targets) if targets else None
         result.append(
@@ -387,8 +510,12 @@ def _label_summary(sample, population, cfg):
                 "sample_count": sample_count,
                 "population_patients": len(_patients(pop_members)),
                 "sample_patients": len(_patients(sample_members)),
-                "population_fraction": count / len(population) if population else 0.0,
-                "sample_fraction": sample_count / len(sample) if sample else 0.0,
+                "population_fraction": count / len(population)
+                if population
+                else 0.0,
+                "sample_fraction": sample_count / len(sample)
+                if sample
+                else 0.0,
                 "relative_count": count / largest if largest else None,
                 "relative_imbalance": 1 - count / largest if largest else None,
                 "relative_deficit": largest - count,
@@ -396,7 +523,9 @@ def _label_summary(sample, population, cfg):
                 "target_fraction": target_fraction,
                 "target_fraction_count": fraction_count,
                 "effective_target_count": target,
-                "deficit": max(0, target - count) if target is not None else None,
+                "deficit": max(0, target - count)
+                if target is not None
+                else None,
             }
         )
     return result
@@ -413,9 +542,13 @@ def _signal_summary(record, maximum):
     sample_rate = float(record["sample_rate"])
     if not np.isfinite(sample_rate) or sample_rate <= 0:
         raise ValueError("Signal sample_rate must be positive and finite")
-    channels = record.get("channels") or [f"channel_{i}" for i in range(len(signal))]
+    channels = record.get("channels") or [
+        f"channel_{i}" for i in range(len(signal))
+    ]
     if len(channels) != len(signal):
-        raise ValueError("Signal channel names must match the channel dimension")
+        raise ValueError(
+            "Signal channel names must match the channel dimension"
+        )
     units = record.get("units")
     if isinstance(units, str) or units is None:
         units = [units] * len(signal)
@@ -440,10 +573,14 @@ def _signal_summary(record, maximum):
                 "ptp": float(np.ptp(finite)),
             }
             if len(finite)
-            else {key: None for key in ("mean", "std", "rms", "min", "max", "ptp")}
+            else {
+                key: None for key in ("mean", "std", "rms", "min", "max", "ptp")
+            }
         )
         channel_stats.append(stats)
-    indices = np.linspace(0, signal.shape[1] - 1, min(maximum, signal.shape[1]), dtype=int)
+    indices = np.linspace(
+        0, signal.shape[1] - 1, min(maximum, signal.shape[1]), dtype=int
+    )
     stats = {
         "channels": channel_stats,
         "channel_count": len(signal),
@@ -478,7 +615,8 @@ def _texts(rows, embeddings, text_rows, cfg):
         raise ValueError("text_rows require matching text_embeddings")
     else:
         x = np.empty((0, 1))
-    # Distinct sentences, with duplicates grouped before nearest-neighbour search.
+    # Distinct sentences, with duplicates grouped before nearest-neighbour
+    # search.
     groups = defaultdict(list)
     for index, text in enumerate(source):
         sentence = _sentence(text.get("text"))
@@ -490,20 +628,28 @@ def _texts(rows, embeddings, text_rows, cfg):
         vector = x[indices[0]]
         details[sentence] = {
             "duplicate_count": len(indices),
-            "duplicate_record_count": len({str(source[i]["record_id"]) for i in indices}),
+            "duplicate_record_count": len(
+                {str(source[i]["record_id"]) for i in indices}
+            ),
             "novelty": None,
-            "novelty_status": "zero_norm_embedding" if not np.any(vector) else "insufficient_distinct_texts",
+            "novelty_status": "zero_norm_embedding"
+            if not np.any(vector)
+            else "insufficient_distinct_texts",
         }
         if np.any(vector):
             unique_sentences.append(sentence)
             vectors.append(vector)
     neighbour_count = 0
     if vectors:
-        distances, neighbour_count = _knn(normalize(np.array(vectors)), cfg["metric_neighbors"], "cosine")
+        distances, neighbour_count = _knn(
+            normalize(np.array(vectors)), cfg["metric_neighbors"], "cosine"
+        )
         for sentence, distance in zip(unique_sentences, distances, strict=True):
             details[sentence].update(
                 novelty=distance,
-                novelty_status="available" if distance is not None else "insufficient_distinct_texts",
+                novelty_status="available"
+                if distance is not None
+                else "insufficient_distinct_texts",
             )
     text_of = {}
     by_record = defaultdict(list)
@@ -514,7 +660,10 @@ def _texts(rows, embeddings, text_rows, cfg):
         original = row.get("texts") or []
         # Preserve all source entries. If rows already carry the same texts,
         # enrich those rather than duplicating them a second time.
-        entries = [dict(item) if isinstance(item, dict) else {"text": str(item)} for item in original]
+        entries = [
+            dict(item) if isinstance(item, dict) else {"text": str(item)}
+            for item in original
+        ]
         represented = defaultdict(list)
         ids = defaultdict(list)
         for index, entry in enumerate(entries):
@@ -527,7 +676,11 @@ def _texts(rows, embeddings, text_rows, cfg):
             # empty. Match tuple identity before sentence contents so a QA
             # tuple remains one tuple. Keep both text representations explicit.
             source_text = entry.get("source_text", entry.get("text", ""))
-            embedded = {**entry, "text": source_text, "embedding_text": entry.get("text", "")}
+            embedded = {
+                **entry,
+                "text": source_text,
+                "embedding_text": entry.get("text", ""),
+            }
             candidates = ids[entry["text_id"]] if entry.get("text_id") else []
             candidates = [index for index in candidates if index not in matched]
             if not candidates:
@@ -535,17 +688,29 @@ def _texts(rows, embeddings, text_rows, cfg):
                     index
                     for index in represented[_sentence(source_text)]
                     if index not in matched
-                    and (not entry.get("text_id") or not entries[index].get("text_id"))
+                    and (
+                        not entry.get("text_id")
+                        or not entries[index].get("text_id")
+                    )
                 ]
             if candidates:
                 index = candidates[0]
                 matched.add(index)
-                entries[index] = {**embedded, **entries[index], "embedding_text": embedded["embedding_text"]}
+                entries[index] = {
+                    **embedded,
+                    **entries[index],
+                    "embedding_text": embedded["embedding_text"],
+                }
             else:
                 entries.append(embedded)
         for entry in entries:
             sentence = _sentence(entry.get("embedding_text", entry.get("text")))
-            entry.update(details.get(sentence, {"novelty": None, "novelty_status": "not_embedded"}))
+            entry.update(
+                details.get(
+                    sentence,
+                    {"novelty": None, "novelty_status": "not_embedded"},
+                )
+            )
         text_of[record_id] = entries
     return text_of, {
         "embedded_text_rows": len(source),
@@ -554,7 +719,9 @@ def _texts(rows, embeddings, text_rows, cfg):
         "metric_neighbors": neighbour_count,
         "scope": "provided text rows",
         "distance": "cosine over distinct non-empty sentence strings",
-        "duplicates_collapsed_for_metrics": sum(len(indices) - 1 for indices in groups.values()),
+        "duplicates_collapsed_for_metrics": sum(
+            len(indices) - 1 for indices in groups.values()
+        ),
     }
 
 

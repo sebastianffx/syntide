@@ -1,0 +1,47 @@
+{
+ "protocol": "ptbxl-diffusets-1530",
+ "trials": [
+  {
+   "run_dir": "scarcity50/G1/seed0",
+   "trial_id": "802776ba17bc343540da9516175116bee8f403797d9bcfc90c5261aa62489859",
+   "regime": "scarcity50",
+   "arm": "G1",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/G1/seed1",
+   "trial_id": "ad53c02f79ff02292a5d445ae2586d8ece98e30887aa0cb76394be0098edd098",
+   "regime": "scarcity50",
+   "arm": "G1",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/G1/seed2",
+   "trial_id": "6db18457279bd0a35dfb24dc50abbaf046fe432b81ab391124c57c7368bcc922",
+   "regime": "scarcity50",
+   "arm": "G1",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/R1/seed0",
+   "trial_id": "f8c4dbc4721b08a680f75861cfc7ffe23e6a917899e13453b467972238f2bc68",
+   "regime": "scarcity50",
+   "arm": "R1",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/R1/seed1",
+   "trial_id": "b7f7528e446eeb7d72550c4b42fcb2403ccb437b1269e9a79d2a82a441a35388",
+   "regime": "scarcity50",
+   "arm": "R1",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/R1/seed2",
+   "trial_id": "17cb7a5d33ddc94aad56afb0c40ecbb57bd634746061167aabeb169205dd6b69",
+   "regime": "scarcity50",
+   "arm": "R1",
+   "seed": 2
+  }
+ ]
+}

@@ -1,0 +1,86 @@
+{
+  "arrays": {
+    "artifacts": {
+      "dtype": "bool",
+      "shape": [
+        4515,
+        4
+      ]
+    },
+    "is_synthetic": {
+      "dtype": "bool",
+      "shape": [
+        4515
+      ]
+    },
+    "labels": {
+      "dtype": "bool",
+      "shape": [
+        4515,
+        5
+      ]
+    },
+    "record_id": {
+      "dtype": "<U83",
+      "shape": [
+        4515
+      ]
+    },
+    "root_record_id": {
+      "dtype": "<U11",
+      "shape": [
+        4515
+      ]
+    },
+    "root_subject_uid": {
+      "dtype": "<U12",
+      "shape": [
+        4515
+      ]
+    },
+    "slot_id": {
+      "dtype": "int64",
+      "shape": [
+        4515
+      ]
+    },
+    "subject_uid": {
+      "dtype": "<U12",
+      "shape": [
+        4515
+      ]
+    },
+    "x": {
+      "dtype": "float32",
+      "shape": [
+        4515,
+        12,
+        1000
+      ]
+    }
+  },
+  "class_order": [
+    "CD",
+    "HYP",
+    "MI",
+    "NORM",
+    "STTC"
+  ],
+  "count": 4515,
+  "files": {
+    "conditioning_labels.json": {
+      "path": "data/conditioning_labels.json",
+      "sha256": "cc6db4e2fede7b1f8cb60c137d82536fcec7089ebbfddf5d04d674697a70e855"
+    },
+    "generated.npz": {
+      "path": "data/generated.npz",
+      "sha256": "b27c7658249a72884c7073b255bfcf3e98f69c1a9dff7ea5669ec9d5ec48feb2"
+    },
+    "provenance.json": {
+      "path": "data/provenance.json",
+      "sha256": "98c8f69d165e669ae4120bfbc07b10450d8bc52aae14a46ae93a404d9434b50f"
+    }
+  },
+  "label_policy": "provisional_conditioning_parent_superclasses",
+  "schema_version": "ptbxl-generated-training@1"
+}

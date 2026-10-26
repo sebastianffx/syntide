@@ -1,4 +1,4 @@
-"""Generated waveforms: lead aliases, explicit resampling, ancestry, pending status, requested vs measured."""
+"""Generated recordings retain channel, sampling, and source information."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ TARGET = SignalInfo(LEADS, 100.0, "mV", 1000)
 
 
 class FixtureBackend:
-    """Writes fixture ECGs in DiffuSETS's native shape and lead names (not a model, not clinically valid)."""
+    """Synthetic test signals with the shape and channel names of DiffuSETS."""
 
     def __init__(self, config):
         self.rate_bias = config.get("rate_bias", 0)
@@ -33,7 +33,8 @@ class FixtureBackend:
             raise ValueError("DiffuSETS lead names expected")
 
     def generate(self, request):
-        # The measured rate differs from the requested one: conditioning is not ground truth.
+        # The measured rate differs from the requested one: conditioning is not
+        # ground truth.
         hr = request.conditioning["heart_rate"] + self.rate_bias
         x = fixture_ecg(hr, fs=102.4, seed=request.seed)
         return GeneratedSignal(x, request.signal, {"fixture": True})
@@ -46,13 +47,19 @@ class FixtureBackend:
 def bundles(monkeypatch, tmp_path):
     monkeypatch.setattr(registry, "_REGISTERED", {})
     monkeypatch.setattr(registry, "entry_points", lambda **_: [])
-    monkeypatch.setattr(registry, "_BUILTINS", {"diffusets@1": FixtureBackend})  # the real one needs weights
+    monkeypatch.setattr(
+        registry, "_BUILTINS", {"diffusets@1": FixtureBackend}
+    )  # the real one needs weights
     plan_body = {
         "schema_version": "syntide.generation-plan@1",
         "analysis_id": "a",
         "source": {},
         "seed": 5,
-        "targets": {"record_ids": ["ptbxl-1", "ptbxl-2"], "text_ids": [], "labels": ["superclass:NORM"]},
+        "targets": {
+            "record_ids": ["ptbxl-1", "ptbxl-2"],
+            "text_ids": [],
+            "labels": ["superclass:NORM"],
+        },
         "requests": [
             {
                 "method": "diffusion",
@@ -74,17 +81,30 @@ def bundles(monkeypatch, tmp_path):
         "units": "mV",
     }
     out = []
-    for rate in (60, 100):  # same plan seed and request index: the same per-sample seeds
+    for rate in (
+        60,
+        100,
+    ):  # same plan seed and request index: the same per-sample seeds
         config = {
             "signal": signal,
             "rate_bias": 4,
             "conditions": [
                 {
-                    "conditioning": {"report": "normal", "heart_rate": rate, "age": 50, "sex": "F"},
+                    "conditioning": {
+                        "report": "normal",
+                        "heart_rate": rate,
+                        "age": 50,
+                        "sex": "F",
+                    },
                     "source_record_ids": ["ptbxl-1"],
                 },
                 {
-                    "conditioning": {"report": "normal", "heart_rate": rate, "age": 50, "sex": "F"},
+                    "conditioning": {
+                        "report": "normal",
+                        "heart_rate": rate,
+                        "age": 50,
+                        "sex": "F",
+                    },
                     "source_record_ids": ["ptbxl-2"],
                 },
             ],
@@ -110,21 +130,40 @@ def test_aliases_rate_conversion_and_ancestry_are_explicit(bundles):
         and ref.lineage["resampling"]["up"] == 125
         and ref.lineage["resampling"]["down"] == 128
     )
-    assert ref.lineage["channel_aliases"] == {"aVR": "AVR", "aVL": "AVL", "aVF": "AVF"}
-    assert ref.lineage["review_status"] == "pending" and ref.root_subject_uids == ("ptb-xl:1001",)
+    assert ref.lineage["channel_aliases"] == {
+        "aVR": "AVR",
+        "aVL": "AVL",
+        "aVF": "AVF",
+    }
+    assert ref.lineage[
+        "review_status"
+    ] == "pending" and ref.root_subject_uids == ("ptb-xl:1001",)
     native = np.load(sample.signal_path)
-    assert np.allclose(x[0].mean(), native[0].mean(), atol=0.02)  # resampled, not truncated or relabelled
+    assert np.allclose(
+        x[0].mean(), native[0].mean(), atol=0.02
+    )  # resampled, not truncated or relabelled
     with pytest.raises(generated.GeneratedInputError, match="not in the index"):
         generated.to_input(sample, TARGET, {}, allow_resample=True)
 
 
-def test_requested_controls_never_become_answers_and_verification_is_required(bundles):
+def test_requested_controls_never_become_answers_and_verification_is_required(
+    bundles,
+):
     sample = generated.load_bundle(bundles[0])[0]
-    ref, x = generated.to_input(sample, TARGET, {"ptbxl-1": "ptb-xl:1001"}, allow_resample=True)
-    verified, evidence, review = generated.verify_generated(ref, x, EvidenceExtractor(), ["heart_rate_bpm"])
-    assert review["status"] == "verified" and verified.lineage["review_status"] == "verified"
+    ref, x = generated.to_input(
+        sample, TARGET, {"ptbxl-1": "ptb-xl:1001"}, allow_resample=True
+    )
+    verified, evidence, review = generated.verify_generated(
+        ref, x, EvidenceExtractor(), ["heart_rate_bpm"]
+    )
+    assert (
+        review["status"] == "verified"
+        and verified.lineage["review_status"] == "verified"
+    )
     measured = next(e for e in evidence if e.attribute == "heart_rate_bpm")
-    assert measured.value == pytest.approx(64, abs=3)  # what the waveform shows, not the requested 60
+    assert measured.value == pytest.approx(
+        64, abs=3
+    )  # what the waveform shows, not the requested 60
     assert verified.lineage["requested_controls"]["heart_rate"] == 60
     flat = np.zeros_like(x)
     flat_ref = ref.__class__(
@@ -136,14 +175,21 @@ def test_requested_controls_never_become_answers_and_verification_is_required(bu
     still_pending, _, failed = generated.verify_generated(
         flat_ref, flat, EvidenceExtractor(), ["heart_rate_bpm"]
     )
-    assert failed["status"] == "rejected" and still_pending.lineage["review_status"] == "rejected"
+    assert (
+        failed["status"] == "rejected"
+        and still_pending.lineage["review_status"] == "rejected"
+    )
 
 
-def test_pending_generated_waveforms_cannot_enter_an_accepted_export(bundles, tmp_path):
+def test_pending_generated_waveforms_cannot_enter_an_accepted_export(
+    bundles, tmp_path
+):
     from tests.qa.test_evidence_and_tasks import _task
 
     sample = generated.load_bundle(bundles[0])[0]
-    ref, x = generated.to_input(sample, TARGET, {"ptbxl-1": "ptb-xl:1001"}, allow_resample=True)
+    ref, x = generated.to_input(
+        sample, TARGET, {"ptbxl-1": "ptb-xl:1001"}, allow_resample=True
+    )
     task, store, _ = _task(x)
     task = task.__class__(
         **{
@@ -152,7 +198,9 @@ def test_pending_generated_waveforms_cannot_enter_an_accepted_export(bundles, tm
             "verification": {"status": "accepted"},
         }
     )
-    writer = CorpusWriter(tmp_path / "corpus", {"purpose": "training", "name": "pending"})
+    writer = CorpusWriter(
+        tmp_path / "corpus", {"purpose": "training", "name": "pending"}
+    )
     writer.put_signal(ref, x)
     evidence = [
         e.__class__(
@@ -171,39 +219,60 @@ def test_pending_generated_waveforms_cannot_enter_an_accepted_export(bundles, tm
     assert not (tmp_path / "corpus").exists()
 
 
-def test_generated_build_verifies_measures_pairs_and_checks_ancestry_before_loading(
+def test_generated_build_checks_evidence_and_source_records(
     bundles, tmp_path, monkeypatch
 ):
     source = memory_source(4)
     cfg = BuildConfig(
         name="gen",
         components=["generated"],
-        generated=GeneratedConfig(bundles=[str(p) for p in bundles], allow_resample=True),
+        generated=GeneratedConfig(
+            bundles=[str(p) for p in bundles], allow_resample=True
+        ),
     )
     info = build_corpus(cfg, source, tmp_path / "gen")
     corpus = load_corpus(tmp_path / "gen")
     assert info["counts"]["generated_waveforms"] == 4
-    assert all(ref.lineage["review_status"] == "verified" for ref in corpus.inputs.values())
+    assert all(
+        ref.lineage["review_status"] == "verified"
+        for ref in corpus.inputs.values()
+    )
     rates = [t for t in corpus.tasks if t.family == "rhythm.heart_rate"]
-    assert rates and all(t.answer not in (60, 100) for t in rates)  # measured, never the requested value
+    assert rates and all(
+        t.answer not in (60, 100) for t in rates
+    )  # measured, never the requested value
     pairs = [t for t in corpus.tasks if len(t.inputs) == 2]
-    assert pairs and all(t.lineage["pair"]["variation"] == "diffusets.heart_rate_condition@1" for t in pairs)
+    assert pairs and all(
+        t.lineage["pair"]["variation"] == "diffusets.heart_rate_condition@1"
+        for t in pairs
+    )
     for task in pairs:  # the faster recording, by measurement, is the answer
-        fast = max(task.inputs, key=lambda r: r.lineage["requested_controls"]["heart_rate"])
+        fast = max(
+            task.inputs,
+            key=lambda r: r.lineage["requested_controls"]["heart_rate"],
+        )
         assert task.answer == "AB"[task.inputs.index(fast)]
 
-    outside = memory_source(4, start=50)  # the conditioning sources are not in this role
+    outside = memory_source(
+        4, start=50
+    )  # the conditioning sources are not in this role
     monkeypatch.setattr(
-        generated.GeneratedSample, "load", lambda self: pytest.fail("a waveform was read before ancestry")
+        generated.GeneratedSample,
+        "load",
+        lambda self: pytest.fail("a waveform was read before ancestry"),
     )
     build_corpus(
         BuildConfig(
             name="gen2",
             components=["generated"],
-            generated=GeneratedConfig(bundles=[str(bundles[0])], allow_resample=True),
+            generated=GeneratedConfig(
+                bundles=[str(bundles[0])], allow_resample=True
+            ),
         ),
         outside,
         tmp_path / "gen2",
     )
     ledger = json.loads((tmp_path / "gen2" / "ledger.json").read_text())
-    assert ledger and all(row["reason"].startswith("ancestry") for row in ledger)
+    assert ledger and all(
+        row["reason"].startswith("ancestry") for row in ledger
+    )

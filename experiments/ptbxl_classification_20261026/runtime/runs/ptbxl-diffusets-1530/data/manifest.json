@@ -1,0 +1,28 @@
+{
+  "arms": {
+    "G1": {
+      "n_additional_rows": 1530,
+      "n_original_pool_rows": 8579,
+      "n_rows": 10109,
+      "path": "data/G1.npz",
+      "sha256": "4e89669215a224ee04e04b00ac959c51a2534b5328daf9f7fb4aa7eb51de8890"
+    },
+    "R1": {
+      "n_additional_rows": 1530,
+      "n_original_pool_rows": 8579,
+      "n_rows": 10109,
+      "path": "data/R1.npz",
+      "sha256": "2b0e4ab5d168428498e9c8e7bed864fb61b2042223923249213fa69741a7721f"
+    }
+  },
+  "conditioning_labels": {
+    "path": "data/conditioning_labels.json",
+    "sha256": "6b3db4dfc045c3679ea3255367e744dfae693743835e39843a66a7f86a3542c3"
+  },
+  "label_policy": "provisional_conditioning_parent_superclasses",
+  "provenance": {
+    "path": "data/provenance.json",
+    "sha256": "6abb95388d3adc382098e264463bba60c09a81cc069622511b7c63cbe2ed5a14"
+  },
+  "schema_version": "ptbxl-offline-training@1"
+}

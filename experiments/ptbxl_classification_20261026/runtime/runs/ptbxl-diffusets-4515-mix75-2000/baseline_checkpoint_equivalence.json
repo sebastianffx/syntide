@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "all_model_parameters_and_buffers_exactly_equal": true,
+  "model_config_equal": true,
+  "trainer_equal": true,
+  "validation_and_test_record_lists_equal": true,
+  "checkpoint_step": 1200,
+  "scaling_checkpoint": "runs/ptbxl-scaling/pool50/real/seed0/best.pt",
+  "control_checkpoint": "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/best.pt",
+  "test_scores_source": "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/test_scores.json",
+  "file_sha256": {
+    "runs/ptbxl-scaling/pool50/real/seed0/best.pt": "4be4bd485bc3fe34c6b32d8e0bd4803ab5f413342115f1c845c38d925d4b8404",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/best.pt": "d44ec036a90e9e069eb37f06a5f7a14d8e8c46d11689c12eb94834c3821cda7f",
+    "runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/test_scores.json": "4a7a2a3fa4b3ea37313a3d2d9ceffbe00c8c05917688506de59509a39b468e07"
+  },
+  "note": "File hashes differ because saved trial metadata differs. All model tensors are identical; reuse existing scores without new baseline test inference."
+}

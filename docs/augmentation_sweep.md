@@ -2,8 +2,8 @@
 
 Protocol `conf/protocol/ptbxl_aug_sweep.yaml`, rules `conf/analysis/ptbxl_aug_sweep.yaml`, runs in
 `runs/ptbxl-aug-sweep/`. 10 new arms and 4 references, 3 seeds each: 42 trials. One more technique,
-SIMVEA_h (T6), was added after the test claim under its own protocol; see
-[Added after the test claim](#added-after-the-test-claim-simvea_h-t6).
+SIMVEA_h (T6), was added after the test claim under its own protocol, and then the same technique on every
+ECG of the batch (T6W) under another; see [Added after the test claim](#added-after-the-test-claim-simvea_h-t6).
 
 ## What the 50% experiment showed
 
@@ -100,8 +100,8 @@ uv run python -m syntide.eval.arms_figure runs/ptbxl-aug-sweep                  
 To train part of the sweep first, pass several narrower globs, for example
 `"runs/ptbxl-aug-sweep/scarcity50/A0/seed*" "runs/ptbxl-aug-sweep/scarcity50/S*/seed*"`.
 
-SIMVEA_h (T6) has its own protocol, paired with the sweep's runs. The figures in this document are drawn from
-both protocols, without S4:
+SIMVEA_h on half the batch (T6) and on every ECG (T6W) have a protocol each, paired with the sweep's runs.
+The figures in this document are drawn from all three protocols, without S4:
 
 ```bash
 uv run python -m syntide.generate protocol=ptbxl_aug_simvea mode=plan              # done
@@ -109,8 +109,15 @@ uv run python -m syntide_trainers.torch_loop "runs/ptbxl-aug-simvea/*/*/seed*"  
 uv run python -m syntide.eval.holdout runs/ptbxl-aug-simvea                        # claims T6's own test fold
 uv run python -m syntide.eval.across runs/ptbxl-aug-sweep runs/ptbxl-aug-simvea --split test \
     --contrast T6-A0 --contrast T6-A1                                              # CIs; also --split val
-uv run python -m syntide.eval.aug_figure runs/ptbxl-aug-sweep runs/ptbxl-aug-simvea --split test --hide S4
-uv run python -m syntide.eval.arms_figure runs/ptbxl-aug-sweep runs/ptbxl-aug-simvea --hide S4
+uv run python -m syntide.generate protocol=ptbxl_aug_simvea_whole mode=plan        # done
+uv run python -m syntide_trainers.torch_loop "runs/ptbxl-aug-simvea-whole/*/*/seed*"   # done
+uv run python -m syntide.eval.holdout runs/ptbxl-aug-simvea-whole                  # claims T6W's own test fold
+uv run python -m syntide.eval.across runs/ptbxl-aug-sweep runs/ptbxl-aug-simvea runs/ptbxl-aug-simvea-whole \
+    --split test --contrast T6W-T6 --contrast T6W-A0 --contrast T6W-A1 --contrast T6W-S3   # also --split val
+uv run python -m syntide.eval.aug_figure runs/ptbxl-aug-sweep runs/ptbxl-aug-simvea runs/ptbxl-aug-simvea-whole \
+    --split test --hide S4
+uv run python -m syntide.eval.arms_figure runs/ptbxl-aug-sweep runs/ptbxl-aug-simvea runs/ptbxl-aug-simvea-whole \
+    --hide S4
 ```
 
 ## How to read the results
@@ -129,8 +136,8 @@ uv run python -m syntide.eval.arms_figure runs/ptbxl-aug-sweep runs/ptbxl-aug-si
   - primary: S3 − A1, the share;
   - sequence: E1 − A3, the same question for the editor;
   - diagnostics, reported but never evidence: every arm against A0, every technique against A1, and S4 − S3.
-- The figures leave out S4 and include T6 (SIMVEA_h, last section). S4's numbers stay in every table and in
-  `aug_summary_<split>.md`.
+- The figures leave out S4 and include T6 and T6W (SIMVEA_h on half and on every ECG, last section). S4's
+  numbers stay in every table and in `aug_summary_<split>.md`.
 
 ## Results on validation
 
@@ -336,7 +343,8 @@ Where the paper is silent:
   not used.
 
 Like T1–T5, T6 augments A1's half of the batch at the paper's random hyperparameters. The paper augments every
-ECG, so its share is twice T6's. In 1 of 16 augmented slots no lead is replaced, as in the paper.
+ECG, so its share is twice T6's. In 1 of 16 augmented slots no lead is replaced, as in the paper. T6W
+([below](#every-ecg-of-the-batch-t6w)) is T6 on every ECG.
 
 ### How it was run
 
@@ -394,8 +402,70 @@ above:
 
 Caveats:
 
-- One setting: the paper's random α and β, on half the batch. The paper's own fixed-α results on PTB-XL
-  (Supplementary Table 5) were best at α = 0.4 and 0.6; choosing α from them was not tried.
+- One setting of α and β: the paper's random ones, on half the batch here and on every ECG in T6W below.
+  The paper's own fixed-α results on PTB-XL (Supplementary Table 5) were best at α = 0.4 and 0.6;
+  choosing α from them was not tried.
 - Fold 10 has now been scored for this sweep, its replication and T6. T6's numbers are exploratory, like the
   rest of the sweep.
 - Seed 0 carries most of the validation gain (+0.0045 against +0.0006 and −0.0000).
+
+### Every ECG of the batch (T6W)
+
+T6 augmented half the batch, like the other techniques; the paper augments every ECG. T6W is T6 with every
+slot augmented (`transform_fraction: 1.0`), so T6W − T6 isolates the share, as S3 − A1 and E1 − A3 do above.
+It has its own protocol, `conf/protocol/ptbxl_aug_simvea_whole.yaml` (runs in `runs/ptbxl-aug-simvea-whole/`),
+because the sweep's and T6's test claims are spent. Its trials differ from T6's in three fields only: arm,
+protocol and share. Nothing else was retrained. Training took 6–8 minutes per seed on MPS.
+
+Checked on all three seeds (`runs/ptbxl-aug-simvea-whole/scarcity50/T6W/seed*/recipes.parquet`):
+
+- each seed starts from the same weights as A0, A1 and T6, with the same trainer;
+- all 640,000 slots (64 × 10,000 steps) are augmented, once each;
+- in each of the 320,000 slots T6 augmented, T6W has the same parent ECG, leads, pairs, α, β and seed key,
+  so the same augmented ECG; in A1's slots it has A1's parents;
+- the number of chest leads replaced per ECG matches Binomial(4, 1/2), with none replaced in 1 of 16.
+
+The contrasts were written in the protocol before training: T6W − T6 and T6W − A0, with T6W − A1 and T6W − S3
+(standard augmentation on every ECG) shown alongside. The validation results
+(`runs/ptbxl-aug-simvea-whole/eval/val/across.md`) were written before T6W claimed its own test fold. CIs are
+from `syntide.eval.across` with the sweep's frozen bootstrap, as for T6.
+
+| Arm | Split | All records | Noisy | Clean | Per class (all seeds agree in bold) | Gap closed | Best step |
+|---|---|---|---|---|---|---|---|
+| T6W SIMVEA_h, every ECG | val | +0.000 [−0.003, +0.005] | +0.004 [−0.004, +0.013] | −0.001 [−0.005, +0.004] | **CD +0.004**, MI +0.001, NORM +0.004, STTC +0.001; **HYP −0.008** | 3% | 1,000–1,300 |
+| T6W SIMVEA_h, every ECG | test | +0.003 [−0.002, +0.007] | +0.000 [−0.008, +0.009] | +0.003 [−0.001, +0.008] | **CD +0.007**, MI +0.004, NORM +0.006, STTC +0.001; HYP −0.006 | 15% | 1,000–1,300 |
+
+| Contrast | Split | All records | Noisy | Clean | Seeds better, all |
+|---|---|---|---|---|---|
+| T6W − T6 | val | −0.001 [−0.003, +0.001] | +0.000 [−0.004, +0.005] | −0.002 [−0.004, +0.001] | 0/3 |
+| T6W − T6 | test | −0.001 [−0.003, +0.003] | −0.002 [−0.008, +0.005] | −0.000 [−0.003, +0.003] | 1/3 |
+| T6W − A1 | val | −0.001 [−0.005, +0.003] | −0.005 [−0.015, +0.004] | +0.000 [−0.005, +0.005] | 1/3 |
+| T6W − A1 | test | −0.002 [−0.006, +0.002] | −0.007 [−0.016, +0.003] | −0.000 [−0.005, +0.004] | 0/3 |
+| T6W − S3 | val | +0.009 [+0.005, +0.013] | +0.007 [−0.004, +0.017] | +0.010 [+0.005, +0.015] | 3/3 |
+| T6W − S3 | test | +0.008 [+0.003, +0.012] | +0.004 [−0.006, +0.014] | +0.009 [+0.004, +0.013] | 3/3 |
+
+- **Augmenting every ECG adds nothing over half.** T6W − T6 is −0.001 on both folds, with CIs within ±0.003;
+  no seed is better on validation and one of three on test. Over A0, T6W gains +0.000 on validation and +0.003
+  on test, both CIs including zero (T6's test CI only just excluded it). It closes 15% of the gap to 100% of
+  patients on test, against T6's 18%. T6's small gain was not for want of dose.
+- **Unlike standard augmentation, SIMVEA_h does not collapse on the whole batch.** Going from half to every ECG
+  cost standard augmentation 0.009 (S3 − A1) and SIMVEA_h 0.001. T6W beats S3 by 0.008–0.009 on every seed of
+  both folds. That fits what each changes: S3 changes every lead of every ECG (gain, noise and wander per
+  lead, and a time shift), while SIMVEA_h never touches the limb leads, V1 or V6, and leaves 1 ECG in 16
+  unchanged.
+- **The cost falls on hypertrophy.** HYP is lower than in T6 on every seed of both folds (−0.005 on
+  validation, −0.006 on test), and lower than in A0 on every validation seed (−0.008; −0.006 on test, two seeds
+  of three). Hypertrophy criteria are voltage thresholds, several of them on the rebuilt leads (Cornell uses
+  S in V3, Sokolow–Lyon R in V5), and α rescales a rebuilt lead's amplitude. With every ECG augmented, each of
+  V2–V5 shows its measured voltage only half the time. Amplitude scaling (T3) has the same weak spot (HYP
+  −0.017 on test). On half the batch, T6 left HYP unchanged on test (+0.001).
+- **CD gains on every seed over A0 on both folds** (+0.004, +0.007), as with T6. MI is lower than in T6 on
+  validation (−0.004, from two seeds; the third is unchanged) and unchanged on test (−0.000).
+- **It peaks about when T6 and A0 do** (steps 1,000–1,300, against 900–1,300 and 900–1,100), so the extra
+  augmentation does not delay the peak the way A1's does (fourth panel of the curves figure).
+
+Caveats:
+
+- Fold 10 has now also been scored for T6W. Like T6, these are diagnostics, not fresh claims.
+- Per-class AUROCs have no CIs here, and HYP is the rarest superclass (about 12% of PTB-XL records), so its
+  per-class AUROC is the noisiest. "Every seed" is the only consistency check behind the HYP finding.

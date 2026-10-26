@@ -1,0 +1,26 @@
+{
+ "protocol": "ptbxl-aug-simvea",
+ "trials": [
+  {
+   "run_dir": "scarcity50/T6/seed0",
+   "trial_id": "f6fa1adb7966b5fa4503bf2e25e4a5faea2e29f6966e2a8b414960b9f3798e44",
+   "regime": "scarcity50",
+   "arm": "T6",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/T6/seed1",
+   "trial_id": "40380a86f797d7b39590d4ccae8cd70f0aed148591889c61a8f32fb4639efc2f",
+   "regime": "scarcity50",
+   "arm": "T6",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/T6/seed2",
+   "trial_id": "b65b176b17c249a6b16c50b0b8b549b8c79af67cce1a82b02f08c657a69def38",
+   "regime": "scarcity50",
+   "arm": "T6",
+   "seed": 2
+  }
+ ]
+}

@@ -1,0 +1,42 @@
+# Decision rules for ptbxl-aug-sweep (docs/augmentation_sweep.md). Freeze with
+# `python -m syntide.eval protocol=ptbxl_aug_sweep mode=freeze` before the test fold is claimed; frozen rules
+# are never replaced. The fold-10 test records were already viewed in the 50% experiment, so this sweep is
+# exploratory: validation picks every checkpoint, and test numbers are a replication, not a fresh claim.
+regime: scarcity50
+reference: A0                     # results-table deltas are against no augmentation
+primary: [S3, A1]                 # does augmenting every ECG beat augmenting half of the batch?
+sequence: [[E1, A3]]              # the same question for the targeted artifact editor
+diagnostics:                      # reported with CIs and per-class deltas, never evidence
+  # The dose ladder against no augmentation, and strength at a full batch.
+  - [S1, A0]
+  - [S2, A0]
+  - [A1, A0]
+  - [S3, A0]
+  - [S4, A0]
+  - [S4, S3]
+  # The artifact editor at half and at full share.
+  - [A3, A0]
+  - [E1, A0]
+  # Each technique against none, and against standard augmentation on the same slots.
+  - [T1, A0]
+  - [T2, A0]
+  - [T3, A0]
+  - [T4, A0]
+  - [T5, A0]
+  - [T1, A1]
+  - [T2, A1]
+  - [T3, A1]
+  - [T4, A1]
+  - [T5, A1]
+  # The gap every arm is trying to close.
+  - [C2@full100, A0]
+practical_target: 0.02
+noninferiority_margin: -0.01
+# Here the gap gate only checks there is a gap worth closing: gap-closed ratios are reported when the 100%
+# target beats no augmentation by at least 0.01 on the validation artifact slice.
+gap_gate: {contrast: [C2@full100, A0], min_effect: 0.01}
+gap_closed:
+  - {name: 100% of patients, target: C2@full100, baseline: A0, gated: true}
+n_boot: 2000
+ci_level: 0.95
+bootstrap_seed: 0

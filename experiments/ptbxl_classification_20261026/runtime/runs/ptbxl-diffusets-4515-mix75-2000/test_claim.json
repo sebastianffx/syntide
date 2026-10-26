@@ -1,0 +1,11 @@
+{
+ "claimed_at": "2026-10-26T08:28:23+00:00",
+ "syntide_version": "0.1.0",
+ "trials": [
+  {
+   "run_dir": "pool50/mix75/seed0",
+   "trial_id": "453798dcf59dd958e014e02546dc48e95fce08a3df8215fe6f4d4acf25db17c3",
+   "best_sha256": "577534c64240f10752edb20247b441e46ec59df8ccd06963d99624316dc31470"
+  }
+ ]
+}

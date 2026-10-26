@@ -1,0 +1,6 @@
+# Weights & Biases: one W&B run per trial, grouped by protocol. Needs `uv sync --extra wandb`
+# and `wandb login`; mode=offline writes locally and can be synced later with `wandb sync`.
+backend: wandb
+project: syntide
+entity: null
+mode: online

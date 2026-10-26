@@ -1,0 +1,24 @@
+# Data-scaling check: when does training converge, and where does more real data stop helping?
+# One arm trains on every ECG of nested pools of 10-100% of the training patients (folds 1-8), with no
+# transform. Plan it with: python -m syntide.generate protocol=ptbxl_scaling mode=plan
+id: ptbxl-scaling
+registry: datasets/timenet-registry
+dataset: physionet/ptb-xl@1.0.3
+
+batch_size: 64
+val_every: 100             # fine-grained, to locate each curve's peak
+transform_fraction: 0.5    # unused: the pool role has no transform slots
+
+arms:
+  real: {source_role: pool, transform_family: none, sampling_policy: none}
+
+# The same budget everywhere: about 45 passes over the full training set, so even pool100 converges.
+regimes:
+  pool10: {manifest: manifests/ptbxl-scaling/pool10.json, max_steps: 12000}
+  pool20: {manifest: manifests/ptbxl-scaling/pool20.json, max_steps: 12000}
+  pool30: {manifest: manifests/ptbxl-scaling/pool30.json, max_steps: 12000}
+  pool50: {manifest: manifests/ptbxl-scaling/pool50.json, max_steps: 12000}
+  pool70: {manifest: manifests/ptbxl-scaling/pool70.json, max_steps: 12000}
+  pool100: {manifest: manifests/ptbxl-scaling/pool100.json, max_steps: 12000}
+
+seeds: [0]

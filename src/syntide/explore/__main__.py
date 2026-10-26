@@ -1,4 +1,4 @@
-"""``python -m syntide.explore``: discover coverage, inspect signals, export a plan."""
+"""Inspect dataset coverage and export generation requests."""
 
 import argparse
 import json
@@ -12,60 +12,104 @@ def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
     analyze = commands.add_parser(
-        "analyze", help="Embed a reproducible training sample and write an explorer"
+        "analyze",
+        help="Embed a reproducible training sample and write an explorer",
     )
-    analyze.add_argument("--dataset", choices=["ptbxl", "ecgqa", "jsonl"], default="ptbxl")
+    analyze.add_argument(
+        "--dataset", choices=["ptbxl", "ecgqa", "jsonl"], default="ptbxl"
+    )
     analyze.add_argument("--registry", default="datasets/timenet-registry")
     analyze.add_argument("--dataset-ref")
     analyze.add_argument("--input", type=Path, help="Generic JSONL catalog")
     analyze.add_argument("--manifest", type=Path)
-    analyze.add_argument("--role", help="Defaults to depleted with a manifest, otherwise train")
+    analyze.add_argument(
+        "--role", help="Defaults to depleted with a manifest, otherwise train"
+    )
     analyze.add_argument("--scp-statements", type=Path)
     sample = analyze.add_mutually_exclusive_group()
-    sample.add_argument("--sample", type=int, help="Recording count (default 512)")
+    sample.add_argument(
+        "--sample", type=int, help="Recording count (default 512)"
+    )
     sample.add_argument("--sample-fraction", type=float)
     analyze.add_argument("--seed", type=int, default=42)
-    analyze.add_argument("--backend", choices=["chronos", "opentslm"], default="chronos")
-    analyze.add_argument("--model", help="Backend model ID; defaults to Chronos T5 tiny or OpenTSLM TSQA SP")
+    analyze.add_argument(
+        "--backend", choices=["chronos", "opentslm"], default="chronos"
+    )
+    analyze.add_argument(
+        "--model",
+        help=(
+            "Backend model ID; defaults to Chronos T5 tiny or OpenTSLM TSQA SP"
+        ),
+    )
     analyze.add_argument("--revision", help="Pin a Hugging Face model revision")
-    analyze.add_argument("--checkpoint", type=Path, help="Local OpenTSLM encoder checkpoint")
+    analyze.add_argument(
+        "--checkpoint", type=Path, help="Local OpenTSLM encoder checkpoint"
+    )
     analyze.add_argument(
         "--checkpoint-provenance",
         type=Path,
         help="JSON declaring checkpoint training_data and contains_ecgqa=false",
     )
-    analyze.add_argument("--target-sample-rate", type=float, help="Explicitly resample mixed-rate signals")
     analyze.add_argument(
-        "--context-length", type=int, help="Chunk length (never silently truncate recordings)"
+        "--target-sample-rate",
+        type=float,
+        help="Explicitly resample mixed-rate signals",
     )
-    analyze.add_argument("--device", choices=["auto", "cpu", "mps", "cuda"], default="auto")
+    analyze.add_argument(
+        "--context-length",
+        type=int,
+        help="Chunk length (never silently truncate recordings)",
+    )
+    analyze.add_argument(
+        "--device", choices=["auto", "cpu", "mps", "cuda"], default="auto"
+    )
     analyze.add_argument("--batch-size", type=int, default=16)
-    analyze.add_argument("--text-model", default="sentence-transformers/all-MiniLM-L6-v2")
-    analyze.add_argument("--text-revision")
-    analyze.add_argument("--text-fields", nargs="+", default=["question", "answer", "text"])
     analyze.add_argument(
-        "--no-text", action="store_true", help="Keep tuples visible but skip semantic novelty"
+        "--text-model", default="sentence-transformers/all-MiniLM-L6-v2"
     )
-    analyze.add_argument("--projection", choices=["umap", "pca"], default="umap")
+    analyze.add_argument("--text-revision")
+    analyze.add_argument(
+        "--text-fields", nargs="+", default=["question", "answer", "text"]
+    )
+    analyze.add_argument(
+        "--no-text",
+        action="store_true",
+        help="Keep tuples visible but skip semantic novelty",
+    )
+    analyze.add_argument(
+        "--projection", choices=["umap", "pca"], default="umap"
+    )
     analyze.add_argument("--clusters", type=int, default=8)
     analyze.add_argument("--neighbors", type=int, default=15)
     analyze.add_argument(
-        "--waveform-points", type=int, default=256, help="Preview points per channel, max 1000"
+        "--waveform-points",
+        type=int,
+        default=256,
+        help="Preview points per channel, max 1000",
     )
     analyze.add_argument("--target-count", type=int, default=0)
     analyze.add_argument("--target-fraction", type=float, default=0)
     analyze.add_argument("--output", type=Path, required=True)
     analyze.add_argument(
-        "--reuse", action="store_true", help="Reuse this exact frozen analysis if already present"
+        "--reuse",
+        action="store_true",
+        help="Reuse this exact frozen analysis if already present",
     )
-    analyze.add_argument("--serve", action="store_true", help="Open a local explorer after analysis")
+    analyze.add_argument(
+        "--serve",
+        action="store_true",
+        help="Open a local explorer after analysis",
+    )
     analyze.add_argument("--port", type=int, default=8765)
     serve = commands.add_parser("serve", help="Serve a saved analysis locally")
     serve.add_argument("directory", type=Path)
     serve.add_argument("--port", type=int, default=8765)
     serve.add_argument("--no-open", action="store_true")
     plan = commands.add_parser(
-        "plan", help="Validate a saved selection and export an immutable generation plan"
+        "plan",
+        help=(
+            "Validate a saved selection and export an immutable generation plan"
+        ),
     )
     plan.add_argument("directory", type=Path)
     plan.add_argument("--selection", type=Path, required=True)
@@ -113,7 +157,9 @@ def main(argv: list[str] | None = None) -> None:
                         "seed": args.seed,
                         "target_sample_rate": args.target_sample_rate,
                         "context_length": args.context_length,
-                        "checkpoint_provenance": json.loads(args.checkpoint_provenance.read_text())
+                        "checkpoint_provenance": json.loads(
+                            args.checkpoint_provenance.read_text()
+                        )
                         if args.checkpoint_provenance
                         else None,
                     }.items()
@@ -148,12 +194,20 @@ def main(argv: list[str] | None = None) -> None:
 
             serve(args.directory, args.port, open_browser=not args.no_open)
         else:
-            analysis = json.loads((args.directory / "analysis.json").read_text())
+            analysis = json.loads(
+                (args.directory / "analysis.json").read_text()
+            )
             selection = json.loads(args.selection.read_text())
             plan = make_plan(analysis, selection)
             write_frozen(args.output, plan)
             print(f"Plan {plan['plan_id']}: {args.output.resolve()}")
-    except (ValueError, FileNotFoundError, FileExistsError, ImportError, RuntimeError) as error:
+    except (
+        ValueError,
+        FileNotFoundError,
+        FileExistsError,
+        ImportError,
+        RuntimeError,
+    ) as error:
         raise SystemExit(str(error)) from error
 
 

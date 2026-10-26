@@ -1,0 +1,30 @@
+{
+  "schema": "syntide.classification-external-inputs@1",
+  "runs": [
+    "ptbxl-scaling",
+    "ptbxl-artifact-50-val100",
+    "ptbxl-aug-sweep",
+    "ptbxl-aug-simvea",
+    "ptbxl-aug-simvea-whole",
+    "ptbxl-diffusets-1530",
+    "ptbxl-diffusets-4515-mix75-2000",
+    "ptbxl-diffusets-4515-s2-mix75-2000"
+  ],
+  "excluded": [
+    "raw and generated waveforms",
+    "per-record conditioning labels and provenance rows",
+    "trained checkpoints",
+    "per-record prediction tables",
+    "event logs",
+    "remote credentials and provisioning receipts"
+  ],
+  "required_locations": {
+    "datasets/timenet-registry": "PTB-XL 1.0.3 TimeNet registry; source hash is in each trial.json.",
+    "outputs/ptbxl-diffusets-classification-1530/snapshot": "Complete accepted-signal snapshot, candidate plan, snapshot manifest and provenance used by the 1,530-signal preparation script.",
+    "outputs/qa-runs/diffusets-extension/study/generation": "Complete 5,000-slot generation including rejected slots and 4,515 accepted signals; identity and summary hashes are checked by the full preparation script.",
+    "runs/ptbxl-diffusets-1530/data": "Prepared generated and repeated-parent arrays; manifest.json binds external input files.",
+    "runs/ptbxl-diffusets-4515-mix75-2000/data": "Prepared 4,515 generated recordings and provisional diagnosis targets, shared with the augmentation experiment.",
+    "runs/<experiment>/<regime>/<arm>/seed<n>": "Checkpoints and prediction tables named and hashed in result.json and experiment_freeze.json; required to rerun reporting that recomputes metrics."
+  },
+  "restoration": "Restore these files in a separate copy of the runtime tree. Existing run claims are historical evidence and must not be erased to rerun held-out scoring. Use new output identities for new experiments."
+}

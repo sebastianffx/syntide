@@ -1,24 +1,10 @@
-"""QA coverage, error-directed gap reports and generation plans (``syntide.qa-generation-plan@1``).
+"""Allocate new question-answer tasks using development-set errors.
 
-This is a QA-specific capability next to the artifact calibration (``policy.py``), which is untouched.
-
-**Coverage** counts accepted tasks over slices defined by *measured* evidence, never by requested
-controls: task family and answer, the measured heart-rate band, lead availability, high-frequency
-noise level, waveform origin and source dataset, composition (single fact vs composed) and
-answerability.
-
-**Gap report.** Predictions on a designated *development* suite (``suite_role: development``, whose
-patients are disjoint from the selection and test suites) are scored per slice. Each slice reports
-its question count, its patient count, the raw error rate, a Jeffreys 90% interval and an error rate
-shrunk toward the overall rate (``prior_strength`` pseudo-questions). Slices below ``min_n`` questions
-are marked unreliable and get the overall rate, so a tiny slice cannot pull the allocation. The
-report's id hashes its inputs (suite, predictions, rules).
-
-**Plan.** A plan turns a gap report and a budget into per-template quotas: each family gets a share
-proportional to its shrunk error, capped at ``max_share``, and its templates split it evenly (largest
-remainder). The plan id hashes the gap report, the parent corpus and every setting. A plan only ever
-builds a **new** corpus (its id is part of the build identity); it never changes an existing corpus,
-a running trial's data, its curriculum or its acceptance rules.
+Coverage groups tasks by measured signal attributes and question family.
+Development predictions determine each group's error estimate and uncertainty.
+Only development data may guide allocation; protected evaluation patients are
+excluded. Generation plans record their parent corpus, random seed, and task
+counts so the selected allocation can be reproduced.
 """
 
 from __future__ import annotations
@@ -53,10 +39,17 @@ class AllocationError(ValueError):
     """The predictions are not from a development suite, or do not match it."""
 
 
-def task_slices(task: QATask, evidence: Mapping[str, Evidence]) -> dict[str, str]:
-    """The slice values of one task, from measured evidence of its first input."""
+def task_slices(
+    task: QATask, evidence: Mapping[str, Evidence]
+) -> dict[str, str]:
+    """Group a task by measured attributes of its first recording."""
     sha = task.inputs[0].waveform_sha256
     own = [e for e in evidence.values() if e.waveform_sha256 == sha]
+    return _task_slices(task, own)
+
+
+def _task_slices(task: QATask, own: Sequence[Evidence]) -> dict[str, str]:
+    """Apply grouping rules to evidence from the first recording only."""
     rate = next((e for e in own if e.attribute == "heart_rate_bpm"), None)
     flat = next((e for e in own if e.attribute == "flat_leads"), None)
     noise = [e.value for e in own if e.attribute == "hf_rms_mv" and e.usable]
@@ -90,15 +83,27 @@ def task_slices(task: QATask, evidence: Mapping[str, Evidence]) -> dict[str, str
         else ">=0.05mV",
         "origin": task.inputs[0].origin,
         "source": task.inputs[0].dataset,
-        "composition": "single" if task.composition in ("attribute", "source") else task.composition,
+        "composition": "single"
+        if task.composition in ("attribute", "source")
+        else task.composition,
         "answerability": task.answerability,
     }
 
 
-def coverage(tasks: Iterable[QATask], evidence: Mapping[str, Evidence]) -> dict[str, dict[str, int]]:
+def coverage(
+    tasks: Iterable[QATask], evidence: Mapping[str, Evidence]
+) -> dict[str, dict[str, int]]:
+    # Preserve evidence insertion order: rate/flat select the first matching
+    # fact,
+    # even when a later fact for the same attribute is usable and the first is
+    # not.
+    by_waveform: dict[str, list[Evidence]] = defaultdict(list)
+    for fact in evidence.values():
+        by_waveform[fact.waveform_sha256].append(fact)
     counts: dict[str, Counter] = defaultdict(Counter)
     for task in tasks:
-        for key, value in task_slices(task, evidence).items():
+        own = by_waveform.get(task.inputs[0].waveform_sha256, ())
+        for key, value in _task_slices(task, own).items():
             counts[key][value] += 1
     return {key: dict(sorted(counts[key].items())) for key in SLICES}
 
@@ -113,19 +118,33 @@ def gap_report(
     prior_strength: float = 10.0,
     protected_subjects: Iterable[str] = (),
 ) -> dict[str, Any]:
-    """Per-slice error with counts and uncertainty, from development-suite predictions only."""
+    """Estimate group errors using development predictions only."""
     identity = suite_info["identity"]
-    if identity.get("purpose") != "evaluation" or identity["config"].get("suite_role") != "development":
+    if (
+        identity.get("purpose") != "evaluation"
+        or identity["config"].get("suite_role") != "development"
+    ):
         raise AllocationError(
-            "gap reports read predictions on a development suite only, never selection or test"
+            "gap reports read predictions on a development suite "
+            "only, never selection or test"
         )
-    subjects = {s for task in tasks for ref in task.inputs for s in ref.root_subject_uids}
+    subjects = {
+        s
+        for task in tasks
+        for ref in task.inputs
+        for s in ref.root_subject_uids
+    }
     shared = subjects & set(protected_subjects)
     if shared:
-        raise AllocationError(f"{len(shared)} development patients are also in the selection or test suites")
+        raise AllocationError(
+            f"{len(shared)} development patients are also in the "
+            f"selection or test suites"
+        )
     ids = {task.task_id for task in tasks}
     if set(correct) != ids:
-        raise AllocationError("predictions must cover exactly the development suite's tasks")
+        raise AllocationError(
+            "predictions must cover exactly the development suite's tasks"
+        )
     overall_errors = sum(not v for v in correct.values())
     overall = (overall_errors + 0.5) / (len(correct) + 1)
     cells: dict[tuple[str, str], list[QATask]] = defaultdict(list)
@@ -143,11 +162,19 @@ def gap_report(
                 "slice": key,
                 "value": value,
                 "n": n,
-                "patients": len({s for t in members for ref in t.inputs for s in ref.root_subject_uids}),
+                "patients": len(
+                    {
+                        s
+                        for t in members
+                        for ref in t.inputs
+                        for s in ref.root_subject_uids
+                    }
+                ),
                 "errors": errors,
                 "error_rate": errors / n,
                 "interval90": [float(low), float(high)],
-                "shrunk_error": (errors + prior_strength * overall) / (n + prior_strength)
+                "shrunk_error": (errors + prior_strength * overall)
+                / (n + prior_strength)
                 if reliable
                 else overall,
                 "reliable": reliable,
@@ -156,8 +183,14 @@ def gap_report(
     body = {
         "schema_version": GAP_SCHEMA,
         "suite_corpus_id": suite_info["corpus_id"],
-        "predictions_sha256": content_id(sorted([k, bool(v)] for k, v in correct.items())),
-        "rules": {"min_n": min_n, "prior_strength": prior_strength, "slices": list(SLICES)},
+        "predictions_sha256": content_id(
+            sorted([k, bool(v)] for k, v in correct.items())
+        ),
+        "rules": {
+            "min_n": min_n,
+            "prior_strength": prior_strength,
+            "slices": list(SLICES),
+        },
         "overall": {
             "n": len(correct),
             "errors": overall_errors,
@@ -177,11 +210,15 @@ def make_plan(
     families: Sequence[str] | None = None,
     max_share: float = 0.3,
 ) -> dict[str, Any]:
-    """Per-template quotas for a new corpus: families weighted by shrunk development error."""
+    """Allocate tasks using development errors and sample counts."""
     body = {k: v for k, v in gap.items() if k != "gap_report_id"}
     if content_id(body)[:16] != gap["gap_report_id"].removeprefix("qagap-"):
-        raise AllocationError("the gap report does not match its id; it was edited")
-    by_family = {row["value"]: row for row in gap["slices"] if row["slice"] == "family"}
+        raise AllocationError(
+            "the gap report does not match its id; it was edited"
+        )
+    by_family = {
+        row["value"]: row for row in gap["slices"] if row["slice"] == "family"
+    }
     generated = {t.family: [] for t in TEMPLATES.values() if t.n_inputs == 1}
     for template in TEMPLATES.values():
         if template.family in generated:
@@ -190,15 +227,22 @@ def make_plan(
     if not chosen:
         raise AllocationError("no generatable family to allocate to")
     overall = gap["overall"]["error_rate"]
-    weights = {f: (by_family[f]["shrunk_error"] if f in by_family else overall) for f in chosen}
+    weights = {
+        f: (by_family[f]["shrunk_error"] if f in by_family else overall)
+        for f in chosen
+    }
     total = sum(weights.values()) or 1.0
     shares = {f: min(max_share, w / total) for f, w in weights.items()}
     norm = sum(shares.values()) or 1.0
-    family_quota = _largest_remainder({f: budget * s / norm for f, s in shares.items()}, budget)
+    family_quota = _largest_remainder(
+        {f: budget * s / norm for f, s in shares.items()}, budget
+    )
     template_quotas: dict[str, int] = {}
     for family, quota in family_quota.items():
         ids = sorted(generated[family])
-        for template_id, n in _largest_remainder({t: quota / len(ids) for t in ids}, quota).items():
+        for template_id, n in _largest_remainder(
+            {t: quota / len(ids) for t in ids}, quota
+        ).items():
             if n:
                 template_quotas[template_id] = n
     plan = {
@@ -218,13 +262,19 @@ def make_plan(
 
 def verify_plan(plan: Mapping[str, Any]) -> None:
     body = {k: v for k, v in plan.items() if k != "plan_id"}
-    if plan.get("schema_version") != PLAN_SCHEMA or plan.get("plan_id") != "qaplan-" + content_id(body)[:16]:
+    if (
+        plan.get("schema_version") != PLAN_SCHEMA
+        or plan.get("plan_id") != "qaplan-" + content_id(body)[:16]
+    ):
         raise AllocationError(
-            "the QA generation plan does not match its id; export a new plan instead of editing it"
+            "the QA generation plan does not match its id; export a "
+            "new plan instead of editing it"
         )
 
 
-def _largest_remainder(targets: Mapping[str, float], total: int) -> dict[str, int]:
+def _largest_remainder(
+    targets: Mapping[str, float], total: int
+) -> dict[str, int]:
     floors = {k: math.floor(v) for k, v in targets.items()}
     left = total - sum(floors.values())
     order = sorted(targets, key=lambda k: (-(targets[k] - floors[k]), k))

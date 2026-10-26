@@ -1,0 +1,99 @@
+{
+  "id": "ptbxl-diffusets-4515-s2-mix75-2000",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "max_steps": 2000,
+  "step_budget_basis": "Retain 2000 steps per seed from the immediately preceding trial.",
+  "real_records": 8579,
+  "generated_records": 4515,
+  "batch_size": 64,
+  "real_per_batch": 48,
+  "generated_per_batch": 16,
+  "augmentation": {
+    "name": "S2",
+    "family": "generic",
+    "fraction": 0.25,
+    "strength_relative_to_A1": 0.5,
+    "dose": 0.125,
+    "real_slots": 12,
+    "generated_slots": 4,
+    "envelope": {
+      "gain": [
+        0.95,
+        1.05
+      ],
+      "max_shift_s": 0.25,
+      "noise_rms_mv": [
+        0.0,
+        0.05
+      ],
+      "wander_mv": [
+        0.0,
+        1.75
+      ],
+      "wander_hz": [
+        0.05,
+        0.7
+      ]
+    },
+    "implementation": "unchanged syntide.generate.generic; labels preserved"
+  },
+  "sampling": "Independent shuffled exhaustive source cycles, identical to prior mixed trial source order; random source-stratified augmentation slots.",
+  "val_every": 100,
+  "model": {
+    "width": 64,
+    "kernel_size": 7
+  },
+  "optimizer": {
+    "lr": 0.001,
+    "weight_decay": 0.01
+  },
+  "device": "mps",
+  "loss": "BCEWithLogitsLoss, equal weight per example and per class",
+  "checkpoint_selection": "first maximum validation overall macro-AUROC across steps100..2000",
+  "label_policy": "provisional_conditioning_parent_superclasses",
+  "class_order": [
+    "CD",
+    "HYP",
+    "MI",
+    "NORM",
+    "STTC"
+  ],
+  "diagnostic_labels_verified_on_generated_signals": false,
+  "manifest": "manifests/ptbxl-scaling/pool50.json",
+  "manifest_sha256": "95db415ff96315d1d6fce2df00992ffacaa4284f4f9d0a137c2051456cce602d",
+  "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+  "input_files_sha256": {
+    "runs/ptbxl-diffusets-4515-mix75-2000/data/conditioning_labels.json": "cc6db4e2fede7b1f8cb60c137d82536fcec7089ebbfddf5d04d674697a70e855",
+    "runs/ptbxl-diffusets-4515-mix75-2000/data/generated.npz": "b27c7658249a72884c7073b255bfcf3e98f69c1a9dff7ea5669ec9d5ec48feb2",
+    "runs/ptbxl-diffusets-4515-mix75-2000/data/manifest.json": "a2ffde2934dd0ebedaca299cd2ef774228b925ec2b348129fac20d5f01ce7c8f",
+    "runs/ptbxl-diffusets-4515-mix75-2000/data/provenance.json": "98c8f69d165e669ae4120bfbc07b10450d8bc52aae14a46ae93a404d9434b50f"
+  },
+  "code_sha256": {
+    "runs/ptbxl-diffusets-4515-s2-mix75-2000/run_experiment.py": "6dd1e24c98259281af37b930cac5defe97ede2e126199e48f75ff11b61c66fb3",
+    "runs/ptbxl-diffusets-4515-s2-mix75-2000/mixed_stream.py": "9f1eafe1424263523a1a959a716d56c65f07fe8d99135fd2b41c353ebd2c7e61",
+    "trainers/src/syntide_trainers/torch_loop.py": "def4501896609c2d931e0de068e61e50be152758404404b065b69d75f6f70af7",
+    "src/syntide/trial.py": "398bac00a3c4043914886e57630c43dd3b1d577debb94eeed7e0d5179521bb64",
+    "src/syntide/generate/stream.py": "2a789792d237eaeeed6b757c1ac785071659c1fd35386d5f4e0a403f691ad2d6",
+    "src/syntide/generate/generic.py": "17e36298a31ba545416e2b003d867843fa652c764c401a3d9e2d0df8dcf4cb70",
+    "src/syntide/generate/ledger.py": "40c0202bec3b8ea75051fb8e9829e972e4ea1c411eee9b5246eea739c98289d8",
+    "src/syntide/eval/stats.py": "36483ba2d08a68234a8db60dad1c17e181b40de611d5f92b6aff84148bd0ade9",
+    "src/syntide/eval/holdout.py": "b65f23d3cfa228e1baf9b360357894ef3ba51c131eab50663fc1e01ae7095228"
+  },
+  "comparisons": {
+    "scaling": "historical seed0,12000 steps; also restrict selection to<=2000",
+    "S2": "historical seeds0,1,2,6389 artifact-depleted real ECGs,10000 steps; all best checkpoints<=2000",
+    "caution": "Compared with historical S2, new recipe restores2190 real ECGs and adds4515 generated ECGs; source-stratified dose; not an isolated generated-data effect.",
+    "uncertainty": "mean and sample SD across3 seeds; SD is not a confidence interval",
+    "test": "exploratory; prior test results known; all3 trials frozen and complete before test scoring"
+  },
+  "conditioning_caveat": {
+    "generated_rows_with_parents_outside_real_pool": 2212,
+    "additional_source_records": 1794,
+    "additional_source_patients": 1765,
+    "heldout_patient_overlap": 0
+  }
+}

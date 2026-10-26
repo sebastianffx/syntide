@@ -1,23 +1,10 @@
-"""Build one QA corpus: work units of source recordings (and generated bundles) into a published corpus.
+"""Build and publish a question-answer corpus from verified signal evidence.
 
-Components (choose any; a corpus holds only what it lists):
-
-- ``source``: the original ECG-QA-CoT questions of each recording (arm 1, "original real QA");
-- ``paraphrase``: teacher paraphrases of those questions (arm 2);
-- ``grounded``: evidence-grounded seed tasks and their TSEvol evolutions, plus natural comparisons;
-- ``acquisition``: acquisition variants of each recording with task-aware supervision, plus controlled
-  variation pairs (``amplitude_up@1``, ``wander_up@1``);
-- ``generated``: tasks on verified generated waveforms, plus generated heart-rate pairs.
-
-Every per-waveform random choice comes from a stream keyed by (build seed, purpose, waveform sha256), so
-per-waveform tasks do not depend on unit order or restarts; natural comparison pairs are formed within a
-unit, so ``unit_size`` (part of the identity) decides them. Units are committed one at a time
-(``CorpusWriter``); rerunning the same build resumes after the last committed unit. ``max_records``
-bounds a build. Every task input's ancestry is checked (``QASource.check_ancestry``) before its
-waveform is loaded or any teacher is called, and again over the whole corpus before publication.
-
-A QA generation plan (``syntide.qa-generation-plan@1``, from ``allocation``) can set per-template
-quotas; it is part of the build identity, so a new plan always builds a new corpus.
+The builder processes source recordings and generated signals in bounded units.
+Each completed unit records its tasks, evidence, signal references, and
+rejected
+attempts. An interrupted build resumes from those records. Publication occurs
+only after every expected unit passes the corpus checks.
 """
 
 from __future__ import annotations
@@ -38,9 +25,18 @@ from syntide.data.qa import Evidence, InputRef, QATask, SignalInfo
 from syntide.generate import editor
 from syntide.generate.qa import acquisition, generated, pairs
 from syntide.generate.qa.corpus import CorpusWriter, ledger_row, rejection
-from syntide.generate.qa.evidence import EvidenceCache, EvidenceExtractor, ExtractorConfig
+from syntide.generate.qa.evidence import (
+    EvidenceCache,
+    EvidenceExtractor,
+    ExtractorConfig,
+)
 from syntide.generate.qa.evol import GENERATOR as TSEVOL
-from syntide.generate.qa.evol import EvolConfig, evolve_waveform, paraphrase, stream
+from syntide.generate.qa.evol import (
+    EvolConfig,
+    evolve_waveform,
+    paraphrase,
+    stream,
+)
 from syntide.generate.qa.sources import QASource, source_tasks
 from syntide.generate.qa.teacher import make_teacher
 from syntide.generate.qa.templates import TEMPLATES, View
@@ -54,15 +50,25 @@ SUITE_ROLES = ("selection", "development", "test", "external")
 @dataclass
 class PairsConfig:
     natural_per_unit: int = 4
-    variations: list[str] = field(default_factory=lambda: ["amplitude_up@1", "wander_up@1"])
-    variation_fraction: float = 0.25  # share of recordings that get one controlled variation pair
+    variations: list[str] = field(
+        default_factory=lambda: ["amplitude_up@1", "wander_up@1"]
+    )
+    variation_fraction: float = (
+        0.25  # share of recordings that get one controlled variation pair
+    )
 
 
 @dataclass
 class GeneratedConfig:
     bundles: list[str] = field(default_factory=list)
     allow_resample: bool = False
-    required: list[str] = field(default_factory=lambda: ["heart_rate_bpm", "beat_count", "rr_regularity"])
+    required: list[str] = field(
+        default_factory=lambda: [
+            "heart_rate_bpm",
+            "beat_count",
+            "rr_regularity",
+        ]
+    )
     templates: list[str] = field(
         default_factory=lambda: [
             "rhythm.heart_rate@1",
@@ -82,30 +88,42 @@ class BuildConfig:
     name: str = "qa"
     purpose: str = "training"
     seed: int = 0
-    components: list[str] = field(default_factory=lambda: ["source", "grounded"])
+    components: list[str] = field(
+        default_factory=lambda: ["source", "grounded"]
+    )
     unit_size: int = 64
     max_records: int | None = None
-    source_dedupe: bool = False  # evaluation suites keep one task per (record, question), lowest task id
-    paraphrase_fraction: float = 1.0  # share of source tasks that get one paraphrase attempt
+    # evaluation suites keep one task per (record, question), lowest task id
+    source_dedupe: bool = False
+    paraphrase_fraction: float = (
+        1.0  # share of source tasks that get one paraphrase attempt
+    )
     extractor: ExtractorConfig = field(default_factory=ExtractorConfig)
     evol: EvolConfig = field(default_factory=EvolConfig)
-    acquisition: acquisition.AcquisitionConfig = field(default_factory=acquisition.AcquisitionConfig)
+    acquisition: acquisition.AcquisitionConfig = field(
+        default_factory=acquisition.AcquisitionConfig
+    )
     pairs: PairsConfig = field(default_factory=PairsConfig)
     generated: GeneratedConfig = field(default_factory=GeneratedConfig)
     teacher: dict[str, Any] | None = None
     cache_dir: str | None = None
-    # Evaluation suites: selection | development | test | external. A development suite's predictions may
+    # Evaluation suites: selection | development | test | external. A
+    # development suite's predictions may
     # drive a new generation plan; the selection and test suites' never do.
     suite_role: str | None = None
-    # Restrict source tasks to an exact list (e.g. the RunPod baseline's selection.parquet): a parquet with
-    # a task_id column or a JSON list, pinned by its file sha256. Only recordings with listed tasks are read.
+    # Restrict source tasks to an exact list (e.g. the RunPod baseline's
+    # selection.parquet): a parquet with
+    # a task_id column or a JSON list, pinned by its file sha256. Only
+    # recordings with listed tasks are read.
     task_ids_file: str | None = None
     task_ids_sha256: str | None = None
-    exclude_corpora: list[str] = field(default_factory=list)  # whole patients of these corpora are left out
+    exclude_corpora: list[str] = field(
+        default_factory=list
+    )  # whole patients of these corpora are left out
 
 
 class Quotas:
-    """Per-template caps from a QA generation plan (none without a plan)."""
+    """Per-template task limits from an optional generation plan."""
 
     def __init__(self, plan: dict[str, Any] | None) -> None:
         self.limits = dict((plan or {}).get("template_quotas", {}))
@@ -122,17 +140,34 @@ class Quotas:
 
 
 def identity(
-    cfg: BuildConfig, source: QASource, plan: dict[str, Any] | None, parent: str | None
+    cfg: BuildConfig,
+    source: QASource,
+    plan: dict[str, Any] | None,
+    parent: str | None,
 ) -> dict[str, Any]:
     unknown = sorted(set(cfg.components) - set(COMPONENTS))
     if unknown:
-        raise ValueError(f"unknown components {unknown}; choose from {COMPONENTS}")
+        raise ValueError(
+            f"unknown components {unknown}; choose from {COMPONENTS}"
+        )
     if cfg.purpose != source.purpose:
-        raise PermissionError(f"a {cfg.purpose} corpus cannot be built from a {source.purpose} source")
-    if cfg.purpose == "evaluation" and set(cfg.components) - {"source", "grounded"}:
-        raise ValueError("evaluation suites hold source or grounded tasks on held-out recordings only")
+        raise PermissionError(
+            f"a {cfg.purpose} corpus cannot be built from a "
+            f"{source.purpose} source"
+        )
+    if cfg.purpose == "evaluation" and set(cfg.components) - {
+        "source",
+        "grounded",
+    }:
+        raise ValueError(
+            "evaluation suites hold source or grounded tasks on "
+            "held-out recordings only"
+        )
     if (cfg.purpose == "evaluation") != (cfg.suite_role is not None):
-        raise ValueError("an evaluation suite needs a suite_role, and only an evaluation suite has one")
+        raise ValueError(
+            "an evaluation suite needs a suite_role, and only an "
+            "evaluation suite has one"
+        )
     if cfg.suite_role is not None and cfg.suite_role not in SUITE_ROLES:
         raise ValueError(f"suite_role must be one of {SUITE_ROLES}")
     teacher = cfg.teacher or {}
@@ -144,7 +179,9 @@ def identity(
         "config": {
             **asdict(cfg),
             "cache_dir": None,
-            "teacher": {k: v for k, v in teacher.items() if k not in ("store", "mode")},
+            "teacher": {
+                k: v for k, v in teacher.items() if k not in ("store", "mode")
+            },
         },
         "source": source.provenance,
         "context_policy": CONTEXT_POLICY,
@@ -171,7 +208,20 @@ def build_corpus(
     tracker: Any = None,
     stop_after_units: int | None = None,
 ) -> dict[str, Any] | None:
-    """Build and publish. ``stop_after_units`` simulates an interruption (returns None, nothing published)."""
+    """Build and publish a corpus, resuming completed work when available.
+
+    Args:
+        cfg: Corpus construction settings.
+        source: Checked source recordings and their loader.
+        output: New directory for the completed corpus.
+        plan: Optional task allocation plan.
+        parent_corpus_id: Identifier of the corpus this build extends.
+        tracker: Optional progress and metric logger.
+        stop_after_units: Stop after this many units to simulate interruption.
+
+    Returns:
+        Published corpus metadata, or ``None`` after a simulated interruption.
+    """
     if cfg.exclude_corpora:
         from syntide.generate.qa.corpus import load_corpus
 
@@ -188,22 +238,34 @@ def build_corpus(
         verify_plan(plan)
     keep_ids = _task_ids(cfg)
     if keep_ids is not None:
-        listed = {r.record_id for r in source.rows if any(q["task_id"] in keep_ids for q in r.questions)}
-        found = {q["task_id"] for r in source.rows for q in r.questions} & keep_ids
+        listed = {
+            r.record_id
+            for r in source.rows
+            if any(q["task_id"] in keep_ids for q in r.questions)
+        }
+        found = {
+            q["task_id"] for r in source.rows for q in r.questions
+        } & keep_ids
         if found != keep_ids:
             raise PermissionError(
-                f"{len(keep_ids - found)} listed tasks are not questions of this source role"
+                f"{len(keep_ids - found)} listed tasks are not "
+                f"questions of this source role"
             )
         source = source.restricted_to(listed)
     ident = identity(cfg, source, plan, parent_corpus_id)
     writer = CorpusWriter(output, ident)
     teacher = make_teacher(cfg.teacher)
     if "paraphrase" in cfg.components and teacher is None:
-        raise ValueError("the paraphrase component needs a teacher (provider template or anthropic)")
+        raise ValueError(
+            "the paraphrase component needs a teacher (provider "
+            "template or anthropic)"
+        )
     cache = EvidenceCache(cfg.cache_dir) if cfg.cache_dir else None
     extractor = EvidenceExtractor(cfg.extractor, cache)
     quotas = Quotas(plan)
-    for chunk in writer.chunks():  # a resumed build continues the plan's quotas where it stopped
+    for chunk in (
+        writer.chunks()
+    ):  # a resumed build continues the plan's quotas where it stopped
         for task in chunk["tasks"]:
             quotas.used[task["template"]] += 1
     records = [row.record_id for row in source.rows][: cfg.max_records]
@@ -213,13 +275,17 @@ def build_corpus(
     ]
     expected = [name for name, _ in units]
     if "generated" in cfg.components:
-        expected += ["generated"]  # one unit, so same-seed pairs can span bundles
+        expected += [
+            "generated"
+        ]  # one unit, so same-seed pairs can span bundles
     done = 0
     totals: Counter = Counter()
     for name, ids in units:
         if writer.unit_done(name):
             continue
-        result = _real_unit(name, ids, cfg, source, extractor, teacher, quotas, writer, keep_ids)
+        result = _real_unit(
+            name, ids, cfg, source, extractor, teacher, quotas, writer, keep_ids
+        )
         writer.write_unit(name, *result)
         done += 1
         _log_unit(tracker, totals, name, result, done)
@@ -227,15 +293,26 @@ def build_corpus(
             return None
     if "generated" in cfg.components and not writer.unit_done("generated"):
         result = _generated_unit(
-            "generated", [Path(b) for b in cfg.generated.bundles], cfg, source, extractor, quotas, writer
+            "generated",
+            [Path(b) for b in cfg.generated.bundles],
+            cfg,
+            source,
+            extractor,
+            quotas,
+            writer,
         )
         writer.write_unit("generated", *result)
         done += 1
         _log_unit(tracker, totals, "generated", result, done)
-    # Defense in depth: every input of every committed task, against the source's role.
+    # Defense in depth: every input of every committed task, against the
+    # source's role.
     source.check_ancestry(
         [
-            (ref["waveform_id"], ref["root_record_ids"], ref["root_subject_uids"])
+            (
+                ref["waveform_id"],
+                ref["root_record_ids"],
+                ref["root_subject_uids"],
+            )
             for chunk in writer.chunks()
             for task in chunk["tasks"]
             for ref in task["inputs"]
@@ -243,27 +320,42 @@ def build_corpus(
     )
     info = writer.publish(expected_units=expected)
     if teacher is not None:
-        log.info("teacher store %s (sha %s)", teacher.store.path, teacher.store.sha256())
+        log.info(
+            "teacher store %s (sha %s)",
+            teacher.store.path,
+            teacher.store.sha256(),
+        )
     if tracker is not None:
         tracker.log_summary(
             {"corpus": cfg.name, "purpose": cfg.purpose},
-            {f"corpus/{k}": v for k, v in info["counts"].items() if isinstance(v, int | float)},
+            {
+                f"corpus/{k}": v
+                for k, v in info["counts"].items()
+                if isinstance(v, int | float)
+            },
         )
         tracker.close()
     return info
 
 
-def _log_unit(tracker: Any, totals: Counter, name: str, result: tuple, step: int) -> None:
+def _log_unit(
+    tracker: Any, totals: Counter, name: str, result: tuple, step: int
+) -> None:
     tasks, _, ledger, _ = result
-    totals["accepted"] += sum(1 for t in tasks if t.verification.get("status") == "accepted")
+    totals["accepted"] += sum(
+        1 for t in tasks if t.verification.get("status") == "accepted"
+    )
     totals["attempts"] += len(ledger)
-    log.info("%s: %d tasks accepted of %d attempts", name, len(tasks), len(ledger))
+    log.info(
+        "%s: %d tasks accepted of %d attempts", name, len(tasks), len(ledger)
+    )
     if tracker is not None:
         tracker.log_scalars(
             {
                 "build/accepted": totals["accepted"],
                 "build/attempts": totals["attempts"],
-                "build/acceptance_rate": totals["accepted"] / max(totals["attempts"], 1),
+                "build/acceptance_rate": totals["accepted"]
+                / max(totals["attempts"], 1),
             },
             step,
         )
@@ -289,25 +381,39 @@ def _real_unit(
     contexts: dict[str, str] = {}
 
     def record(task: QATask, attempt: str) -> None:
-        if task.verification.get("status") == "accepted" and not quotas.allow(task):
+        if task.verification.get("status") == "accepted" and not quotas.allow(
+            task
+        ):
             task = _reject(task, "plan_quota_reached")
         ledger.append(ledger_row(task, name, attempt))
         if task.verification.get("status") == "accepted":
             tasks.append(task)
 
-    for ref, x in source.load(ids):  # the source role was checked when it was opened
+    for ref, x in source.load(
+        ids
+    ):  # the source role was checked when it was opened
         row = source.row(ref.waveform_id)
         sha = ref.waveform_sha256
         writer.put_signal(ref, x)
         waveforms.append(ref)
-        annotations = {"labels": row.labels, "artifact_types": row.artifact_types}
+        annotations = {
+            "labels": row.labels,
+            "artifact_types": row.artifact_types,
+        }
         ev = extractor.extract(x, ref, annotations)
         evidence.extend(ev)
-        views[ref.waveform_id], contexts[ref.waveform_id] = View(ref, ev), row.clinical_context
+        views[ref.waveform_id], contexts[ref.waveform_id] = (
+            View(ref, ev),
+            row.clinical_context,
+        )
         if comps & {"source", "paraphrase"}:
             originals = source_tasks(source, ref, dedupe=cfg.source_dedupe)
             if keep_ids is not None:
-                originals = [t for t in originals if t.lineage["source_task_id"] in keep_ids]
+                originals = [
+                    t
+                    for t in originals
+                    if t.lineage["source_task_id"] in keep_ids
+                ]
             if "source" in comps:
                 for task in originals:
                     record(task, "source")
@@ -321,7 +427,9 @@ def _real_unit(
                         record(made, "paraphrase")
         if not comps & {"grounded", "acquisition"}:
             continue
-        context = {"clinical_context": [student_context("real", row.clinical_context)]}
+        context = {
+            "clinical_context": [student_context("real", row.clinical_context)]
+        }
         grown = evolve_waveform(
             views[ref.waveform_id],
             ev,
@@ -353,8 +461,12 @@ def _real_unit(
                 waveforms,
             )
     if "grounded" in comps and len(views) > 1:
-        rng = stream(cfg.seed, "pair", views[ids[0]].ref.waveform_sha256, len(ids))
-        for a, b in pairs.natural_partners(ids, cfg.pairs.natural_per_unit, rng):
+        rng = stream(
+            cfg.seed, "pair", views[ids[0]].ref.waveform_sha256, len(ids)
+        )
+        for a, b in pairs.natural_partners(
+            ids, cfg.pairs.natural_per_unit, rng
+        ):
             accepted, rejected, cited = pairs.comparison_tasks(
                 views[a], views[b], [contexts[a], contexts[b]], rng
             )
@@ -391,11 +503,19 @@ def _acquisition(
             variant = acquisition.apply(x, ref, recipe, acq)
         except acquisition.UnsupportedTransformation as error:
             ledger.append(
-                rejection(unit, f"acquisition/{k}", op, f"unsupported:{error}", inputs=[ref.waveform_id])
+                rejection(
+                    unit,
+                    f"acquisition/{k}",
+                    op,
+                    f"unsupported:{error}",
+                    inputs=[ref.waveform_id],
+                )
             )
             continue
         if not variant.ok:
-            failed = ",".join(c["name"] for c in variant.checks if not c["pass"])
+            failed = ",".join(
+                c["name"] for c in variant.checks if not c["pass"]
+            )
             ledger.append(
                 rejection(
                     unit,
@@ -409,12 +529,14 @@ def _acquisition(
             continue
         writer.put_signal(variant.ref, variant.x)
         waveforms.append(variant.ref)
-        vev = extractor.extract(variant.x, variant.ref) + acquisition.inherit_annotations(
-            ev, variant, extractor
-        )
+        vev = extractor.extract(
+            variant.x, variant.ref
+        ) + acquisition.inherit_annotations(ev, variant, extractor)
         evidence.extend(vev)
         for task in carried_from:
-            carried, decision, cited = acquisition.carry(task, variant, vev, context)
+            carried, decision, cited = acquisition.carry(
+                task, variant, vev, context
+            )
             evidence.extend(cited)
             if carried is None:
                 if decision != "not_carried":
@@ -436,7 +558,9 @@ def _acquisition(
             record(carried, f"acquisition/{k}")
     if not cfg.pairs.variations or rng.random() >= cfg.pairs.variation_fraction:
         return
-    spec = pairs.variation(cfg.pairs.variations[int(rng.integers(len(cfg.pairs.variations)))])
+    spec = pairs.variation(
+        cfg.pairs.variations[int(rng.integers(len(cfg.pairs.variations)))]
+    )
     recipe = {
         "generator": f"{acquisition.GENERATOR}@{acquisition.VERSION}",
         **spec.recipe,
@@ -446,7 +570,13 @@ def _acquisition(
     variant = acquisition.apply(x, ref, recipe, acq)
     if not variant.ok:
         ledger.append(
-            rejection(unit, "variation", spec.name, "invalid_signal", inputs=[variant.ref.waveform_id])
+            rejection(
+                unit,
+                "variation",
+                spec.name,
+                "invalid_signal",
+                inputs=[variant.ref.waveform_id],
+            )
         )
         return
     vev = extractor.extract(variant.x, variant.ref)
@@ -495,17 +625,31 @@ def _generated_unit(
     evidence: list[Evidence] = []
     ledger: list[dict[str, Any]] = []
     waveforms: list[InputRef] = []
-    samples = [sample for bundle in bundles for sample in generated.load_bundle(bundle)]
+    samples = [
+        sample for bundle in bundles for sample in generated.load_bundle(bundle)
+    ]
     target = SignalInfo(
-        source.signal.channels, source.signal.sample_rate, source.signal.units, source.signal.num_samples
+        source.signal.channels,
+        source.signal.sample_rate,
+        source.signal.units,
+        source.signal.num_samples,
     )
     subject_of = source.subject_of
-    # Ancestry first: no waveform is read for a sample whose conditioning sources are outside the role.
+    # Ancestry first: no waveform is read for a sample whose conditioning
+    # sources are outside the role.
     eligible = []
     for sample in samples:
         roots = sample.source_record_ids
         try:
-            source.check_ancestry([(sample.record_id, roots, tuple(subject_of.get(r, "") for r in roots))])
+            source.check_ancestry(
+                [
+                    (
+                        sample.record_id,
+                        roots,
+                        tuple(subject_of.get(r, "") for r in roots),
+                    )
+                ]
+            )
         except Exception as error:
             ledger.append(
                 rejection(
@@ -526,15 +670,33 @@ def _generated_unit(
         "channels",
         "sample_rate_hz",
     }
+    # Regularity is derived from the same measured RR coefficient; its template
+    # cites
+    # that coefficient as rationale support, not as an independently accepted
+    # target.
+    if "rr_regularity" in gen.required:
+        allowed.add("rr_cv")
     evol_cfg = EvolConfig(
-        **{**asdict(cfg.evol), "seed_templates": list(gen.templates), "operators": ["breadth", "situation"]}
+        **{
+            **asdict(cfg.evol),
+            "seed_templates": list(gen.templates),
+            "operators": ["breadth", "situation"],
+        }
     )
     for sample in eligible:
         try:
-            ref, x = generated.to_input(sample, target, subject_of, allow_resample=gen.allow_resample)
+            ref, x = generated.to_input(
+                sample, target, subject_of, allow_resample=gen.allow_resample
+            )
         except generated.GeneratedInputError as error:
             ledger.append(
-                rejection(name, "convert", "generated", f"convert:{error}", inputs=[sample.record_id])
+                rejection(
+                    name,
+                    "convert",
+                    "generated",
+                    f"convert:{error}",
+                    inputs=[sample.record_id],
+                )
             )
             continue
         ref, ev, review = generated.verify_generated(
@@ -557,12 +719,20 @@ def _generated_unit(
         view = View(ref, ev)
         verified[ref.waveform_id] = (view, sample)
         grown = evolve_waveform(
-            view, ev, {"clinical_context": [student_context("generated", None)]}, evol_cfg, cfg.seed
+            view,
+            ev,
+            {"clinical_context": [student_context("generated", None)]},
+            evol_cfg,
+            cfg.seed,
         )
         evidence.extend(grown.evidence)
         store = {e.evidence_id: e for e in grown.evidence}
         for task in grown.accepted:
-            attributes = {store[eid].attribute for eid in task.required_evidence if eid in store}
+            attributes = {
+                store[eid].attribute
+                for eid in task.required_evidence
+                if eid in store
+            }
             if not attributes <= allowed:
                 task = _reject(task, "attribute_not_verified_for_generated")
             elif not quotas.allow(task):
@@ -576,7 +746,7 @@ def _generated_unit(
 
 
 def _generated_pairs(name, verified, cfg, tasks, evidence, ledger) -> None:
-    """Same-seed samples whose conditioning differs only in heart_rate, remeasured both ways."""
+    """Compare remeasured samples that differ only in requested heart rate."""
     by_seed: dict[int, list[tuple[View, Any]]] = defaultdict(list)
     for view, sample in verified.values():
         by_seed[sample.seed].append((view, sample))
@@ -584,11 +754,19 @@ def _generated_pairs(name, verified, cfg, tasks, evidence, ledger) -> None:
     for seed_value, group in sorted(by_seed.items()):
         group.sort(key=lambda item: item[1].conditioning.get("heart_rate", 0))
         for (va, sa), (vb, sb) in itertools.pairwise(group):
-            rest_a = {k: v for k, v in sa.conditioning.items() if k != "heart_rate"}
-            rest_b = {k: v for k, v in sb.conditioning.items() if k != "heart_rate"}
-            if rest_a != rest_b or sa.conditioning.get("heart_rate") == sb.conditioning.get("heart_rate"):
+            rest_a = {
+                k: v for k, v in sa.conditioning.items() if k != "heart_rate"
+            }
+            rest_b = {
+                k: v for k, v in sb.conditioning.items() if k != "heart_rate"
+            }
+            if rest_a != rest_b or sa.conditioning.get(
+                "heart_rate"
+            ) == sb.conditioning.get("heart_rate"):
                 continue
-            pair = pairs.check_pair(spec, va, vb, {"heart_rate_bpm": "increase"})
+            pair = pairs.check_pair(
+                spec, va, vb, {"heart_rate_bpm": "increase"}
+            )
             if pair.status != "accepted":
                 ledger.append(
                     rejection(
@@ -612,23 +790,35 @@ def _generated_pairs(name, verified, cfg, tasks, evidence, ledger) -> None:
 
 
 def _task_ids(cfg: BuildConfig) -> set[str] | None:
-    """The pinned task-id list, or None. The file must have exactly the declared sha256."""
+    """Load selected task identifiers after verifying their checksum."""
     if not cfg.task_ids_file:
         return None
     path = Path(cfg.task_ids_file)
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     if not cfg.task_ids_sha256 or digest != cfg.task_ids_sha256:
         raise PermissionError(
-            f"{path} has sha256 {digest[:12]}, not the pinned {str(cfg.task_ids_sha256)[:12]}"
+            f"{path} has sha256 {digest[:12]}, not the pinned "
+            f"{str(cfg.task_ids_sha256)[:12]}"
         )
     if path.suffix == ".parquet":
         import pyarrow.parquet as pq
 
-        return set(pq.read_table(path, columns=["task_id"]).column("task_id").to_pylist())
+        return set(
+            pq.read_table(path, columns=["task_id"])
+            .column("task_id")
+            .to_pylist()
+        )
     return set(json.loads(path.read_text(encoding="utf-8")))
 
 
 def _reject(task: QATask, reason: str) -> QATask:
     from dataclasses import replace
 
-    return replace(task, verification={**task.verification, "status": "rejected", "reason": reason})
+    return replace(
+        task,
+        verification={
+            **task.verification,
+            "status": "rejected",
+            "reason": reason,
+        },
+    )

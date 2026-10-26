@@ -1,0 +1,16 @@
+{
+ "hparams": {
+  "arm": "G1",
+  "regime": "scarcity50",
+  "seed": 0,
+  "model.width": 64,
+  "model.kernel_size": 7,
+  "optim.lr": 0.001,
+  "optim.weight_decay": 0.01
+ },
+ "metrics": {
+  "summary/best_val_auroc_overall": 0.9192087542460898,
+  "summary/best_step": 1800,
+  "summary/wall_time_seconds": 212.2288872919744
+ }
+}

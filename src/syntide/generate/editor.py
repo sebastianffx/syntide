@@ -1,17 +1,15 @@
-"""``ecg.electrode_artifact@1.0.0``: the electrode-space artifact editor (arms A2 and A3).
+"""Add electrode artifacts to twelve-lead electrocardiogram recordings.
 
-Real artifacts arise at electrodes, not leads (MVE challenge #4). The editor adds one artifact to one
-of the nine electrodes (RA, LA, LL, V1-V6) and projects it into the 12 leads with the fixed
-Einthoven / Goldberger / Wilson matrix: I = LA-RA, II = LL-RA, III = LL-LA, aVR = RA-(LA+LL)/2, ...,
-Vi = Vi - WCT with WCT = (RA+LA+LL)/3. A left-arm artifact therefore shows in every lead except II.
+The editor adds an artifact to one arm, leg, or chest electrode and projects it
+into the twelve measured leads using the standard lead equations. For example,
+an artifact at the left-arm electrode affects every lead except lead II.
 
-Artifact types (v1): ``baseline_drift`` (a sinusoid), ``static_noise`` (high-frequency noise over the
-whole record) and ``burst_noise`` (the same noise in one interval). ``electrodes_problems`` is deferred.
-Amplitudes are in descriptor units: every lead's coefficient is at most 1 in magnitude, so the
-strongest lead of the projected residual carries the requested amplitude.
+Supported artifacts are slow baseline drift, continuous high-frequency noise,
+and a short burst of high-frequency noise. The requested amplitude describes
+the strongest affected lead. Electrode contact problems are not implemented.
 
-A recipe (parent, generator, version, controls, seed_key, gap report) fully determines the edit: the
-waveform randomness (noise, phase) comes only from ``seed_key``, so ``edit`` regenerates bit-exactly.
+A recipe records the source recording, generator version, settings, random
+seed, and calibration report. These values reproduce the edited signal exactly.
 """
 
 from dataclasses import dataclass, field
@@ -23,14 +21,19 @@ from syntide.data.schema import LEADS
 from syntide.generate import descriptors
 from syntide.generate.ledger import Recipe
 
-__all__ = ["Recipe"]  # re-exported: a recipe is the editor's unit of provenance
+__all__ = ["Recipe"]  # Re-export the settings needed to reproduce an edit.
 
 GENERATOR = "ecg.electrode_artifact"
 VERSION = "1.0.0"
 ELECTRODES = ("RA", "LA", "LL", "V1", "V2", "V3", "V4", "V5", "V6")
 ARTIFACTS = ("baseline_drift", "static_noise", "burst_noise")
-LABEL_EFFECT = {"diagnosis": "preserves", "artifact_type": "determines", "signal_quality": "invalidates"}
-# The continuous controls each artifact type uses, besides the categorical artifact_type and electrode.
+LABEL_EFFECT = {
+    "diagnosis": "preserves",
+    "artifact_type": "determines",
+    "signal_quality": "invalidates",
+}
+# The continuous controls each artifact type uses, besides the categorical
+# artifact_type and electrode.
 CONTROLS = {
     "baseline_drift": ("amplitude_mv", "freq_hz"),
     "static_noise": ("amplitude_mv",),
@@ -50,7 +53,12 @@ def _lead_matrix() -> np.ndarray:
     }
     matrix = np.zeros((len(LEADS), len(ELECTRODES)))
     for row, lead in enumerate(LEADS):
-        weights = limb.get(lead) or {ELECTRODES.index(lead): 1, ra: -1 / 3, la: -1 / 3, ll: -1 / 3}
+        weights = limb.get(lead) or {
+            ELECTRODES.index(lead): 1,
+            ra: -1 / 3,
+            la: -1 / 3,
+            ll: -1 / 3,
+        }
         for column, weight in weights.items():
             matrix[row, column] = weight
     return matrix
@@ -78,7 +86,7 @@ class BurstEnvelope:
 
 @dataclass
 class Envelope:
-    """The prior envelope: the range each control may take. Onset is uniform over the record."""
+    """Allowed artifact ranges, with onset drawn uniformly."""
 
     baseline_drift: DriftEnvelope = field(default_factory=DriftEnvelope)
     static_noise: StaticEnvelope = field(default_factory=StaticEnvelope)
@@ -87,18 +95,28 @@ class Envelope:
 
 @dataclass
 class EditorConfig:
-    """The editor's envelope, its acceptance rules and the targeted policy's smoothing."""
+    """Artifact ranges, acceptance criteria, and sampling smoothing settings."""
 
-    mv_limit: float = 10.0  # bounds@1: an edit may not push a sample past this (or the parent's own peak)
-    alignment_tol: float = 0.15  # alignment@1: relative error allowed between realized and requested severity
-    max_retries: int = 5  # further draws for the same parent and slot after a rejection
-    type_smoothing: float = 0.1  # A3 type weights are prior / (retained frequency + type_smoothing)
-    density_floor: float = 1.0  # A3 severity density is prior / (retained KDE + density_floor x prior)
+    # bounds@1: an edit may not push a sample past this (or the parent's own
+    # peak)
+    mv_limit: float = 10.0
+    # alignment@1: relative error allowed between realized and requested
+    # severity
+    alignment_tol: float = 0.15
+    max_retries: int = (
+        5  # further draws for the same parent and slot after a rejection
+    )
+    type_smoothing: float = 0.1  # Smooth weights for uncommon artifact types.
+    density_floor: float = (
+        1.0  # Smooth weights for uncommon artifact severities.
+    )
     envelope: Envelope = field(default_factory=Envelope)
 
 
-def control_range(envelope: dict, artifact_type: str, name: str, record_s: float) -> tuple[float, float]:
-    """The [low, high] a continuous control may take; onset depends on the shortest burst."""
+def control_range(
+    envelope: dict, artifact_type: str, name: str, record_s: float
+) -> tuple[float, float]:
+    """Return the permitted lower and upper bounds for one artifact setting."""
     if name == "onset_s":
         return 0.0, record_s - envelope[artifact_type]["duration_s"][0]
     low, high = envelope[artifact_type][name]
@@ -108,14 +126,27 @@ def control_range(envelope: dict, artifact_type: str, name: str, record_s: float
 @dataclass(frozen=True)
 class Candidate:
     x: np.ndarray  # (12, T) float32: the edited ECG, mV
-    residual: np.ndarray  # (12, T) float64: exactly what the edit added to each lead
+    residual: (
+        np.ndarray
+    )  # (12, T) float64: exactly what the edit added to each lead
     interval: tuple[float, float]  # seconds the artifact spans
     affected_leads: tuple[str, ...]
-    strongest_lead: int  # a lead whose coefficient is +-1, where the requested amplitude appears
+    # a lead whose coefficient is +-1, where the requested amplitude appears
+    strongest_lead: int
 
 
 def edit(parent_x: np.ndarray, recipe: Recipe, fs: int) -> Candidate:
-    """Add the recipe's artifact to one ECG (12, T) in mV."""
+    """Add the recorded electrode artifact to a twelve-lead recording.
+
+    Args:
+        parent_x: Source signal with shape (12, samples), in millivolts.
+        recipe: Artifact settings and random seed used to reproduce the edit.
+        fs: Sampling frequency in hertz.
+
+    Returns:
+        A candidate containing the edited signal, added artifact, and affected
+        leads.
+    """
     controls = recipe.controls
     weights = LEAD_FROM_ELECTRODE[:, ELECTRODES.index(controls["electrode"])]
     wave, interval = artifact_waveform(
@@ -126,33 +157,44 @@ def edit(parent_x: np.ndarray, recipe: Recipe, fs: int) -> Candidate:
         x=(parent_x.astype(np.float64) + residual).astype(np.float32),
         residual=residual,
         interval=interval,
-        affected_leads=tuple(lead for lead, w in zip(LEADS, weights, strict=True) if w != 0),
+        affected_leads=tuple(
+            lead for lead, w in zip(LEADS, weights, strict=True) if w != 0
+        ),
         strongest_lead=int(np.argmax(np.abs(weights))),
     )
 
 
 def artifact_waveform(
-    controls: dict[str, Any], n_samples: int, fs: int, waveform: np.random.Generator
+    controls: dict[str, Any],
+    n_samples: int,
+    fs: int,
+    waveform: np.random.Generator,
 ) -> tuple[np.ndarray, tuple[float, float]]:
-    """The electrode-space artifact (T,) in mV, and the interval it spans in seconds."""
+    """Return an electrode artifact and its interval in seconds."""
     kind, amplitude = controls["artifact_type"], controls["amplitude_mv"]
     t = np.arange(n_samples) / fs
     whole = (0.0, n_samples / fs)
     if kind == "baseline_drift":
         phase = waveform.uniform(0.0, 2 * np.pi)
-        return amplitude * np.sin(2 * np.pi * controls["freq_hz"] * t + phase), whole
+        return amplitude * np.sin(
+            2 * np.pi * controls["freq_hz"] * t + phase
+        ), whole
     if kind == "static_noise":
         return amplitude * _hf_noise(n_samples, fs, waveform), whole
     if kind == "burst_noise":
         onset, duration = controls["onset_s"], controls["duration_s"]
         gate = (t >= onset) & (t < onset + duration)
         noise = descriptors.highpass(waveform.standard_normal(n_samples), fs)[0]
-        noise *= gate / descriptors.robust_sd(noise[gate])  # unit robust RMS inside the burst
+        noise *= gate / descriptors.robust_sd(
+            noise[gate]
+        )  # unit robust RMS inside the burst
         return amplitude * noise, (onset, onset + duration)
     raise ValueError(f"unknown artifact type {kind!r}")
 
 
-def _hf_noise(n_samples: int, fs: int, waveform: np.random.Generator) -> np.ndarray:
-    """Gaussian noise in the descriptors' high-frequency band, with unit robust RMS."""
+def _hf_noise(
+    n_samples: int, fs: int, waveform: np.random.Generator
+) -> np.ndarray:
+    """Generate high-frequency Gaussian noise with unit robust amplitude."""
     noise = descriptors.highpass(waveform.standard_normal(n_samples), fs)[0]
     return noise / descriptors.robust_sd(noise)

@@ -1,4 +1,4 @@
-"""The QA additions leave the classification experiment's files, ids, versions and fingerprints unchanged."""
+"""Question-answering changes preserve classification records."""
 
 from __future__ import annotations
 
@@ -29,7 +29,9 @@ LEGACY = {
 
 
 @pytest.mark.parametrize(("name", "trial_id"), sorted(LEGACY.items()))
-def test_real_legacy_trial_files_load_with_their_original_ids(name, trial_id, tmp_path):
+def test_real_legacy_trial_files_load_with_their_original_ids(
+    name, trial_id, tmp_path
+):
     shutil.copy(FIXTURES / name, tmp_path / "trial.json")
     payload = json.loads((tmp_path / "trial.json").read_text())
     assert "schema_version" not in payload  # the legacy shape is untouched
@@ -71,7 +73,10 @@ def test_trial_spec_fields_are_unchanged():
 
 
 def test_artifact_generators_plan_methods_and_ecgqa_columns_are_unchanged():
-    assert (editor.GENERATOR, editor.VERSION) == ("ecg.electrode_artifact", "1.0.0")
+    assert (editor.GENERATOR, editor.VERSION) == (
+        "ecg.electrode_artifact",
+        "1.0.0",
+    )
     assert (generic.GENERATOR, generic.VERSION) == ("per_lead_aug", "1")
     assert editor.LABEL_EFFECT == {
         "diagnosis": "preserves",
@@ -115,8 +120,14 @@ def test_ecgqa_source_fingerprint_is_the_documented_algorithm(qa_registry):
 def test_qa_trial_files_are_not_classification_trials(tmp_path):
     from syntide.trial import TrialError
 
-    (tmp_path / "trial.json").write_text(json.dumps({"schema_version": "syntide.qa-trial@1", "arm": "x"}))
+    (tmp_path / "trial.json").write_text(
+        json.dumps({"schema_version": "syntide.qa-trial@1", "arm": "x"})
+    )
     with pytest.raises(TrialError):
-        load_spec(tmp_path)  # the classification loader never accepts a QA trial
+        load_spec(
+            tmp_path
+        )  # the classification loader never accepts a QA trial
     with pytest.raises(TrialError):
-        load_any_spec(tmp_path)  # and a malformed QA trial is refused, not reinterpreted
+        load_any_spec(
+            tmp_path
+        )  # and a malformed QA trial is refused, not reinterpreted

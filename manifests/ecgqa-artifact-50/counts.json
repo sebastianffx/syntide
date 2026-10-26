@@ -1,0 +1,233 @@
+{
+ "source": {
+  "dataset": "physionet/ecg-qa-cot",
+  "version": "1.0.0",
+  "sha256": "ac0dcb4203c9c94a62ea7d9ed9291583d6d53169e9a1fc837ef51cc0aef3af6a",
+  "signals": {
+   "dataset": "physionet/ptb-xl",
+   "version": "1.0.3",
+   "sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4"
+  }
+ },
+ "dropped": {
+  "ecg_not_a_labelled_ptbxl_record": 2482
+ },
+ "signal_agreement": {
+  "records": {
+   "ptbxl-1": {
+    "median_lead_corr": 0.985,
+    "min_lead_corr": 0.9704,
+    "rms_diff_mv": 0.0169,
+    "rms_signal_mv": 0.1076
+   },
+   "ptbxl-2311": {
+    "median_lead_corr": 0.9818,
+    "min_lead_corr": 0.9452,
+    "rms_diff_mv": 0.0572,
+    "rms_signal_mv": 0.2182
+   },
+   "ptbxl-4694": {
+    "median_lead_corr": 0.9981,
+    "min_lead_corr": 0.9958,
+    "rms_diff_mv": 0.017,
+    "rms_signal_mv": 0.4505
+   },
+   "ptbxl-7956": {
+    "median_lead_corr": 0.9948,
+    "min_lead_corr": 0.9923,
+    "rms_diff_mv": 0.0224,
+    "rms_signal_mv": 0.2127
+   },
+   "ptbxl-10934": {
+    "median_lead_corr": 0.9949,
+    "min_lead_corr": 0.9931,
+    "rms_diff_mv": 0.0241,
+    "rms_signal_mv": 0.2708
+   },
+   "ptbxl-14147": {
+    "median_lead_corr": 0.9975,
+    "min_lead_corr": 0.9948,
+    "rms_diff_mv": 0.0201,
+    "rms_signal_mv": 0.2761
+   },
+   "ptbxl-17398": {
+    "median_lead_corr": 0.9908,
+    "min_lead_corr": 0.9833,
+    "rms_diff_mv": 0.0174,
+    "rms_signal_mv": 0.1883
+   },
+   "ptbxl-21837": {
+    "median_lead_corr": 0.992,
+    "min_lead_corr": 0.9454,
+    "rms_diff_mv": 0.0192,
+    "rms_signal_mv": 0.1554
+   }
+  },
+  "summary": "8 ECGs, worst lead correlation 0.9452, max RMS difference 0.0572 mV"
+ },
+ "manifests": {
+  "pool50.json": {
+   "pool": {
+    "ecgs": 5778,
+    "patients": 5266,
+    "questions": 82829,
+    "noisy_ecg_share": 0.1888,
+    "noisy_question_share": 0.2447
+   },
+   "unused": {
+    "ecgs": 5788,
+    "patients": 5265,
+    "questions": 84206,
+    "noisy_ecg_share": 0.1919,
+    "noisy_question_share": 0.2497
+   },
+   "retained_artifact": {
+    "ecgs": 108,
+    "patients": 105,
+    "questions": 2173,
+    "noisy_ecg_share": 1.0,
+    "noisy_question_share": 1.0
+   },
+   "withheld": {
+    "ecgs": 1147,
+    "patients": 944,
+    "questions": 20970,
+    "noisy_ecg_share": 0.857,
+    "noisy_question_share": 0.863
+   },
+   "depleted": {
+    "ecgs": 4631,
+    "patients": 4322,
+    "questions": 61859,
+    "noisy_ecg_share": 0.0233,
+    "noisy_question_share": 0.0351
+   },
+   "natural_mix": {
+    "ecgs": 4631,
+    "patients": 4211,
+    "questions": 66092,
+    "noisy_ecg_share": 0.1915,
+    "noisy_question_share": 0.2505
+   },
+   "val": {
+    "ecgs": 2143,
+    "patients": 1915,
+    "questions": 31306,
+    "noisy_ecg_share": 0.2464,
+    "noisy_question_share": 0.3263
+   },
+   "test": {
+    "ecgs": 2154,
+    "patients": 1873,
+    "questions": 30720,
+    "noisy_ecg_share": 0.2382,
+    "noisy_question_share": 0.3069
+   }
+  },
+  "pool100.json": {
+   "pool": {
+    "ecgs": 11566,
+    "patients": 10531,
+    "questions": 167035,
+    "noisy_ecg_share": 0.1904,
+    "noisy_question_share": 0.2472
+   },
+   "unused": {
+    "ecgs": 0,
+    "patients": 0,
+    "questions": 0,
+    "noisy_ecg_share": 0.0,
+    "noisy_question_share": 0.0
+   },
+   "retained_artifact": {
+    "ecgs": 222,
+    "patients": 211,
+    "questions": 4247,
+    "noisy_ecg_share": 1.0,
+    "noisy_question_share": 1.0
+   },
+   "withheld": {
+    "ecgs": 2309,
+    "patients": 1893,
+    "questions": 42188,
+    "noisy_ecg_share": 0.8575,
+    "noisy_question_share": 0.8782
+   },
+   "depleted": {
+    "ecgs": 9257,
+    "patients": 8638,
+    "questions": 124847,
+    "noisy_ecg_share": 0.024,
+    "noisy_question_share": 0.034
+   },
+   "natural_mix": {
+    "ecgs": 9257,
+    "patients": 8416,
+    "questions": 132970,
+    "noisy_ecg_share": 0.19,
+    "noisy_question_share": 0.2471
+   },
+   "val": {
+    "ecgs": 2143,
+    "patients": 1915,
+    "questions": 31306,
+    "noisy_ecg_share": 0.2464,
+    "noisy_question_share": 0.3263
+   },
+   "test": {
+    "ecgs": 2154,
+    "patients": 1873,
+    "questions": 30720,
+    "noisy_ecg_share": 0.2382,
+    "noisy_question_share": 0.3069
+   }
+  }
+ },
+ "cot_split_vs_folds": {
+  "cot test -> folds test": {
+   "questions": 5609,
+   "ecgs": 460,
+   "patients": 389
+  },
+  "cot test -> folds train": {
+   "questions": 29757,
+   "ecgs": 2304,
+   "patients": 2093
+  },
+  "cot test -> folds validation": {
+   "questions": 5472,
+   "ecgs": 424,
+   "patients": 388
+  },
+  "cot train -> folds test": {
+   "questions": 21200,
+   "ecgs": 1544,
+   "patients": 1350
+  },
+  "cot train -> folds train": {
+   "questions": 114480,
+   "ecgs": 8313,
+   "patients": 7568
+  },
+  "cot train -> folds validation": {
+   "questions": 21772,
+   "ecgs": 1561,
+   "patients": 1388
+  },
+  "cot validation -> folds test": {
+   "questions": 3911,
+   "ecgs": 150,
+   "patients": 134
+  },
+  "cot validation -> folds train": {
+   "questions": 22798,
+   "ecgs": 949,
+   "patients": 870
+  },
+  "cot validation -> folds validation": {
+   "questions": 4062,
+   "ecgs": 158,
+   "patients": 139
+  }
+ }
+}

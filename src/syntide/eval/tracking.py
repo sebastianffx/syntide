@@ -1,10 +1,11 @@
-"""Dashboard backends shared by trainers and evaluation: local files, TensorBoard or Weights & Biases.
+"""Record experiment progress to files or a training dashboard.
 
-The backend is chosen by a small YAML file in ``conf/tracker/``. It only decides where the dashboard
-goes: the evidence files (predictions, ``result.json``, the recipe ledger) are written whatever the
-backend. Metric names follow docs/results_visualization.md, and the step axis is optimizer updates.
+The configuration in ``conf/tracker/`` selects the dashboard destination.
+Predictions, ``result.json``, and the recipe ledger are saved with every
+destination. Dashboard plots use optimizer updates as their horizontal axis.
 
-Backends import their libraries lazily, so choosing ``files`` needs neither torch nor wandb.
+Backends import their libraries lazily, so choosing ``files`` needs neither
+torch nor wandb.
 """
 
 import html
@@ -23,11 +24,13 @@ BACKENDS = ("files", "tensorboard", "wandb")
 
 @dataclass
 class TrackerConfig:
-    """Which dashboard to write to. Also the Hydra schema node for ``tracker``."""
+    """Configuration for recording training and evaluation progress."""
 
     backend: str = "files"
     project: str = "syntide"  # W&B project
-    entity: str | None = None  # W&B entity (user or team); None uses the logged-in default
+    entity: str | None = (
+        None  # W&B entity (user or team); None uses the logged-in default
+    )
     mode: str = "online"  # W&B mode: online | offline | disabled
 
     @classmethod
@@ -40,14 +43,20 @@ class Tracker(Protocol):
     def log_scalars(self, values: Mapping[str, float], step: int) -> None: ...
     def log_figure(self, name: str, fig: Any, step: int) -> None: ...
     def log_text(self, name: str, markdown: str, step: int) -> None: ...
-    def log_summary(self, hparams: Mapping[str, Any], metrics: Mapping[str, float]) -> None: ...
+    def log_summary(
+        self, hparams: Mapping[str, Any], metrics: Mapping[str, float]
+    ) -> None: ...
     def close(self) -> None: ...
 
 
 def make_tracker(
-    cfg: TrackerConfig, log_dir: str | Path, run_name: str, group: str, config: Mapping[str, Any]
+    cfg: TrackerConfig,
+    log_dir: str | Path,
+    run_name: str,
+    group: str,
+    config: Mapping[str, Any],
 ) -> Tracker:
-    """Open one dashboard run. ``run_name`` and ``group`` label the run where the backend supports it."""
+    """Open a progress tracker for a named run and group."""
     log_dir = Path(log_dir)
     log_dir.mkdir(parents=True, exist_ok=True)
     if cfg.backend == "files":
@@ -56,7 +65,10 @@ def make_tracker(
         return TensorBoardTracker(log_dir)
     if cfg.backend == "wandb":
         return WandbTracker(cfg, log_dir, run_name, group, config)
-    raise ValueError(f"unknown tracker backend {cfg.backend!r}; choose one of {', '.join(BACKENDS)}")
+    raise ValueError(
+        f"unknown tracker backend {cfg.backend!r}; choose one of "
+        f"{', '.join(BACKENDS)}"
+    )
 
 
 def _file_name(name: str) -> str:
@@ -64,15 +76,21 @@ def _file_name(name: str) -> str:
 
 
 class FilesTracker:
-    """Plain files: ``metrics.jsonl`` (one ``{"step", **values}`` line per call), ``figures/*.png``,
-    ``text/*.md`` and ``summary.json``. Each open starts a fresh ``metrics.jsonl``."""
+    """Save metrics, figures, text, and a summary to local files.
+
+    Each new run starts a fresh metrics.jsonl. Figures and text use separate
+    subdirectories; summary.json holds the final run summary.
+    """
 
     def __init__(self, log_dir: Path) -> None:
         self.dir = log_dir
         self._metrics = (log_dir / "metrics.jsonl").open("w", encoding="utf-8")
 
     def log_scalars(self, values: Mapping[str, float], step: int) -> None:
-        line = {"step": int(step), **{key: float(value) for key, value in values.items()}}
+        line = {
+            "step": int(step),
+            **{key: float(value) for key, value in values.items()},
+        }
         self._metrics.write(json.dumps(line) + "\n")
         self._metrics.flush()
 
@@ -86,16 +104,20 @@ class FilesTracker:
         path.parent.mkdir(exist_ok=True)
         path.write_text(markdown, encoding="utf-8")
 
-    def log_summary(self, hparams: Mapping[str, Any], metrics: Mapping[str, float]) -> None:
+    def log_summary(
+        self, hparams: Mapping[str, Any], metrics: Mapping[str, float]
+    ) -> None:
         summary = {"hparams": dict(hparams), "metrics": dict(metrics)}
-        (self.dir / "summary.json").write_text(json.dumps(summary, indent=1, default=str) + "\n")
+        (self.dir / "summary.json").write_text(
+            json.dumps(summary, indent=1, default=str) + "\n"
+        )
 
     def close(self) -> None:
         self._metrics.close()
 
 
 class TensorBoardTracker:
-    """TensorBoard event files in ``log_dir``; view them with ``tensorboard --logdir runs``."""
+    """Write event files for viewing in TensorBoard."""
 
     def __init__(self, log_dir: Path) -> None:
         from torch.utils.tensorboard import SummaryWriter
@@ -112,25 +134,43 @@ class TensorBoardTracker:
     def log_text(self, name: str, markdown: str, step: int) -> None:
         self._writer.add_text(name, markdown, int(step))
 
-    def log_summary(self, hparams: Mapping[str, Any], metrics: Mapping[str, float]) -> None:
-        # TensorBoard's hparams table takes only scalars and strings. run_name="." keeps the summary in
+    def log_summary(
+        self, hparams: Mapping[str, Any], metrics: Mapping[str, float]
+    ) -> None:
+        # TensorBoard's hparams table takes only scalars and strings.
+        # run_name="." keeps the summary in
         # this run's directory instead of a new timestamped one.
-        plain = {k: v if isinstance(v, int | float | str | bool) else str(v) for k, v in hparams.items()}
-        self._writer.add_hparams(plain, {k: float(v) for k, v in metrics.items()}, run_name=".")
+        plain = {
+            k: v if isinstance(v, int | float | str | bool) else str(v)
+            for k, v in hparams.items()
+        }
+        self._writer.add_hparams(
+            plain, {k: float(v) for k, v in metrics.items()}, run_name="."
+        )
 
     def close(self) -> None:
         self._writer.close()
 
 
 class WandbTracker:
-    """One W&B run per trial (or per eval split): W&B drops steps that go backwards within a run."""
+    """Record one Weights & Biases run per trial or evaluation split.
+
+    Logged step numbers must increase within each run.
+    """
 
     def __init__(
-        self, cfg: TrackerConfig, log_dir: Path, run_name: str, group: str, config: Mapping[str, Any]
+        self,
+        cfg: TrackerConfig,
+        log_dir: Path,
+        run_name: str,
+        group: str,
+        config: Mapping[str, Any],
     ) -> None:
         mode = cfg.mode
         if mode not in ("online", "offline", "disabled"):
-            raise ValueError(f"unknown W&B mode {mode!r}; choose online, offline or disabled")
+            raise ValueError(
+                f"unknown W&B mode {mode!r}; choose online, offline or disabled"
+            )
         import wandb
 
         self._wandb = wandb
@@ -145,15 +185,22 @@ class WandbTracker:
         )
 
     def log_scalars(self, values: Mapping[str, float], step: int) -> None:
-        self._run.log({key: float(value) for key, value in values.items()}, step=int(step))
+        self._run.log(
+            {key: float(value) for key, value in values.items()}, step=int(step)
+        )
 
     def log_figure(self, name: str, fig: Any, step: int) -> None:
         self._run.log({name: self._wandb.Image(fig)}, step=int(step))
 
     def log_text(self, name: str, markdown: str, step: int) -> None:
-        self._run.log({name: self._wandb.Html(f"<pre>{html.escape(markdown)}</pre>")}, step=int(step))
+        self._run.log(
+            {name: self._wandb.Html(f"<pre>{html.escape(markdown)}</pre>")},
+            step=int(step),
+        )
 
-    def log_summary(self, hparams: Mapping[str, Any], metrics: Mapping[str, float]) -> None:
+    def log_summary(
+        self, hparams: Mapping[str, Any], metrics: Mapping[str, float]
+    ) -> None:
         self._run.config.update(dict(hparams), allow_val_change=True)
         self._run.summary.update(dict(metrics))
 

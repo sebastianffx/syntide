@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=https://docs.timenet.ai/schemas/dataset-card-v1.schema.json
+# Dataset card for SYNTIDE's physionet/ptb-xl connector (loaded by DatasetMetadata.from_yaml()).
+# Signals are 100 Hz records (records100), 12 leads in millivolts. Splits follow the PTB-XL
+# authors' recommended folds and are stored on each ClassificationTask's metadata.
+yaml_schema_version: 1
+dataset_id: physionet/ptb-xl
+dataset_version: 1.0.3
+name: PTB-XL
+description: >-
+  21,799 clinical 10 s 12-lead ECGs from 18,869 patients (100 Hz), with SCP-ECG statements,
+  diagnostic superclass classification tasks, patient ids, stratified folds and signal-quality flags.
+license: CC-BY-4.0
+domains:
+  - cardiology
+  - health
+tags:
+  - ecg
+  - 12-lead
+  - physionet
+source_url: https://physionet.org/content/ptb-xl/1.0.3/

@@ -1,0 +1,124 @@
+{
+ "frozen_at": "2026-10-24T17:08:42+00:00",
+ "protocol_dir": "runs/ptbxl-aug-sweep",
+ "rules": {
+  "regime": "scarcity50",
+  "reference": "A0",
+  "primary": [
+   "S3",
+   "A1"
+  ],
+  "sequence": [
+   [
+    "E1",
+    "A3"
+   ]
+  ],
+  "sequence_regimes": [],
+  "diagnostics": [
+   [
+    "S1",
+    "A0"
+   ],
+   [
+    "S2",
+    "A0"
+   ],
+   [
+    "A1",
+    "A0"
+   ],
+   [
+    "S3",
+    "A0"
+   ],
+   [
+    "S4",
+    "A0"
+   ],
+   [
+    "S4",
+    "S3"
+   ],
+   [
+    "A3",
+    "A0"
+   ],
+   [
+    "E1",
+    "A0"
+   ],
+   [
+    "T1",
+    "A0"
+   ],
+   [
+    "T2",
+    "A0"
+   ],
+   [
+    "T3",
+    "A0"
+   ],
+   [
+    "T4",
+    "A0"
+   ],
+   [
+    "T5",
+    "A0"
+   ],
+   [
+    "T1",
+    "A1"
+   ],
+   [
+    "T2",
+    "A1"
+   ],
+   [
+    "T3",
+    "A1"
+   ],
+   [
+    "T4",
+    "A1"
+   ],
+   [
+    "T5",
+    "A1"
+   ],
+   [
+    "C2@full100",
+    "A0"
+   ]
+  ],
+  "practical_target": 0.02,
+  "noninferiority_margin": -0.01,
+  "gap_gate": {
+   "contrast": [
+    "C2@full100",
+    "A0"
+   ],
+   "min_effect": 0.01
+  },
+  "gap_closed": [
+   {
+    "name": "100% of patients",
+    "target": "C2@full100",
+    "baseline": "A0",
+    "gated": true
+   }
+  ],
+  "n_boot": 2000,
+  "ci_level": 0.95,
+  "bootstrap_seed": 0
+ },
+ "rules_sha256": "7329468ebc8d819add071638ad3efc87c389f58f11356787054b72de9cfe8c98",
+ "plan_sha256": "18618fa6ef47c8151b55575d87d29739b4cb24ede53c4174422b681bb8f80640",
+ "syntide_version": "0.1.0",
+ "git": {
+  "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+  "dirty": true
+ }
+}

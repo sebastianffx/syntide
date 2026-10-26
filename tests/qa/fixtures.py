@@ -1,7 +1,7 @@
-"""Synthetic test fixtures for the QA pipeline.
+"""Create signals with known heartbeat times for question-answering tests.
 
-The ECG-like signals here are Gaussian bumps at known beat times plus noise: test fixtures with known
-heart rates, NOT clinically validated ECGs and not synthetic data for training.
+Signals contain Gaussian pulses and noise. They are software test fixtures, not
+clinically validated recordings or data for training a clinical model.
 """
 
 from __future__ import annotations
@@ -12,7 +12,9 @@ from syntide.data.qa import SignalInfo
 from syntide.data.schema import LEADS
 from syntide.generate.qa.sources import QASource, SourceRow
 
-FIXTURE_NOTICE = "test fixture with known beat times; not a clinically validated ECG"
+FIXTURE_NOTICE = (
+    "test fixture with known beat times; not a clinically validated ECG"
+)
 
 
 def fixture_ecg(
@@ -52,7 +54,13 @@ def fixture_ecg(
 
 
 def question(
-    record_id: str, k: int, template_id: int, text: str, answer: str, options: list[str], context: str
+    record_id: str,
+    k: int,
+    template_id: int,
+    text: str,
+    answer: str,
+    options: list[str],
+    context: str,
 ) -> dict:
     return {
         "task_id": f"ecgqa-train-{record_id}-{k}",
@@ -69,7 +77,9 @@ def question(
     }
 
 
-def memory_source(n: int = 8, *, start: int = 1, purpose: str = "training", seed: int = 0) -> QASource:
+def memory_source(
+    n: int = 8, *, start: int = 1, purpose: str = "training", seed: int = 0
+) -> QASource:
     """A small in-memory population: patient i owns record ptbxl-(start+i)."""
     rates = [55, 72, 88, 110, 64, 95, 130, 48, 76, 102]
     rows, signals = [], {}
@@ -77,7 +87,10 @@ def memory_source(n: int = 8, *, start: int = 1, purpose: str = "training", seed
         record_id = f"ptbxl-{start + i}"
         drift = i % 3 == 0
         quality = "baseline drift noted" if drift else "no issues"
-        context = f"{50 + i}-year-old patient. 12-lead ECG. Signal quality: {quality}."
+        context = (
+            f"{50 + i}-year-old patient. "
+            f"12-lead ECG. Signal quality: {quality}."
+        )
         rows.append(
             SourceRow(
                 record_id=record_id,
@@ -123,4 +136,10 @@ def memory_source(n: int = 8, *, start: int = 1, purpose: str = "training", seed
         "purpose": purpose,
         "notice": FIXTURE_NOTICE,
     }
-    return QASource(rows, load, provenance, purpose=purpose, signal=SignalInfo(LEADS, 100.0, "mV", 1000))
+    return QASource(
+        rows,
+        load,
+        provenance,
+        purpose=purpose,
+        signal=SignalInfo(LEADS, 100.0, "mV", 1000),
+    )

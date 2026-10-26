@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "n_test": 2158,
+  "selected_step": 1700,
+  "selection": "validation overall AUROC only",
+  "baseline_outputs_unchanged": true,
+  "test_scores_sha256": "7edc7fffbd5b361ae7f17df913af598c12370dd26f7892813c254d432d0ca507"
+}

@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "n_test": 2158,
+  "all_trials_complete_before_test": true,
+  "validation_selected_checkpoints": [
+    1700,
+    1900,
+    2000
+  ],
+  "original_outputs_unchanged": true,
+  "score_files_sha256": {
+    "pool50/mix75_s2/seed0": "ddc87556dab189d379bb962129118c20220145ced746982610bf5c5556065bf1",
+    "pool50/mix75_s2/seed1": "ec72ae59bcb5206134dc0a69383ed7635815bb14c9ac24ff6138e4f55acca26a",
+    "pool50/mix75_s2/seed2": "cde010a2d0e41fa160a0b0bdf551030143283abb68464a341e87ae107bd8e03b"
+  }
+}

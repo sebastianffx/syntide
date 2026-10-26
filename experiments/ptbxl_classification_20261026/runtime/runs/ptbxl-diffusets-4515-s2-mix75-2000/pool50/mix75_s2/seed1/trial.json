@@ -1,0 +1,44 @@
+{
+ "protocol": "ptbxl-diffusets-4515-s2-mix75-2000",
+ "regime": "pool50",
+ "arm": "mix75_s2",
+ "replicate_seed": 1,
+ "source_role": "pool_plus_offline_diffusets",
+ "transform_family": "generic",
+ "sampling_policy": "fixed",
+ "generator": "diffusets4515+S2@ac8afe75c4581420a7f444991f48d636652aa1df29bcb9c1a180cdf6c58a1a5f",
+ "validators": [],
+ "transform": {
+  "gain": [
+   0.95,
+   1.05
+  ],
+  "max_shift_s": 0.25,
+  "noise_rms_mv": [
+   0.0,
+   0.05
+  ],
+  "wander_mv": [
+   0.0,
+   1.75
+  ],
+  "wander_hz": [
+   0.05,
+   0.7
+  ]
+ },
+ "dataset": "physionet/ptb-xl@1.0.3",
+ "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+ "manifest_sha256": "95db415ff96315d1d6fce2df00992ffacaa4284f4f9d0a137c2051456cce602d",
+ "calibration_sha256": null,
+ "batch_size": 64,
+ "max_steps": 2000,
+ "val_every": 100,
+ "transform_fraction": 0.25,
+ "init_seed": 8206391887579712274,
+ "syntide_version": "0.1.0",
+ "registry": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/datasets/timenet-registry",
+ "manifest": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/manifests/ptbxl-scaling/pool50.json",
+ "calibration": null,
+ "trial_id": "3c59cd546864a6face232446c5135fbdd35c619acd64dc73f9518d532a4b08f9"
+}

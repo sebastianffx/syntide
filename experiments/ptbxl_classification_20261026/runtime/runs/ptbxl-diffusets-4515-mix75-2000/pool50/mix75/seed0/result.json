@@ -1,0 +1,223 @@
+{
+ "status": "complete",
+ "trial_id": "453798dcf59dd958e014e02546dc48e95fce08a3df8215fe6f4d4acf25db17c3",
+ "protocol": "ptbxl-diffusets-4515-mix75-2000",
+ "regime": "pool50",
+ "arm": "mix75",
+ "replicate_seed": 0,
+ "best_step": 1700,
+ "best_val_auroc": 0.9222149408914129,
+ "final_step": 2000,
+ "val_history": [
+  {
+   "step": 100,
+   "val/auroc_overall": 0.8727142291804831,
+   "val/auroc_artifact": 0.862091058234124,
+   "val/auroc_clean": 0.8766237853756758,
+   "val/loss": 0.38619841962534657
+  },
+  {
+   "step": 200,
+   "val/auroc_overall": 0.8804402509484219,
+   "val/auroc_artifact": 0.8683245424505417,
+   "val/auroc_clean": 0.884906131694212,
+   "val/loss": 0.37656060954373793
+  },
+  {
+   "step": 300,
+   "val/auroc_overall": 0.9019758820161613,
+   "val/auroc_artifact": 0.8841650095019105,
+   "val/auroc_clean": 0.9084307209541805,
+   "val/loss": 0.3324914890678688
+  },
+  {
+   "step": 400,
+   "val/auroc_overall": 0.90507227101746,
+   "val/auroc_artifact": 0.8882940128219966,
+   "val/auroc_clean": 0.9107250404016952,
+   "val/loss": 0.3276290606479436
+  },
+  {
+   "step": 500,
+   "val/auroc_overall": 0.9104394820859685,
+   "val/auroc_artifact": 0.8985662924457337,
+   "val/auroc_clean": 0.9147244382760977,
+   "val/loss": 0.3021067395562866
+  },
+  {
+   "step": 600,
+   "val/auroc_overall": 0.9089292064994356,
+   "val/auroc_artifact": 0.8988558827267292,
+   "val/auroc_clean": 0.9126846487448697,
+   "val/loss": 0.30676633465800535
+  },
+  {
+   "step": 700,
+   "val/auroc_overall": 0.9133813581954879,
+   "val/auroc_artifact": 0.903629401267175,
+   "val/auroc_clean": 0.917356265632226,
+   "val/loss": 0.3096030783540219
+  },
+  {
+   "step": 800,
+   "val/auroc_overall": 0.912868138178242,
+   "val/auroc_artifact": 0.9011431034179577,
+   "val/auroc_clean": 0.9172610903345542,
+   "val/loss": 0.3042723575643132
+  },
+  {
+   "step": 900,
+   "val/auroc_overall": 0.9087436035560852,
+   "val/auroc_artifact": 0.9033298255554779,
+   "val/auroc_clean": 0.9109529788314766,
+   "val/loss": 0.33462030631427
+  },
+  {
+   "step": 1000,
+   "val/auroc_overall": 0.9021172080947844,
+   "val/auroc_artifact": 0.8915515880698415,
+   "val/auroc_clean": 0.906534801898274,
+   "val/loss": 0.34309827584078334
+  },
+  {
+   "step": 1100,
+   "val/auroc_overall": 0.9034152500658779,
+   "val/auroc_artifact": 0.8955115677404273,
+   "val/auroc_clean": 0.9064806515996773,
+   "val/loss": 0.3334210767785327
+  },
+  {
+   "step": 1200,
+   "val/auroc_overall": 0.9127817192249704,
+   "val/auroc_artifact": 0.9076845238895981,
+   "val/auroc_clean": 0.9151609410446915,
+   "val/loss": 0.29724845055312227
+  },
+  {
+   "step": 1300,
+   "val/auroc_overall": 0.9172851365980007,
+   "val/auroc_artifact": 0.9123950300752561,
+   "val/auroc_clean": 0.9193437203472394,
+   "val/loss": 0.2989661478047737
+  },
+  {
+   "step": 1400,
+   "val/auroc_overall": 0.9138750492158468,
+   "val/auroc_artifact": 0.9049088085014876,
+   "val/auroc_clean": 0.9174472821012642,
+   "val/loss": 0.30914261289226536
+  },
+  {
+   "step": 1500,
+   "val/auroc_overall": 0.9195794999527453,
+   "val/auroc_artifact": 0.9106436648092101,
+   "val/auroc_clean": 0.9229674716981127,
+   "val/loss": 0.3032455869120644
+  },
+  {
+   "step": 1600,
+   "val/auroc_overall": 0.9155103080448246,
+   "val/auroc_artifact": 0.905645309718292,
+   "val/auroc_clean": 0.919099146355232,
+   "val/loss": 0.3256920940578268
+  },
+  {
+   "step": 1700,
+   "val/auroc_overall": 0.9222149408914129,
+   "val/auroc_artifact": 0.9177367722730404,
+   "val/auroc_clean": 0.9240564226766763,
+   "val/loss": 0.30377594623861415
+  },
+  {
+   "step": 1800,
+   "val/auroc_overall": 0.9159879182051759,
+   "val/auroc_artifact": 0.9084849661143959,
+   "val/auroc_clean": 0.9192485927731642,
+   "val/loss": 0.30729434560282426
+  },
+  {
+   "step": 1900,
+   "val/auroc_overall": 0.9120938049950593,
+   "val/auroc_artifact": 0.9074744654819312,
+   "val/auroc_clean": 0.9144635958563793,
+   "val/loss": 0.32926825168612756
+  },
+  {
+   "step": 2000,
+   "val/auroc_overall": 0.9151962081734372,
+   "val/auroc_artifact": 0.9101912748697758,
+   "val/auroc_clean": 0.9174025042397418,
+   "val/loss": 0.33757123790437593
+  }
+ ],
+ "exposure": {
+  "steps": 2000,
+  "presentations": 128000,
+  "transform_slots": 0,
+  "candidates": 0,
+  "accepted": 0,
+  "rejected": 0,
+  "exhausted_slots": 0,
+  "distinct_recipes": 0,
+  "real_presentations": 96000,
+  "generated_presentations": 32000,
+  "distinct_real_records": 8579,
+  "distinct_generated_records": 4515
+ },
+ "trainer": {
+  "name": "syntide_trainers.torch_loop",
+  "version": "0.1.0",
+  "config": {
+   "model": {
+    "width": 64,
+    "kernel_size": 7
+   },
+   "optim": {
+    "lr": 0.001,
+    "weight_decay": 0.01
+   }
+  },
+  "device": "mps",
+  "predictor": "syntide_trainers.torch_loop:predict",
+  "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+  "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+ },
+ "wall_time_s": 68.50296662497567,
+ "provenance": {
+  "dataset": "physionet/ptb-xl@1.0.3",
+  "registry": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/datasets/timenet-registry",
+  "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+  "manifest": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/manifests/ptbxl-scaling/pool50.json",
+  "manifest_sha256": "95db415ff96315d1d6fce2df00992ffacaa4284f4f9d0a137c2051456cce602d",
+  "calibration": null,
+  "calibration_sha256": null,
+  "checkpoints": {
+   "best": {
+    "path": "best.pt",
+    "step": 1700,
+    "sha256": "577534c64240f10752edb20247b441e46ec59df8ccd06963d99624316dc31470"
+   },
+   "final": {
+    "path": "final.pt",
+    "step": 2000,
+    "sha256": "84396007b2a0479800fd561313ed319c442e73ba8c4248c03ccaa9939460a618"
+   }
+  }
+ },
+ "env": {
+  "python": "3.13.13",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "syntide": "0.1.0",
+  "packages": {
+   "numpy": "2.5.4",
+   "torch": "2.14.1",
+   "timenet": "0.11.0",
+   "scikit-learn": "1.9.1"
+  },
+  "git": {
+   "rev": "2c5538c03d7734e55828b22b6c713b1413fe7d3a",
+   "dirty": true
+  }
+ },
+ "finished_at": "2026-10-26T08:28:23+00:00"
+}

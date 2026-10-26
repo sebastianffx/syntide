@@ -1,4 +1,4 @@
-"""A loopback-only viewer: read analysis and download plans, never run generators."""
+"""Serve local analysis and generation-plan downloads."""
 
 import json
 import logging
@@ -16,12 +16,19 @@ def make_server(directory: Path, port: int = 8765) -> ThreadingHTTPServer:
 
     class Handler(BaseHTTPRequestHandler):
         def authorized(self) -> bool:
-            hosts = {f"127.0.0.1:{self.server.server_port}", f"localhost:{self.server.server_port}"}
+            hosts = {
+                f"127.0.0.1:{self.server.server_port}",
+                f"localhost:{self.server.server_port}",
+            }
             origin = self.headers.get("Origin")
             if self.headers.get("Host") not in hosts or (
                 origin and origin not in {f"http://{host}" for host in hosts}
             ):
-                self.reply(403, b"Only same-origin loopback requests are allowed", "text/plain")
+                self.reply(
+                    403,
+                    b"Only same-origin loopback requests are allowed",
+                    "text/plain",
+                )
                 return False
             return True
 
@@ -39,9 +46,15 @@ def make_server(directory: Path, port: int = 8765) -> ThreadingHTTPServer:
                 return
             path = self.path.split("?")[0]
             if path in ("/", "/index.html"):
-                self.reply(200, (directory / "index.html").read_bytes(), "text/html; charset=utf-8")
+                self.reply(
+                    200,
+                    (directory / "index.html").read_bytes(),
+                    "text/html; charset=utf-8",
+                )
             elif path == "/api/analysis":
-                self.reply(200, json.dumps(analysis).encode(), "application/json")
+                self.reply(
+                    200, json.dumps(analysis).encode(), "application/json"
+                )
             else:
                 self.reply(404, b"Not found", "text/plain")
 
@@ -54,14 +67,24 @@ def make_server(directory: Path, port: int = 8765) -> ThreadingHTTPServer:
             try:
                 length = int(self.headers.get("Content-Length", "0"))
                 if not 0 < length <= 2_000_000:
-                    raise ValueError("Selection must be between 1 byte and 2 MB")
+                    raise ValueError(
+                        "Selection must be between 1 byte and 2 MB"
+                    )
                 selection = json.loads(self.rfile.read(length))
                 if not isinstance(selection, dict):
                     raise ValueError("Selection must be a JSON object")
                 result = make_plan(analysis, selection)
-                self.reply(200, json.dumps(result, ensure_ascii=False).encode(), "application/json")
+                self.reply(
+                    200,
+                    json.dumps(result, ensure_ascii=False).encode(),
+                    "application/json",
+                )
             except (ValueError, KeyError, TypeError) as error:
-                self.reply(400, json.dumps({"error": str(error)}).encode(), "application/json")
+                self.reply(
+                    400,
+                    json.dumps({"error": str(error)}).encode(),
+                    "application/json",
+                )
 
         def log_message(self, message: str, *args: object) -> None:
             logging.getLogger(__name__).debug(message, *args)
@@ -69,7 +92,9 @@ def make_server(directory: Path, port: int = 8765) -> ThreadingHTTPServer:
     return ThreadingHTTPServer(("127.0.0.1", port), Handler)
 
 
-def serve(directory: Path, port: int = 8765, *, open_browser: bool = True) -> None:
+def serve(
+    directory: Path, port: int = 8765, *, open_browser: bool = True
+) -> None:
     server = make_server(directory, port)
     url = f"http://127.0.0.1:{server.server_port}"
     print(f"SYNTIDE explorer: {url} (Ctrl-C to stop)", flush=True)

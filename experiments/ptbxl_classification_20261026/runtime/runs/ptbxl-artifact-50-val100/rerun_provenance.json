@@ -1,0 +1,122 @@
+{
+  "purpose": "User-requested validation-cadence replication; change validation interval from 250 to 100 updates.",
+  "original_run": "runs/ptbxl-artifact-50",
+  "new_run": "runs/ptbxl-artifact-50-val100",
+  "changed_fields": [
+    "protocol (output identity)",
+    "val_every (250 -> 100)",
+    "trial_id (derived)"
+  ],
+  "all_other_trial_fields_identical": true,
+  "original_plan_sha256": "de94961e93cd94b6fd53c497380add3ff942130e2333ae43fc905ec8e146283c",
+  "original_test_claim_sha256": "01f5a862bed42fef527948ccc936ccfb75392f5ca69cbaebf7c3658eab14ed71",
+  "analysis_rules": "Same as original experiment; freeze again against new plan before scoring.",
+  "test_interpretation": "Replication on the existing test fold; previous test results have already been viewed. Checkpoints selected exclusively on validation.",
+  "trials": [
+    {
+      "run_dir": "full100/C2/seed0",
+      "old_trial_id": "2e5a9cad655d81804036cb0c99056bd6c82bb3d241548f19720194ece8fdb3fc",
+      "new_trial_id": "dd38eebf1b861f7e8e0c01712c4fc52d875385a26cd35f24b81e8afba459a3e8"
+    },
+    {
+      "run_dir": "full100/C2/seed1",
+      "old_trial_id": "fb2ab1c270590a4b7a509ffa6b2beb8c10121d0384fc6cb4ebbd54b561e69563",
+      "new_trial_id": "27df44b516dd10675205bfb7a95fbe90d98e56e4e907fa2d4d66451468c40dc3"
+    },
+    {
+      "run_dir": "full100/C2/seed2",
+      "old_trial_id": "ca5315cf0aa0bea78462aef6ef9e1feeabd9029ad183948827595d4316e8851d",
+      "new_trial_id": "2cfd1045add61c4b350ca8ed5220d1e51f62734744a33aa2793d01d8cb71a49c"
+    },
+    {
+      "run_dir": "scarcity50/A0/seed0",
+      "old_trial_id": "8b8c8e1f51c389f43874a3571dc1bb08ba450dc2900b98e5743bd7b402aacad8",
+      "new_trial_id": "d1c99d504eaa09f928e8ae512eb5593e01b864ff54f32e397e512f5e17a34d82"
+    },
+    {
+      "run_dir": "scarcity50/A0/seed1",
+      "old_trial_id": "cc5ac9239f8f1aee789de4b49285ac936ce227a0575018810c3ec4389a4d7604",
+      "new_trial_id": "a5e8089bdf55131616f88cbfdf8998935d7dbd124a56e172253c3422f6f86457"
+    },
+    {
+      "run_dir": "scarcity50/A0/seed2",
+      "old_trial_id": "658e25f2dd3f9fdcf785c89e3598949145dcbb6817aba50a3b48845f2f955d70",
+      "new_trial_id": "b880d6c5440d0be84e40efe7922ec4311124540fdc6348b924c0fba9a2b7ff64"
+    },
+    {
+      "run_dir": "scarcity50/A1/seed0",
+      "old_trial_id": "0c1bf9abdd557176b9f02ca914da685334a70cea4f47db1053fe248e8f1cd3f0",
+      "new_trial_id": "1114e33f8db1adfbb8ec19d6bed5d393f616dd90e33699be66eed25c2f764c37"
+    },
+    {
+      "run_dir": "scarcity50/A1/seed1",
+      "old_trial_id": "7580099bca45890f27a36d479ec45a81f596dd7a3f84d226d16c20c6aecc70ba",
+      "new_trial_id": "6b7c4a575b07027fa74b5490dd84955e7f9aa914d9e26c5165e7be33d4f3ca4e"
+    },
+    {
+      "run_dir": "scarcity50/A1/seed2",
+      "old_trial_id": "18fff17d6b6781d3fb4b2fd5439111b6d5cd9352521268cd81ee46109dcd1140",
+      "new_trial_id": "5d41e4292ba894d14c39557fe1d23e1aaf0e507867cebafce029d1f1f8afc8d6"
+    },
+    {
+      "run_dir": "scarcity50/A2/seed0",
+      "old_trial_id": "94d4f103d80a824b6e8f7c7ade2a30697d374eec6f9703bf5851b466f5431480",
+      "new_trial_id": "a30daa8d5bb133b259eb1ada1854f83352deb583aab2c3c9904f5d41779099f6"
+    },
+    {
+      "run_dir": "scarcity50/A2/seed1",
+      "old_trial_id": "bf885f8c4aa883e2982659a021e3d38b67948eee5929b801ef148b9474bcedc8",
+      "new_trial_id": "f7213a4cba15de4b9ab3b678a358626ad09f70dc03d151f1239b2f94dfced5ff"
+    },
+    {
+      "run_dir": "scarcity50/A2/seed2",
+      "old_trial_id": "aa0a576b3ec9e5aac3dd9bf6792243b60a57d1a96efd7f77d6448db64d066fc2",
+      "new_trial_id": "e70b1e7a7d06ffc741fbe786a567745fa1bc9452e419c22a30a14c47ae26bf92"
+    },
+    {
+      "run_dir": "scarcity50/A3/seed0",
+      "old_trial_id": "e3608c7fff4a21c03510183c531e7352a00cc904cac8aedd097453e32846184a",
+      "new_trial_id": "58988b250a92909880b741f0567ff084e5bfa349e4019277a61117b4e8d7649c"
+    },
+    {
+      "run_dir": "scarcity50/A3/seed1",
+      "old_trial_id": "32abbbcdab256857d7ec580e28dc989b103a0119e1a21933801e7353e2b25f92",
+      "new_trial_id": "1a9113d852fa72094c18f70ad3cdb89b963e66ecb144e22619917b07552d6e01"
+    },
+    {
+      "run_dir": "scarcity50/A3/seed2",
+      "old_trial_id": "72d5d620729370529ac7379951a23f8545b9c3d35011c521d387d9b0e44b41ee",
+      "new_trial_id": "4e52f2e01da67aa2d666951f838240138ded858b236f5a28cbf95d842df6907c"
+    },
+    {
+      "run_dir": "scarcity50/C1/seed0",
+      "old_trial_id": "397b7d2d2c9bf7295db7a7fa7cdfaa46fed715b33ba08d719723eb7eb9290c86",
+      "new_trial_id": "c4a039ee70f8ee2b373ecbb3a950dbb2d1e8dd905eaa9dce2f89a5520807959b"
+    },
+    {
+      "run_dir": "scarcity50/C1/seed1",
+      "old_trial_id": "c74e7fdc10441ff1785b139409c8ce922330c2a038f8bbcb96697770166aee8b",
+      "new_trial_id": "1104eb8738c24be3a5d0d4d8ac7c028cb5eee5c35303e1473c0941eb18332d67"
+    },
+    {
+      "run_dir": "scarcity50/C1/seed2",
+      "old_trial_id": "4e33c30d7d066d271c3fae1e8e7b797afa7ea9d8df34b5d0ec66d48f3445aec1",
+      "new_trial_id": "f0e9f9bcd428e1815a40a9493af7803deecb3f1fa8770fc50ec24e8125fc14eb"
+    },
+    {
+      "run_dir": "scarcity50/C2/seed0",
+      "old_trial_id": "9f6f0908e44c43d9f64c331ea8c984a104a39afa1d2b5c9c25db81d54307c26b",
+      "new_trial_id": "4669acb4bec32cc3cb1fc88c4f82e305218e3fc995eacc47c2f69fb5d0a6001a"
+    },
+    {
+      "run_dir": "scarcity50/C2/seed1",
+      "old_trial_id": "50bba65cf491c6716435622c9b1c85366accb3f44b059a267a60aad8fb44ed29",
+      "new_trial_id": "4dbe743cad4ba3e2a08bdb6f9b2ef7e7dc32af55009b35b3be2ea6e1407c79f4"
+    },
+    {
+      "run_dir": "scarcity50/C2/seed2",
+      "old_trial_id": "daa02d9b4a1472c73087857f228fdd49cd80ef5b167fdd0a524a095bc84f3d7e",
+      "new_trial_id": "a1ab14e317cac9e7fec969df1c212522c7251ace90f3286c6289d6da904b0984"
+    }
+  ]
+}

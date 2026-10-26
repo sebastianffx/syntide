@@ -267,6 +267,50 @@ verbatim. That text states PTB-XL signal-quality flags, so tasks whose answer it
 `context_reveals_answer`, and the context-only control measures how much that matters. Derived recordings
 keep the format but drop the stale "Signal quality:" sentence.
 
+### Export for the unchanged baseline trainer
+
+`syntide.generate.qa export` augments the original baseline prepared folder. It keeps every original
+training row, including its source task id and rationale, as an unchanged prefix. It appends accepted
+corpus tasks and any new waveform arrays. The baseline's entire signal array remains an exact prefix,
+so selection, validation and test can be copied byte-for-byte with their original signal indices.
+The exporter hashes these held-out files but does not parse validation or test labels.
+
+Use the complete original prepared folder (all six data files and `manifest.json`), not just the
+selection file copied for corpus construction:
+
+```bash
+BASELINE=/absolute/path/to/original/prepared
+uv run python -m syntide.generate.qa export --baseline-prepared "$BASELINE" \
+  --corpus outputs/qa/paraphrase --output runs/ecgqa-data-paraphrase
+uv run python -m syntide.generate.qa export --baseline-prepared "$BASELINE" \
+  --corpus outputs/qa/grounded --output runs/ecgqa-data-grounded
+uv run python -m syntide.generate.qa export --baseline-prepared "$BASELINE" \
+  --corpus outputs/qa/grounded outputs/qa/acquisition --output runs/ecgqa-data-grounded_acq
+```
+
+The source fingerprint, split manifest, training role, every root recording and its patient must match
+the baseline. Original source tasks supplied as a corpus are checked against the existing training
+rows and do not duplicate them. Identical corpus task ids across inputs are included once. The
+`qa_export` section of the new checksummed `manifest.json` records corpus ids, exclusions, appended
+waveform lineage and template ids. Synthetic rows retain corpus task ids, making their full evidence
+and provenance recoverable from the frozen corpus. Training slice annotations (`is_artifact`, fold,
+artifact types) describe the first root recording; the evaluation slices remain exactly the baseline's.
+
+The unchanged trainer has fixed input and prompt constraints:
+
+- Two-ECG comparisons are excluded and counted as `multiple_ecg_inputs`.
+- Short crops are excluded and counted as `incompatible_signal_length`. The exporter does not pad,
+  stretch or repeat a waveform, since that would change what its measured answer describes.
+- Other lead orders, rates, units or signals combining multiple root patients are excluded explicitly.
+- Numeric answers retain empty options. The prompt therefore has an empty options line.
+- Student context must consist of exactly one `clinical_context` string; unrepresentable context is
+  an error. Stated lead subsets and interpretation rules already appear in the question itself.
+
+Publication is atomic. Re-running an identical export verifies and reuses it; changed corpora or
+baseline files require a new output directory. Each arm gets a new dataset fingerprint. For arms that
+add questions on existing ECGs only, `records.json` and `signals.npy` remain byte-identical to baseline.
+The baseline trainer, prompt, normalization and selection procedure need no code changes.
+
 ## Explicitly unsupported
 
 - P/QRS/T delineation and interval measurement from the waveform at 100 Hz. Intervals come only from a

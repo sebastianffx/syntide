@@ -1,4 +1,4 @@
-"""Full synthesis is modality-neutral, reproducible, explicit and transactional."""
+"""Complete signal generation is reproducible and publishes complete outputs."""
 
 import json
 from types import SimpleNamespace
@@ -9,13 +9,23 @@ import pytest
 from syntide.explore.data import open_source
 from syntide.explore.plans import content_id
 from syntide.generate.full import registry
-from syntide.generate.full.api import GeneratedSignal, GenerationRequest, SignalSpec
+from syntide.generate.full.api import (
+    GeneratedSignal,
+    GenerationRequest,
+    SignalSpec,
+)
 from syntide.generate.full.runner import run_generation
 
 
 class FakeGenerator:
     def __init__(self, config):
-        unknown = set(config) - {"scale", "fail_after", "bad_shape", "bad_values", "changing_provenance"}
+        unknown = set(config) - {
+            "scale",
+            "fail_after",
+            "bad_shape",
+            "bad_values",
+            "changing_provenance",
+        }
         if unknown:
             raise ValueError(f"Unknown backend fields: {sorted(unknown)}")
         self.config, self.validated, self.generated = config, [], []
@@ -23,7 +33,10 @@ class FakeGenerator:
     def validate_request(self, request):
         if request.signal.modality != "ppg":
             raise ValueError("This generator supports ppg only")
-        if set(request.conditioning) != {"rate"} or request.conditioning["rate"] <= 0:
+        if (
+            set(request.conditioning) != {"rate"}
+            or request.conditioning["rate"] <= 0
+        ):
             raise ValueError("Conditioning needs a positive rate")
         self.validated.append(request)
 
@@ -65,7 +78,11 @@ def setup(monkeypatch):
         "analysis_id": "analysis",
         "source": {"source_sha256": "source", "role": "train"},
         "seed": 17,
-        "targets": {"record_ids": ["r1"], "text_ids": ["q1"], "labels": ["requested-label"]},
+        "targets": {
+            "record_ids": ["r1"],
+            "text_ids": ["q1"],
+            "labels": ["requested-label"],
+        },
         "requests": [
             {
                 "method": "diffusion",
@@ -86,7 +103,11 @@ def setup(monkeypatch):
             "units": "normalized",
         },
         "conditions": [
-            {"conditioning": {"rate": 60}, "source_record_ids": ["r1"], "source_text_ids": ["q1"]},
+            {
+                "conditioning": {"rate": 60},
+                "source_record_ids": ["r1"],
+                "source_text_ids": ["q1"],
+            },
             {"conditioning": {"rate": 80}},
         ],
     }
@@ -102,7 +123,9 @@ def read_lines(path):
     return [json.loads(line) for line in path.read_text().splitlines()]
 
 
-def test_full_run_freezes_exact_count_and_reopens_non_ecg_dataset(setup, tmp_path):
+def test_full_run_freezes_exact_count_and_reopens_non_ecg_dataset(
+    setup, tmp_path
+):
     plan, config, instances = setup
     out = tmp_path / "first"
     run = run_generation(seal(plan), config, out)
@@ -114,23 +137,42 @@ def test_full_run_freezes_exact_count_and_reopens_non_ecg_dataset(setup, tmp_pat
     assert len(instances[0].validated) == 2
     ledger = read_lines(out / "ledger.jsonl")
     assert [row["condition_index"] for row in ledger] == [0, 1, 0, 1, 0]
-    assert [row["conditioning"]["rate"] for row in ledger] == [60, 80, 60, 80, 60]
+    assert [row["conditioning"]["rate"] for row in ledger] == [
+        60,
+        80,
+        60,
+        80,
+        60,
+    ]
     assert len({row["seed"] for row in ledger}) == 5
-    assert all(row["conditioning_id"] == content_id(row["conditioning"]) for row in ledger)
-    source = open_source({"dataset": "jsonl", "input": str(out / "catalog.jsonl")})
+    assert all(
+        row["conditioning_id"] == content_id(row["conditioning"])
+        for row in ledger
+    )
+    source = open_source(
+        {"dataset": "jsonl", "input": str(out / "catalog.jsonl")}
+    )
     recordings = source.load([row["record_id"] for row in source.rows])
     assert len(recordings) == 5
     assert all(row["signal"].shape == (2, 64) for row in recordings)
-    assert all(row["signal"].dtype == np.float32 and row["labels"] == [] for row in recordings)
     assert all(
-        row["texts"] == [] and row["metadata"]["qa_status"].startswith("pending") for row in recordings
+        row["signal"].dtype == np.float32 and row["labels"] == []
+        for row in recordings
+    )
+    assert all(
+        row["texts"] == []
+        and row["metadata"]["qa_status"].startswith("pending")
+        for row in recordings
     )
     assert recordings[0]["metadata"]["requested_labels"] == ["requested-label"]
     repeated = run_generation(seal(plan), config, tmp_path / "second")
     assert repeated == run
     for file in out.rglob("*"):
         if file.is_file():
-            assert file.read_bytes() == (tmp_path / "second" / file.relative_to(out)).read_bytes()
+            assert (
+                file.read_bytes()
+                == (tmp_path / "second" / file.relative_to(out)).read_bytes()
+            )
 
 
 def test_mixed_requests_require_explicit_diffusion_selection(setup, tmp_path):
@@ -140,7 +182,9 @@ def test_mixed_requests_require_explicit_diffusion_selection(setup, tmp_path):
         run_generation(seal(plan), config, tmp_path / "out")
     with pytest.raises(ValueError, match="method=diffusion"):
         run_generation(seal(plan), config, tmp_path / "out", request_index=0)
-    result = run_generation(seal(plan), config, tmp_path / "out", request_index=1)
+    result = run_generation(
+        seal(plan), config, tmp_path / "out", request_index=1
+    )
     assert result["count"] == 5 and result["unexecuted_request_indices"] == [0]
 
 
@@ -151,7 +195,9 @@ def test_multiple_diffusion_requests_are_not_silently_merged(setup, tmp_path):
         run_generation(seal(plan), config, tmp_path / "out")
     for index in (-1, 2, True):
         with pytest.raises(ValueError, match="outside"):
-            run_generation(seal(plan), config, tmp_path / "out", request_index=index)
+            run_generation(
+                seal(plan), config, tmp_path / "out", request_index=index
+            )
 
 
 @pytest.mark.parametrize(
@@ -162,15 +208,32 @@ def test_multiple_diffusion_requests_are_not_silently_merged(setup, tmp_path):
         (lambda c: c["signal"].update(modality="eeg"), "modality conflicts"),
         (lambda c: c["signal"].update(misspelled=True), "unknown"),
         (lambda c: c.update(misspelled=True), "Unknown backend fields"),
-        (lambda c: c["conditions"][0].update(misspelled=True), "unknown fields"),
-        (lambda c: c["conditions"][0].update(source_record_ids=["heldout"]), "subset"),
-        (lambda c: c["conditions"][0].update(source_text_ids=["heldout"]), "subset"),
-        (lambda c: c["conditions"][0].update(source_record_ids=["r1", "r1"]), "duplicate"),
+        (
+            lambda c: c["conditions"][0].update(misspelled=True),
+            "unknown fields",
+        ),
+        (
+            lambda c: c["conditions"][0].update(source_record_ids=["heldout"]),
+            "subset",
+        ),
+        (
+            lambda c: c["conditions"][0].update(source_text_ids=["heldout"]),
+            "subset",
+        ),
+        (
+            lambda c: c["conditions"][0].update(source_record_ids=["r1", "r1"]),
+            "duplicate",
+        ),
         (lambda c: c.update(conditions=[]), "at least one"),
-        (lambda c: c["conditions"][1].update(conditioning={"rate": -2}), "positive rate"),
+        (
+            lambda c: c["conditions"][1].update(conditioning={"rate": -2}),
+            "positive rate",
+        ),
     ],
 )
-def test_invalid_requests_fail_before_inference_or_output(setup, tmp_path, change, message):
+def test_invalid_requests_fail_before_inference_or_output(
+    setup, tmp_path, change, message
+):
     plan, config, instances = setup
     change(config)
     with pytest.raises(ValueError, match=message):
@@ -204,7 +267,9 @@ def test_tampered_plan_and_existing_output_are_never_replaced(setup, tmp_path):
         ({"changing_provenance": True}, ValueError, "provenance changed"),
     ],
 )
-def test_failed_generation_leaves_no_partial_bundle(setup, tmp_path, settings, exception, message):
+def test_failed_generation_leaves_no_partial_bundle(
+    setup, tmp_path, settings, exception, message
+):
     plan, config, _ = setup
     config.update(settings)
     with pytest.raises(exception, match=message):
@@ -222,7 +287,9 @@ def test_seed_stream_is_stable_when_count_changes(setup, tmp_path):
     assert [row["seed"] for row in first[:2]] == [row["seed"] for row in second]
     for index in range(2):
         name = f"signals/{index:08d}.npy"
-        assert (tmp_path / "long" / name).read_bytes() == (tmp_path / "short" / name).read_bytes()
+        assert (tmp_path / "long" / name).read_bytes() == (
+            tmp_path / "short" / name
+        ).read_bytes()
 
 
 def test_signal_contract_rejects_ambiguous_or_invalid_shapes(setup):
@@ -248,13 +315,19 @@ def test_signal_contract_rejects_ambiguous_or_invalid_shapes(setup):
         GenerationRequest(0, signal, {"rate": float("nan")})
 
 
-def test_registry_loads_only_selected_plugin_and_detects_collisions(monkeypatch):
+def test_registry_loads_only_selected_plugin_and_detects_collisions(
+    monkeypatch,
+):
     loaded = []
-    entry = SimpleNamespace(name="plugin.ppg@2", load=lambda: loaded.append(True) or FakeGenerator)
+    entry = SimpleNamespace(
+        name="plugin.ppg@2", load=lambda: loaded.append(True) or FakeGenerator
+    )
     monkeypatch.setattr(registry, "entry_points", lambda **_: [entry])
     assert "plugin.ppg@2" in registry.available_generators()
     assert not loaded
-    assert isinstance(registry.create_generator("plugin.ppg@2", {}), FakeGenerator)
+    assert isinstance(
+        registry.create_generator("plugin.ppg@2", {}), FakeGenerator
+    )
     assert loaded == [True]
     monkeypatch.setattr(registry, "entry_points", lambda **_: [entry, entry])
     with pytest.raises(ValueError, match="Multiple"):
@@ -273,7 +346,16 @@ def test_cli_uses_frozen_files(setup, tmp_path, capsys):
     plan_path, config_path = tmp_path / "plan.json", tmp_path / "config.json"
     plan_path.write_text(json.dumps(seal(plan)))
     config_path.write_text(json.dumps(config))
-    main(["--plan", str(plan_path), "--config", str(config_path), "--output", str(tmp_path / "out")])
+    main(
+        [
+            "--plan",
+            str(plan_path),
+            "--config",
+            str(config_path),
+            "--output",
+            str(tmp_path / "out"),
+        ]
+    )
     assert "Generated 5 signals" in capsys.readouterr().out
     assert (tmp_path / "out" / "run.json").is_file()
 

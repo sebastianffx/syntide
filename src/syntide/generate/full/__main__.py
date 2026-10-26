@@ -1,4 +1,4 @@
-"""Generate complete signals from one explicit request in a frozen explorer plan."""
+"""Generate complete signals from one saved explorer request."""
 
 import argparse
 import json
@@ -10,13 +10,27 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--plan", type=Path)
     parser.add_argument("--config", type=Path)
     parser.add_argument("--output", type=Path)
-    parser.add_argument("--list", action="store_true", help="List registered full-signal generator IDs")
     parser.add_argument(
-        "--request-index", type=int, help="Zero-based request index; required for mixed plans"
+        "--list",
+        action="store_true",
+        help="List registered full-signal generator IDs",
+    )
+    parser.add_argument(
+        "--request-index",
+        type=int,
+        help="Zero-based request index; required for mixed plans",
     )
     args = parser.parse_args(argv)
     if args.list:
-        if any(value is not None for value in (args.plan, args.config, args.output, args.request_index)):
+        if any(
+            value is not None
+            for value in (
+                args.plan,
+                args.config,
+                args.output,
+                args.request_index,
+            )
+        ):
             parser.error("--list cannot be combined with execution options")
         from syntide.generate.full.registry import available_generators
 

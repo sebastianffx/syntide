@@ -1,0 +1,299 @@
+{
+ "protocol": "ptbxl-aug-sweep",
+ "trials": [
+  {
+   "run_dir": "full100/C2/seed0",
+   "trial_id": "c649c12bef483a1078679bdd6cb2f7c2398b13a79ffaea3d69c6ab8b3b1bdba8",
+   "regime": "full100",
+   "arm": "C2",
+   "seed": 0
+  },
+  {
+   "run_dir": "full100/C2/seed1",
+   "trial_id": "61ee09bb8ff10d968bd41d919a8e855888172d8f70bd3a5756a9efb3063738fa",
+   "regime": "full100",
+   "arm": "C2",
+   "seed": 1
+  },
+  {
+   "run_dir": "full100/C2/seed2",
+   "trial_id": "a468e9273ea4272aea04a673d2bffe39021824d62a292d03479bcfc4207290ae",
+   "regime": "full100",
+   "arm": "C2",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/A0/seed0",
+   "trial_id": "2bf5f2a6e1e25af2b1bcf0e72eb61312c7501c97f4984cc1c055196573dfa697",
+   "regime": "scarcity50",
+   "arm": "A0",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/A0/seed1",
+   "trial_id": "897bb716ba099a472f9855319a64508e579f973239c6d762d2099d543bd82525",
+   "regime": "scarcity50",
+   "arm": "A0",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/A0/seed2",
+   "trial_id": "509da9767d2c41dcc79ac505f06cfcc2d18e34e0aed304a2d9ed43f5a94221c8",
+   "regime": "scarcity50",
+   "arm": "A0",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/A1/seed0",
+   "trial_id": "f01b47e347eaa3c951fd7039364fec0722e6fd22d013aac6176ede9e2e368b9e",
+   "regime": "scarcity50",
+   "arm": "A1",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/A1/seed1",
+   "trial_id": "ced044d07caaf56754599c1c6fb84ee487446cbb360eb2c8b6e8b98db73f492a",
+   "regime": "scarcity50",
+   "arm": "A1",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/A1/seed2",
+   "trial_id": "1b3ba99870bc282bfe058808dd65c8b4c6fd0820825a7d14a63ac4dab7335fbc",
+   "regime": "scarcity50",
+   "arm": "A1",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/A3/seed0",
+   "trial_id": "85d1f6ebd5c72cb2483cad90d10e4ab19c9e984fe4d26d72cd5772b95309b00e",
+   "regime": "scarcity50",
+   "arm": "A3",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/A3/seed1",
+   "trial_id": "ae0079cc78c8701739febccbdc59928a7818508531fb26623f83b4ac0811a68b",
+   "regime": "scarcity50",
+   "arm": "A3",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/A3/seed2",
+   "trial_id": "2c4c2fb2650f35da99bdd595b418782d91a64fec6ed34ffbdfbd4534f74c839b",
+   "regime": "scarcity50",
+   "arm": "A3",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/E1/seed0",
+   "trial_id": "f6bb6a44e02fbb68cfb6eb051b5a3a89363fbeb122e1076c5b1fc140dc46064a",
+   "regime": "scarcity50",
+   "arm": "E1",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/E1/seed1",
+   "trial_id": "82090626114520b419611e34106dcfcaf6c4cc02367418c4d8320e4f23985270",
+   "regime": "scarcity50",
+   "arm": "E1",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/E1/seed2",
+   "trial_id": "4fc87cb1b6182084f65377991aa8b01cee80bf4ccd75b5e71f41cc7d9f4dda64",
+   "regime": "scarcity50",
+   "arm": "E1",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/S1/seed0",
+   "trial_id": "a920d2372496b6e9b983f58115c38703cfbd634be244d3202fbe7ad3bf56bc14",
+   "regime": "scarcity50",
+   "arm": "S1",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/S1/seed1",
+   "trial_id": "f1878898407d2eff9bf8896e2e206dfb16ad34ea6794d12c0b8e8f5090379e12",
+   "regime": "scarcity50",
+   "arm": "S1",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/S1/seed2",
+   "trial_id": "e93000b565e7eec210728cab737c70bb979af685a78b98f9d0ef52b2b84c7c9f",
+   "regime": "scarcity50",
+   "arm": "S1",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/S2/seed0",
+   "trial_id": "4725a4a4f36df95e375ef0d9d29b6a3b386b081e971f6fc53061c9df5c463f84",
+   "regime": "scarcity50",
+   "arm": "S2",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/S2/seed1",
+   "trial_id": "700d78b798435620915fe94f22fdb0e715314694efd96640c85e460c01a04a24",
+   "regime": "scarcity50",
+   "arm": "S2",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/S2/seed2",
+   "trial_id": "9cb1e84bc1458b3d987d8248865f8b18c32cd58791bc4d8935ed1a29fc8bb1c0",
+   "regime": "scarcity50",
+   "arm": "S2",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/S3/seed0",
+   "trial_id": "dac347cdbb0d083cfee60b643d08a6b4ffa7209f403e87b8245733372014755e",
+   "regime": "scarcity50",
+   "arm": "S3",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/S3/seed1",
+   "trial_id": "34c2494e2dfd7306fc82d56014e9b7a13e88951c63e11870b8481cffbfe6395b",
+   "regime": "scarcity50",
+   "arm": "S3",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/S3/seed2",
+   "trial_id": "da6eb36bd6dddd72cf6bb0aa6383ba3cbc2a7c1d98a0039477ef1b776f84a467",
+   "regime": "scarcity50",
+   "arm": "S3",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/S4/seed0",
+   "trial_id": "13846c172a54055587158b5a98d1474a6e06569c3be29e692a3b46acc3a9e398",
+   "regime": "scarcity50",
+   "arm": "S4",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/S4/seed1",
+   "trial_id": "565cf266c7190215573979a06cf6a0631129a491dfeec36943e6a7fbf84f608e",
+   "regime": "scarcity50",
+   "arm": "S4",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/S4/seed2",
+   "trial_id": "758ff58bb3f1972ceb53ee5a931f192f1a2d83f177c3dbce6bdcc16726fefda0",
+   "regime": "scarcity50",
+   "arm": "S4",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/T1/seed0",
+   "trial_id": "560eefa63c39e8efb968dec86f951c6c1290335e034fc1dfbaa097c0bf28077b",
+   "regime": "scarcity50",
+   "arm": "T1",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/T1/seed1",
+   "trial_id": "3e1d13fa3fbb84fa4062335e57672653f3692fe8fa38d6d6c840baed4df0ccc7",
+   "regime": "scarcity50",
+   "arm": "T1",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/T1/seed2",
+   "trial_id": "03e629b60b45dc5d01c9538ad030d53253eea85bc35c40ab1b2dd4d1a960dc24",
+   "regime": "scarcity50",
+   "arm": "T1",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/T2/seed0",
+   "trial_id": "782c5628e81dabd9ecddaa2c15b74ec05299923c4837190fdc0c4f615bd316e9",
+   "regime": "scarcity50",
+   "arm": "T2",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/T2/seed1",
+   "trial_id": "d581a71cc90d0c9e12d4318eeb01ff409f5aaee794b2ee45503426cca799a1f8",
+   "regime": "scarcity50",
+   "arm": "T2",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/T2/seed2",
+   "trial_id": "c17d0cb6de6a2a27745ef42506a947976f080a5472ba6851cb157e6af514394d",
+   "regime": "scarcity50",
+   "arm": "T2",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/T3/seed0",
+   "trial_id": "5b728b8e06c1e920c33f5bfebf915c4cea19c71c6fed12a438351b82e0a3edd8",
+   "regime": "scarcity50",
+   "arm": "T3",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/T3/seed1",
+   "trial_id": "4169fb7e3c0c3286d80c3e8d8c924440dae86ec6585db8bc714befd9d1c27ed5",
+   "regime": "scarcity50",
+   "arm": "T3",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/T3/seed2",
+   "trial_id": "1a8d742bf3c07756027f3fa2400abee8730b854f730568876cb4566625940ebd",
+   "regime": "scarcity50",
+   "arm": "T3",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/T4/seed0",
+   "trial_id": "d150c23db97618a03156338a3f193c51bc42a8b47b22d46ba39199a2b75fa465",
+   "regime": "scarcity50",
+   "arm": "T4",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/T4/seed1",
+   "trial_id": "139148f988d348b690cda703886c1cfaa2b0240007dc96cc552c01804acfacd2",
+   "regime": "scarcity50",
+   "arm": "T4",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/T4/seed2",
+   "trial_id": "d2662adaf71f164fb79407a7961c217764c5aa5cda7fc7e328449a78ee4fd22e",
+   "regime": "scarcity50",
+   "arm": "T4",
+   "seed": 2
+  },
+  {
+   "run_dir": "scarcity50/T5/seed0",
+   "trial_id": "0e302251eb334cb61cced0a46230784ca41f85c9692e7db8c08a1c8ed1c1b1ea",
+   "regime": "scarcity50",
+   "arm": "T5",
+   "seed": 0
+  },
+  {
+   "run_dir": "scarcity50/T5/seed1",
+   "trial_id": "ac37deeb8ea8428dd1d17eb62e102dd68f7f4e0e821389026a8695177b48ae97",
+   "regime": "scarcity50",
+   "arm": "T5",
+   "seed": 1
+  },
+  {
+   "run_dir": "scarcity50/T5/seed2",
+   "trial_id": "f97e5d5c84be7173e75490b4cf1681b47f336a32b892164167af9d19ecaecf72",
+   "regime": "scarcity50",
+   "arm": "T5",
+   "seed": 2
+  }
+ ]
+}

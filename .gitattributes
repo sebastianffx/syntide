@@ -1,0 +1,4 @@
+# Historical source and evidence hashes require identical bytes after checkout.
+experiments/** -text
+# Archived CSV exports retain their original carriage-return line endings.
+experiments/**/*.csv whitespace=cr-at-eol

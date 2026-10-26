@@ -1,0 +1,41 @@
+{
+ "protocol": "ptbxl-diffusets-1530",
+ "regime": "scarcity50",
+ "arm": "R1",
+ "replicate_seed": 1,
+ "source_role": "pool_plus_offline_r1",
+ "transform_family": "none",
+ "sampling_policy": "none",
+ "generator": null,
+ "validators": [],
+ "transform": {
+  "offline_loader": "run_experiment.py@1",
+  "offline_arm": "R1",
+  "protocol_sha256": "195b07f1b7ee8c30a148ce39bf555e848be31c51244255b1ebb58219b3534be9",
+  "data_files_sha256": {
+   "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-1530/data/manifest.json": "7572f8a05f94c5a3825b8e855f4f2759eb064176e52106e643423fcb606be0b2",
+   "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-1530/data/conditioning_labels.json": "6b3db4dfc045c3679ea3255367e744dfae693743835e39843a66a7f86a3542c3",
+   "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-1530/data/provenance.json": "6abb95388d3adc382098e264463bba60c09a81cc069622511b7c63cbe2ed5a14",
+   "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-1530/data/G1.npz": "4e89669215a224ee04e04b00ac959c51a2534b5328daf9f7fb4aa7eb51de8890",
+   "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-1530/data/R1.npz": "2b0e4ab5d168428498e9c8e7bed864fb61b2042223923249213fa69741a7721f"
+  },
+  "label_policy": "provisional_conditioning_parent_superclasses",
+  "real_count": 8579,
+  "extra_count": 1530,
+  "sampling": "one seeded permutation of all rows per pass; no online transform"
+ },
+ "dataset": "physionet/ptb-xl@1.0.3",
+ "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+ "manifest_sha256": "af56199d780e8ca529c1191c8ab4201dcbfaa301362e9b99d8949838b5230c50",
+ "calibration_sha256": null,
+ "batch_size": 64,
+ "max_steps": 6500,
+ "val_every": 100,
+ "transform_fraction": 0.0,
+ "init_seed": 8206391887579712274,
+ "syntide_version": "0.1.0",
+ "registry": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/datasets/timenet-registry",
+ "manifest": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/manifests/ptbxl-artifact-50/pool50.json",
+ "calibration": null,
+ "trial_id": "b7f7528e446eeb7d72550c4b42fcb2403ccb437b1269e9a79d2a82a441a35388"
+}

@@ -1,5 +1,4 @@
-"""Paired contrasts: identical arms cancel, a real effect is found, unpaired arms are refused, and the
-decision rules read the CIs as frozen."""
+"""Paired comparisons enforce shared seeds and frozen confidence rules."""
 
 from dataclasses import replace
 from pathlib import Path
@@ -39,7 +38,9 @@ def records():
 
 @pytest.fixture
 def make_run(records, make_test_spec):
-    def build(arm, seed, probs, *, regime="scarcity25", result=None, **record_changes):
+    def build(
+        arm, seed, probs, *, regime="scarcity25", result=None, **record_changes
+    ):
         result = {
             "trainer": {"fingerprint": "f" * 64, "init_sha256": f"{seed}" * 64},
             "exposure": {"presentations": 240, "transform_slots": 120},
@@ -69,46 +70,74 @@ def _scorer(run, n_boot=500):
 
 def test_auroc_draws_match_sklearn_with_ties_and_weights():
     rng = np.random.default_rng(0)
-    y, p = rng.random(300) < 0.3, np.round(rng.random(300), 1)  # coarse scores: many ties
+    y, p = (
+        rng.random(300) < 0.3,
+        np.round(rng.random(300), 1),
+    )  # coarse scores: many ties
     weights = rng.integers(0, 3, size=(6, 300)).astype(float)
     expected = [roc_auc_score(y, p, sample_weight=w) for w in weights]
-    np.testing.assert_allclose(auroc_draws(y, p, weights), expected, rtol=0, atol=1e-12)
-    assert np.isnan(auroc_draws(np.zeros(300, bool), p, weights)).all()  # no positive: undefined
+    np.testing.assert_allclose(
+        auroc_draws(y, p, weights), expected, rtol=0, atol=1e-12
+    )
+    assert np.isnan(
+        auroc_draws(np.zeros(300, bool), p, weights)
+    ).all()  # no positive: undefined
 
 
 def test_identical_arms_cancel_exactly(make_run, records):
     probs = [_probs(records["labels"], 2.0, seed) for seed in SEEDS]
     a = [make_run("A3", s, probs[s]) for s in SEEDS]
     b = [make_run("A1", s, probs[s]) for s in SEEDS]
-    report = _scorer(a[0]).contrast(a, b, "artifact", ci_level=0.95, labels=("A3", "A1"))
+    report = _scorer(a[0]).contrast(
+        a, b, "artifact", ci_level=0.95, labels=("A3", "A1")
+    )
     assert report.estimate == report.ci_low == report.ci_high == 0.0
     assert report.per_seed == [0.0, 0.0, 0.0]
 
 
-def test_a_real_effect_is_detected_and_every_seed_is_reported(make_run, records):
+def test_a_real_effect_is_detected_and_every_seed_is_reported(
+    make_run, records
+):
     labels = records["labels"]
     a = [make_run("A3", s, _probs(labels, 4.0, s)) for s in SEEDS]
     b = [make_run("A1", s, _probs(labels, 1.0, 10 + s)) for s in SEEDS]
     scorer = _scorer(a[0])
-    report = scorer.contrast(a, b, "overall", ci_level=0.95, labels=("A3", "A1"))
-    assert report.ci_low > 0 and report.ci_low < report.estimate < report.ci_high
+    report = scorer.contrast(
+        a, b, "overall", ci_level=0.95, labels=("A3", "A1")
+    )
+    assert (
+        report.ci_low > 0 and report.ci_low < report.estimate < report.ci_high
+    )
     expected = [
-        macro_auroc(labels, run_a.probs["best"]) - macro_auroc(labels, run_b.probs["best"])
+        macro_auroc(labels, run_a.probs["best"])
+        - macro_auroc(labels, run_b.probs["best"])
         for run_a, run_b in zip(a, b, strict=True)
     ]
-    np.testing.assert_allclose(report.per_seed, expected, atol=1e-12)  # unit weights = the selection metric
+    np.testing.assert_allclose(
+        report.per_seed, expected, atol=1e-12
+    )  # unit weights = the selection metric
     assert report.seeds == list(SEEDS) and report.n_records == N
-    artifact = scorer.contrast(a, b, "artifact", ci_level=0.95, labels=("A3", "A1"))
+    artifact = scorer.contrast(
+        a, b, "artifact", ci_level=0.95, labels=("A3", "A1")
+    )
     assert artifact.n_records == records["is_artifact"].sum()
-    assert artifact.n_patients == len(set(records["subject_uid"][records["is_artifact"]]))
+    assert artifact.n_patients == len(
+        set(records["subject_uid"][records["is_artifact"]])
+    )
 
 
 def test_a_class_without_positives_is_skipped_not_nan(make_run, records):
     labels = records["labels"].copy()
     labels[:, 1] = False  # HYP never occurs
-    a = [make_run("A3", s, _probs(labels, 3.0, s), labels=labels) for s in SEEDS]
-    b = [make_run("A1", s, _probs(labels, 1.0, s), labels=labels) for s in SEEDS]
-    report = _scorer(a[0]).contrast(a, b, "artifact", ci_level=0.95, labels=("A3", "A1"))
+    a = [
+        make_run("A3", s, _probs(labels, 3.0, s), labels=labels) for s in SEEDS
+    ]
+    b = [
+        make_run("A1", s, _probs(labels, 1.0, s), labels=labels) for s in SEEDS
+    ]
+    report = _scorer(a[0]).contrast(
+        a, b, "artifact", ci_level=0.95, labels=("A3", "A1")
+    )
     assert np.isfinite([report.estimate, report.ci_low, report.ci_high]).all()
     assert report.per_class["HYP"] is None and report.n_positive["HYP"] == 0
 
@@ -119,53 +148,90 @@ def test_a_class_without_positives_is_skipped_not_nan(make_run, records):
         (lambda run, s: run if s else None, "different seeds"),
         (
             lambda run, s: replace(
-                run, result=run.result | {"trainer": {**run.result["trainer"], "fingerprint": "e"}}
+                run,
+                result=run.result
+                | {"trainer": {**run.result["trainer"], "fingerprint": "e"}},
             ),
             "different trainers",
         ),
         (
             lambda run, s: replace(
-                run, result=run.result | {"trainer": {**run.result["trainer"], "init_sha256": "x"}}
+                run,
+                result=run.result
+                | {"trainer": {**run.result["trainer"], "init_sha256": "x"}},
             ),
             "different initial weights",
         ),
         (
             lambda run, s: replace(
-                run, result=run.result | {"exposure": {"presentations": 480, "transform_slots": 120}}
+                run,
+                result=run.result
+                | {"exposure": {"presentations": 480, "transform_slots": 120}},
             ),
             "budgets differ",
         ),
         (
             lambda run, s: replace(
-                run, result=run.result | {"exposure": {"presentations": 240, "transform_slots": 96}}
+                run,
+                result=run.result
+                | {"exposure": {"presentations": 240, "transform_slots": 96}},
             ),
             "different transform slots",
         ),
-        (lambda run, s: replace(run, labels=~run.labels), "other records or labels"),
-        (lambda run, s: replace(run, record_id=np.roll(run.record_id, 1)), "other records or labels"),
+        (
+            lambda run, s: replace(run, labels=~run.labels),
+            "other records or labels",
+        ),
+        (
+            lambda run, s: replace(run, record_id=np.roll(run.record_id, 1)),
+            "other records or labels",
+        ),
     ],
-    ids=["seeds", "fingerprint", "init", "presentations", "transform-slots", "labels", "records"],
+    ids=[
+        "seeds",
+        "fingerprint",
+        "init",
+        "presentations",
+        "transform-slots",
+        "labels",
+        "records",
+    ],
 )
-def test_arms_that_differ_in_more_than_the_arm_are_refused(make_run, records, change, message):
+def test_arms_that_differ_in_more_than_the_arm_are_refused(
+    make_run, records, change, message
+):
     a = [make_run("A3", s, _probs(records["labels"], 2.0, s)) for s in SEEDS]
     b = [make_run("A1", s, _probs(records["labels"], 2.0, s)) for s in SEEDS]
-    changed = [run for run in (change(run, s) for s, run in enumerate(b)) if run is not None]
+    changed = [
+        run
+        for run in (change(run, s) for s, run in enumerate(b))
+        if run is not None
+    ]
     with pytest.raises(PairingError, match=message):
-        _scorer(a[0]).contrast(a, changed, "overall", ci_level=0.95, labels=("A3", "A1"))
+        _scorer(a[0]).contrast(
+            a, changed, "overall", ci_level=0.95, labels=("A3", "A1")
+        )
 
 
-def test_an_arm_without_transform_slots_pairs_with_a_transform_arm(make_run, records):
+def test_an_arm_without_transform_slots_pairs_with_a_transform_arm(
+    make_run, records
+):
     a = [make_run("C1", s, _probs(records["labels"], 2.0, s)) for s in SEEDS]
     a = [
-        replace(run, result=run.result | {"exposure": {"presentations": 240, "transform_slots": 0}})
+        replace(
+            run,
+            result=run.result
+            | {"exposure": {"presentations": 240, "transform_slots": 0}},
+        )
         for run in a
     ]
     b = [make_run("A0", s, _probs(records["labels"], 2.0, s)) for s in SEEDS]
     _scorer(a[0]).contrast(a, b, "overall", ci_level=0.95, labels=("C1", "A0"))
 
 
-def test_a_dose_arm_pairs_with_a0_and_a1_but_a_slot_mismatch_at_one_share_is_refused(make_run, records):
-    # A dose arm declares 1/8 of the batch. A0 has half-batch slots of unchanged parents; A1 augments half.
+def test_augmentation_dose_requires_matching_slots(make_run, records):
+    # A dose arm declares 1/8 of the batch. A0 has half-batch slots of unchanged
+    # parents; A1 augments half.
     dose = [
         replace(
             make_run("A1", s, _probs(records["labels"], 2.0, s)),
@@ -176,75 +242,146 @@ def test_a_dose_arm_pairs_with_a0_and_a1_but_a_slot_mismatch_at_one_share_is_ref
         )
         for s in SEEDS
     ]
-    dose = [replace(run, spec=replace(run.spec, transform_fraction=0.125)) for run in dose]
+    dose = [
+        replace(run, spec=replace(run.spec, transform_fraction=0.125))
+        for run in dose
+    ]
     a0 = [make_run("A0", s, _probs(records["labels"], 2.0, s)) for s in SEEDS]
-    _scorer(a0[0]).contrast(dose, a0, "overall", ci_level=0.95, labels=("S1", "A0"))
+    _scorer(a0[0]).contrast(
+        dose, a0, "overall", ci_level=0.95, labels=("S1", "A0")
+    )
     a1 = [make_run("A1", s, _probs(records["labels"], 2.0, s)) for s in SEEDS]
-    _scorer(a0[0]).contrast(dose, a1, "overall", ci_level=0.95, labels=("S1", "A1"))
-    undeclared = [replace(run, spec=replace(run.spec, transform_fraction=0.5)) for run in dose]
+    _scorer(a0[0]).contrast(
+        dose, a1, "overall", ci_level=0.95, labels=("S1", "A1")
+    )
+    undeclared = [
+        replace(run, spec=replace(run.spec, transform_fraction=0.5))
+        for run in dose
+    ]
     with pytest.raises(PairingError, match="different transform slots"):
-        _scorer(a0[0]).contrast(undeclared, a1, "overall", ci_level=0.95, labels=("S1", "A1"))
+        _scorer(a0[0]).contrast(
+            undeclared, a1, "overall", ci_level=0.95, labels=("S1", "A1")
+        )
 
 
 def _report(estimate, low, high, slice_name="artifact"):
     return UtilityReport(
-        a="A3", b="A1", split="val", checkpoint="best", slice=slice_name, metric="macro_auroc",
-        estimate=estimate, ci_low=low, ci_high=high, ci_level=0.95, n_boot=2000, seeds=[0],
-        per_seed=[estimate], mean_a=0.9, mean_b=0.9, n_records=10, n_patients=10, per_class={},
+        a="A3",
+        b="A1",
+        split="val",
+        checkpoint="best",
+        slice=slice_name,
+        metric="macro_auroc",
+        estimate=estimate,
+        ci_low=low,
+        ci_high=high,
+        ci_level=0.95,
+        n_boot=2000,
+        seeds=[0],
+        per_seed=[estimate],
+        mean_a=0.9,
+        mean_b=0.9,
+        n_records=10,
+        n_patients=10,
+        per_class={},
         n_positive={},
-    )  # fmt: skip
+    )
 
 
 def test_the_decision_rules_are_separate_questions():
     small_gain = findings(
-        _report(0.009, 0.003, 0.015), _report(0.0, -0.004, 0.004, "clean"), practical_target=0.02,
+        _report(0.009, 0.003, 0.015),
+        _report(0.0, -0.004, 0.004, "clean"),
+        practical_target=0.02,
         noninferiority_margin=-0.01,
-    )  # fmt: skip
-    assert small_gain["positive_effect_supported"] and small_gain["target_effect_ruled_out"]
-    assert small_gain["benefit"] and small_gain["verdict"].startswith("benefit below target")
+    )
+    assert (
+        small_gain["positive_effect_supported"]
+        and small_gain["target_effect_ruled_out"]
+    )
+    assert small_gain["benefit"] and small_gain["verdict"].startswith(
+        "benefit below target"
+    )
 
     clean_loss = findings(
-        _report(0.009, 0.003, 0.015), _report(-0.005, -0.02, 0.01, "clean"), practical_target=0.02,
+        _report(0.009, 0.003, 0.015),
+        _report(-0.005, -0.02, 0.01, "clean"),
+        practical_target=0.02,
         noninferiority_margin=-0.01,
-    )  # fmt: skip
-    assert not clean_loss["clean_noninferiority_supported"] and not clean_loss["benefit"]
+    )
+    assert (
+        not clean_loss["clean_noninferiority_supported"]
+        and not clean_loss["benefit"]
+    )
 
     null = findings(
-        _report(0.001, -0.006, 0.012), _report(0.0, -0.004, 0.004, "clean"), practical_target=0.02,
+        _report(0.001, -0.006, 0.012),
+        _report(0.0, -0.004, 0.004, "clean"),
+        practical_target=0.02,
         noninferiority_margin=-0.01,
-    )  # fmt: skip
-    assert null["verdict"].startswith("useful negative") and null["target_effect"] == "ruled out"
+    )
+    assert (
+        null["verdict"].startswith("useful negative")
+        and null["target_effect"] == "ruled out"
+    )
 
 
 def test_the_fixed_sequence_stops_at_the_first_step_without_a_benefit():
-    assert fixed_sequence([True, False, True]) == ["passed", "failed", "not tested"]
+    assert fixed_sequence([True, False, True]) == [
+        "passed",
+        "failed",
+        "not tested",
+    ]
     assert fixed_sequence([None, True]) == ["not run", "not tested"]
     assert fixed_sequence([True, True]) == ["passed", "passed"]
 
 
-def test_gap_closed_withholds_the_ratio_unless_the_gate_passed_and_the_denominator_is_clear():
-    numerator, denominator = _report(0.01, 0.0, 0.02), _report(0.02, 0.005, 0.035)
-    assert gap_closed(numerator, denominator, gated=True, gate_passed=True)["ratio"] == pytest.approx(0.5)
-    assert gap_closed(numerator, denominator, gated=True, gate_passed=False)["ratio"] is None
-    assert gap_closed(numerator, denominator, gated=False, gate_passed=False)["ratio"] == pytest.approx(0.5)
-    unclear = gap_closed(numerator, _report(0.02, -0.001, 0.04), gated=False, gate_passed=None)
-    assert unclear["ratio"] is None and "denominator" in unclear["withheld_because"]
+def test_gap_ratio_requires_passed_checks_and_clear_denominator():
+    numerator, denominator = (
+        _report(0.01, 0.0, 0.02),
+        _report(0.02, 0.005, 0.035),
+    )
+    assert gap_closed(numerator, denominator, gated=True, gate_passed=True)[
+        "ratio"
+    ] == pytest.approx(0.5)
+    assert (
+        gap_closed(numerator, denominator, gated=True, gate_passed=False)[
+            "ratio"
+        ]
+        is None
+    )
+    assert gap_closed(numerator, denominator, gated=False, gate_passed=False)[
+        "ratio"
+    ] == pytest.approx(0.5)
+    unclear = gap_closed(
+        numerator, _report(0.02, -0.001, 0.04), gated=False, gate_passed=None
+    )
+    assert (
+        unclear["ratio"] is None
+        and "denominator" in unclear["withheld_because"]
+    )
 
 
 def test_the_gap_gate_is_inclusive(make_run, records):
     labels = records["labels"]
     c1 = [make_run("C1", s, _probs(labels, 3.0, s)) for s in SEEDS]
     c1 = [
-        replace(run, result=run.result | {"exposure": {"presentations": 240, "transform_slots": 0}})
+        replace(
+            run,
+            result=run.result
+            | {"exposure": {"presentations": 240, "transform_slots": 0}},
+        )
         for run in c1
     ]
     a0 = [make_run("A0", s, _probs(labels, 1.0, s)) for s in SEEDS]
     rules = AnalysisConfig(regime="scarcity25", n_boot=200)
     estimate = gap_gate_outcome([*c1, *a0], rules)["artifact"]["estimate"]
     assert gap_gate_outcome(
-        [*c1, *a0], replace(rules, gap_gate=replace(rules.gap_gate, min_effect=estimate))
+        [*c1, *a0],
+        replace(rules, gap_gate=replace(rules.gap_gate, min_effect=estimate)),
     )["passed"]
     above = np.nextafter(estimate, np.inf)
     assert not gap_gate_outcome(
-        [*c1, *a0], replace(rules, gap_gate=replace(rules.gap_gate, min_effect=above))
+        [*c1, *a0],
+        replace(rules, gap_gate=replace(rules.gap_gate, min_effect=above)),
     )["passed"]

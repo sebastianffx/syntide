@@ -1,0 +1,4667 @@
+{
+  "generated_at": "2026-10-23T14:17:11+00:00",
+  "passed": true,
+  "checks": {
+    "all_21_specs_change_only_protocol_cadence_and_id": true,
+    "all_21_results_match_plan_and_best_test_checkpoint": true,
+    "all_21_init_hashes_and_trainer_fingerprints_match": true,
+    "all_21_history_grids_match_expected_cadence": true,
+    "all_273_shared_history_rows_equal": true,
+    "all_21_final_model_states_equal": true,
+    "scaling_seed0_first_65_rows_equal": true,
+    "scaling_seed0_selected_scores_equal": true,
+    "scaling_seed0_best_model_state_equal": true,
+    "scaling_seed0_init_and_trainer_match": true
+  },
+  "failures": [],
+  "provenance_note": "This is a replication that changes validation cadence after the original test results were already viewed. The test records are the same fold 10 records; they are not a newly unseen confirmatory test set. Validation chooses each best checkpoint by raw overall macro-AUROC. The 100-step and 250-step checkpoint grids are not nested. Original artifacts are read-only.",
+  "inputs": {
+    "old": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-artifact-50",
+    "new": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-artifact-50-val100",
+    "scaling": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling",
+    "old_plan_sha256": "de94961e93cd94b6fd53c497380add3ff942130e2333ae43fc905ec8e146283c",
+    "new_plan_sha256": "ee4d89d23cc90d8a01abb35af79c43c9bdb99353d5facaf816e49d307f4bc200"
+  },
+  "scaling_equivalence": {
+    "history": {
+      "equal": true,
+      "steps": [
+        100,
+        200,
+        300,
+        400,
+        500,
+        600,
+        700,
+        800,
+        900,
+        1000,
+        1100,
+        1200,
+        1300,
+        1400,
+        1500,
+        1600,
+        1700,
+        1800,
+        1900,
+        2000,
+        2100,
+        2200,
+        2300,
+        2400,
+        2500,
+        2600,
+        2700,
+        2800,
+        2900,
+        3000,
+        3100,
+        3200,
+        3300,
+        3400,
+        3500,
+        3600,
+        3700,
+        3800,
+        3900,
+        4000,
+        4100,
+        4200,
+        4300,
+        4400,
+        4500,
+        4600,
+        4700,
+        4800,
+        4900,
+        5000,
+        5100,
+        5200,
+        5300,
+        5400,
+        5500,
+        5600,
+        5700,
+        5800,
+        5900,
+        6000,
+        6100,
+        6200,
+        6300,
+        6400,
+        6500
+      ],
+      "rows_checked": 65,
+      "differences": []
+    },
+    "best_model": {
+      "equal": true,
+      "tensors_checked": 74,
+      "missing_left": [],
+      "missing_right": [],
+      "differences": [],
+      "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+    },
+    "scaling_best_step": 3200,
+    "new_best_step": 3200,
+    "scaling_scores": {
+      "overall": 0.930928257100865,
+      "clean": 0.9331361218584815,
+      "artifact": 0.9259146607008647
+    },
+    "new_scores": {
+      "overall": 0.930928257100865,
+      "clean": 0.9331361218584815,
+      "artifact": 0.9259146607008647
+    },
+    "scaling_result_sha256": "e8e2adced51299f5fa7a68b99ad4ad085e10be2c29bcf9806fac4c15600f88ce"
+  },
+  "trials": [
+    {
+      "run_dir": "full100/C2/seed0",
+      "regime": "full100",
+      "arm": "C2",
+      "seed": 0,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "2e5a9cad655d81804036cb0c99056bd6c82bb3d241548f19720194ece8fdb3fc",
+          "new": "dd38eebf1b861f7e8e0c01712c4fc52d875385a26cd35f24b81e8afba459a3e8"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "2e5a9cad655d81804036cb0c99056bd6c82bb3d241548f19720194ece8fdb3fc",
+        "best_step": 3250,
+        "val": {
+          "overall": 0.9278819363718892,
+          "clean": 0.9302532600720307,
+          "artifact": 0.9225763939582784
+        },
+        "test": {
+          "overall": 0.9245283121930467,
+          "clean": 0.9272830789910543,
+          "artifact": 0.9152872975799067
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "bab193995e68eea9b67fdae711b5e4d042c9eb9eb915da8dd36930695a1aca45",
+        "test_scores_sha256": "4c36ff71cddb76e88563a73a4404065dcbf18556a0425ca43ea20a352ad92cbd"
+      },
+      "new": {
+        "trial_id": "dd38eebf1b861f7e8e0c01712c4fc52d875385a26cd35f24b81e8afba459a3e8",
+        "best_step": 3200,
+        "val": {
+          "overall": 0.930928257100865,
+          "clean": 0.9331361218584815,
+          "artifact": 0.9259146607008647
+        },
+        "test": {
+          "overall": 0.9256877392089555,
+          "clean": 0.9271949316198279,
+          "artifact": 0.9211231894656235
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "f676a18d28d6ff5a1814efd9685489b6c33e7dcc15e78999b819d7c496e7146d",
+        "test_scores_sha256": "c4a82ea55bcdfe8e68f2a0ca3fe38228ed5f49d0b5e33aa3b73a479b4bfedccb"
+      }
+    },
+    {
+      "run_dir": "full100/C2/seed1",
+      "regime": "full100",
+      "arm": "C2",
+      "seed": 1,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "fb2ab1c270590a4b7a509ffa6b2beb8c10121d0384fc6cb4ebbd54b561e69563",
+          "new": "27df44b516dd10675205bfb7a95fbe90d98e56e4e907fa2d4d66451468c40dc3"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "fb2ab1c270590a4b7a509ffa6b2beb8c10121d0384fc6cb4ebbd54b561e69563",
+        "best_step": 3250,
+        "val": {
+          "overall": 0.9283286906260495,
+          "clean": 0.9299026197365008,
+          "artifact": 0.9252506595536719
+        },
+        "test": {
+          "overall": 0.9219194972897423,
+          "clean": 0.9238273331463109,
+          "artifact": 0.9162643117026162
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "c4843ab4157a01732a584514fb5e22501142c3b569762f7632c9ea103ca0ae9f",
+        "test_scores_sha256": "9b86e282042b6ada1400f86e4788630705530d3a9d7579ffb47df2e49463ddd4"
+      },
+      "new": {
+        "trial_id": "27df44b516dd10675205bfb7a95fbe90d98e56e4e907fa2d4d66451468c40dc3",
+        "best_step": 3100,
+        "val": {
+          "overall": 0.9295886872182699,
+          "clean": 0.9331668037328156,
+          "artifact": 0.9209222501368206
+        },
+        "test": {
+          "overall": 0.924513464890896,
+          "clean": 0.9254944974659596,
+          "artifact": 0.9217307044480982
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "1db12beaaab5f4dde1e16b227b0e2d21e2672b893cd36ffd9807c5d957544098",
+        "test_scores_sha256": "844692a4dc86f704d800288b486c9b4aa363c6f48442ae4fbe1e5869c345a669"
+      }
+    },
+    {
+      "run_dir": "full100/C2/seed2",
+      "regime": "full100",
+      "arm": "C2",
+      "seed": 2,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "ca5315cf0aa0bea78462aef6ef9e1feeabd9029ad183948827595d4316e8851d",
+          "new": "2cfd1045add61c4b350ca8ed5220d1e51f62734744a33aa2793d01d8cb71a49c"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "ca5315cf0aa0bea78462aef6ef9e1feeabd9029ad183948827595d4316e8851d",
+        "best_step": 3250,
+        "val": {
+          "overall": 0.9277776306077306,
+          "clean": 0.9290980423076979,
+          "artifact": 0.9254643981902898
+        },
+        "test": {
+          "overall": 0.9226962348922655,
+          "clean": 0.9254541048617669,
+          "artifact": 0.9138578884858133
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "7c6d1c3e2efc8c957914542d2393274a53d3adc20391a7935151cf7819002bf5",
+        "test_scores_sha256": "28037fa70668ed6ff11b86bca2c3826cd46ca5f8c8712f8345402d6b2f2f1ce2"
+      },
+      "new": {
+        "trial_id": "2cfd1045add61c4b350ca8ed5220d1e51f62734744a33aa2793d01d8cb71a49c",
+        "best_step": 2100,
+        "val": {
+          "overall": 0.9262566806798667,
+          "clean": 0.9286663879224395,
+          "artifact": 0.9207139126556234
+        },
+        "test": {
+          "overall": 0.9218330665432262,
+          "clean": 0.9221666413647377,
+          "artifact": 0.9213856179630902
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "79c9bb59c41671eb6cdfc83dd7d8dbdea8be98b83bd45294a37959af2ef6ca8f",
+        "test_scores_sha256": "419b8df6cb98d31a4cc9ea97503b042753f10002efcd925667ebb7df03ec201c"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A0/seed0",
+      "regime": "scarcity50",
+      "arm": "A0",
+      "seed": 0,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "8b8c8e1f51c389f43874a3571dc1bb08ba450dc2900b98e5743bd7b402aacad8",
+          "new": "d1c99d504eaa09f928e8ae512eb5593e01b864ff54f32e397e512f5e17a34d82"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "8b8c8e1f51c389f43874a3571dc1bb08ba450dc2900b98e5743bd7b402aacad8",
+        "best_step": 1250,
+        "val": {
+          "overall": 0.9119327887179658,
+          "clean": 0.9171158537910241,
+          "artifact": 0.8970765508544863
+        },
+        "test": {
+          "overall": 0.904587830369237,
+          "clean": 0.9094051116860277,
+          "artifact": 0.888671828963534
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "ed47b0ee45937fbcef3eac83562d33836eb70b4c9b1ae330fb4bac6217842476",
+        "test_scores_sha256": "be4c0c592e666dcfd8dd2df11d765b3a15240834511ee16549f767d6ecb0bb3b"
+      },
+      "new": {
+        "trial_id": "d1c99d504eaa09f928e8ae512eb5593e01b864ff54f32e397e512f5e17a34d82",
+        "best_step": 1100,
+        "val": {
+          "overall": 0.9124408146988003,
+          "clean": 0.9163522205896907,
+          "artifact": 0.9026250355371372
+        },
+        "test": {
+          "overall": 0.905487823478175,
+          "clean": 0.9077633430190118,
+          "artifact": 0.89981182073771
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "8357ca374d97e05b00406e2a5c08eeaea4b52015ccbee4ac8c694814ba968f2c",
+        "test_scores_sha256": "a1be339082d8257011f8d8483f7d043c6ecc572898a93a3448f3dd5222d46230"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A0/seed1",
+      "regime": "scarcity50",
+      "arm": "A0",
+      "seed": 1,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "cc5ac9239f8f1aee789de4b49285ac936ce227a0575018810c3ec4389a4d7604",
+          "new": "a5e8089bdf55131616f88cbfdf8998935d7dbd124a56e172253c3422f6f86457"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "cc5ac9239f8f1aee789de4b49285ac936ce227a0575018810c3ec4389a4d7604",
+        "best_step": 1000,
+        "val": {
+          "overall": 0.9155588522038363,
+          "clean": 0.9194103678868337,
+          "artifact": 0.9064548017086903
+        },
+        "test": {
+          "overall": 0.9083189471310206,
+          "clean": 0.9108266791875493,
+          "artifact": 0.9001721494740181
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "a614c9f294de0a84eaa63f95d046cab320e60e8249f80900de0df14e2fc4bfe6",
+        "test_scores_sha256": "61b2591c50a179428309b8c11ef69b230c5dd1d4e55ec7aa1aedba39d3075b0a"
+      },
+      "new": {
+        "trial_id": "a5e8089bdf55131616f88cbfdf8998935d7dbd124a56e172253c3422f6f86457",
+        "best_step": 1000,
+        "val": {
+          "overall": 0.9155588522038363,
+          "clean": 0.9194103678868337,
+          "artifact": 0.9064548017086903
+        },
+        "test": {
+          "overall": 0.9083189471310206,
+          "clean": 0.9108266791875493,
+          "artifact": 0.9001721494740181
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "4aa0d0c90b941a92e832e54514c471238c9ef7d9b99bb85fb1c55c2a3fa7d89c",
+        "test_scores_sha256": "ebd3139902c2a642dce8cca91a366440cb311642b2ed127c1f80a5b0a2f3d85f"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A0/seed2",
+      "regime": "scarcity50",
+      "arm": "A0",
+      "seed": 2,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "658e25f2dd3f9fdcf785c89e3598949145dcbb6817aba50a3b48845f2f955d70",
+          "new": "b880d6c5440d0be84e40efe7922ec4311124540fdc6348b924c0fba9a2b7ff64"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "658e25f2dd3f9fdcf785c89e3598949145dcbb6817aba50a3b48845f2f955d70",
+        "best_step": 1000,
+        "val": {
+          "overall": 0.9131424788867945,
+          "clean": 0.9155088738365335,
+          "artifact": 0.9080581103997926
+        },
+        "test": {
+          "overall": 0.9075090453692132,
+          "clean": 0.9094468214018738,
+          "artifact": 0.9011085403201747
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "168a8b4c47142e656671ca7279c50f711958382156525041e594ca405cc0cac3",
+        "test_scores_sha256": "7a44468f3979a82587428f5691bcb2b32266a2e2e02d724929ee9d07a86a21d4"
+      },
+      "new": {
+        "trial_id": "b880d6c5440d0be84e40efe7922ec4311124540fdc6348b924c0fba9a2b7ff64",
+        "best_step": 900,
+        "val": {
+          "overall": 0.9138754770057199,
+          "clean": 0.9172450989312537,
+          "artifact": 0.9049357215989329
+        },
+        "test": {
+          "overall": 0.9059944129099285,
+          "clean": 0.9083255395385235,
+          "artifact": 0.8984921690858171
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "098aa08ae466aeebaf25ef451568fb6bdc8ed055b7af1d0f9ef9c42359a19cbd",
+        "test_scores_sha256": "3ff15b62ef485c9534c9743263e56ea3e15389172075f824e01b378c0bb064e3"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A1/seed0",
+      "regime": "scarcity50",
+      "arm": "A1",
+      "seed": 0,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "0c1bf9abdd557176b9f02ca914da685334a70cea4f47db1053fe248e8f1cd3f0",
+          "new": "1114e33f8db1adfbb8ec19d6bed5d393f616dd90e33699be66eed25c2f764c37"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "0c1bf9abdd557176b9f02ca914da685334a70cea4f47db1053fe248e8f1cd3f0",
+        "best_step": 3250,
+        "val": {
+          "overall": 0.9159955617325204,
+          "clean": 0.9183422217848495,
+          "artifact": 0.9104238934681147
+        },
+        "test": {
+          "overall": 0.9100076727518804,
+          "clean": 0.9116790987272972,
+          "artifact": 0.9056835781116013
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "aa168291cec0f141bca14b443a174cf4a0f20fceb7f93de994a7439c7d905a3e",
+        "test_scores_sha256": "0f216031d74a56c460e32bf42df9033b765851abb9127a853360008d4ea52ae7"
+      },
+      "new": {
+        "trial_id": "1114e33f8db1adfbb8ec19d6bed5d393f616dd90e33699be66eed25c2f764c37",
+        "best_step": 3800,
+        "val": {
+          "overall": 0.9147965273334255,
+          "clean": 0.9159018094630775,
+          "artifact": 0.913199650631902
+        },
+        "test": {
+          "overall": 0.9098910763472203,
+          "clean": 0.9119596232541722,
+          "artifact": 0.9035089853799734
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "0851604d783126245c65564ec51abfe11a8e6fe7ae641933c7985446c8cb1624",
+        "test_scores_sha256": "8269441bf22ecb94c09fe9a6d38078e0e4c2b733b7cc64c6381d7ed98a47d603"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A1/seed1",
+      "regime": "scarcity50",
+      "arm": "A1",
+      "seed": 1,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "7580099bca45890f27a36d479ec45a81f596dd7a3f84d226d16c20c6aecc70ba",
+          "new": "6b7c4a575b07027fa74b5490dd84955e7f9aa914d9e26c5165e7be33d4f3ca4e"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "7580099bca45890f27a36d479ec45a81f596dd7a3f84d226d16c20c6aecc70ba",
+        "best_step": 3500,
+        "val": {
+          "overall": 0.9159815060690398,
+          "clean": 0.9171736697447587,
+          "artifact": 0.9139609886373131
+        },
+        "test": {
+          "overall": 0.9097977474109917,
+          "clean": 0.911053431756231,
+          "artifact": 0.9068678446216891
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "7af180902bd077ebd8ce45e508f615f69d6761bda919839eda7fc589fdb14962",
+        "test_scores_sha256": "7e1865e029070a47666f27e692d6693772a415b461ec8374687d3de4baba0d07"
+      },
+      "new": {
+        "trial_id": "6b7c4a575b07027fa74b5490dd84955e7f9aa914d9e26c5165e7be33d4f3ca4e",
+        "best_step": 3500,
+        "val": {
+          "overall": 0.9159815060690398,
+          "clean": 0.9171736697447587,
+          "artifact": 0.9139609886373131
+        },
+        "test": {
+          "overall": 0.9097977474109917,
+          "clean": 0.911053431756231,
+          "artifact": 0.9068678446216891
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "8f186646982a3000b520f9446c6f9f795b6efa3e9ba2034e7d006f5da15161c9",
+        "test_scores_sha256": "14cede2a119cc8a68cb3c5105ab3770745fd00da1c5991f1ff522b71ff4876d6"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A1/seed2",
+      "regime": "scarcity50",
+      "arm": "A1",
+      "seed": 2,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "18fff17d6b6781d3fb4b2fd5439111b6d5cd9352521268cd81ee46109dcd1140",
+          "new": "5d41e4292ba894d14c39557fe1d23e1aaf0e507867cebafce029d1f1f8afc8d6"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "18fff17d6b6781d3fb4b2fd5439111b6d5cd9352521268cd81ee46109dcd1140",
+        "best_step": 3000,
+        "val": {
+          "overall": 0.9155848022735593,
+          "clean": 0.9170248987431406,
+          "artifact": 0.912779713470903
+        },
+        "test": {
+          "overall": 0.9135677823694504,
+          "clean": 0.9151578184092933,
+          "artifact": 0.9089999699819137
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "d933b3ade19c4d9f9469043562077c2691ae40c491a0fb05a794df980eb98dda",
+        "test_scores_sha256": "7508eb44ce74132a3fe8d397dcaf294c24dcd79590af4c68c52c8f88f689011d"
+      },
+      "new": {
+        "trial_id": "5d41e4292ba894d14c39557fe1d23e1aaf0e507867cebafce029d1f1f8afc8d6",
+        "best_step": 3000,
+        "val": {
+          "overall": 0.9155848022735593,
+          "clean": 0.9170248987431406,
+          "artifact": 0.912779713470903
+        },
+        "test": {
+          "overall": 0.9135677823694504,
+          "clean": 0.9151578184092933,
+          "artifact": 0.9089999699819137
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "ed0ae96bc5f199d3461824081cf8d012158081ec1afd45eb16bb6c0d187e15f2",
+        "test_scores_sha256": "de8af1355f486ba6d15584f2380ccbdc760cfb4de6977156944dff4f5124bb6d"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A2/seed0",
+      "regime": "scarcity50",
+      "arm": "A2",
+      "seed": 0,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "94d4f103d80a824b6e8f7c7ade2a30697d374eec6f9703bf5851b466f5431480",
+          "new": "a30daa8d5bb133b259eb1ada1854f83352deb583aab2c3c9904f5d41779099f6"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "94d4f103d80a824b6e8f7c7ade2a30697d374eec6f9703bf5851b466f5431480",
+        "best_step": 1250,
+        "val": {
+          "overall": 0.9189325449141486,
+          "clean": 0.9218098952970015,
+          "artifact": 0.9107044890890489
+        },
+        "test": {
+          "overall": 0.9128690253292874,
+          "clean": 0.9154209895174296,
+          "artifact": 0.9045733192944578
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "cedfff834a3c52821fdc8bfa96d71c8e9deb1a3507f1a6ebf85a003332b8bcff",
+        "test_scores_sha256": "7fd3ee92d4891151a3d901925d88ff3b1acf4dfe818a6786fc856790f806c993"
+      },
+      "new": {
+        "trial_id": "a30daa8d5bb133b259eb1ada1854f83352deb583aab2c3c9904f5d41779099f6",
+        "best_step": 1100,
+        "val": {
+          "overall": 0.9168861584420072,
+          "clean": 0.9203118722390317,
+          "artifact": 0.9085922533485554
+        },
+        "test": {
+          "overall": 0.9107146853487744,
+          "clean": 0.9122635776165268,
+          "artifact": 0.9077377895992711
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "8399374601705558a37460c6d6c51226b0ae1c8d6fdff65f6bed0c3379af7abc",
+        "test_scores_sha256": "ee70cc1eafe39a75f9d37bab9f397becb3e9f8f9f280a8d83f955bb2d689d9c9"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A2/seed1",
+      "regime": "scarcity50",
+      "arm": "A2",
+      "seed": 1,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "bf885f8c4aa883e2982659a021e3d38b67948eee5929b801ef148b9474bcedc8",
+          "new": "f7213a4cba15de4b9ab3b678a358626ad09f70dc03d151f1239b2f94dfced5ff"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "bf885f8c4aa883e2982659a021e3d38b67948eee5929b801ef148b9474bcedc8",
+        "best_step": 1000,
+        "val": {
+          "overall": 0.9160330650153667,
+          "clean": 0.9183039185350605,
+          "artifact": 0.9104573453297128
+        },
+        "test": {
+          "overall": 0.9095319054308144,
+          "clean": 0.9118262263886573,
+          "artifact": 0.9023393863456921
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "ee0d45b8a2ac82ea2f42c45489c59a7f98b0b90e88e1927e8e22a1abfda363e9",
+        "test_scores_sha256": "1488000710e30a17eef2f0dcb5d9080788017869d3d09fd4694ac0c50be8962a"
+      },
+      "new": {
+        "trial_id": "f7213a4cba15de4b9ab3b678a358626ad09f70dc03d151f1239b2f94dfced5ff",
+        "best_step": 1000,
+        "val": {
+          "overall": 0.9160330650153667,
+          "clean": 0.9183039185350605,
+          "artifact": 0.9104573453297128
+        },
+        "test": {
+          "overall": 0.9095319054308144,
+          "clean": 0.9118262263886573,
+          "artifact": 0.9023393863456921
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "0719a367697242ae5b0f7b1e46f2043f20f8006983d0faac3a58579da17cacee",
+        "test_scores_sha256": "af185be7acef43c04caeecad072dbb78b2715f98e9c4e2c25f70e8ebc0f14b56"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A2/seed2",
+      "regime": "scarcity50",
+      "arm": "A2",
+      "seed": 2,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "aa0a576b3ec9e5aac3dd9bf6792243b60a57d1a96efd7f77d6448db64d066fc2",
+          "new": "e70b1e7a7d06ffc741fbe786a567745fa1bc9452e419c22a30a14c47ae26bf92"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "aa0a576b3ec9e5aac3dd9bf6792243b60a57d1a96efd7f77d6448db64d066fc2",
+        "best_step": 1000,
+        "val": {
+          "overall": 0.9130149174858815,
+          "clean": 0.9137617501051306,
+          "artifact": 0.9131973859651635
+        },
+        "test": {
+          "overall": 0.9096801088092177,
+          "clean": 0.9103798631930647,
+          "artifact": 0.9076473611975713
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "a399f07dad8d1761842e9ee57a493259b521c1819f0f770654914c903c9bac5f",
+        "test_scores_sha256": "cb5d151c7ba8e16dd619ad10a92d0b2abe8b8d9cc44b035f9cb410bc4b5203fa"
+      },
+      "new": {
+        "trial_id": "e70b1e7a7d06ffc741fbe786a567745fa1bc9452e419c22a30a14c47ae26bf92",
+        "best_step": 1200,
+        "val": {
+          "overall": 0.915141448768385,
+          "clean": 0.9164776166835569,
+          "artifact": 0.9130096071869772
+        },
+        "test": {
+          "overall": 0.9104779701724892,
+          "clean": 0.9131568395549303,
+          "artifact": 0.9019191077843505
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "6c833d853175495f70fb8a8a2dc7eb2fec97d887f4654dfd28ca0c1f9a1f7fa7",
+        "test_scores_sha256": "a15211b7579a6d0c15db20ca08d6f59c1f64d69a2ecac9fe567bbc186cbee8e5"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A3/seed0",
+      "regime": "scarcity50",
+      "arm": "A3",
+      "seed": 0,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "e3608c7fff4a21c03510183c531e7352a00cc904cac8aedd097453e32846184a",
+          "new": "58988b250a92909880b741f0567ff084e5bfa349e4019277a61117b4e8d7649c"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "e3608c7fff4a21c03510183c531e7352a00cc904cac8aedd097453e32846184a",
+        "best_step": 1250,
+        "val": {
+          "overall": 0.9168047456223392,
+          "clean": 0.9196384539094176,
+          "artifact": 0.9092406266597723
+        },
+        "test": {
+          "overall": 0.9126439044596897,
+          "clean": 0.9146780383223556,
+          "artifact": 0.9063775313712558
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "e86f98bbb98464a51758a2c1f81731acdc0dae00b5672262171301b9a1ac7849",
+        "test_scores_sha256": "8825db35e07a2466837163a19374f5d5c9df9e949e6a4cb228823f07b8fd1bbb"
+      },
+      "new": {
+        "trial_id": "58988b250a92909880b741f0567ff084e5bfa349e4019277a61117b4e8d7649c",
+        "best_step": 1700,
+        "val": {
+          "overall": 0.9166450608693395,
+          "clean": 0.9176784657280809,
+          "artifact": 0.9151540749107678
+        },
+        "test": {
+          "overall": 0.9123628148744656,
+          "clean": 0.9139736750089614,
+          "artifact": 0.907593196987268
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "b62771793ef0c22db1b9dcaaf83c7ae3f68fa5d3df32fbcd613d036da1a95f54",
+        "test_scores_sha256": "ade6778bbe044fd93d680dc64ccc3574cb7a1e339f6bd2c4fdd65b95bbac1489"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A3/seed1",
+      "regime": "scarcity50",
+      "arm": "A3",
+      "seed": 1,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "32abbbcdab256857d7ec580e28dc989b103a0119e1a21933801e7353e2b25f92",
+          "new": "1a9113d852fa72094c18f70ad3cdb89b963e66ecb144e22619917b07552d6e01"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "32abbbcdab256857d7ec580e28dc989b103a0119e1a21933801e7353e2b25f92",
+        "best_step": 1250,
+        "val": {
+          "overall": 0.9164362497760055,
+          "clean": 0.9175543088416862,
+          "artifact": 0.9151899535952976
+        },
+        "test": {
+          "overall": 0.9088747000214582,
+          "clean": 0.9097122605334835,
+          "artifact": 0.907089103421928
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "cbba849afa7226fb21c708d4b41ffba4d3d40b33",
+            "dirty": true
+          }
+        },
+        "result_sha256": "370bdb8f3c0343b31cad9ab204b230dde43c6fd3df4c5263b7f806d362cc4a53",
+        "test_scores_sha256": "91b755b2950158448e62a5ede6b2dadb9e032cc33f7117d1316e07f8c26bbe17"
+      },
+      "new": {
+        "trial_id": "1a9113d852fa72094c18f70ad3cdb89b963e66ecb144e22619917b07552d6e01",
+        "best_step": 1600,
+        "val": {
+          "overall": 0.9153535308090195,
+          "clean": 0.9174133557324413,
+          "artifact": 0.9108637095576467
+        },
+        "test": {
+          "overall": 0.9115096131419291,
+          "clean": 0.912723757218933,
+          "artifact": 0.9082364121255303
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "97d9e69f3bac595d49442fe23e69e811e2db8a7a096260c1165f7a0d41f3f99b",
+        "test_scores_sha256": "223bae9f1a8c4025bbf9ba1cff3807fd6e2d7b0ddb8cd385a3ec1d89be2512a4"
+      }
+    },
+    {
+      "run_dir": "scarcity50/A3/seed2",
+      "regime": "scarcity50",
+      "arm": "A3",
+      "seed": 2,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "72d5d620729370529ac7379951a23f8545b9c3d35011c521d387d9b0e44b41ee",
+          "new": "4e52f2e01da67aa2d666951f838240138ded858b236f5a28cbf95d842df6907c"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "72d5d620729370529ac7379951a23f8545b9c3d35011c521d387d9b0e44b41ee",
+        "best_step": 1000,
+        "val": {
+          "overall": 0.9130704524216571,
+          "clean": 0.9141064074066373,
+          "artifact": 0.9117889745697623
+        },
+        "test": {
+          "overall": 0.9085576108326784,
+          "clean": 0.9094390985175332,
+          "artifact": 0.9054930725201032
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "ab4376bc6674ebfce2e9fb635092e6eeefe59137",
+            "dirty": true
+          }
+        },
+        "result_sha256": "643f882730395b7efa2e7e7c3dff593678efd8c417c0c1132c8e23e474355b99",
+        "test_scores_sha256": "a3f6faa4aa036474a6e4165d39c935f4e427ec231e600c7408e0429c8d6cd311"
+      },
+      "new": {
+        "trial_id": "4e52f2e01da67aa2d666951f838240138ded858b236f5a28cbf95d842df6907c",
+        "best_step": 1100,
+        "val": {
+          "overall": 0.9157328878672899,
+          "clean": 0.9167209464242309,
+          "artifact": 0.9150615882659038
+        },
+        "test": {
+          "overall": 0.9130963321596479,
+          "clean": 0.9147919326552045,
+          "artifact": 0.9082722168745875
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "46eebc07462d18c4a05f1ccabbd89e31d40c34295e3d239754778559158b2727",
+        "test_scores_sha256": "50a74bba0b20ef3ac67305619adfe48c385416d9e9cbd47cf1abf872af1848e8"
+      }
+    },
+    {
+      "run_dir": "scarcity50/C1/seed0",
+      "regime": "scarcity50",
+      "arm": "C1",
+      "seed": 0,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "397b7d2d2c9bf7295db7a7fa7cdfaa46fed715b33ba08d719723eb7eb9290c86",
+          "new": "c4a039ee70f8ee2b373ecbb3a950dbb2d1e8dd905eaa9dce2f89a5520807959b"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "397b7d2d2c9bf7295db7a7fa7cdfaa46fed715b33ba08d719723eb7eb9290c86",
+        "best_step": 750,
+        "val": {
+          "overall": 0.9170482605820333,
+          "clean": 0.9197936401030082,
+          "artifact": 0.9100018048046664
+        },
+        "test": {
+          "overall": 0.9118139010709869,
+          "clean": 0.9147128526238533,
+          "artifact": 0.9026080995344223
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "ab4376bc6674ebfce2e9fb635092e6eeefe59137",
+            "dirty": true
+          }
+        },
+        "result_sha256": "7f13f015aa603e42495b3f3e80aea8b8b95a06aae4d8e67bb12a4fa76d01a395",
+        "test_scores_sha256": "6bec75bb367bc18f4ab15bcf44d03101b46de4093d8c02031fc4a0f4d20c5b36"
+      },
+      "new": {
+        "trial_id": "c4a039ee70f8ee2b373ecbb3a950dbb2d1e8dd905eaa9dce2f89a5520807959b",
+        "best_step": 800,
+        "val": {
+          "overall": 0.9152263058882228,
+          "clean": 0.9164217882162147,
+          "artifact": 0.9131334139085887
+        },
+        "test": {
+          "overall": 0.9084586923309452,
+          "clean": 0.9114845299204835,
+          "artifact": 0.8988472344568568
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "0bed627f53d5767fd5e388b88f8e2d78703d7a89180557690c16487a6405da04",
+        "test_scores_sha256": "4f60bcba1108a4f31407c2ea194c4fb1ce82f389fd0b24298901e5ba910bd5e9"
+      }
+    },
+    {
+      "run_dir": "scarcity50/C1/seed1",
+      "regime": "scarcity50",
+      "arm": "C1",
+      "seed": 1,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "c74e7fdc10441ff1785b139409c8ce922330c2a038f8bbcb96697770166aee8b",
+          "new": "1104eb8738c24be3a5d0d4d8ac7c028cb5eee5c35303e1473c0941eb18332d67"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "c74e7fdc10441ff1785b139409c8ce922330c2a038f8bbcb96697770166aee8b",
+        "best_step": 1000,
+        "val": {
+          "overall": 0.9128212775267187,
+          "clean": 0.9149658245386092,
+          "artifact": 0.9081316161942897
+        },
+        "test": {
+          "overall": 0.9046504342193341,
+          "clean": 0.9072343632826939,
+          "artifact": 0.8966684959552083
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "ab4376bc6674ebfce2e9fb635092e6eeefe59137",
+            "dirty": true
+          }
+        },
+        "result_sha256": "baf3d84b14417129359531b8cdcc025b2e505cb2a6bfd98e0e53de6aef974e5b",
+        "test_scores_sha256": "f0c95be33fb80c8ed98ff5854c974233d3422fe7d5c365700fc1347f41684d34"
+      },
+      "new": {
+        "trial_id": "1104eb8738c24be3a5d0d4d8ac7c028cb5eee5c35303e1473c0941eb18332d67",
+        "best_step": 1100,
+        "val": {
+          "overall": 0.9178149369836135,
+          "clean": 0.921610537378777,
+          "artifact": 0.9089739108384952
+        },
+        "test": {
+          "overall": 0.9113435775526574,
+          "clean": 0.9143283163173104,
+          "artifact": 0.9027145828055861
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "b9d4939e3a9000370c7e977b991e66001ee0f5a1e8a19aeb1fdb57c097d6441b",
+        "test_scores_sha256": "d589c885d0d81f2d84accae21362bfc91db1a0901404a8fdd62ff2910fd49610"
+      }
+    },
+    {
+      "run_dir": "scarcity50/C1/seed2",
+      "regime": "scarcity50",
+      "arm": "C1",
+      "seed": 2,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "4e33c30d7d066d271c3fae1e8e7b797afa7ea9d8df34b5d0ec66d48f3445aec1",
+          "new": "f0e9f9bcd428e1815a40a9493af7803deecb3f1fa8770fc50ec24e8125fc14eb"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "4e33c30d7d066d271c3fae1e8e7b797afa7ea9d8df34b5d0ec66d48f3445aec1",
+        "best_step": 750,
+        "val": {
+          "overall": 0.9143125244331319,
+          "clean": 0.9172546272790523,
+          "artifact": 0.9063524997625656
+        },
+        "test": {
+          "overall": 0.9083377957647377,
+          "clean": 0.9113704863625365,
+          "artifact": 0.8981988549609483
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "ab4376bc6674ebfce2e9fb635092e6eeefe59137",
+            "dirty": true
+          }
+        },
+        "result_sha256": "8f0abc40234386104e82be06ac57d124fc172db5f61cd2dea9f8d139f2b3eebe",
+        "test_scores_sha256": "907c1343c8ad693cd21c5e95239ea7d8adb9923b8dbe2bc7654f3b50a6eb666a"
+      },
+      "new": {
+        "trial_id": "f0e9f9bcd428e1815a40a9493af7803deecb3f1fa8770fc50ec24e8125fc14eb",
+        "best_step": 1100,
+        "val": {
+          "overall": 0.9151141975087536,
+          "clean": 0.9179498266424023,
+          "artifact": 0.9071798243017053
+        },
+        "test": {
+          "overall": 0.9078609545562794,
+          "clean": 0.9097646288020098,
+          "artifact": 0.9017744237529058
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "36e5139c91912663d35f70fcf10819f39bde211e4e9dcf96b87718f77c3dd817",
+        "test_scores_sha256": "11caed19ae724f08f6e0901ffd76c83ce98ccf26e341d947a0152692d75ca2c8"
+      }
+    },
+    {
+      "run_dir": "scarcity50/C2/seed0",
+      "regime": "scarcity50",
+      "arm": "C2",
+      "seed": 0,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "9f6f0908e44c43d9f64c331ea8c984a104a39afa1d2b5c9c25db81d54307c26b",
+          "new": "4669acb4bec32cc3cb1fc88c4f82e305218e3fc995eacc47c2f69fb5d0a6001a"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "9f6f0908e44c43d9f64c331ea8c984a104a39afa1d2b5c9c25db81d54307c26b",
+        "best_step": 1250,
+        "val": {
+          "overall": 0.9195659836150009,
+          "clean": 0.9227609059582369,
+          "artifact": 0.9114397233946807
+        },
+        "test": {
+          "overall": 0.9156287531413507,
+          "clean": 0.9182154886044446,
+          "artifact": 0.9076536854352393
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "ab4376bc6674ebfce2e9fb635092e6eeefe59137",
+            "dirty": true
+          }
+        },
+        "result_sha256": "44c055611bfdda82b9b018323262ad0c65bbca452b862012d3377f2e9ca3668f",
+        "test_scores_sha256": "45ad914f2ddf495adefd6771f1815466e2e922f3bbdb62654066e5ba56ea031b"
+      },
+      "new": {
+        "trial_id": "4669acb4bec32cc3cb1fc88c4f82e305218e3fc995eacc47c2f69fb5d0a6001a",
+        "best_step": 1200,
+        "val": {
+          "overall": 0.9195656152825388,
+          "clean": 0.9218894094810715,
+          "artifact": 0.9144401446307263
+        },
+        "test": {
+          "overall": 0.9157093474196948,
+          "clean": 0.9171840904922399,
+          "artifact": 0.9122307696397801
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "363ef5574acef6df733107de1f19d65d23ee85e9f2842547d7b9833b567fb2c9"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "47b8e1ec9e9490637bb81b8c4449565608fccfd7879213a40a40da159b9e2b52",
+        "test_scores_sha256": "4a7a2a3fa4b3ea37313a3d2d9ceffbe00c8c05917688506de59509a39b468e07"
+      }
+    },
+    {
+      "run_dir": "scarcity50/C2/seed1",
+      "regime": "scarcity50",
+      "arm": "C2",
+      "seed": 1,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "50bba65cf491c6716435622c9b1c85366accb3f44b059a267a60aad8fb44ed29",
+          "new": "4dbe743cad4ba3e2a08bdb6f9b2ef7e7dc32af55009b35b3be2ea6e1407c79f4"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "50bba65cf491c6716435622c9b1c85366accb3f44b059a267a60aad8fb44ed29",
+        "best_step": 1000,
+        "val": {
+          "overall": 0.9170510042687479,
+          "clean": 0.9193127751820483,
+          "artifact": 0.9136666708213266
+        },
+        "test": {
+          "overall": 0.9100294840490377,
+          "clean": 0.9121835473066596,
+          "artifact": 0.9041648570109982
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "ab4376bc6674ebfce2e9fb635092e6eeefe59137",
+            "dirty": true
+          }
+        },
+        "result_sha256": "409b16be506c522eb81dd59efaa2bd186ddd66fbd1c272fc30fb46a274f33b0e",
+        "test_scores_sha256": "dd7434c231014a09a348a78fef886b27288d1aa98dada14b1cb6dbf6805d36ea"
+      },
+      "new": {
+        "trial_id": "4dbe743cad4ba3e2a08bdb6f9b2ef7e7dc32af55009b35b3be2ea6e1407c79f4",
+        "best_step": 1700,
+        "val": {
+          "overall": 0.9214236450190387,
+          "clean": 0.9229083181872862,
+          "artifact": 0.9188868288438943
+        },
+        "test": {
+          "overall": 0.9120329983564645,
+          "clean": 0.9157052062183609,
+          "artifact": 0.8991595695899226
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "e0dbe150f742e49a9e733e3eb18ef98736ae942314966229eae46545a4c14597",
+        "test_scores_sha256": "7a83ab4f756acd6e12519cf465f668ecbbb433636be3c102294db1b5a560c8ba"
+      }
+    },
+    {
+      "run_dir": "scarcity50/C2/seed2",
+      "regime": "scarcity50",
+      "arm": "C2",
+      "seed": 2,
+      "spec_changes": {
+        "protocol": {
+          "old": "ptbxl-artifact-50",
+          "new": "ptbxl-artifact-50-val100"
+        },
+        "trial_id": {
+          "old": "daa02d9b4a1472c73087857f228fdd49cd80ef5b167fdd0a524a095bc84f3d7e",
+          "new": "a1ab14e317cac9e7fec969df1c212522c7251ace90f3286c6289d6da904b0984"
+        },
+        "val_every": {
+          "old": 250,
+          "new": 100
+        }
+      },
+      "init_equal": true,
+      "fingerprint_equal": true,
+      "shared_history": {
+        "equal": true,
+        "steps": [
+          500,
+          1000,
+          1500,
+          2000,
+          2500,
+          3000,
+          3500,
+          4000,
+          4500,
+          5000,
+          5500,
+          6000,
+          6500
+        ],
+        "rows_checked": 13,
+        "differences": []
+      },
+      "final_model": {
+        "equal": true,
+        "tensors_checked": 74,
+        "missing_left": [],
+        "missing_right": [],
+        "differences": [],
+        "note": "Compares model parameters and buffers, excluding trial-specific checkpoint metadata."
+      },
+      "old": {
+        "trial_id": "daa02d9b4a1472c73087857f228fdd49cd80ef5b167fdd0a524a095bc84f3d7e",
+        "best_step": 1250,
+        "val": {
+          "overall": 0.9198320032697737,
+          "clean": 0.9214829576807441,
+          "artifact": 0.9169242505570898
+        },
+        "test": {
+          "overall": 0.9146401643544347,
+          "clean": 0.9168542716235889,
+          "artifact": 0.9088112689791703
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "ab4376bc6674ebfce2e9fb635092e6eeefe59137",
+            "dirty": true
+          }
+        },
+        "result_sha256": "e07908ce3584a93639952182ba4d3e3c7fa716f4896047a7e9f10898e412e892",
+        "test_scores_sha256": "e6010db30f47ff4c896e9c94ccc3c18444c1a8ee00c67e42cefe46820eb3fdcc"
+      },
+      "new": {
+        "trial_id": "a1ab14e317cac9e7fec969df1c212522c7251ace90f3286c6289d6da904b0984",
+        "best_step": 900,
+        "val": {
+          "overall": 0.918997328771319,
+          "clean": 0.9223788931522465,
+          "artifact": 0.9101708632673416
+        },
+        "test": {
+          "overall": 0.9145740479640387,
+          "clean": 0.916789154018784,
+          "artifact": 0.9085135895237917
+        },
+        "trainer": {
+          "name": "syntide_trainers.torch_loop",
+          "version": "0.1.0",
+          "config": {
+            "model": {
+              "width": 64,
+              "kernel_size": 7
+            },
+            "optim": {
+              "lr": 0.001,
+              "weight_decay": 0.01
+            }
+          },
+          "device": "mps",
+          "predictor": "syntide_trainers.torch_loop:predict",
+          "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+          "init_sha256": "aa5853916c437c0ab0d701d9399838a1ac6474590e7f88ea201424781796dc70"
+        },
+        "environment": {
+          "python": "3.13.13",
+          "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+          "syntide": "0.1.0",
+          "packages": {
+            "numpy": "2.5.4",
+            "torch": "2.14.1",
+            "timenet": "0.11.0",
+            "scikit-learn": "1.9.1"
+          },
+          "git": {
+            "rev": "0e9a720c1ac6411fb050ffff17b3535d979d16bf",
+            "dirty": true
+          }
+        },
+        "result_sha256": "3b10c0b15bc07253e5aaf2abfbee04941594a8f475216e61a96eba81918103bd",
+        "test_scores_sha256": "7047e1e5ddfe2eb69d37bc01972ebd4219ca56490197f78358be2aa6d1dcf4ec"
+      }
+    }
+  ],
+  "groups": [
+    {
+      "regime": "full100",
+      "arm": "C2",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "val": {
+        "overall": {
+          "old": {
+            "mean": 0.9279960858685564,
+            "sd": 0.0002927274613688545,
+            "n_seeds": 3,
+            "values": [
+              0.9278819363718892,
+              0.9283286906260495,
+              0.9277776306077306
+            ]
+          },
+          "new": {
+            "mean": 0.9289245416663339,
+            "sd": 0.002405560963668203,
+            "n_seeds": 3,
+            "values": [
+              0.930928257100865,
+              0.9295886872182699,
+              0.9262566806798667
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0009284557977774499,
+            "sd": 0.002301614604357593,
+            "n_seeds": 3,
+            "values": [
+              0.0030463207289758154,
+              0.0012599965922204248,
+              -0.0015209499278638905
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9297513073720765,
+            "sd": 0.0005922867502133441,
+            "n_seeds": 3,
+            "values": [
+              0.9302532600720307,
+              0.9299026197365008,
+              0.9290980423076979
+            ]
+          },
+          "new": {
+            "mean": 0.9316564378379122,
+            "sd": 0.0025895046277457884,
+            "n_seeds": 3,
+            "values": [
+              0.9331361218584815,
+              0.9331668037328156,
+              0.9286663879224395
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.001905130465835736,
+            "sd": 0.0020326766189340383,
+            "n_seeds": 3,
+            "values": [
+              0.0028828617864508077,
+              0.0032641839963147845,
+              -0.0004316543852583843
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9244304839007467,
+            "sd": 0.0016092414943902687,
+            "n_seeds": 3,
+            "values": [
+              0.9225763939582784,
+              0.9252506595536719,
+              0.9254643981902898
+            ]
+          },
+          "new": {
+            "mean": 0.9225169411644363,
+            "sd": 0.0029443547107453985,
+            "n_seeds": 3,
+            "values": [
+              0.9259146607008647,
+              0.9209222501368206,
+              0.9207139126556234
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.0019135427363104658,
+            "sd": 0.004553093911208063,
+            "n_seeds": 3,
+            "values": [
+              0.0033382667425863044,
+              -0.004328409416851309,
+              -0.004750485534666393
+            ]
+          }
+        }
+      },
+      "test": {
+        "overall": {
+          "old": {
+            "mean": 0.9230480147916849,
+            "sd": 0.001339511337448216,
+            "n_seeds": 3,
+            "values": [
+              0.9245283121930467,
+              0.9219194972897423,
+              0.9226962348922655
+            ]
+          },
+          "new": {
+            "mean": 0.9240114235476926,
+            "sd": 0.0019757680715849287,
+            "n_seeds": 3,
+            "values": [
+              0.9256877392089555,
+              0.924513464890896,
+              0.9218330665432262
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0009634087560077553,
+            "sd": 0.0017368835922969255,
+            "n_seeds": 3,
+            "values": [
+              0.001159427015908876,
+              0.0025939676011537127,
+              -0.0008631683490393227
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9255215056663774,
+            "sd": 0.0017288585792978894,
+            "n_seeds": 3,
+            "values": [
+              0.9272830789910543,
+              0.9238273331463109,
+              0.9254541048617669
+            ]
+          },
+          "new": {
+            "mean": 0.9249520234835084,
+            "sd": 0.0025576618694788692,
+            "n_seeds": 3,
+            "values": [
+              0.9271949316198279,
+              0.9254944974659596,
+              0.9221666413647377
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.0005694821828690078,
+            "sd": 0.0025121398450571597,
+            "n_seeds": 3,
+            "values": [
+              -8.814737122642136e-05,
+              0.0016671643196486396,
+              -0.0032874634970292416
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9151364992561121,
+            "sd": 0.0012102781810131582,
+            "n_seeds": 3,
+            "values": [
+              0.9152872975799067,
+              0.9162643117026162,
+              0.9138578884858133
+            ]
+          },
+          "new": {
+            "mean": 0.921413170625604,
+            "sd": 0.00030469324802414943,
+            "n_seeds": 3,
+            "values": [
+              0.9211231894656235,
+              0.9217307044480982,
+              0.9213856179630902
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.006276671369491911,
+            "sd": 0.0010990869826585311,
+            "n_seeds": 3,
+            "values": [
+              0.005835891885716871,
+              0.005466392745481996,
+              0.007527729477276868
+            ]
+          }
+        }
+      }
+    },
+    {
+      "regime": "scarcity50",
+      "arm": "A0",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "val": {
+        "overall": {
+          "old": {
+            "mean": 0.9135447066028655,
+            "sd": 0.0018461918785902434,
+            "n_seeds": 3,
+            "values": [
+              0.9119327887179658,
+              0.9155588522038363,
+              0.9131424788867945
+            ]
+          },
+          "new": {
+            "mean": 0.9139583813027855,
+            "sd": 0.001560671109669366,
+            "n_seeds": 3,
+            "values": [
+              0.9124408146988003,
+              0.9155588522038363,
+              0.9138754770057199
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.00041367469992000433,
+            "sd": 0.0003754972486513436,
+            "n_seeds": 3,
+            "values": [
+              0.0005080259808345478,
+              0.0,
+              0.0007329981189254653
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9173450318381304,
+            "sd": 0.0019608176582968386,
+            "n_seeds": 3,
+            "values": [
+              0.9171158537910241,
+              0.9194103678868337,
+              0.9155088738365335
+            ]
+          },
+          "new": {
+            "mean": 0.9176692291359261,
+            "sd": 0.0015725714755273807,
+            "n_seeds": 3,
+            "values": [
+              0.9163522205896907,
+              0.9194103678868337,
+              0.9172450989312537
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0003241972977956105,
+            "sd": 0.0012810740770972664,
+            "n_seeds": 3,
+            "values": [
+              -0.0007636332013334357,
+              0.0,
+              0.0017362250947202673
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9038631543209897,
+            "sd": 0.005931790593775872,
+            "n_seeds": 3,
+            "values": [
+              0.8970765508544863,
+              0.9064548017086903,
+              0.9080581103997926
+            ]
+          },
+          "new": {
+            "mean": 0.9046718529482535,
+            "sd": 0.0019284701788727702,
+            "n_seeds": 3,
+            "values": [
+              0.9026250355371372,
+              0.9064548017086903,
+              0.9049357215989329
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0008086986272637375,
+            "sd": 0.004391640564079152,
+            "n_seeds": 3,
+            "values": [
+              0.0055484846826509004,
+              0.0,
+              -0.003122388800859688
+            ]
+          }
+        }
+      },
+      "test": {
+        "overall": {
+          "old": {
+            "mean": 0.9068052742898236,
+            "sd": 0.0019625948057748884,
+            "n_seeds": 3,
+            "values": [
+              0.904587830369237,
+              0.9083189471310206,
+              0.9075090453692132
+            ]
+          },
+          "new": {
+            "mean": 0.9066003945063748,
+            "sd": 0.0015097104211897593,
+            "n_seeds": 3,
+            "values": [
+              0.905487823478175,
+              0.9083189471310206,
+              0.9059944129099285
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.0002048797834488525,
+            "sd": 0.0012202810958661244,
+            "n_seeds": 3,
+            "values": [
+              0.0008999931089380686,
+              0.0,
+              -0.001514632459284626
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9098928707584836,
+            "sd": 0.0008089706803986419,
+            "n_seeds": 3,
+            "values": [
+              0.9094051116860277,
+              0.9108266791875493,
+              0.9094468214018738
+            ]
+          },
+          "new": {
+            "mean": 0.9089718539150282,
+            "sd": 0.001630735669973841,
+            "n_seeds": 3,
+            "values": [
+              0.9077633430190118,
+              0.9108266791875493,
+              0.9083255395385235
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.0009210168434553948,
+            "sd": 0.0008390057494700944,
+            "n_seeds": 3,
+            "values": [
+              -0.0016417686670158194,
+              0.0,
+              -0.0011212818633503652
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.896650839585909,
+            "sd": 0.00692586924783962,
+            "n_seeds": 3,
+            "values": [
+              0.888671828963534,
+              0.9001721494740181,
+              0.9011085403201747
+            ]
+          },
+          "new": {
+            "mean": 0.8994920464325151,
+            "sd": 0.0008844632445060832,
+            "n_seeds": 3,
+            "values": [
+              0.89981182073771,
+              0.9001721494740181,
+              0.8984921690858171
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.002841206846606122,
+            "sd": 0.007305047779757466,
+            "n_seeds": 3,
+            "values": [
+              0.011139991774176017,
+              0.0,
+              -0.0026163712343576506
+            ]
+          }
+        }
+      }
+    },
+    {
+      "regime": "scarcity50",
+      "arm": "A1",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "val": {
+        "overall": {
+          "old": {
+            "mean": 0.9158539566917065,
+            "sd": 0.00023320048461589077,
+            "n_seeds": 3,
+            "values": [
+              0.9159955617325204,
+              0.9159815060690398,
+              0.9155848022735593
+            ]
+          },
+          "new": {
+            "mean": 0.9154542785586749,
+            "sd": 0.0006031757464246518,
+            "n_seeds": 3,
+            "values": [
+              0.9147965273334255,
+              0.9159815060690398,
+              0.9155848022735593
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.00039967813303161864,
+            "sd": 0.0006922628330850363,
+            "n_seeds": 3,
+            "values": [
+              -0.001199034399094856,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9175135967575829,
+            "sd": 0.0007214553205777719,
+            "n_seeds": 3,
+            "values": [
+              0.9183422217848495,
+              0.9171736697447587,
+              0.9170248987431406
+            ]
+          },
+          "new": {
+            "mean": 0.9167001259836589,
+            "sd": 0.0006953525386489356,
+            "n_seeds": 3,
+            "values": [
+              0.9159018094630775,
+              0.9171736697447587,
+              0.9170248987431406
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.0008134707739239818,
+            "sd": 0.0014089727109087122,
+            "n_seeds": 3,
+            "values": [
+              -0.0024404123217719453,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9123881985254436,
+            "sd": 0.0018007563753546097,
+            "n_seeds": 3,
+            "values": [
+              0.9104238934681147,
+              0.9139609886373131,
+              0.912779713470903
+            ]
+          },
+          "new": {
+            "mean": 0.9133134509133727,
+            "sd": 0.000598803500942844,
+            "n_seeds": 3,
+            "values": [
+              0.913199650631902,
+              0.9139609886373131,
+              0.912779713470903
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0009252523879291022,
+            "sd": 0.0016025841457176337,
+            "n_seeds": 3,
+            "values": [
+              0.002775757163787307,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      },
+      "test": {
+        "overall": {
+          "old": {
+            "mean": 0.9111244008441075,
+            "sd": 0.0021186321344152373,
+            "n_seeds": 3,
+            "values": [
+              0.9100076727518804,
+              0.9097977474109917,
+              0.9135677823694504
+            ]
+          },
+          "new": {
+            "mean": 0.9110855353758874,
+            "sd": 0.002150195380744124,
+            "n_seeds": 3,
+            "values": [
+              0.9098910763472203,
+              0.9097977474109917,
+              0.9135677823694504
+            ]
+          },
+          "paired_delta": {
+            "mean": -3.886546822003586e-05,
+            "sd": 6.731696561705564e-05,
+            "n_seeds": 3,
+            "values": [
+              -0.00011659640466010757,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9126301162976072,
+            "sd": 0.0022112944769382813,
+            "n_seeds": 3,
+            "values": [
+              0.9116790987272972,
+              0.911053431756231,
+              0.9151578184092933
+            ]
+          },
+          "new": {
+            "mean": 0.9127236244732322,
+            "sd": 0.002156216790237682,
+            "n_seeds": 3,
+            "values": [
+              0.9119596232541722,
+              0.911053431756231,
+              0.9151578184092933
+            ]
+          },
+          "paired_delta": {
+            "mean": 9.350817562499743e-05,
+            "sd": 0.00016196091110556922,
+            "n_seeds": 3,
+            "values": [
+              0.0002805245268749923,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9071837975717347,
+            "sd": 0.0016806199627965954,
+            "n_seeds": 3,
+            "values": [
+              0.9056835781116013,
+              0.9068678446216891,
+              0.9089999699819137
+            ]
+          },
+          "new": {
+            "mean": 0.9064589333278588,
+            "sd": 0.0027682366787095585,
+            "n_seeds": 3,
+            "values": [
+              0.9035089853799734,
+              0.9068678446216891,
+              0.9089999699819137
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.0007248642438759667,
+            "sd": 0.0012555016989831717,
+            "n_seeds": 3,
+            "values": [
+              -0.0021745927316279,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "regime": "scarcity50",
+      "arm": "A2",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "val": {
+        "overall": {
+          "old": {
+            "mean": 0.9159935091384656,
+            "sd": 0.0029590120134079796,
+            "n_seeds": 3,
+            "values": [
+              0.9189325449141486,
+              0.9160330650153667,
+              0.9130149174858815
+            ]
+          },
+          "new": {
+            "mean": 0.916020224075253,
+            "sd": 0.0008724257152416749,
+            "n_seeds": 3,
+            "values": [
+              0.9168861584420072,
+              0.9160330650153667,
+              0.915141448768385
+            ]
+          },
+          "paired_delta": {
+            "mean": 2.6714936787371652e-05,
+            "sd": 0.0020865871447517653,
+            "n_seeds": 3,
+            "values": [
+              -0.0020463864721413927,
+              0.0,
+              0.0021265312825035076
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9179585213123975,
+            "sd": 0.004035174678799693,
+            "n_seeds": 3,
+            "values": [
+              0.9218098952970015,
+              0.9183039185350605,
+              0.9137617501051306
+            ]
+          },
+          "new": {
+            "mean": 0.9183644691525497,
+            "sd": 0.0019178448057992211,
+            "n_seeds": 3,
+            "values": [
+              0.9203118722390317,
+              0.9183039185350605,
+              0.9164776166835569
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.00040594784015213214,
+            "sd": 0.0021360738993828864,
+            "n_seeds": 3,
+            "values": [
+              -0.0014980230579698661,
+              0.0,
+              0.0027158665784262626
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9114530734613084,
+            "sd": 0.0015156647362704304,
+            "n_seeds": 3,
+            "values": [
+              0.9107044890890489,
+              0.9104573453297128,
+              0.9131973859651635
+            ]
+          },
+          "new": {
+            "mean": 0.9106864019550818,
+            "sd": 0.0022175671211203535,
+            "n_seeds": 3,
+            "values": [
+              0.9085922533485554,
+              0.9104573453297128,
+              0.9130096071869772
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.0007666715062265942,
+            "sd": 0.0011690690949588583,
+            "n_seeds": 3,
+            "values": [
+              -0.002112235740493462,
+              0.0,
+              -0.0001877787781863205
+            ]
+          }
+        }
+      },
+      "test": {
+        "overall": {
+          "old": {
+            "mean": 0.9106936798564398,
+            "sd": 0.001885361239927588,
+            "n_seeds": 3,
+            "values": [
+              0.9128690253292874,
+              0.9095319054308144,
+              0.9096801088092177
+            ]
+          },
+          "new": {
+            "mean": 0.9102415203173594,
+            "sd": 0.0006258382251633178,
+            "n_seeds": 3,
+            "values": [
+              0.9107146853487744,
+              0.9095319054308144,
+              0.9104779701724892
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.00045215953908047296,
+            "sd": 0.0015271572872978193,
+            "n_seeds": 3,
+            "values": [
+              -0.0021543399805129537,
+              0.0,
+              0.0007978613632715348
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9125423596997172,
+            "sd": 0.002595741482497479,
+            "n_seeds": 3,
+            "values": [
+              0.9154209895174296,
+              0.9118262263886573,
+              0.9103798631930647
+            ]
+          },
+          "new": {
+            "mean": 0.9124155478533714,
+            "sd": 0.0006781991331679506,
+            "n_seeds": 3,
+            "values": [
+              0.9122635776165268,
+              0.9118262263886573,
+              0.9131568395549303
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.0001268118463457387,
+            "sd": 0.002969225816033697,
+            "n_seeds": 3,
+            "values": [
+              -0.0031574119009027957,
+              0.0,
+              0.0027769763618655796
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9048533556125737,
+            "sd": 0.002665044936139607,
+            "n_seeds": 3,
+            "values": [
+              0.9045733192944578,
+              0.9023393863456921,
+              0.9076473611975713
+            ]
+          },
+          "new": {
+            "mean": 0.9039987612431045,
+            "sd": 0.0032449049760268672,
+            "n_seeds": 3,
+            "values": [
+              0.9077377895992711,
+              0.9023393863456921,
+              0.9019191077843505
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.0008545943694691823,
+            "sd": 0.00450753618216956,
+            "n_seeds": 3,
+            "values": [
+              0.0031644703048132605,
+              0.0,
+              -0.005728253413220807
+            ]
+          }
+        }
+      }
+    },
+    {
+      "regime": "scarcity50",
+      "arm": "A3",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "val": {
+        "overall": {
+          "old": {
+            "mean": 0.9154371492733339,
+            "sd": 0.002057884298981368,
+            "n_seeds": 3,
+            "values": [
+              0.9168047456223392,
+              0.9164362497760055,
+              0.9130704524216571
+            ]
+          },
+          "new": {
+            "mean": 0.915910493181883,
+            "sd": 0.0006638299556409975,
+            "n_seeds": 3,
+            "values": [
+              0.9166450608693395,
+              0.9153535308090195,
+              0.9157328878672899
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.00047334390854906577,
+            "sd": 0.00195117640369756,
+            "n_seeds": 3,
+            "values": [
+              -0.0001596847529996559,
+              -0.0010827189669859738,
+              0.002662435445632827
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9170997233859137,
+            "sd": 0.0027938988134291473,
+            "n_seeds": 3,
+            "values": [
+              0.9196384539094176,
+              0.9175543088416862,
+              0.9141064074066373
+            ]
+          },
+          "new": {
+            "mean": 0.917270922628251,
+            "sd": 0.0004943947776709621,
+            "n_seeds": 3,
+            "values": [
+              0.9176784657280809,
+              0.9174133557324413,
+              0.9167209464242309
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.00017119924233732764,
+            "sd": 0.0023031834688940662,
+            "n_seeds": 3,
+            "values": [
+              -0.0019599881813366915,
+              -0.00014095310924489013,
+              0.0026145390175935646
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9120731849416107,
+            "sd": 0.0029848290400023595,
+            "n_seeds": 3,
+            "values": [
+              0.9092406266597723,
+              0.9151899535952976,
+              0.9117889745697623
+            ]
+          },
+          "new": {
+            "mean": 0.9136931242447728,
+            "sd": 0.0024507813139207292,
+            "n_seeds": 3,
+            "values": [
+              0.9151540749107678,
+              0.9108637095576467,
+              0.9150615882659038
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0016199393031620286,
+            "sd": 0.005316138074622286,
+            "n_seeds": 3,
+            "values": [
+              0.00591344825099549,
+              -0.004326244037650917,
+              0.003272613696141513
+            ]
+          }
+        }
+      },
+      "test": {
+        "overall": {
+          "old": {
+            "mean": 0.9100254051046087,
+            "sd": 0.0022732225018307537,
+            "n_seeds": 3,
+            "values": [
+              0.9126439044596897,
+              0.9088747000214582,
+              0.9085576108326784
+            ]
+          },
+          "new": {
+            "mean": 0.9123229200586809,
+            "sd": 0.0007941114578838968,
+            "n_seeds": 3,
+            "values": [
+              0.9123628148744656,
+              0.9115096131419291,
+              0.9130963321596479
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0022975149540721183,
+            "sd": 0.0024275548293173866,
+            "n_seeds": 3,
+            "values": [
+              -0.00028108958522410354,
+              0.0026349131204709275,
+              0.00453872132696953
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9112764657911241,
+            "sd": 0.0029490127391486355,
+            "n_seeds": 3,
+            "values": [
+              0.9146780383223556,
+              0.9097122605334835,
+              0.9094390985175332
+            ]
+          },
+          "new": {
+            "mean": 0.9138297882943663,
+            "sd": 0.0010415685041210774,
+            "n_seeds": 3,
+            "values": [
+              0.9139736750089614,
+              0.912723757218933,
+              0.9147919326552045
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.002553322503242176,
+            "sd": 0.0030544807948699702,
+            "n_seeds": 3,
+            "values": [
+              -0.0007043633133941851,
+              0.003011496685449422,
+              0.005352834137671292
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9063199024377623,
+            "sd": 0.0007995745621119599,
+            "n_seeds": 3,
+            "values": [
+              0.9063775313712558,
+              0.907089103421928,
+              0.9054930725201032
+            ]
+          },
+          "new": {
+            "mean": 0.9080339419957952,
+            "sd": 0.0003821159731286,
+            "n_seeds": 3,
+            "values": [
+              0.907593196987268,
+              0.9082364121255303,
+              0.9082722168745875
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0017140395580329537,
+            "sd": 0.0009230408102766593,
+            "n_seeds": 3,
+            "values": [
+              0.0012156656160122736,
+              0.0011473087036023566,
+              0.002779144354484231
+            ]
+          }
+        }
+      }
+    },
+    {
+      "regime": "scarcity50",
+      "arm": "C1",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "val": {
+        "overall": {
+          "old": {
+            "mean": 0.914727354180628,
+            "sd": 0.002143807180470015,
+            "n_seeds": 3,
+            "values": [
+              0.9170482605820333,
+              0.9128212775267187,
+              0.9143125244331319
+            ]
+          },
+          "new": {
+            "mean": 0.9160518134601966,
+            "sd": 0.0015279383139728592,
+            "n_seeds": 3,
+            "values": [
+              0.9152263058882228,
+              0.9178149369836135,
+              0.9151141975087536
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0013244592795686645,
+            "sd": 0.003437750445291404,
+            "n_seeds": 3,
+            "values": [
+              -0.0018219546938104125,
+              0.004993659456894783,
+              0.0008016730756216228
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9173380306402232,
+            "sd": 0.0024149881721147967,
+            "n_seeds": 3,
+            "values": [
+              0.9197936401030082,
+              0.9149658245386092,
+              0.9172546272790523
+            ]
+          },
+          "new": {
+            "mean": 0.9186607174124647,
+            "sd": 0.00266642152204365,
+            "n_seeds": 3,
+            "values": [
+              0.9164217882162147,
+              0.921610537378777,
+              0.9179498266424023
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0013226867722414177,
+            "sd": 0.005037677795233572,
+            "n_seeds": 3,
+            "values": [
+              -0.0033718518867935643,
+              0.006644712840167766,
+              0.000695199363350052
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9081619735871739,
+            "sd": 0.0018248419112494787,
+            "n_seeds": 3,
+            "values": [
+              0.9100018048046664,
+              0.9081316161942897,
+              0.9063524997625656
+            ]
+          },
+          "new": {
+            "mean": 0.9097623830162631,
+            "sd": 0.00305410765742353,
+            "n_seeds": 3,
+            "values": [
+              0.9131334139085887,
+              0.9089739108384952,
+              0.9071798243017053
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0016004094290891595,
+            "sd": 0.0013260789415295926,
+            "n_seeds": 3,
+            "values": [
+              0.003131609103922295,
+              0.0008422946442054879,
+              0.0008273245391396955
+            ]
+          }
+        }
+      },
+      "test": {
+        "overall": {
+          "old": {
+            "mean": 0.9082673770183529,
+            "sd": 0.0035822525641785734,
+            "n_seeds": 3,
+            "values": [
+              0.9118139010709869,
+              0.9046504342193341,
+              0.9083377957647377
+            ]
+          },
+          "new": {
+            "mean": 0.909221074813294,
+            "sd": 0.0018622797912154494,
+            "n_seeds": 3,
+            "values": [
+              0.9084586923309452,
+              0.9113435775526574,
+              0.9078609545562794
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.00095369779494107,
+            "sd": 0.005174666774562376,
+            "n_seeds": 3,
+            "values": [
+              -0.003355208740041693,
+              0.00669314333332327,
+              -0.0004768412084583673
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9111059007563612,
+            "sd": 0.003746258782265965,
+            "n_seeds": 3,
+            "values": [
+              0.9147128526238533,
+              0.9072343632826939,
+              0.9113704863625365
+            ]
+          },
+          "new": {
+            "mean": 0.9118591583466013,
+            "sd": 0.0023047930010239876,
+            "n_seeds": 3,
+            "values": [
+              0.9114845299204835,
+              0.9143283163173104,
+              0.9097646288020098
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0007532575902399937,
+            "sd": 0.005550802853974156,
+            "n_seeds": 3,
+            "values": [
+              -0.0032283227033698125,
+              0.0070939530346164625,
+              -0.001605857560526669
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.8991584834835263,
+            "sd": 0.0030838916721509678,
+            "n_seeds": 3,
+            "values": [
+              0.9026080995344223,
+              0.8966684959552083,
+              0.8981988549609483
+            ]
+          },
+          "new": {
+            "mean": 0.9011120803384496,
+            "sd": 0.002016958083751402,
+            "n_seeds": 3,
+            "values": [
+              0.8988472344568568,
+              0.9027145828055861,
+              0.9017744237529058
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.001953596854923282,
+            "sd": 0.005100703015530645,
+            "n_seeds": 3,
+            "values": [
+              -0.003760865077565567,
+              0.006046086850377885,
+              0.0035755687919575285
+            ]
+          }
+        }
+      }
+    },
+    {
+      "regime": "scarcity50",
+      "arm": "C2",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "val": {
+        "overall": {
+          "old": {
+            "mean": 0.9188163303845075,
+            "sd": 0.0015345924004172944,
+            "n_seeds": 3,
+            "values": [
+              0.9195659836150009,
+              0.9170510042687479,
+              0.9198320032697737
+            ]
+          },
+          "new": {
+            "mean": 0.9199955296909655,
+            "sd": 0.001269004504490371,
+            "n_seeds": 3,
+            "values": [
+              0.9195656152825388,
+              0.9214236450190387,
+              0.918997328771319
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0011791993064580453,
+            "sd": 0.0027968853902234,
+            "n_seeds": 3,
+            "values": [
+              -3.683324620862294e-07,
+              0.004372640750290868,
+              -0.0008346744984546461
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9211855462736764,
+            "sd": 0.0017431986751988784,
+            "n_seeds": 3,
+            "values": [
+              0.9227609059582369,
+              0.9193127751820483,
+              0.9214829576807441
+            ]
+          },
+          "new": {
+            "mean": 0.9223922069402014,
+            "sd": 0.0005095848119914456,
+            "n_seeds": 3,
+            "values": [
+              0.9218894094810715,
+              0.9229083181872862,
+              0.9223788931522465
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0012066606665249724,
+            "sd": 0.0022496717637144133,
+            "n_seeds": 3,
+            "values": [
+              -0.0008714964771654454,
+              0.0035955430052379,
+              0.0008959354715024626
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9140102149243657,
+            "sd": 0.002758355753315828,
+            "n_seeds": 3,
+            "values": [
+              0.9114397233946807,
+              0.9136666708213266,
+              0.9169242505570898
+            ]
+          },
+          "new": {
+            "mean": 0.9144992789139874,
+            "sd": 0.004358283679443688,
+            "n_seeds": 3,
+            "values": [
+              0.9144401446307263,
+              0.9188868288438943,
+              0.9101708632673416
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0004890639896217112,
+            "sd": 0.006369586583986018,
+            "n_seeds": 3,
+            "values": [
+              0.003000421236045603,
+              0.0052201580225677,
+              -0.0067533872897481695
+            ]
+          }
+        }
+      },
+      "test": {
+        "overall": {
+          "old": {
+            "mean": 0.913432800514941,
+            "sd": 0.00298851956204416,
+            "n_seeds": 3,
+            "values": [
+              0.9156287531413507,
+              0.9100294840490377,
+              0.9146401643544347
+            ]
+          },
+          "new": {
+            "mean": 0.914105464580066,
+            "sd": 0.0018824354967648027,
+            "n_seeds": 3,
+            "values": [
+              0.9157093474196948,
+              0.9120329983564645,
+              0.9145740479640387
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0006726640651249319,
+            "sd": 0.0011548821501160256,
+            "n_seeds": 3,
+            "values": [
+              8.059427834405941e-05,
+              0.0020035143074267348,
+              -6.611639039599826e-05
+            ]
+          }
+        },
+        "clean": {
+          "old": {
+            "mean": 0.9157511025115643,
+            "sd": 0.003163671209571981,
+            "n_seeds": 3,
+            "values": [
+              0.9182154886044446,
+              0.9121835473066596,
+              0.9168542716235889
+            ]
+          },
+          "new": {
+            "mean": 0.9165594835764617,
+            "sd": 0.0007657258373197748,
+            "n_seeds": 3,
+            "values": [
+              0.9171840904922399,
+              0.9157052062183609,
+              0.916789154018784
+            ]
+          },
+          "paired_delta": {
+            "mean": 0.0008083810648972604,
+            "sd": 0.002398923093851364,
+            "n_seeds": 3,
+            "values": [
+              -0.0010313981122046512,
+              0.0035216589117013086,
+              -6.511760480487627e-05
+            ]
+          }
+        },
+        "artifact": {
+          "old": {
+            "mean": 0.9068766038084692,
+            "sd": 0.002418714107845483,
+            "n_seeds": 3,
+            "values": [
+              0.9076536854352393,
+              0.9041648570109982,
+              0.9088112689791703
+            ]
+          },
+          "new": {
+            "mean": 0.9066346429178315,
+            "sd": 0.006735124196841943,
+            "n_seeds": 3,
+            "values": [
+              0.9122307696397801,
+              0.8991595695899226,
+              0.9085135895237917
+            ]
+          },
+          "paired_delta": {
+            "mean": -0.00024196089063780826,
+            "sd": 0.0047914287964758015,
+            "n_seeds": 3,
+            "values": [
+              0.004577084204540838,
+              -0.005005287421075644,
+              -0.00029767945537861884
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

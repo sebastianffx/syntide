@@ -1,6 +1,7 @@
-"""The trainer seam: what a run must deliver, what finish refuses, and how trials are identified.
+"""Trainer outputs must satisfy the saved trial specification.
 
-A NumPy stand-in plays the trainer, so these tests need neither torch nor TimeNet.
+A NumPy implementation stands in for a trainer, so these tests need neither
+PyTorch nor TimeNet.
 """
 
 import json
@@ -25,29 +26,52 @@ from syntide.trial import (
     write_spec,
 )
 
-TRAINER = TrainerInfo(name="fake", version="1", config={"width": 1}, device="cpu", predictor="fake:predict")
+TRAINER = TrainerInfo(
+    name="fake",
+    version="1",
+    config={"width": 1},
+    device="cpu",
+    predictor="fake:predict",
+)
 OTHER_TRAINER = replace(TRAINER, config={"width": 2})
-QUALITY = {10: 0.2, 20: 0.6, 30: 0.4}  # how well the fake "model" separates val labels; best at step 20
+QUALITY = {
+    10: 0.2,
+    20: 0.6,
+    30: 0.4,
+}  # how well the fake "model" separates val labels; best at step 20
 
 
 def _open(spec, make_samples, run_dir, parents=None):
     write_spec(run_dir, spec)
-    tracker = make_tracker(TrackerConfig("files"), run_dir, spec.run_name, spec.protocol, spec.to_dict())
+    tracker = make_tracker(
+        TrackerConfig("files"),
+        run_dir,
+        spec.run_name,
+        spec.protocol,
+        spec.to_dict(),
+    )
     return open_trial(
-        spec, parents or make_samples(20), make_samples(40, seed=1, prefix="val"), tracker, run_dir
+        spec,
+        parents or make_samples(20),
+        make_samples(40, seed=1, prefix="val"),
+        tracker,
+        run_dir,
     )
 
 
 def _fake_training(trial, stop_after=None):
-    """Consume the stream, then report what an honest trainer would: val scores per val step,
-    the argmax checkpoint and the final one. Returns ``finish``'s arguments."""
+    """Create validation scores and checkpoint records for a trial."""
     for batch in trial.batches():
         if batch.step == stop_after:
             break
     probs, history = {}, []
     for step, quality in QUALITY.items():
-        noise = np.random.default_rng(step).standard_normal(trial.val.labels.shape)
-        probs[step] = np.clip(0.5 + quality * (trial.val.labels - 0.5) + 0.2 * noise, 0, 1)
+        noise = np.random.default_rng(step).standard_normal(
+            trial.val.labels.shape
+        )
+        probs[step] = np.clip(
+            0.5 + quality * (trial.val.labels - 0.5) + 0.2 * noise, 0, 1
+        )
         history.append({"step": step, **val_scores(trial.val, probs[step])})
     best_step = max(history, key=lambda entry: entry[SELECTION_METRIC])["step"]
     checkpoints = {}
@@ -78,29 +102,54 @@ def test_a_finished_run_records_exposure_ledger_predictions_and_result(
     assert result["best_step"] == 20
     assert result["exposure"]["presentations"] == 30 * 8
     assert result["exposure"]["transform_slots"] == 30 * 4
-    assert json.loads((tmp_path / "exposure.json").read_text()) == result["exposure"]
-    assert json.loads((tmp_path / "result.json").read_text())["trainer"]["fingerprint"] == TRAINER.fingerprint
+    assert (
+        json.loads((tmp_path / "exposure.json").read_text())
+        == result["exposure"]
+    )
+    assert (
+        json.loads((tmp_path / "result.json").read_text())["trainer"][
+            "fingerprint"
+        ]
+        == TRAINER.fingerprint
+    )
 
     ledger = pq.read_table(tmp_path / "recipes.parquet")
     assert ledger.num_rows == 30 * 4
     assert max(ledger["step"].to_pylist()) <= spec.max_steps
     assert set(ledger["parent_record_id"].to_pylist()) <= set(parents.record_id)
 
-    predictions = pq.read_table(tmp_path / "predictions_val.parquet").to_pandas()
+    predictions = pq.read_table(
+        tmp_path / "predictions_val.parquet"
+    ).to_pandas()
     n_val = len(trial.val)
     assert len(predictions) == 2 * n_val * len(SUPERCLASSES)
-    assert not predictions.duplicated(["checkpoint", "record_id", "class_id"]).any()
+    assert not predictions.duplicated(
+        ["checkpoint", "record_id", "class_id"]
+    ).any()
     best = predictions[predictions.checkpoint == "best"]
-    assert np.array_equal(best.y_prob.to_numpy().reshape(n_val, -1), args["val_probs"]["best"])
-    assert np.array_equal(best.y_true.to_numpy().reshape(n_val, -1), trial.val.labels)
+    assert np.array_equal(
+        best.y_prob.to_numpy().reshape(n_val, -1), args["val_probs"]["best"]
+    )
+    assert np.array_equal(
+        best.y_true.to_numpy().reshape(n_val, -1), trial.val.labels
+    )
 
     # The stream logged its budget counters at every validation step.
-    budget = [json.loads(line) for line in (tmp_path / "metrics.jsonl").read_text().splitlines()]
-    assert [entry["step"] for entry in budget if "budget/sample_presentations" in entry] == [10, 20, 30]
+    budget = [
+        json.loads(line)
+        for line in (tmp_path / "metrics.jsonl").read_text().splitlines()
+    ]
+    assert [
+        entry["step"]
+        for entry in budget
+        if "budget/sample_presentations" in entry
+    ] == [10, 20, 30]
     assert is_complete(tmp_path, TRAINER)
 
 
-def test_controls_without_transform_slots_write_an_empty_ledger(make_samples, make_test_spec, tmp_path):
+def test_controls_without_transform_slots_write_an_empty_ledger(
+    make_samples, make_test_spec, tmp_path
+):
     with _open(make_test_spec("C1"), make_samples, tmp_path) as trial:
         result = trial.finish(**_fake_training(trial))
     assert result["exposure"]["transform_slots"] == 0
@@ -128,7 +177,11 @@ def _drop_first_validation(args):
             lambda args: args.update(final=replace(args["final"], step=20)),
             "final checkpoint is at step 20",
         ),
-        (None, lambda args: args.update(best=replace(args["best"], step=30)), "first argmax"),
+        (
+            None,
+            lambda args: args.update(best=replace(args["best"], step=30)),
+            "first argmax",
+        ),
         (None, _shift_best_probs, "the history reports"),
         (None, _drop_first_validation, "every 10 steps"),
         (None, lambda args: args["best"].path.unlink(), "does not exist"),
@@ -179,9 +232,15 @@ def test_a_finished_run_is_never_overwritten_and_another_trainer_is_refused(
         is_complete(tmp_path, TRAINER)
 
 
-def test_trial_id_ignores_paths_and_changes_with_every_scientific_input(make_test_spec):
+def test_trial_id_ignores_paths_and_changes_with_every_scientific_input(
+    make_test_spec,
+):
     base = make_test_spec("A1")
-    for paths in ({"registry": "/elsewhere"}, {"manifest": "/copy/pool25.json"}, {"calibration": "/c.json"}):
+    for paths in (
+        {"registry": "/elsewhere"},
+        {"manifest": "/copy/pool25.json"},
+        {"calibration": "/c.json"},
+    ):
         assert make_test_spec("A1", **paths).trial_id == base.trial_id
     for change in (
         {"replicate_seed": 1},
@@ -208,11 +267,17 @@ def test_planned_trial_files_are_frozen(make_test_spec, tmp_path):
 
 
 def test_syntide_imports_no_training_framework():
-    """Trainers depend on syntide, never the reverse, and the seam stays torch-free."""
+    """Syntide can be imported without a training framework."""
     code = (
         "import importlib, pkgutil, sys, syntide\n"
-        "for m in pkgutil.walk_packages(syntide.__path__, 'syntide.'): importlib.import_module(m.name)\n"
-        "print(sorted(n for n in ('torch', 'lightning', 'syntide_trainers') if n in sys.modules))\n"
+        "for m in "
+        "pkgutil.walk_packages(syntide.__path__, "
+        "'syntide.'): importlib.import_module(m.name)\n"
+        "print(sorted(n for n in ('torch', "
+        "'lightning', 'syntide_trainers') if n in "
+        "sys.modules))\n"
     )
-    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True).stdout
+    out = subprocess.run(
+        [sys.executable, "-c", code], capture_output=True, text=True, check=True
+    ).stdout
     assert out.strip() == "[]"

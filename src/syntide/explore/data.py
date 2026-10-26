@@ -1,9 +1,9 @@
-"""Training-only recording catalogs for embedding-based generation discovery.
+"""Prepare training-recording catalogs for dataset exploration.
 
-Catalog construction does not decode waveforms. QA examples attach to recordings as ``texts``;
-they never create additional recording points. The PTB-XL adapter and private ECG-QA registry view
-provide experiment membership and compatible fingerprints. Generic JSONL supports new tuple datasets
-without adding another task-specific adapter.
+Building a catalog reads metadata without decoding waveforms. Questions and
+answers attach to their recording as text; they do not add recording points.
+The PTB-XL adapter and ECG-QA registry reader supply experiment membership
+and dataset hashes. Other datasets can use one JSON object per line.
 """
 
 from __future__ import annotations
@@ -30,80 +30,148 @@ _SUPERCLASSES = {
     "CD": "Conduction disturbance",
     "HYP": "Hypertrophy",
 }
-_FORBIDDEN_ROLES = {"val", "validation", "test", "withheld", "heldout", "held_out", "unused"}
-_SPLITS = {"train": "train", "val": "validation", "validation": "validation", "test": "test"}
+_FORBIDDEN_ROLES = {
+    "val",
+    "validation",
+    "test",
+    "withheld",
+    "heldout",
+    "held_out",
+    "unused",
+}
+_SPLITS = {
+    "train": "train",
+    "val": "validation",
+    "validation": "validation",
+    "test": "test",
+}
 
 
 class RecordingSource:
-    """A complete selected population and an ordered, restricted waveform loader."""
+    """A selected population with an ordered waveform loader."""
 
-    def __init__(self, rows: list[dict], provenance: dict, loader: Callable[[list[str]], list[dict]]):
+    def __init__(
+        self,
+        rows: list[dict],
+        provenance: dict,
+        loader: Callable[[list[str]], list[dict]],
+    ):
         self.rows = rows
         self.provenance = provenance
         self._by_id = {row["record_id"]: row for row in rows}
         self._loader = loader
 
     def load(self, record_ids: Sequence[str]) -> list[dict]:
-        """Load only selected population members, preserving the caller's order."""
+        """Load selected recordings in the requested order."""
         ids = list(record_ids)
         missing = sorted(set(ids) - self._by_id.keys())
         if missing:
-            raise ValueError(f"Waveform request is outside the discovery population: {missing[:5]}")
+            raise ValueError(
+                "Waveform request is outside the discovery population: "
+                f"{missing[:5]}"
+            )
         if not ids:
             return []
         loaded = self._loader(ids)
         if [row["record_id"] for row in loaded] != ids:
-            raise RuntimeError("Waveform loader did not preserve requested recording order")
+            raise RuntimeError(
+                "Waveform loader did not preserve requested recording order"
+            )
         for row in loaded:
             signal = np.asarray(row["signal"])
             if signal.ndim != 2 or not all(signal.shape):
-                raise ValueError(f"{row['record_id']}: expected non-empty signal [channels, time]")
+                raise ValueError(
+                    f"{row['record_id']}: expected non-empty signal "
+                    "[channels, time]"
+                )
             if len(row["channels"]) != signal.shape[0]:
-                raise ValueError(f"{row['record_id']}: channels do not match signal shape {signal.shape}")
-            if not np.issubdtype(signal.dtype, np.number) or np.iscomplexobj(signal):
-                raise ValueError(f"{row['record_id']}: signal must contain real numeric values")
+                raise ValueError(
+                    f"{row['record_id']}: channels do not match signal "
+                    f"shape {signal.shape}"
+                )
+            if not np.issubdtype(signal.dtype, np.number) or np.iscomplexobj(
+                signal
+            ):
+                raise ValueError(
+                    f"{row['record_id']}: signal must contain real numeric "
+                    "values"
+                )
             if not np.isfinite(signal).all():
-                raise ValueError(f"{row['record_id']}: signal contains non-finite values")
-            if np.max(np.abs(signal.astype(np.float64, copy=False))) > np.finfo(np.float32).max:
-                raise ValueError(f"{row['record_id']}: signal exceeds the float32 numeric range")
+                raise ValueError(
+                    f"{row['record_id']}: signal contains non-finite values"
+                )
+            if (
+                np.max(np.abs(signal.astype(np.float64, copy=False)))
+                > np.finfo(np.float32).max
+            ):
+                raise ValueError(
+                    f"{row['record_id']}: signal exceeds the float32 "
+                    "numeric range"
+                )
             row["signal"] = signal.astype(np.float32, copy=False)
         return loaded
 
 
 def open_source(config: dict[str, Any]) -> RecordingSource:
-    """Open ``ptbxl``, ``ecgqa`` or ``jsonl`` with whole-record training membership.
+    """Open a recording source restricted to training data.
 
-    Shared keys: ``dataset``, ``manifest`` and ``role`` (defaults to ``depleted`` when a
-    manifest is present, otherwise ``train``). Registry adapters also accept ``registry``,
-    ``dataset_ref``, ``signals_ref`` (ECG-QA), ``scp_statements`` and ``ptbxl_root``.
-    JSONL requires ``input``; paths inside it are relative to the JSONL file. Every row needs
-    ``record_id``, ``signal_path``, ``sample_rate``, ``channels`` and an explicit ``split``.
-    Repeated rows may supply different text/QA tuples for the same recording.
+    Shared keys: ``dataset``, ``manifest`` and ``role`` (defaults to
+    ``depleted`` when a manifest is present, otherwise ``train``). Registry
+    adapters also accept ``registry``, ``dataset_ref``, ``signals_ref``
+    (ECG-QA), ``scp_statements`` and ``ptbxl_root``. JSONL requires
+    ``input``; paths inside it are relative to the JSONL file. Every row
+    needs ``record_id``, ``signal_path``, ``sample_rate``, ``channels`` and
+    an explicit ``split``. Repeated rows may supply different
+    text/question-answer tuples for the same recording.
     """
     kind = str(config.get("dataset", "ptbxl")).lower()
-    role = str(config.get("role") or ("depleted" if config.get("manifest") else "train"))
+    role = str(
+        config.get("role")
+        or ("depleted" if config.get("manifest") else "train")
+    )
     if role in _FORBIDDEN_ROLES:
-        raise ValueError(f"Role {role!r} cannot be used for generation discovery; use training records")
+        raise ValueError(
+            f"Role {role!r} cannot be used for generation discovery; use "
+            "training records"
+        )
     if not config.get("manifest") and role != "train":
-        raise ValueError("A named experiment role requires --manifest; without a manifest use role=train")
+        raise ValueError(
+            "A named experiment role requires --manifest; without a "
+            "manifest use role=train"
+        )
     if kind == "jsonl":
         return _open_jsonl(config, role)
     if kind in {"ptbxl", "ecgqa"}:
         return _open_registry(config, kind, role)
-    raise ValueError(f"Unsupported discovery dataset {kind!r}; choose ptbxl, ecgqa, or jsonl")
+    raise ValueError(
+        f"Unsupported discovery dataset {kind!r}; choose ptbxl, ecgqa, or jsonl"
+    )
 
 
 def _open_registry(config: dict, kind: str, role: str) -> RecordingSource:
-    registry = Path(config.get("registry", "datasets/timenet-registry")).expanduser().resolve()
+    registry = (
+        Path(config.get("registry", "datasets/timenet-registry"))
+        .expanduser()
+        .resolve()
+    )
     if kind == "ecgqa":
-        from syntide.explore.qa import DATASET, SIGNALS, EcgQaView, check_qa_tasks
+        from syntide.explore.qa import (
+            DATASET,
+            SIGNALS,
+            EcgQaView,
+            check_qa_tasks,
+        )
 
         adapter = EcgQaView(
-            registry, config.get("dataset_ref") or DATASET, config.get("signals_ref") or SIGNALS
+            registry,
+            config.get("dataset_ref") or DATASET,
+            config.get("signals_ref") or SIGNALS,
         )
         signal_adapter = adapter.signals
     else:
-        adapter = PtbXlAdapter(registry, config.get("dataset_ref") or "physionet/ptb-xl@1.0.3")
+        adapter = PtbXlAdapter(
+            registry, config.get("dataset_ref") or "physionet/ptb-xl@1.0.3"
+        )
         signal_adapter = adapter
     index = adapter.index()
     index_rows = index.to_pylist()
@@ -117,33 +185,56 @@ def _open_registry(config: dict, kind: str, role: str) -> RecordingSource:
         if kind == "ecgqa":
             check_qa_tasks(adapter.tasks(), manifest, index)
         if role not in manifest.roles:
-            raise ValueError(f"Manifest has no role {role!r}; choose depleted or retained_artifact")
+            raise ValueError(
+                f"Manifest has no role {role!r}; choose depleted or "
+                "retained_artifact"
+            )
         selected_ids = set(manifest.roles[role])
-        forbidden = set().union(*(manifest.roles[name] for name in ("withheld", "val", "test")))
-        forbidden_subjects = {row["subject_uid"] for row in index_rows if row["record_id"] in forbidden}
+        forbidden = set().union(
+            *(manifest.roles[name] for name in ("withheld", "val", "test"))
+        )
+        forbidden_subjects = {
+            row["subject_uid"]
+            for row in index_rows
+            if row["record_id"] in forbidden
+        }
         unsafe = [
             row["record_id"]
             for row in index_rows
             if row["record_id"] in selected_ids
-            and (row["record_id"] in forbidden or row["subject_uid"] in forbidden_subjects)
+            and (
+                row["record_id"] in forbidden
+                or row["subject_uid"] in forbidden_subjects
+            )
         ]
         if unsafe:
             raise LeakageError(
-                f"Role {role!r} includes withheld or held-out records/patients; use depleted "
-                f"for generation discovery (e.g. {unsafe[:3]})"
+                f"Role {role!r} includes withheld or held-out "
+                "records/patients; use depleted for generation discovery "
+                f"(e.g. {unsafe[:3]})"
             )
     else:
-        selected_ids = {row["record_id"] for row in index_rows if 1 <= row["strat_fold"] <= 8}
+        selected_ids = {
+            row["record_id"]
+            for row in index_rows
+            if 1 <= row["strat_fold"] <= 8
+        }
     # Apply the ordinary patient boundary even without an experiment manifest.
-    _check_subject_splits([{**row, "split": _fold_split(row["strat_fold"])} for row in index_rows])
+    _check_subject_splits(
+        [{**row, "split": _fold_split(row["strat_fold"])} for row in index_rows]
+    )
     chosen = [row for row in index_rows if row["record_id"] in selected_ids]
     if any(_fold_split(row["strat_fold"]) != "train" for row in chosen):
-        raise LeakageError("Discovery selection includes records outside PTB-XL training folds 1-8")
+        raise LeakageError(
+            "Discovery selection includes records outside PTB-XL "
+            "training folds 1-8"
+        )
 
     statements_path, database_path = _ptbxl_files(config, registry)
     definitions = _label_definitions(statements_path)
     raw_metadata = _clinical_metadata(database_path, selected_ids)
-    # iter_records hydrates structure only; to_numpy is called only inside the loader below.
+    # iter_records hydrates structure only; to_numpy is called only inside the
+    # loader below.
     record_metadata = {
         record.record_id: dict(record.metadata or {})
         for record in signal_adapter._reader.iter_records(
@@ -201,7 +292,9 @@ def _open_registry(config: dict, kind: str, role: str) -> RecordingSource:
                     "strat_fold": row["strat_fold"],
                     "is_artifact": row["is_artifact"],
                     "label_descriptions": {
-                        label: definitions.get(label, {}).get("description", label.split(":", 1)[-1])
+                        label: definitions.get(label, {}).get(
+                            "description", label.split(":", 1)[-1]
+                        )
                         for label in labels
                     },
                 },
@@ -230,16 +323,24 @@ def _open_registry(config: dict, kind: str, role: str) -> RecordingSource:
         "source_sha256": source["sha256"],
         "registry": str(registry),
         "role": role,
-        "manifest": str(Path(config["manifest"]).expanduser().resolve()) if manifest else None,
+        "manifest": str(Path(config["manifest"]).expanduser().resolve())
+        if manifest
+        else None,
         "manifest_sha256": manifest.sha256 if manifest else None,
         "label_definitions": definitions,
         "label_namespaces": ["superclass", "scp", "artifact"],
         "population_scope": "PTB-XL records with a diagnostic superclass"
         + (" and at least one ECG-QA question" if kind == "ecgqa" else ""),
-        "split_policy": "PTB-XL patient folds 1-8; CoT release split is descriptive only",
-        "label_effect_status": "unreviewed; discovery does not approve labels after generation",
+        ("split_policy"): (
+            "PTB-XL patient folds 1-8; CoT release split is descriptive only"
+        ),
+        ("label_effect_status"): (
+            "unreviewed; discovery does not approve labels after generation"
+        ),
         "metadata_files": {
-            str(path): _file_sha256(path) for path in (statements_path, database_path) if path
+            str(path): _file_sha256(path)
+            for path in (statements_path, database_path)
+            if path
         },
     }
     _finish_provenance(provenance, rows)
@@ -249,7 +350,8 @@ def _open_registry(config: dict, kind: str, role: str) -> RecordingSource:
 def _open_jsonl(config: dict, role: str) -> RecordingSource:
     if config.get("manifest"):
         raise ValueError(
-            "JSONL uses explicit patient-level splits; PTB-XL challenge manifests are unsupported"
+            "JSONL uses explicit patient-level splits; PTB-XL "
+            "challenge manifests are unsupported"
         )
     if not config.get("input"):
         raise ValueError("dataset=jsonl requires an input JSONL path")
@@ -257,7 +359,9 @@ def _open_jsonl(config: dict, role: str) -> RecordingSource:
     records: dict[str, dict] = {}
     signal_specs: dict[str, dict] = {}
     text_ids: dict[str, dict] = {}
-    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+    for line_number, line in enumerate(
+        path.read_text(encoding="utf-8").splitlines(), 1
+    ):
         if not line.strip():
             continue
         try:
@@ -267,7 +371,9 @@ def _open_jsonl(config: dict, role: str) -> RecordingSource:
             if raw_split not in _SPLITS:
                 raise ValueError("split must be train, validation, or test")
             split = _SPLITS[raw_split]
-            signal_path = Path(_required_string(item, "signal_path")).expanduser()
+            signal_path = Path(
+                _required_string(item, "signal_path")
+            ).expanduser()
             signal_path = (path.parent / signal_path).resolve()
             if signal_path.suffix.lower() not in {".npy", ".npz"}:
                 raise ValueError("signal_path must name a .npy or .npz file")
@@ -278,10 +384,15 @@ def _open_jsonl(config: dict, role: str) -> RecordingSource:
             if (
                 not isinstance(channels, list)
                 or not channels
-                or any(not isinstance(channel, str) or not channel for channel in channels)
+                or any(
+                    not isinstance(channel, str) or not channel
+                    for channel in channels
+                )
                 or len(set(channels)) != len(channels)
             ):
-                raise ValueError("channels must be a non-empty list of unique names")
+                raise ValueError(
+                    "channels must be a non-empty list of unique names"
+                )
             spec = {
                 "path": str(signal_path),
                 "sample_rate": sample_rate,
@@ -296,16 +407,28 @@ def _open_jsonl(config: dict, role: str) -> RecordingSource:
                 "labels": _strings(item.get("labels", []), "labels"),
                 "metadata": dict(item.get("metadata") or {}),
                 "texts": [],
-                "artifact_types": _strings(item.get("artifact_types", []), "artifact_types"),
+                "artifact_types": _strings(
+                    item.get("artifact_types", []), "artifact_types"
+                ),
             }
             if record_id in records:
                 previous = records[record_id]
                 if signal_specs[record_id] != spec or any(
                     previous[key] != row[key]
-                    for key in ("subject_uid", "split", "metadata", "artifact_types")
+                    for key in (
+                        "subject_uid",
+                        "split",
+                        "metadata",
+                        "artifact_types",
+                    )
                 ):
-                    raise ValueError(f"conflicting recording metadata for repeated record {record_id!r}")
-                previous["labels"] = sorted(set(previous["labels"]) | set(row["labels"]))
+                    raise ValueError(
+                        "conflicting recording metadata for repeated "
+                        f"record {record_id!r}"
+                    )
+                previous["labels"] = sorted(
+                    set(previous["labels"]) | set(row["labels"])
+                )
             else:
                 records[record_id] = row
                 signal_specs[record_id] = spec
@@ -313,7 +436,10 @@ def _open_jsonl(config: dict, role: str) -> RecordingSource:
                 text_id = text["text_id"]
                 identity = {"record_id": record_id, **text}
                 if text_id in text_ids and text_ids[text_id] != identity:
-                    raise ValueError(f"text_id {text_id!r} is reused for different text or recording")
+                    raise ValueError(
+                        f"text_id {text_id!r} is reused for different text "
+                        "or recording"
+                    )
                 if text_id not in text_ids:
                     records[record_id]["texts"].append(text)
                     text_ids[text_id] = identity
@@ -322,11 +448,14 @@ def _open_jsonl(config: dict, role: str) -> RecordingSource:
     all_rows = list(records.values())
     _check_subject_splits(all_rows)
     rows = [row for row in all_rows if row["split"] == "train"]
-    # Hash selected signal bytes once per path without loading arrays or inspecting holdout signals.
+    # Hash selected signal bytes once per path without loading arrays or
+    # inspecting holdout signals.
     hashes = {signal_specs[row["record_id"]]["path"]: "" for row in rows}
     for signal_path in hashes:
         hashes[signal_path] = _file_sha256(Path(signal_path))
-    selected_specs = {row["record_id"]: signal_specs[row["record_id"]] for row in rows}
+    selected_specs = {
+        row["record_id"]: signal_specs[row["record_id"]] for row in rows
+    }
     source = {
         "dataset": "jsonl",
         "input_sha256": _file_sha256(path),
@@ -335,12 +464,14 @@ def _open_jsonl(config: dict, role: str) -> RecordingSource:
             for record_id, spec in selected_specs.items()
         ],
     }
-    # Content hashes, not machine-dependent absolute paths, determine source identity.
+    # Content hashes, not machine-dependent absolute paths, determine source
+    # identity.
     source_sha256 = _sha256(
         {
             "input_sha256": source["input_sha256"],
             "signals": [
-                {key: value for key, value in spec.items() if key != "path"} for spec in source["signals"]
+                {key: value for key, value in spec.items() if key != "path"}
+                for spec in source["signals"]
             ],
         }
     )
@@ -349,17 +480,24 @@ def _open_jsonl(config: dict, role: str) -> RecordingSource:
         loaded = []
         for record_id in ids:
             spec = selected_specs[record_id]
-            # Detect mutation between analysis cataloging and waveform materialization.
+            # Detect mutation between analysis cataloging and waveform
+            # materialization.
             if _file_sha256(Path(spec["path"])) != hashes[spec["path"]]:
-                raise ValueError(f"Signal file changed after cataloging: {spec['path']}")
+                raise ValueError(
+                    f"Signal file changed after cataloging: {spec['path']}"
+                )
             signal = np.load(spec["path"], allow_pickle=False)
             if isinstance(signal, np.lib.npyio.NpzFile):
                 with signal as archive:
-                    key = spec["signal_key"] or ("signal" if "signal" in archive else None)
+                    key = spec["signal_key"] or (
+                        "signal" if "signal" in archive else None
+                    )
                     if key is None and len(archive.files) == 1:
                         key = archive.files[0]
                     if key is None:
-                        raise ValueError(f"{spec['path']}: ambiguous NPZ; set signal_key")
+                        raise ValueError(
+                            f"{spec['path']}: ambiguous NPZ; set signal_key"
+                        )
                     signal = archive[key]
             loaded.append(
                 {
@@ -383,9 +521,15 @@ def _open_jsonl(config: dict, role: str) -> RecordingSource:
         "manifest_sha256": None,
         "label_namespaces": ["user supplied"],
         "label_definitions": {},
-        "population_scope": "Explicit train split; one point per distinct record_id",
-        "split_policy": "Explicit splits with cross-split subject overlap rejected",
-        "label_effect_status": "unreviewed; discovery does not approve labels after generation",
+        ("population_scope"): (
+            "Explicit train split; one point per distinct record_id"
+        ),
+        ("split_policy"): (
+            "Explicit splits with cross-split subject overlap rejected"
+        ),
+        ("label_effect_status"): (
+            "unreviewed; discovery does not approve labels after generation"
+        ),
     }
     _finish_provenance(provenance, rows)
     return RecordingSource(rows, provenance, load)
@@ -397,21 +541,28 @@ def _jsonl_texts(item: dict, record_id: str, line_number: int) -> list[dict]:
         values.insert(0, item)
     out = []
     for k, value in enumerate(values):
-        question, answer = str(value.get("question") or ""), str(value.get("answer") or "")
+        question, answer = (
+            str(value.get("question") or ""),
+            str(value.get("answer") or ""),
+        )
         text = str(value.get("text") or "")
         if not any(part.strip() for part in (text, question, answer)):
             continue
         out.append(
             {
                 "text_id": str(
-                    value.get("text_id") or value.get("task_id") or f"{record_id}:line{line_number}:text{k}"
+                    value.get("text_id")
+                    or value.get("task_id")
+                    or f"{record_id}:line{line_number}:text{k}"
                 ),
                 "text": text,
                 "question": question,
                 "answer": answer,
                 "rationale": str(value.get("rationale") or ""),
                 "metadata": dict(
-                    value.get("text_metadata") or (value.get("metadata") if value is not item else {}) or {}
+                    value.get("text_metadata")
+                    or (value.get("metadata") if value is not item else {})
+                    or {}
                 ),
             }
         )
@@ -422,9 +573,15 @@ def _check_subject_splits(rows: list[dict]) -> None:
     splits: dict[str, set[str]] = defaultdict(set)
     for row in rows:
         splits[row["subject_uid"]].add(row["split"])
-    overlap = sorted(subject for subject, memberships in splits.items() if len(memberships) > 1)
+    overlap = sorted(
+        subject
+        for subject, memberships in splits.items()
+        if len(memberships) > 1
+    )
     if overlap:
-        raise LeakageError(f"Subjects occur in multiple dataset splits: {overlap[:5]}")
+        raise LeakageError(
+            f"Subjects occur in multiple dataset splits: {overlap[:5]}"
+        )
 
 
 def _fold_split(fold: int) -> str:
@@ -435,15 +592,25 @@ def _fold_split(fold: int) -> str:
     raise ValueError(f"Invalid PTB-XL strat_fold {fold!r}")
 
 
-def _ptbxl_files(config: dict, registry: Path) -> tuple[Path | None, Path | None]:
-    root = Path(config["ptbxl_root"]).expanduser().resolve() if config.get("ptbxl_root") else None
+def _ptbxl_files(
+    config: dict, registry: Path
+) -> tuple[Path | None, Path | None]:
+    root = (
+        Path(config["ptbxl_root"]).expanduser().resolve()
+        if config.get("ptbxl_root")
+        else None
+    )
     statements = (
-        Path(config["scp_statements"]).expanduser().resolve() if config.get("scp_statements") else None
+        Path(config["scp_statements"]).expanduser().resolve()
+        if config.get("scp_statements")
+        else None
     )
     if statements and not statements.is_file():
         raise FileNotFoundError(statements)
     if root is None:
-        candidates = sorted((registry.parent / "raw" / "ptb-xl").glob("**/ptbxl_database.csv"))
+        candidates = sorted(
+            (registry.parent / "raw" / "ptb-xl").glob("**/ptbxl_database.csv")
+        )
         if len(candidates) == 1:
             root = candidates[0].parent
     if root and not root.is_dir():
@@ -459,8 +626,16 @@ def _label_definitions(path: Path | None) -> dict[str, dict]:
         f"superclass:{key}": {"description": value, "namespace": "superclass"}
         for key, value in _SUPERCLASSES.items()
     }
-    for flag in ("baseline_drift", "static_noise", "burst_noise", "electrodes_problems"):
-        definitions[f"artifact:{flag}"] = {"description": flag.replace("_", " "), "namespace": "artifact"}
+    for flag in (
+        "baseline_drift",
+        "static_noise",
+        "burst_noise",
+        "electrodes_problems",
+    ):
+        definitions[f"artifact:{flag}"] = {
+            "description": flag.replace("_", " "),
+            "namespace": "artifact",
+        }
     if path:
         with path.open(newline="", encoding="utf-8-sig") as handle:
             for row in csv.DictReader(handle):
@@ -472,18 +647,24 @@ def _label_definitions(path: Path | None) -> dict[str, dict]:
                         or code,
                         "namespace": "scp",
                         "categories": [
-                            name for name in ("diagnostic", "form", "rhythm") if row.get(name) in {"1", "1.0"}
+                            name
+                            for name in ("diagnostic", "form", "rhythm")
+                            if row.get(name) in {"1", "1.0"}
                         ],
                         "diagnostic_class": row.get("diagnostic_class") or None,
-                        "diagnostic_subclass": row.get("diagnostic_subclass") or None,
+                        "diagnostic_subclass": row.get("diagnostic_subclass")
+                        or None,
                     }
     return definitions
 
 
-def _clinical_metadata(path: Path | None, record_ids: set[str]) -> dict[str, dict]:
+def _clinical_metadata(
+    path: Path | None, record_ids: set[str]
+) -> dict[str, dict]:
     if path is None:
         return {}
-    # Context for meaningful slices; patient IDs and split remain adapter-controlled.
+    # Context for meaningful slices; patient IDs and split remain
+    # adapter-controlled.
     fields = (
         "age",
         "sex",
@@ -504,7 +685,9 @@ def _clinical_metadata(path: Path | None, record_ids: set[str]) -> dict[str, dic
         for row in csv.DictReader(handle):
             record_id = f"ptbxl-{row['ecg_id']}"
             if record_id in record_ids:
-                values = {field: row[field] for field in fields if row.get(field)}
+                values = {
+                    field: row[field] for field in fields if row.get(field)
+                }
                 for field in ("age", "sex", "height", "weight"):
                     if field in values:
                         try:
@@ -547,14 +730,18 @@ def _required_string(item: dict, key: str) -> str:
 def _strings(value: Any, name: str) -> list[str]:
     if isinstance(value, str):
         value = [value]
-    if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
+    if not isinstance(value, list) or any(
+        not isinstance(item, str) for item in value
+    ):
         raise ValueError(f"{name} must be a list of strings")
     return sorted(set(value))
 
 
 def _sha256(value: Any) -> str:
     return hashlib.sha256(
-        json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+        json.dumps(
+            value, sort_keys=True, separators=(",", ":"), allow_nan=False
+        ).encode()
     ).hexdigest()
 
 

@@ -1,4 +1,4 @@
-"""PTB-XL connector package; ``CONNECTOR`` follows the timenet-connectors convention."""
+"""Connect PTB-XL to TimeNet using the standard connector interface."""
 
 from syntide.data.ptbxl.connector import PtbXlConnector
 

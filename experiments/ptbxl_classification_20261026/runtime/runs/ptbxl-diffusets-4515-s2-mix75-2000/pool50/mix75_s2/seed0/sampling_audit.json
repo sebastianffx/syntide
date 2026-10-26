@@ -1,0 +1,61 @@
+{
+  "all_rows_seen": true,
+  "augmentation": {
+    "gain": [
+      0.95,
+      1.05
+    ],
+    "max_shift_s": 0.25,
+    "noise_rms_mv": [
+      0.0,
+      0.05
+    ],
+    "wander_hz": [
+      0.05,
+      0.7
+    ],
+    "wander_mv": [
+      0.0,
+      1.75
+    ]
+  },
+  "augmentation_slot_rng": "numpy.default_rng([seed,4515,3,source,step]); 25% within each source",
+  "augmentation_waveform_rng": "unchanged native syntide.generate.stream._augment",
+  "every_batch_has_exact_mix": true,
+  "every_batch_has_exact_s2_dose": true,
+  "exposure": {
+    "accepted": 32000,
+    "augmented_generated_presentations": 8000,
+    "augmented_real_presentations": 24000,
+    "candidates": 32000,
+    "distinct_generated_records": 4515,
+    "distinct_real_records": 8579,
+    "distinct_recipes": 32000,
+    "exhausted_slots": 0,
+    "generated_presentations": 32000,
+    "presentations": 128000,
+    "real_presentations": 96000,
+    "rejected": 0,
+    "steps": 2000,
+    "transform_slots": 32000
+  },
+  "files_sha256": {
+    "batch_composition.csv": "dcedbc14e52d8da00f551f7076413ae513269dad6f695d410759a07bc04b0f86",
+    "row_exposure.csv": "60518d4711bb02a85673cb903acae224718241ae1d65d449816761a59ed90098",
+    "sampling_trace.npz": "ab9e2915e8816f721bac1cac8eae1f7df7f1caddf9fca068e4ee569a7fcdd50c"
+  },
+  "generated_augmented_per_batch": 4,
+  "generated_per_batch": 16,
+  "generated_presentations_per_record_max": 8,
+  "generated_presentations_per_record_min": 7,
+  "n_generated": 4515,
+  "n_real": 8579,
+  "policy": "independent shuffled exhaustive cycles; exact source quota; shuffled batch positions",
+  "real_augmented_per_batch": 12,
+  "real_per_batch": 48,
+  "real_presentations_per_record_max": 12,
+  "real_presentations_per_record_min": 11,
+  "rng_key": "numpy.default_rng([seed,4515,source,pass]); source=0 real,1 generated,2 batch shuffle",
+  "schema_version": "ptbxl-offline-mixed-s2-sampling@1",
+  "seed": 0
+}

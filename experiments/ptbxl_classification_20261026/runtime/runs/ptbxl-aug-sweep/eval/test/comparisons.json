@@ -1,0 +1,5423 @@
+{
+ "protocol": "ptbxl-aug-sweep",
+ "generated_at": "2026-10-25T13:32:46+00:00",
+ "pending": [],
+ "freeze": "rules frozen 2026-10-24T17:08:42+00:00; test fold claimed 2026-10-25T13:32:01+00:00",
+ "generator_gates": {
+  "scarcity50": "passed; coverage_matched 99.8% accepted, gap_targeted 98.7% accepted"
+ },
+ "split": "test",
+ "checkpoint": "best",
+ "rules_sha256": "7329468ebc8d819add071638ad3efc87c389f58f11356787054b72de9cfe8c98",
+ "gap_gate": {
+  "label": "C2@full100 - A0",
+  "min_effect": 0.01,
+  "passed": true,
+  "status": "passed",
+  "artifact": {
+   "a": "C2@full100",
+   "b": "A0",
+   "split": "val",
+   "checkpoint": "best",
+   "slice": "artifact",
+   "metric": "macro_auroc",
+   "estimate": 0.01784508821618284,
+   "ci_low": 0.008399102623553508,
+   "ci_high": 0.027983612110537147,
+   "ci_level": 0.95,
+   "n_boot": 2000,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "per_seed": [
+    0.02328962516372768,
+    0.014467448428130303,
+    0.015778191056690538
+   ],
+   "mean_a": 0.9225169411644364,
+   "mean_b": 0.9046718529482535,
+   "n_records": 528,
+   "n_patients": 494,
+   "per_class": {
+    "CD": 0.019112223747610974,
+    "HYP": 0.013768647591098082,
+    "MI": 0.03134359713093845,
+    "NORM": 0.012527233115468403,
+    "STTC": 0.01247373949579833
+   },
+   "n_positive": {
+    "CD": 122,
+    "HYP": 58,
+    "MI": 145,
+    "NORM": 222,
+    "STTC": 136
+   }
+  }
+ },
+ "chain": [
+  {
+   "role": "primary",
+   "label": "S3 - A1",
+   "missing": [],
+   "artifact": {
+    "a": "S3",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.0103482443399077,
+    "ci_low": -0.01880172872079626,
+    "ci_high": -0.0020100883927674125,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.006608543281754198,
+     -0.013260283654831229,
+     -0.011175906083137677
+    ],
+    "mean_a": 0.896110688987951,
+    "mean_b": 0.9064589333278588,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.014167650531286916,
+     "HYP": 0.002712716686515774,
+     "MI": -0.022949014843779647,
+     "NORM": -0.011846707818930047,
+     "STTC": -0.005490565192057706
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "S3",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.009117836181089967,
+    "ci_low": -0.013684039890097636,
+    "ci_high": -0.004535110079986799,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.007749934402079717,
+     -0.008767128418947001,
+     -0.010836445722243182
+    ],
+    "mean_a": 0.9036057882921421,
+    "mean_b": 0.9127236244732323,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": -0.015334383202099714,
+     "HYP": -0.0037290117111125065,
+     "MI": -0.023005267857614625,
+     "NORM": -0.0018181383577892858,
+     "STTC": -0.0017023797768342213
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "S3",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.00942113272455484,
+    "ci_low": -0.013557014676997008,
+    "ci_high": -0.0054340722164087545,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.007666173503900531,
+     -0.009749858855770843,
+     -0.010847365813993148
+    ],
+    "mean_a": 0.9016644026513326,
+    "mean_b": 0.9110855353758875,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.014875926788556315,
+     "HYP": -0.0022197528478328232,
+     "MI": -0.023450927182270487,
+     "NORM": -0.004106182591303613,
+     "STTC": -0.0024528742128114844
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": false,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   },
+   "status": "failed"
+  },
+  {
+   "role": "sequence",
+   "label": "E1 - A3",
+   "missing": [],
+   "artifact": {
+    "a": "E1",
+    "b": "A3",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.0021283273185737825,
+    "ci_low": -0.008747939973399052,
+    "ci_high": 0.004072878442736512,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.000170118009862108,
+     -0.006305208978759191,
+     9.034503289995222e-05
+    ],
+    "mean_a": 0.9059056146772214,
+    "mean_b": 0.9080339419957952,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.005270703322651375,
+     "HYP": 0.00407569141193594,
+     "MI": -0.006555053591992192,
+     "NORM": -0.002988683127571982,
+     "STTC": 9.711203741051093e-05
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "E1",
+    "b": "A3",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.00015258614040610427,
+    "ci_low": -0.0031423231686130114,
+    "ci_high": 0.002927124032540979,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.00016448849672900945,
+     -0.001501729011697428,
+     0.0008794820937501058
+    ],
+    "mean_a": 0.9136772021539601,
+    "mean_b": 0.9138297882943663,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": -0.0027310586176727916,
+     "HYP": 0.004891388334576326,
+     "MI": -0.0027098821204580106,
+     "NORM": 0.0016851767194628886,
+     "STTC": -0.0018985550179388966
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "E1",
+    "b": "A3",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.0005385347790580383,
+    "ci_low": -0.003830831956193172,
+    "ci_high": 0.00248869071116004,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.00012992321202676127,
+     -0.0026112844729919704,
+     0.0008657569237910945
+    ],
+    "mean_a": 0.9117843852796228,
+    "mean_b": 0.9123229200586809,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.003464135062044645,
+     "HYP": 0.004832726726146393,
+     "MI": -0.0035779436152570585,
+     "NORM": 0.0009920764231951724,
+     "STTC": -0.0014753983673300535
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   },
+   "status": "not tested"
+  }
+ ],
+ "diagnostics": [
+  {
+   "role": "diagnostic",
+   "label": "S1 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "S1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.007715909884554654,
+    "ci_low": -0.0023482487257193256,
+    "ci_high": 0.016960685562027317,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.002121375910357548,
+     0.013175631430088486,
+     0.007850722313217928
+    ],
+    "mean_a": 0.9072079563170697,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.011117670208579308,
+     "HYP": -0.004803493449781667,
+     "MI": 0.021076142388924708,
+     "NORM": 0.010046296296296275,
+     "STTC": 0.0011429339787548676
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "S1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.00635813521846762,
+    "ci_low": 0.0027245793883755795,
+    "ci_high": 0.009808384134612306,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.00688177808120527,
+     0.0063057207407573035,
+     0.005886906833440286
+    ],
+    "mean_a": 0.9153299891334958,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.00856622922134731,
+     "HYP": 0.005000011198233345,
+     "MI": 0.0107378170885708,
+     "NORM": 0.007112700674967091,
+     "STTC": 0.0003739179092195159
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "S1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.006674636484057565,
+    "ci_low": 0.003419229995852397,
+    "ci_high": 0.010020191753219249,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0061834892248279205,
+     0.007631640468597545,
+     0.006208779758747229
+    ],
+    "mean_a": 0.9132750309904324,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.008931055342054517,
+     "HYP": 0.002832399265629504,
+     "MI": 0.013338233077039038,
+     "NORM": 0.007790768909918033,
+     "STTC": 0.0004807258256465848
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "S2 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "S2",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.009148251650737738,
+    "ci_low": 0.0013431646429884537,
+    "ci_high": 0.016671604681786426,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.009567214654227496,
+     0.010400449080854579,
+     0.007477091217131138
+    ],
+    "mean_a": 0.9086402980832529,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.013436779670545906,
+     "HYP": -0.0018525870054254174,
+     "MI": 0.017627779254141163,
+     "NORM": 0.01196502057613169,
+     "STTC": 0.004564265758295605
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "S2",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.007613010982234621,
+    "ci_low": 0.0035371618152905135,
+    "ci_high": 0.01166590309834363,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.009361424838769894,
+     0.004535277194096188,
+     0.008942330913837782
+    ],
+    "mean_a": 0.9165848648972629,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.008819597550306221,
+     "HYP": 0.0054367422995347985,
+     "MI": 0.011560094261363951,
+     "NORM": 0.008728657665113956,
+     "STTC": 0.0035199631348539575
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "S2",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.007986602611960972,
+    "ci_low": 0.004447192962060634,
+    "ci_high": 0.011588625198270544,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.009648464968346593,
+     0.005832985705941596,
+     0.00847835716159473
+    ],
+    "mean_a": 0.9145869971183357,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.009711466299186141,
+     "HYP": 0.0037463361999549027,
+     "MI": 0.013122267450625688,
+     "NORM": 0.009429360537951662,
+     "STTC": 0.003923582572086397
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": true,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": true,
+    "verdict": "benefit below target: an artifact gain under +0.02; the clean slice holds"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "A1 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "A1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.006966886895343638,
+    "ci_low": -0.0032202393641011626,
+    "ci_high": 0.016574388338721144,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0036971646422633286,
+     0.006695695147670988,
+     0.010507800896096597
+    ],
+    "mean_a": 0.9064589333278588,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.011574464496542425,
+     "HYP": 0.0007939658594680413,
+     "MI": 0.018836288169267152,
+     "NORM": 0.006460905349794229,
+     "STTC": -0.002831189398353584
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "A1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.0037517705582039707,
+    "ci_low": -0.0013856481945812588,
+    "ci_high": 0.009125360425193121,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.004196280235160388,
+     0.00022675256868165405,
+     0.00683227887076987
+    ],
+    "mean_a": 0.9127236244732323,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.00432055993000872,
+     "HYP": 0.004148945462363884,
+     "MI": 0.007701005489773409,
+     "NORM": 0.005053040240067956,
+     "STTC": -0.002464698331193893
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "A1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.004485140869512756,
+    "ci_low": -0.000292282875461377,
+    "ci_high": 0.009755607957638628,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.004403252869045304,
+     0.0014788002799711597,
+     0.007573369459521806
+    ],
+    "mean_a": 0.9110855353758875,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.005963876272919018,
+     "HYP": 0.0031699251672195525,
+     "MI": 0.010493366500829215,
+     "NORM": 0.005270170651627677,
+     "STTC": -0.0024716342450318285
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "S3 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "S3",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.003381357444564063,
+    "ci_low": -0.01343587322984927,
+    "ci_high": 0.006635203343036008,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.002911378639490869,
+     -0.0065645885071602406,
+     -0.0006681051870410792
+    ],
+    "mean_a": 0.896110688987951,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.0025931860347444915,
+     "HYP": 0.0035066825459838156,
+     "MI": -0.004112726674512494,
+     "NORM": -0.005385802469135818,
+     "STTC": -0.00832175459041129
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "S3",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.005366065622885996,
+    "ci_low": -0.010959685584807453,
+    "ci_high": 5.857756685412771e-05,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.003553654166919329,
+     -0.008540375850265347,
+     -0.004004166851473312
+    ],
+    "mean_a": 0.9036057882921421,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": -0.011013823272090995,
+     "HYP": 0.0004199337512513779,
+     "MI": -0.015304262367841215,
+     "NORM": 0.00323490188227867,
+     "STTC": -0.0041670781080281145
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "S3",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.004935991855042084,
+    "ci_low": -0.010169124001301752,
+    "ci_high": 0.0005246733589156151,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.0032629206348552264,
+     -0.008271058575799684,
+     -0.0032739963544713424
+    ],
+    "mean_a": 0.9016644026513326,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.008912050515637296,
+     "HYP": 0.0009501723193867292,
+     "MI": -0.012957560681441271,
+     "NORM": 0.0011639880603240653,
+     "STTC": -0.004924508457843313
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": false,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "S4 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "S4",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.04244823489006777,
+    "ci_low": -0.07413559449371875,
+    "ci_high": -0.014696108042189349,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.07369380395226433,
+     -0.01804708185180226,
+     -0.03560381886613673
+    ],
+    "mean_a": 0.8570438115424474,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.08610220947883289,
+     "HYP": -0.03050152176789737,
+     "MI": -0.05039039267048839,
+     "NORM": -0.023919753086419766,
+     "STTC": -0.02132729744670044
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "S4",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.03844894244953456,
+    "ci_low": -0.06638546306186571,
+    "ci_high": -0.01464831982078416,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.06897458547657942,
+     -0.015000495214445464,
+     -0.0313717466575788
+    ],
+    "mean_a": 0.8705229114654937,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": -0.05557655293088367,
+     "HYP": -0.02392726523463658,
+     "MI": -0.0735888534880403,
+     "NORM": -0.01376775436258589,
+     "STTC": -0.025384286231526332
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "S4",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.039478018803473756,
+    "ci_low": -0.06683799967233717,
+    "ci_high": -0.01657951544159321,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.0697543209560717,
+     -0.015989777822115192,
+     -0.03268995763223437
+    ],
+    "mean_a": 0.867122375702901,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.06286311349197105,
+     "HYP": -0.025491593390665757,
+     "MI": -0.06825154530378408,
+     "NORM": -0.016519303489936576,
+     "STTC": -0.024264538341011277
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": false,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "S4 - S3",
+   "missing": [],
+   "artifact": {
+    "a": "S4",
+    "b": "S3",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.03906687744550371,
+    "ci_low": -0.07055059048945926,
+    "ci_high": -0.011435153281502027,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.07078242531277346,
+     -0.01148249334464202,
+     -0.03493571367909565
+    ],
+    "mean_a": 0.8570438115424474,
+    "mean_b": 0.896110688987951,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.08350902344408839,
+     "HYP": -0.034008204313881185,
+     "MI": -0.0462776659959759,
+     "NORM": -0.01853395061728395,
+     "STTC": -0.01300554285628915
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "S4",
+    "b": "S3",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.033082876826648566,
+    "ci_low": -0.06272825255036801,
+    "ci_high": -0.007626531172319383,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.06542093130966009,
+     -0.006460119364180117,
+     -0.02736757980610549
+    ],
+    "mean_a": 0.8705229114654937,
+    "mean_b": 0.9036057882921421,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": -0.044562729658792676,
+     "HYP": -0.02434719898588796,
+     "MI": -0.05828459112019909,
+     "NORM": -0.01700265624486456,
+     "STTC": -0.021217208123498216
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "S4",
+    "b": "S3",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.03454202694843167,
+    "ci_low": -0.06422056216065172,
+    "ci_high": -0.008772757979398334,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.06649140032121648,
+     -0.0077187192463155085,
+     -0.029415961277763025
+    ],
+    "mean_a": 0.867122375702901,
+    "mean_b": 0.9016644026513326,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.05395106297633375,
+     "HYP": -0.026441765710052485,
+     "MI": -0.05529398462234281,
+     "NORM": -0.017683291550260643,
+     "STTC": -0.019340029883167964
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": false,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "A3 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "A3",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.008541895563280185,
+    "ci_low": 0.0004285311897441793,
+    "ci_high": 0.016402144087886282,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.007781376249557992,
+     0.008064262651512166,
+     0.009780047788770396
+    ],
+    "mean_a": 0.9080339419957952,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.011138753021869877,
+     "HYP": -0.0036257774249040717,
+     "MI": 0.023195778444250397,
+     "NORM": 0.011522633744855959,
+     "STTC": 0.0004780900303288371
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "A3",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.004857934379338051,
+    "ci_low": 0.0006134961871740427,
+    "ci_high": 0.009082288662086765,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.00621033198994958,
+     0.0018970780313836144,
+     0.006466393116680957
+    ],
+    "mean_a": 0.9138297882943663,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.0051422572178477415,
+     "HYP": 0.0007625996922725475,
+     "MI": 0.009829019185146448,
+     "NORM": 0.0067954850809074,
+     "STTC": 0.0017603107205160784
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "A3",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.005722525552306161,
+    "ci_low": 0.001766942232370101,
+    "ci_high": 0.009787982199267275,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.006874991396290553,
+     0.0031906660109085605,
+     0.007101919249719368
+    ],
+    "mean_a": 0.9123229200586809,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.006513803164990987,
+     "HYP": -0.00042811436424346666,
+     "MI": 0.013305065581185013,
+     "NORM": 0.007736313328148503,
+     "STTC": 0.0014855600514493972
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": true,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": true,
+    "verdict": "benefit below target: an artifact gain under +0.02; the clean slice holds"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "E1 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "E1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.006413568244706402,
+    "ci_low": -0.0025689792533846994,
+    "ci_high": 0.015335683929678764,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.007611258239695884,
+     0.0017590536727529749,
+     0.009870392821670348
+    ],
+    "mean_a": 0.9059056146772214,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.005868049699218503,
+     "HYP": 0.00044991398703186913,
+     "MI": 0.016640724852258204,
+     "NORM": 0.008533950617283978,
+     "STTC": 0.000575202067739348
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "E1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.004705348238931946,
+    "ci_low": -0.0002545424575776893,
+    "ci_high": 0.009474439516214326,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.00637482048667859,
+     0.0003953490196861864,
+     0.007345875210431063
+    ],
+    "mean_a": 0.9136772021539601,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.00241119860017495,
+     "HYP": 0.005653988026848873,
+     "MI": 0.007119137064688437,
+     "NORM": 0.00848066180037029,
+     "STTC": -0.00013824429742281819
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "E1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.005183990773248122,
+    "ci_low": 5.001086679457831e-05,
+    "ci_high": 0.010057504972766595,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.007004914608317314,
+     0.0005793815379165901,
+     0.007967676173510463
+    ],
+    "mean_a": 0.9117843852796228,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.003049668102946342,
+     "HYP": 0.0044046123619029265,
+     "MI": 0.009727121965927954,
+     "NORM": 0.008728389751343676,
+     "STTC": 1.016168411934378e-05
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "T1 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "T1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.0028584241796936936,
+    "ci_low": -0.0007159766006779969,
+    "ci_high": 0.006561072120846522,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.002444299131677985,
+     0.001983828854536185,
+     0.00414714455286691
+    ],
+    "mean_a": 0.9023504706122089,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.0017077078765390292,
+     "HYP": -0.0019187508270478066,
+     "MI": 0.003081381369980892,
+     "NORM": 0.0051543209876543,
+     "STTC": 0.00626746149134209
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.0025275839023273607,
+    "ci_low": -0.0007101119084661181,
+    "ci_high": 0.005399722993675551,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0036665776831869,
+     -0.0007839119690957741,
+     0.004700085992890957
+    ],
+    "mean_a": 0.9114994378173557,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.002666666666666632,
+     "HYP": 0.004508408753435056,
+     "MI": 0.0004636454420086829,
+     "NORM": 0.004009764463686505,
+     "STTC": 0.0009894341858397808
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T1",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.0025040168442592345,
+    "ci_low": -0.00027762657505467256,
+    "ci_high": 0.005124278537413804,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0032406664768039883,
+     -0.000250133211243897,
+     0.004521517267217612
+    ],
+    "mean_a": 0.909104411350634,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.0024079519428593654,
+     "HYP": 0.0030706133711255004,
+     "MI": 0.0007911201567917988,
+     "NORM": 0.0040773616849947665,
+     "STTC": 0.002173037065524482
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "T2 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "T2",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.003026300076371613,
+    "ci_low": -0.007098961771581642,
+    "ci_high": 0.011800526985146506,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.005412418570935662,
+     0.00595170902864639,
+     -0.0022852273704672132
+    ],
+    "mean_a": 0.9025183465088867,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.0021785573733625885,
+     "HYP": -0.010665608045520747,
+     "MI": 0.019760069853080726,
+     "NORM": 0.0006687242798354051,
+     "STTC": 0.003189756921100203
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T2",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.004203325535234799,
+    "ci_low": 0.0006177961427983355,
+    "ci_high": 0.007928185944695283,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.004705605281741798,
+     0.004199434154417481,
+     0.0037049371695451194
+    ],
+    "mean_a": 0.913175179450263,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.00798180227471564,
+     "HYP": 0.0017088504117589813,
+     "MI": 0.008282873914858343,
+     "NORM": 0.0031497466757100336,
+     "STTC": -0.0001066456008689635
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T2",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.00385635843728697,
+    "ci_low": 8.050321623262867e-05,
+    "ci_high": 0.007653270165808834,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0051060347019614705,
+     0.004144235200026936,
+     0.002318805409872504
+    ],
+    "mean_a": 0.9104567529436617,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.0066440064438492525,
+     "HYP": -0.0011501379628734802,
+     "MI": 0.010751922207146122,
+     "NORM": 0.0024683151066446176,
+     "STTC": 0.000567686391668006
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "T3 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "T3",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.006164036867613169,
+    "ci_low": -0.016949896423361626,
+    "ci_high": 0.0047082614012880185,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.012644868003041765,
+     -0.010160069939739835,
+     0.0043128273399420936
+    ],
+    "mean_a": 0.8933280095649018,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.003668409512565307,
+     "HYP": -0.034127299192801365,
+     "MI": 0.004802399301469196,
+     "NORM": -0.0037294238683127645,
+     "STTC": -0.0014342700909865114
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T3",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.0015663850618903297,
+    "ci_low": -0.005764424849262722,
+    "ci_high": 0.003048716514274483,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.0003139048986030568,
+     -0.004796740732867177,
+     0.0004114904457992452
+    ],
+    "mean_a": 0.9074054688531379,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.004164479440069997,
+     "HYP": -0.011534180367705224,
+     "MI": -0.0018512794500715746,
+     "NORM": 0.000793287976981194,
+     "STTC": 0.0005957670912741057
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T3",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.0025361827945290147,
+    "ci_low": -0.006728115977269809,
+    "ci_high": 0.0020659317640560437,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.002825533956845372,
+     -0.00601713922767555,
+     0.0012341248009338779
+    ],
+    "mean_a": 0.9040642117118457,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.003843018516361929,
+     "HYP": -0.016595806358102243,
+     "MI": 2.6383235338656164e-06,
+     "NORM": -0.00027821588451937274,
+     "STTC": 0.0003474514300811545
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "T4 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "T4",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.005159787424458402,
+    "ci_low": -0.004126040101753624,
+    "ci_high": 0.01291489649412493,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0012644348575638897,
+     0.0065179435677841235,
+     0.007696983848027195
+    ],
+    "mean_a": 0.9046518338569735,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.005903187721369552,
+     "HYP": -0.0016276300119095015,
+     "MI": 0.02137352416385104,
+     "NORM": 0.005360082304526744,
+     "STTC": 0.006596148387193172
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T4",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.006483740442993972,
+    "ci_low": 0.0017976040690800932,
+    "ci_high": 0.010973681635377944,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.009944176988441855,
+     0.003139686285911547,
+     0.0063673580546285136
+    ],
+    "mean_a": 0.9154555943580222,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.0006915135608048795,
+     "HYP": 0.007257575044960903,
+     "MI": 0.012541543159974836,
+     "NORM": 0.010121019990060246,
+     "STTC": 0.0018070504591685133
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T4",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.006284624161687809,
+    "ci_low": 0.0026024595892898505,
+    "ci_high": 0.010274922461589687,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.008438116767302106,
+     0.0038275125774868135,
+     0.006588243140274508
+    ],
+    "mean_a": 0.9128850186680625,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.0010197908983864412,
+     "HYP": 0.005272248526427677,
+     "MI": 0.014973993668023508,
+     "NORM": 0.009265414477943379,
+     "STTC": 0.00293125503443048
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "T5 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "T5",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.003016917018224633,
+    "ci_low": -0.011038642860205016,
+    "ci_high": 0.004092414638362267,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.005031787357227091,
+     -0.002219082557622265,
+     -0.001799881139824544
+    ],
+    "mean_a": 0.8964751294142905,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.0020871985157699577,
+     "HYP": -0.007529442900621963,
+     "MI": -0.007731926148083527,
+     "NORM": -0.0045936213991769614,
+     "STTC": 0.0068576038725292054
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T5",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.0009885923230705436,
+    "ci_low": -0.005022817690811548,
+    "ci_high": 0.0037631158239238454,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0015735750112692015,
+     -0.004030254727557581,
+     -0.0005090972529232518
+    ],
+    "mean_a": 0.9079832615919576,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": -0.0002747156605424535,
+     "HYP": -0.0020795119361969316,
+     "MI": -0.004374250373822368,
+     "NORM": 0.0025267691118660376,
+     "STTC": -0.0007412527566571514
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T5",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.0015447194636200774,
+    "ci_low": -0.00498818143235976,
+    "ci_high": 0.0022968452335315735,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.00035261105452466524,
+     -0.0037551296950201207,
+     -0.001231639750364777
+    ],
+    "mean_a": 0.9050556750427546,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.0010139277072577595,
+     "HYP": -0.003468196068326527,
+     "MI": -0.005282677521483444,
+     "NORM": 0.0011567466265781274,
+     "STTC": 0.0008844573523888455
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "T1 - A1",
+   "missing": [],
+   "artifact": {
+    "a": "T1",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.004108462715649945,
+    "ci_low": -0.013201151032865253,
+    "ci_high": 0.005497225966294862,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.0012528655105853437,
+     -0.004711866293134803,
+     -0.006360656343229687
+    ],
+    "mean_a": 0.9023504706122089,
+    "mean_b": 0.9064589333278588,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.009866756620003395,
+     "HYP": -0.002712716686515848,
+     "MI": -0.01575490679928626,
+     "NORM": -0.0013065843621399287,
+     "STTC": 0.009098650889695673
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T1",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.0012241866558766097,
+    "ci_low": -0.0056142487693082,
+    "ci_high": 0.002890200612272764,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.0005297025519734877,
+     -0.0010106645377774282,
+     -0.0021321928778789134
+    ],
+    "mean_a": 0.9114994378173557,
+    "mean_b": 0.9127236244732323,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": -0.0016538932633420877,
+     "HYP": 0.0003594632910711715,
+     "MI": -0.007237360047764725,
+     "NORM": -0.0010432757763814509,
+     "STTC": 0.0034541325170336736
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T1",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.0019811240252535223,
+    "ci_low": -0.005920706680908464,
+    "ci_high": 0.0019459120215628732,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.001162586392241316,
+     -0.0017289334912150567,
+     -0.003051852192304194
+    ],
+    "mean_a": 0.909104411350634,
+    "mean_b": 0.9110855353758875,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.003555924330059653,
+     "HYP": -9.931179609405187e-05,
+     "MI": -0.009702246344037416,
+     "NORM": -0.0011928089666329116,
+     "STTC": 0.00464467131055631
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "T2 - A1",
+   "missing": [],
+   "artifact": {
+    "a": "T2",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.003940586818972025,
+    "ci_low": -0.017587976626895548,
+    "ci_high": 0.007681782606086518,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0017152539286723334,
+     -0.0007439861190245978,
+     -0.01279302826656381
+    ],
+    "mean_a": 0.9025183465088867,
+    "mean_b": 0.9064589333278588,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.009395907123179836,
+     "HYP": -0.011459573904988788,
+     "MI": 0.0009237816838135737,
+     "NORM": -0.005792181069958824,
+     "STTC": 0.0060209463194537865
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T2",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.00045155497703082875,
+    "ci_low": -0.004823292883641149,
+    "ci_high": 0.005786551034569649,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0005093250465814103,
+     0.003972681585735827,
+     -0.0031273417012247506
+    ],
+    "mean_a": 0.913175179450263,
+    "mean_b": 0.9127236244732323,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.00366124234470692,
+     "HYP": -0.0024400950506049033,
+     "MI": 0.0005818684250849341,
+     "NORM": -0.0019032935643579219,
+     "STTC": 0.0023580527303249297
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T2",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.0006287824322257866,
+    "ci_low": -0.006362633096487932,
+    "ci_high": 0.0043665772017538775,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0007027818329161661,
+     0.002665434920055776,
+     -0.005254564049649302
+    ],
+    "mean_a": 0.9104567529436617,
+    "mean_b": 0.9110855353758875,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.000680130170930234,
+     "HYP": -0.0043200631300930326,
+     "MI": 0.000258555706316906,
+     "NORM": -0.0028018555449830598,
+     "STTC": 0.0030393206366998347
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "T3 - A1",
+   "missing": [],
+   "artifact": {
+    "a": "T3",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.013130923762956806,
+    "ci_low": -0.02485326113110307,
+    "ci_high": -0.002626270672121905,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.016342032645305093,
+     -0.016855765087410823,
+     -0.006194973556154504
+    ],
+    "mean_a": 0.8933280095649018,
+    "mean_b": 0.9064589333278588,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.007906054983977118,
+     "HYP": -0.03492126505226941,
+     "MI": -0.014033888867797958,
+     "NORM": -0.010190329218106994,
+     "STTC": 0.0013969193073670727
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T3",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.0053181556200943,
+    "ci_low": -0.0099733145854069,
+    "ci_high": -0.0005186083969256519,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.004510185133763445,
+     -0.0050234933015488314,
+     -0.006420788424970625
+    ],
+    "mean_a": 0.9074054688531379,
+    "mean_b": 0.9127236244732323,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": -0.00015608048993872212,
+     "HYP": -0.015683125830069106,
+     "MI": -0.009552284939844983,
+     "NORM": -0.004259752263086762,
+     "STTC": 0.0030604654224679986
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T3",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.0070213236640417715,
+    "ci_low": -0.011541571274727555,
+    "ci_high": -0.0030504120914508414,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.007228786825890676,
+     -0.0074959395076467095,
+     -0.006339244658587928
+    ],
+    "mean_a": 0.9040642117118457,
+    "mean_b": 0.9110855353758875,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.0021208577565570894,
+     "HYP": -0.019765731525321795,
+     "MI": -0.01049072817729535,
+     "NORM": -0.00554838653614705,
+     "STTC": 0.002819085675112983
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "T4 - A1",
+   "missing": [],
+   "artifact": {
+    "a": "T4",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.0018070994708852355,
+    "ci_low": -0.01183174622129563,
+    "ci_high": 0.0076751310210084744,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.002432729784699439,
+     -0.00017775157988686452,
+     -0.002810817048069403
+    ],
+    "mean_a": 0.9046518338569735,
+    "mean_b": 0.9064589333278588,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.017477652217911976,
+     "HYP": -0.002421595871377543,
+     "MI": 0.0025372359945838863,
+     "NORM": -0.001100823045267485,
+     "STTC": 0.009427337785546755
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T4",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.002731969884790001,
+    "ci_low": -0.002324052161799315,
+    "ci_high": 0.007979820202255647,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.005747896753281467,
+     0.002912933717229893,
+     -0.0004649208161413565
+    ],
+    "mean_a": 0.9154555943580222,
+    "mean_b": 0.9127236244732323,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": -0.00362904636920384,
+     "HYP": 0.0031086295825970187,
+     "MI": 0.004840537670201428,
+     "NORM": 0.005067979749992291,
+     "STTC": 0.004271748790362406
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T4",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.0017994832921750525,
+    "ci_low": -0.0027067730383719115,
+    "ci_high": 0.0063829024264423,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.004034863898256802,
+     0.002348712297515654,
+     -0.000985126319247298
+    ],
+    "mean_a": 0.9128850186680625,
+    "mean_b": 0.9110855353758875,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.006983667171305459,
+     "HYP": 0.0021023233592081247,
+     "MI": 0.0044806271671942914,
+     "NORM": 0.0039952438263157015,
+     "STTC": 0.0054028892794623085
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "T5 - A1",
+   "missing": [],
+   "artifact": {
+    "a": "T5",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.00998380391356827,
+    "ci_low": -0.018761534015577522,
+    "ci_high": -0.001021393555883494,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.00872895199949042,
+     -0.008914777705293253,
+     -0.012307682035921141
+    ],
+    "mean_a": 0.8964751294142905,
+    "mean_b": 0.9064589333278588,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.013661663012312383,
+     "HYP": -0.008323408760090004,
+     "MI": -0.02656821431735068,
+     "NORM": -0.011054526748971191,
+     "STTC": 0.00968879327088279
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T5",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.004740362881274514,
+    "ci_low": -0.009678120796025504,
+    "ci_high": 0.00016813678955007952,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.0026227052238911863,
+     -0.004257007296239235,
+     -0.007341376123693122
+    ],
+    "mean_a": 0.9079832615919576,
+    "mean_b": 0.9127236244732323,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": -0.004595275590551173,
+     "HYP": -0.006228457398560816,
+     "MI": -0.012075255863595777,
+     "NORM": -0.002526271128201918,
+     "STTC": 0.0017234455745367416
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T5",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.006029860333132834,
+    "ci_low": -0.010593583494413403,
+    "ci_high": -0.0016889839092327351,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.004050641814520639,
+     -0.00523392997499128,
+     -0.008805009209886583
+    ],
+    "mean_a": 0.9050556750427546,
+    "mean_b": 0.9110855353758875,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": -0.006977803980176778,
+     "HYP": -0.0066381212355460795,
+     "MI": -0.015776044022312658,
+     "NORM": -0.00411342402504955,
+     "STTC": 0.003356091597420674
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": false,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": true,
+    "target_effect": "ruled out",
+    "clean_noninferiority_supported": true,
+    "benefit": false,
+    "verdict": "useful negative: no artifact gain shown, and a gain of +0.02 is ruled out"
+   }
+  },
+  {
+   "role": "diagnostic",
+   "label": "C2@full100 - A0",
+   "missing": [],
+   "artifact": {
+    "a": "C2@full100",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.021921124193088892,
+    "ci_low": 0.011906638871007546,
+    "ci_high": 0.031450449187543306,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.021311368727913504,
+     0.021558554974080102,
+     0.02289344887727307
+    ],
+    "mean_a": 0.921413170625604,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.019536740315961126,
+     "HYP": 0.016183670768823582,
+     "MI": 0.03372435873100236,
+     "NORM": 0.019027777777777793,
+     "STTC": 0.021133073371879346
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "C2@full100",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.01598016956848018,
+    "ci_low": 0.010923565541509644,
+    "ci_high": 0.021127758521071616,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.019431588600816063,
+     0.014667818278410238,
+     0.01384110182621423
+    ],
+    "mean_a": 0.9249520234835084,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.017071566054243204,
+     "HYP": 0.015970920427593294,
+     "MI": 0.02437044610352901,
+     "NORM": 0.015259713420360957,
+     "STTC": 0.007228201836674201
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "C2@full100",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.017411029041317933,
+    "ci_low": 0.013027844731620237,
+    "ci_high": 0.022315242497845424,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.020199915730780504,
+     0.01619451775987546,
+     0.01583865363329784
+    ],
+    "mean_a": 0.9240114235476926,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.017415699442309435,
+     "HYP": 0.01605227558218188,
+     "MI": 0.02709143675561591,
+     "NORM": 0.01629887424670991,
+     "STTC": 0.010196859179772274
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   },
+   "unpaired_seeds": [],
+   "findings": {
+    "positive_effect_supported": true,
+    "target_effect_supported": false,
+    "target_effect_ruled_out": false,
+    "target_effect": "plausible",
+    "clean_noninferiority_supported": true,
+    "benefit": true,
+    "verdict": "benefit: an artifact gain, +0.02 still plausible; the clean slice holds"
+   }
+  }
+ ],
+ "gap_closed": [
+  {
+   "name": "100% of patients",
+   "gated": true,
+   "numerator": {
+    "a": "S3",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.003381357444564063,
+    "ci_low": -0.01343587322984927,
+    "ci_high": 0.006635203343036008,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.002911378639490869,
+     -0.0065645885071602406,
+     -0.0006681051870410792
+    ],
+    "mean_a": 0.896110688987951,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.0025931860347444915,
+     "HYP": 0.0035066825459838156,
+     "MI": -0.004112726674512494,
+     "NORM": -0.005385802469135818,
+     "STTC": -0.00832175459041129
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "denominator": {
+    "a": "C2@full100",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.021921124193088892,
+    "ci_low": 0.011906638871007546,
+    "ci_high": 0.031450449187543306,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.021311368727913504,
+     0.021558554974080102,
+     0.02289344887727307
+    ],
+    "mean_a": 0.921413170625604,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.019536740315961126,
+     "HYP": 0.016183670768823582,
+     "MI": 0.03372435873100236,
+     "NORM": 0.019027777777777793,
+     "STTC": 0.021133073371879346
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "ratio": -0.15425109655781746,
+   "withheld_because": null
+  }
+ ],
+ "table": [
+  {
+   "regime": "scarcity50",
+   "arm": "A0",
+   "label": "A0",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.8994920464325151,
+    "sd": 0.0008844632445060832,
+    "per_seed": [
+     0.89981182073771,
+     0.9001721494740181,
+     0.8984921690858171
+    ]
+   },
+   "clean": {
+    "mean": 0.9089718539150282,
+    "sd": 0.0016307356699738409,
+    "per_seed": [
+     0.9077633430190118,
+     0.9108266791875493,
+     0.9083255395385235
+    ]
+   },
+   "overall": {
+    "mean": 0.9066003945063748,
+    "sd": 0.0015097104211897593,
+    "per_seed": [
+     0.905487823478175,
+     0.9083189471310206,
+     0.9059944129099285
+    ]
+   },
+   "best_step": [
+    1100,
+    1000,
+    900
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 320000.0,
+    "candidates": 0.0,
+    "accepted": 0.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 0.0
+   },
+   "wall_time_s": 1476.8838444306748,
+   "delta": null,
+   "gap_closed": {
+    "100% of patients": 0.0
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "A1",
+   "label": "A1",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.9064589333278588,
+    "sd": 0.0027682366787095585,
+    "per_seed": [
+     0.9035089853799734,
+     0.9068678446216891,
+     0.9089999699819137
+    ]
+   },
+   "clean": {
+    "mean": 0.9127236244732323,
+    "sd": 0.002156216790237682,
+    "per_seed": [
+     0.9119596232541722,
+     0.911053431756231,
+     0.9151578184092933
+    ]
+   },
+   "overall": {
+    "mean": 0.9110855353758875,
+    "sd": 0.002150195380744124,
+    "per_seed": [
+     0.9098910763472203,
+     0.9097977474109917,
+     0.9135677823694504
+    ]
+   },
+   "best_step": [
+    3800,
+    3500,
+    3000
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 320000.0,
+    "candidates": 320000.0,
+    "accepted": 320000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 320000.0
+   },
+   "wall_time_s": 1399.6978949583329,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "A1",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": 0.006966886895343638,
+     "ci_low": -0.0032202393641011626,
+     "ci_high": 0.016574388338721144,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.0036971646422633286,
+      0.006695695147670988,
+      0.010507800896096597
+     ],
+     "mean_a": 0.9064589333278588,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": 0.011574464496542425,
+      "HYP": 0.0007939658594680413,
+      "MI": 0.018836288169267152,
+      "NORM": 0.006460905349794229,
+      "STTC": -0.002831189398353584
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "A1",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": 0.0037517705582039707,
+     "ci_low": -0.0013856481945812588,
+     "ci_high": 0.009125360425193121,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.004196280235160388,
+      0.00022675256868165405,
+      0.00683227887076987
+     ],
+     "mean_a": 0.9127236244732323,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": 0.00432055993000872,
+      "HYP": 0.004148945462363884,
+      "MI": 0.007701005489773409,
+      "NORM": 0.005053040240067956,
+      "STTC": -0.002464698331193893
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": 0.31781613178123863
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "A3",
+   "label": "A3",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.9080339419957952,
+    "sd": 0.0003821159731286,
+    "per_seed": [
+     0.907593196987268,
+     0.9082364121255303,
+     0.9082722168745875
+    ]
+   },
+   "clean": {
+    "mean": 0.9138297882943663,
+    "sd": 0.001041568504121026,
+    "per_seed": [
+     0.9139736750089614,
+     0.912723757218933,
+     0.9147919326552044
+    ]
+   },
+   "overall": {
+    "mean": 0.9123229200586809,
+    "sd": 0.0007941114578838968,
+    "per_seed": [
+     0.9123628148744656,
+     0.9115096131419291,
+     0.9130963321596479
+    ]
+   },
+   "best_step": [
+    1700,
+    1600,
+    1100
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 320000.0,
+    "candidates": 324264.3333333333,
+    "accepted": 320000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 320000.0
+   },
+   "wall_time_s": 1565.6336765273397,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "A3",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": 0.008541895563280185,
+     "ci_low": 0.0004285311897441793,
+     "ci_high": 0.016402144087886282,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.007781376249557992,
+      0.008064262651512166,
+      0.009780047788770396
+     ],
+     "mean_a": 0.9080339419957952,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": 0.011138753021869877,
+      "HYP": -0.0036257774249040717,
+      "MI": 0.023195778444250397,
+      "NORM": 0.011522633744855959,
+      "STTC": 0.0004780900303288371
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "A3",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": 0.004857934379338051,
+     "ci_low": 0.0006134961871740427,
+     "ci_high": 0.009082288662086765,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.00621033198994958,
+      0.0018970780313836144,
+      0.006466393116680957
+     ],
+     "mean_a": 0.9138297882943663,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": 0.0051422572178477415,
+      "HYP": 0.0007625996922725475,
+      "MI": 0.009829019185146448,
+      "NORM": 0.0067954850809074,
+      "STTC": 0.0017603107205160784
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": 0.38966503214160897
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "S1",
+   "label": "S1",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.9072079563170697,
+    "sd": 0.005756251941920571,
+    "per_seed": [
+     0.9019331966480676,
+     0.9133477809041066,
+     0.906342891399035
+    ]
+   },
+   "clean": {
+    "mean": 0.9153299891334958,
+    "sd": 0.0015758538511090325,
+    "per_seed": [
+     0.9146451211002171,
+     0.9171323999283066,
+     0.9142124463719637
+    ]
+   },
+   "overall": {
+    "mean": 0.9132750309904324,
+    "sd": 0.002332311396702752,
+    "per_seed": [
+     0.911671312703003,
+     0.9159505875996181,
+     0.9122031926686758
+    ]
+   },
+   "best_step": [
+    1300,
+    1600,
+    2200
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 80000.0,
+    "candidates": 80000.0,
+    "accepted": 80000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 80000.0
+   },
+   "wall_time_s": 1740.33124304167,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "S1",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": 0.007715909884554654,
+     "ci_low": -0.0023482487257193256,
+     "ci_high": 0.016960685562027317,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.002121375910357548,
+      0.013175631430088486,
+      0.007850722313217928
+     ],
+     "mean_a": 0.9072079563170697,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": 0.011117670208579308,
+      "HYP": -0.004803493449781667,
+      "MI": 0.021076142388924708,
+      "NORM": 0.010046296296296275,
+      "STTC": 0.0011429339787548676
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "S1",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": 0.00635813521846762,
+     "ci_low": 0.0027245793883755795,
+     "ci_high": 0.009808384134612306,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.00688177808120527,
+      0.0063057207407573035,
+      0.005886906833440286
+     ],
+     "mean_a": 0.9153299891334958,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": 0.00856622922134731,
+      "HYP": 0.005000011198233345,
+      "MI": 0.0107378170885708,
+      "NORM": 0.007112700674967091,
+      "STTC": 0.0003739179092195159
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": 0.3519851361905637
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "S2",
+   "label": "S2",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.9086402980832529,
+    "sd": 0.0023889287084046407,
+    "per_seed": [
+     0.9093790353919375,
+     0.9105725985548727,
+     0.9059692603029482
+    ]
+   },
+   "clean": {
+    "mean": 0.9165848648972629,
+    "sd": 0.0010614841102535872,
+    "per_seed": [
+     0.9171247678577817,
+     0.9153619563816455,
+     0.9172678704523612
+    ]
+   },
+   "overall": {
+    "mean": 0.9145869971183357,
+    "sd": 0.0005020207716672716,
+    "per_seed": [
+     0.9151362884465216,
+     0.9141519328369622,
+     0.9144727700715233
+    ]
+   },
+   "best_step": [
+    1700,
+    1400,
+    1300
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 160000.0,
+    "candidates": 160000.0,
+    "accepted": 160000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 160000.0
+   },
+   "wall_time_s": 1630.5150213753222,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "S2",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": 0.009148251650737738,
+     "ci_low": 0.0013431646429884537,
+     "ci_high": 0.016671604681786426,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.009567214654227496,
+      0.010400449080854579,
+      0.007477091217131138
+     ],
+     "mean_a": 0.9086402980832529,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": 0.013436779670545906,
+      "HYP": -0.0018525870054254174,
+      "MI": 0.017627779254141163,
+      "NORM": 0.01196502057613169,
+      "STTC": 0.004564265758295605
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "S2",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": 0.007613010982234621,
+     "ci_low": 0.0035371618152905135,
+     "ci_high": 0.01166590309834363,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.009361424838769894,
+      0.004535277194096188,
+      0.008942330913837782
+     ],
+     "mean_a": 0.9165848648972629,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": 0.008819597550306221,
+      "HYP": 0.0054367422995347985,
+      "MI": 0.011560094261363951,
+      "NORM": 0.008728657665113956,
+      "STTC": 0.0035199631348539575
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": 0.41732584379143844
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "S3",
+   "label": "S3",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.896110688987951,
+    "sd": 0.0022164175430415102,
+    "per_seed": [
+     0.8969004420982192,
+     0.8936075609668579,
+     0.897824063898776
+    ]
+   },
+   "clean": {
+    "mean": 0.9036057882921421,
+    "sd": 0.0011440711207440864,
+    "per_seed": [
+     0.9042096888520925,
+     0.902286303337284,
+     0.9043213726870502
+    ]
+   },
+   "overall": {
+    "mean": 0.9016644026513326,
+    "sd": 0.0014216968125887537,
+    "per_seed": [
+     0.9022249028433198,
+     0.9000478885552209,
+     0.9027204165554572
+    ]
+   },
+   "best_step": [
+    3500,
+    3800,
+    3800
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 640000.0,
+    "candidates": 640000.0,
+    "accepted": 640000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 640000.0
+   },
+   "wall_time_s": 1075.8425853333513,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "S3",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": -0.003381357444564063,
+     "ci_low": -0.01343587322984927,
+     "ci_high": 0.006635203343036008,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      -0.002911378639490869,
+      -0.0065645885071602406,
+      -0.0006681051870410792
+     ],
+     "mean_a": 0.896110688987951,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": -0.0025931860347444915,
+      "HYP": 0.0035066825459838156,
+      "MI": -0.004112726674512494,
+      "NORM": -0.005385802469135818,
+      "STTC": -0.00832175459041129
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "S3",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": -0.005366065622885996,
+     "ci_low": -0.010959685584807453,
+     "ci_high": 5.857756685412771e-05,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      -0.003553654166919329,
+      -0.008540375850265347,
+      -0.004004166851473312
+     ],
+     "mean_a": 0.9036057882921421,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": -0.011013823272090995,
+      "HYP": 0.0004199337512513779,
+      "MI": -0.015304262367841215,
+      "NORM": 0.00323490188227867,
+      "STTC": -0.0041670781080281145
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": -0.15425109655781746
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "S4",
+   "label": "S4",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.8570438115424474,
+    "sd": 0.028457273413319027,
+    "per_seed": [
+     0.8261180167854457,
+     0.8821250676222159,
+     0.8628883502196804
+    ]
+   },
+   "clean": {
+    "mean": 0.8705229114654937,
+    "sd": 0.029057429003496837,
+    "per_seed": [
+     0.8387887575424324,
+     0.8958261839731039,
+     0.8769537928809447
+    ]
+   },
+   "overall": {
+    "mean": 0.867122375702901,
+    "sd": 0.0287998429798235,
+    "per_seed": [
+     0.8357335025221033,
+     0.8923291693089054,
+     0.8733044552776942
+    ]
+   },
+   "best_step": [
+    10000,
+    9400,
+    9800
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 640000.0,
+    "candidates": 640000.0,
+    "accepted": 640000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 640000.0
+   },
+   "wall_time_s": 745.4847281389908,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "S4",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": -0.04244823489006777,
+     "ci_low": -0.07413559449371875,
+     "ci_high": -0.014696108042189349,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      -0.07369380395226433,
+      -0.01804708185180226,
+      -0.03560381886613673
+     ],
+     "mean_a": 0.8570438115424474,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": -0.08610220947883289,
+      "HYP": -0.03050152176789737,
+      "MI": -0.05039039267048839,
+      "NORM": -0.023919753086419766,
+      "STTC": -0.02132729744670044
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "S4",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": -0.03844894244953456,
+     "ci_low": -0.06638546306186571,
+     "ci_high": -0.01464831982078416,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      -0.06897458547657942,
+      -0.015000495214445464,
+      -0.0313717466575788
+     ],
+     "mean_a": 0.8705229114654937,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": -0.05557655293088367,
+      "HYP": -0.02392726523463658,
+      "MI": -0.0735888534880403,
+      "NORM": -0.01376775436258589,
+      "STTC": -0.025384286231526332
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": -1.936407755193983
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "E1",
+   "label": "E1",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.9059056146772214,
+    "sd": 0.003473847622451412,
+    "per_seed": [
+     0.9074230789774059,
+     0.9019312031467711,
+     0.9083625619074874
+    ]
+   },
+   "clean": {
+    "mean": 0.9136772021539601,
+    "sd": 0.002260226576086853,
+    "per_seed": [
+     0.9141381635056904,
+     0.9112220282072355,
+     0.9156714147489545
+    ]
+   },
+   "overall": {
+    "mean": 0.9117843852796228,
+    "sd": 0.0026051372628172424,
+    "per_seed": [
+     0.9124927380864923,
+     0.9088983286689372,
+     0.913962089083439
+    ]
+   },
+   "best_step": [
+    1700,
+    1500,
+    1800
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 640000.0,
+    "candidates": 648485.0,
+    "accepted": 640000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 640000.0
+   },
+   "wall_time_s": 1711.7226421943244,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "E1",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": 0.006413568244706402,
+     "ci_low": -0.0025689792533846994,
+     "ci_high": 0.015335683929678764,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.007611258239695884,
+      0.0017590536727529749,
+      0.009870392821670348
+     ],
+     "mean_a": 0.9059056146772214,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": 0.005868049699218503,
+      "HYP": 0.00044991398703186913,
+      "MI": 0.016640724852258204,
+      "NORM": 0.008533950617283978,
+      "STTC": 0.000575202067739348
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "E1",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": 0.004705348238931946,
+     "ci_low": -0.0002545424575776893,
+     "ci_high": 0.009474439516214326,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.00637482048667859,
+      0.0003953490196861864,
+      0.007345875210431063
+     ],
+     "mean_a": 0.9136772021539601,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": 0.00241119860017495,
+      "HYP": 0.005653988026848873,
+      "MI": 0.007119137064688437,
+      "NORM": 0.00848066180037029,
+      "STTC": -0.00013824429742281819
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": 0.29257478714200336
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "T1",
+   "label": "T1",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.9023504706122089,
+    "sd": 0.0002551074332661783,
+    "per_seed": [
+     0.902256119869388,
+     0.9021559783285543,
+     0.902639313638684
+    ]
+   },
+   "clean": {
+    "mean": 0.9114994378173557,
+    "sd": 0.0014926437621799508,
+    "per_seed": [
+     0.9114299207021987,
+     0.9100427672184536,
+     0.9130256255314144
+    ]
+   },
+   "overall": {
+    "mean": 0.909104411350634,
+    "sd": 0.0012661288110037922,
+    "per_seed": [
+     0.908728489954979,
+     0.9080688139197767,
+     0.9105159301771462
+    ]
+   },
+   "best_step": [
+    1100,
+    1000,
+    900
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 320000.0,
+    "candidates": 320000.0,
+    "accepted": 320000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 320000.0
+   },
+   "wall_time_s": 667.816183153016,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "T1",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": 0.0028584241796936936,
+     "ci_low": -0.0007159766006779969,
+     "ci_high": 0.006561072120846522,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.002444299131677985,
+      0.001983828854536185,
+      0.00414714455286691
+     ],
+     "mean_a": 0.9023504706122089,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": 0.0017077078765390292,
+      "HYP": -0.0019187508270478066,
+      "MI": 0.003081381369980892,
+      "NORM": 0.0051543209876543,
+      "STTC": 0.00626746149134209
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "T1",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": 0.0025275839023273607,
+     "ci_low": -0.0007101119084661181,
+     "ci_high": 0.005399722993675551,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.0036665776831869,
+      -0.0007839119690957741,
+      0.004700085992890957
+     ],
+     "mean_a": 0.9114994378173557,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": 0.002666666666666632,
+      "HYP": 0.004508408753435056,
+      "MI": 0.0004636454420086829,
+      "NORM": 0.004009764463686505,
+      "STTC": 0.0009894341858397808
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": 0.13039587543575312
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "T2",
+   "label": "T2",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.9025183465088867,
+    "sd": 0.005484314134371912,
+    "per_seed": [
+     0.9052242393086457,
+     0.9061238585026645,
+     0.8962069417153499
+    ]
+   },
+   "clean": {
+    "mean": 0.913175179450263,
+    "sd": 0.0016178787154763122,
+    "per_seed": [
+     0.9124689483007536,
+     0.9150261133419668,
+     0.9120304767080686
+    ]
+   },
+   "overall": {
+    "mean": 0.9104567529436617,
+    "sd": 0.0020783764596583073,
+    "per_seed": [
+     0.9105938581801365,
+     0.9124631823310475,
+     0.908313218319801
+    ]
+   },
+   "best_step": [
+    1200,
+    1400,
+    1800
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 320000.0,
+    "candidates": 320000.0,
+    "accepted": 320000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 320000.0
+   },
+   "wall_time_s": 738.9958019723223,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "T2",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": 0.003026300076371613,
+     "ci_low": -0.007098961771581642,
+     "ci_high": 0.011800526985146506,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.005412418570935662,
+      0.00595170902864639,
+      -0.0022852273704672132
+     ],
+     "mean_a": 0.9025183465088867,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": 0.0021785573733625885,
+      "HYP": -0.010665608045520747,
+      "MI": 0.019760069853080726,
+      "NORM": 0.0006687242798354051,
+      "STTC": 0.003189756921100203
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "T2",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": 0.004203325535234799,
+     "ci_low": 0.0006177961427983355,
+     "ci_high": 0.007928185944695283,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.004705605281741798,
+      0.004199434154417481,
+      0.0037049371695451194
+     ],
+     "mean_a": 0.913175179450263,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": 0.00798180227471564,
+      "HYP": 0.0017088504117589813,
+      "MI": 0.008282873914858343,
+      "NORM": 0.0031497466757100336,
+      "STTC": -0.0001066456008689635
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": 0.1380540546057268
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "T3",
+   "label": "T3",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.8933280095649018,
+    "sd": 0.00832968466372591,
+    "per_seed": [
+     0.8871669527346683,
+     0.8900120795342783,
+     0.9028049964257592
+    ]
+   },
+   "clean": {
+    "mean": 0.9074054688531379,
+    "sd": 0.00135408127887921,
+    "per_seed": [
+     0.9074494381204088,
+     0.9060299384546822,
+     0.9087370299843227
+    ]
+   },
+   "overall": {
+    "mean": 0.9040642117118457,
+    "sd": 0.0027463077067703292,
+    "per_seed": [
+     0.9026622895213297,
+     0.902301807903345,
+     0.9072285377108624
+    ]
+   },
+   "best_step": [
+    900,
+    1000,
+    1000
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 320000.0,
+    "candidates": 320000.0,
+    "accepted": 320000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 320000.0
+   },
+   "wall_time_s": 706.3637360696836,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "T3",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": -0.006164036867613169,
+     "ci_low": -0.016949896423361626,
+     "ci_high": 0.0047082614012880185,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      -0.012644868003041765,
+      -0.010160069939739835,
+      0.0043128273399420936
+     ],
+     "mean_a": 0.8933280095649018,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": 0.003668409512565307,
+      "HYP": -0.034127299192801365,
+      "MI": 0.004802399301469196,
+      "NORM": -0.0037294238683127645,
+      "STTC": -0.0014342700909865114
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "T3",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": -0.0015663850618903297,
+     "ci_low": -0.005764424849262722,
+     "ci_high": 0.003048716514274483,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      -0.0003139048986030568,
+      -0.004796740732867177,
+      0.0004114904457992452
+     ],
+     "mean_a": 0.9074054688531379,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": 0.004164479440069997,
+      "HYP": -0.011534180367705224,
+      "MI": -0.0018512794500715746,
+      "NORM": 0.000793287976981194,
+      "STTC": 0.0005957670912741057
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": -0.28119164023332865
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "T4",
+   "label": "T4",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.9046518338569735,
+    "sd": 0.003106654981985295,
+    "per_seed": [
+     0.9010762555952739,
+     0.9066900930418023,
+     0.9061891529338443
+    ]
+   },
+   "clean": {
+    "mean": 0.9154555943580222,
+    "sd": 0.001983768907448993,
+    "per_seed": [
+     0.9177075200074537,
+     0.9139663654734609,
+     0.914692897593152
+    ]
+   },
+   "overall": {
+    "mean": 0.9128850186680625,
+    "sd": 0.0009274724307884614,
+    "per_seed": [
+     0.9139259402454771,
+     0.9121464597085074,
+     0.9125826560502031
+    ]
+   },
+   "best_step": [
+    1500,
+    1900,
+    1600
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 320000.0,
+    "candidates": 320000.0,
+    "accepted": 320000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 320000.0
+   },
+   "wall_time_s": 808.7117323193233,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "T4",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": 0.005159787424458402,
+     "ci_low": -0.004126040101753624,
+     "ci_high": 0.01291489649412493,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.0012644348575638897,
+      0.0065179435677841235,
+      0.007696983848027195
+     ],
+     "mean_a": 0.9046518338569735,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": -0.005903187721369552,
+      "HYP": -0.0016276300119095015,
+      "MI": 0.02137352416385104,
+      "NORM": 0.005360082304526744,
+      "STTC": 0.006596148387193172
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "T4",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": 0.006483740442993972,
+     "ci_low": 0.0017976040690800932,
+     "ci_high": 0.010973681635377944,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.009944176988441855,
+      0.003139686285911547,
+      0.0063673580546285136
+     ],
+     "mean_a": 0.9154555943580222,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": 0.0006915135608048795,
+      "HYP": 0.007257575044960903,
+      "MI": 0.012541543159974836,
+      "NORM": 0.010121019990060246,
+      "STTC": 0.0018070504591685133
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": 0.23537969033929093
+   }
+  },
+  {
+   "regime": "scarcity50",
+   "arm": "T5",
+   "label": "T5",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.8964751294142905,
+    "sd": 0.0015976244320631996,
+    "per_seed": [
+     0.894780033380483,
+     0.8979530669163959,
+     0.8966922879459925
+    ]
+   },
+   "clean": {
+    "mean": 0.9079832615919576,
+    "sd": 0.0012784359217029603,
+    "per_seed": [
+     0.909336918030281,
+     0.9067964244599918,
+     0.9078164422856002
+    ]
+   },
+   "overall": {
+    "mean": 0.9050556750427546,
+    "sd": 0.0006868634782682551,
+    "per_seed": [
+     0.9058404345326997,
+     0.9045638174360005,
+     0.9047627731595638
+    ]
+   },
+   "best_step": [
+    1300,
+    1000,
+    700
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 320000.0,
+    "candidates": 320000.0,
+    "accepted": 320000.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 320000.0
+   },
+   "wall_time_s": 729.295941097332,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "T5",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": -0.003016917018224633,
+     "ci_low": -0.011038642860205016,
+     "ci_high": 0.004092414638362267,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      -0.005031787357227091,
+      -0.002219082557622265,
+      -0.001799881139824544
+     ],
+     "mean_a": 0.8964751294142905,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": -0.0020871985157699577,
+      "HYP": -0.007529442900621963,
+      "MI": -0.007731926148083527,
+      "NORM": -0.0045936213991769614,
+      "STTC": 0.0068576038725292054
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "T5",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": -0.0009885923230705436,
+     "ci_low": -0.005022817690811548,
+     "ci_high": 0.0037631158239238454,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.0015735750112692015,
+      -0.004030254727557581,
+      -0.0005090972529232518
+     ],
+     "mean_a": 0.9079832615919576,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": -0.0002747156605424535,
+      "HYP": -0.0020795119361969316,
+      "MI": -0.004374250373822368,
+      "NORM": 0.0025267691118660376,
+      "STTC": -0.0007412527566571514
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": -0.13762601733608998
+   }
+  },
+  {
+   "regime": "full100",
+   "arm": "C2",
+   "label": "C2@full100",
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "artifact": {
+    "mean": 0.921413170625604,
+    "sd": 0.00030469324802414943,
+    "per_seed": [
+     0.9211231894656235,
+     0.9217307044480982,
+     0.9213856179630902
+    ]
+   },
+   "clean": {
+    "mean": 0.9249520234835084,
+    "sd": 0.0025576618694788692,
+    "per_seed": [
+     0.9271949316198279,
+     0.9254944974659596,
+     0.9221666413647377
+    ]
+   },
+   "overall": {
+    "mean": 0.9240114235476926,
+    "sd": 0.001975768071584806,
+    "per_seed": [
+     0.9256877392089555,
+     0.924513464890896,
+     0.9218330665432264
+    ]
+   },
+   "best_step": [
+    3200,
+    3100,
+    2100
+   ],
+   "exposure": {
+    "presentations": 640000.0,
+    "transform_slots": 0.0,
+    "candidates": 0.0,
+    "accepted": 0.0,
+    "exhausted_slots": 0.0,
+    "distinct_recipes": 0.0
+   },
+   "wall_time_s": 1178.2751717223243,
+   "delta": {
+    "against": "A0",
+    "artifact": {
+     "a": "C2@full100",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "artifact",
+     "metric": "macro_auroc",
+     "estimate": 0.021921124193088892,
+     "ci_low": 0.011906638871007546,
+     "ci_high": 0.031450449187543306,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.021311368727913504,
+      0.021558554974080102,
+      0.02289344887727307
+     ],
+     "mean_a": 0.921413170625604,
+     "mean_b": 0.8994920464325151,
+     "n_records": 513,
+     "n_patients": 477,
+     "per_class": {
+      "CD": 0.019536740315961126,
+      "HYP": 0.016183670768823582,
+      "MI": 0.03372435873100236,
+      "NORM": 0.019027777777777793,
+      "STTC": 0.021133073371879346
+     },
+     "n_positive": {
+      "CD": 121,
+      "HYP": 55,
+      "MI": 142,
+      "NORM": 225,
+      "STTC": 111
+     }
+    },
+    "clean": {
+     "a": "C2@full100",
+     "b": "A0",
+     "split": "test",
+     "checkpoint": "best",
+     "slice": "clean",
+     "metric": "macro_auroc",
+     "estimate": 0.01598016956848018,
+     "ci_low": 0.010923565541509644,
+     "ci_high": 0.021127758521071616,
+     "ci_level": 0.95,
+     "n_boot": 2000,
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "per_seed": [
+      0.019431588600816063,
+      0.014667818278410238,
+      0.01384110182621423
+     ],
+     "mean_a": 0.9249520234835084,
+     "mean_b": 0.9089718539150282,
+     "n_records": 1645,
+     "n_patients": 1481,
+     "per_class": {
+      "CD": 0.017071566054243204,
+      "HYP": 0.015970920427593294,
+      "MI": 0.02437044610352901,
+      "NORM": 0.015259713420360957,
+      "STTC": 0.007228201836674201
+     },
+     "n_positive": {
+      "CD": 375,
+      "HYP": 207,
+      "MI": 408,
+      "NORM": 738,
+      "STTC": 410
+     }
+    }
+   },
+   "gap_closed": {
+    "100% of patients": 1.0
+   }
+  }
+ ],
+ "runs": [
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/full100/C2/seed0",
+   "trial_id": "c649c12bef483a1078679bdd6cb2f7c2398b13a79ffaea3d69c6ab8b3b1bdba8",
+   "regime": "full100",
+   "arm": "C2",
+   "seed": 0,
+   "step": 3200,
+   "auroc_artifact": 0.9211231894656235,
+   "auroc_clean": 0.9271949316198279,
+   "auroc_overall": 0.9256877392089555,
+   "wall_time_s": 1456.3054409589968
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/full100/C2/seed1",
+   "trial_id": "61ee09bb8ff10d968bd41d919a8e855888172d8f70bd3a5756a9efb3063738fa",
+   "regime": "full100",
+   "arm": "C2",
+   "seed": 1,
+   "step": 3100,
+   "auroc_artifact": 0.9217307044480982,
+   "auroc_clean": 0.9254944974659596,
+   "auroc_overall": 0.924513464890896,
+   "wall_time_s": 1473.977944208018
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/full100/C2/seed2",
+   "trial_id": "a468e9273ea4272aea04a673d2bffe39021824d62a292d03479bcfc4207290ae",
+   "regime": "full100",
+   "arm": "C2",
+   "seed": 2,
+   "step": 2100,
+   "auroc_artifact": 0.9213856179630902,
+   "auroc_clean": 0.9221666413647377,
+   "auroc_overall": 0.9218330665432264,
+   "wall_time_s": 604.542129999958
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/A0/seed0",
+   "trial_id": "2bf5f2a6e1e25af2b1bcf0e72eb61312c7501c97f4984cc1c055196573dfa697",
+   "regime": "scarcity50",
+   "arm": "A0",
+   "seed": 0,
+   "step": 1100,
+   "auroc_artifact": 0.89981182073771,
+   "auroc_clean": 0.9077633430190118,
+   "auroc_overall": 0.905487823478175,
+   "wall_time_s": 1770.2744919169927
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/A0/seed1",
+   "trial_id": "897bb716ba099a472f9855319a64508e579f973239c6d762d2099d543bd82525",
+   "regime": "scarcity50",
+   "arm": "A0",
+   "seed": 1,
+   "step": 1000,
+   "auroc_artifact": 0.9001721494740181,
+   "auroc_clean": 0.9108266791875493,
+   "auroc_overall": 0.9083189471310206,
+   "wall_time_s": 1800.5074504580116
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/A0/seed2",
+   "trial_id": "509da9767d2c41dcc79ac505f06cfcc2d18e34e0aed304a2d9ed43f5a94221c8",
+   "regime": "scarcity50",
+   "arm": "A0",
+   "seed": 2,
+   "step": 900,
+   "auroc_artifact": 0.8984921690858171,
+   "auroc_clean": 0.9083255395385235,
+   "auroc_overall": 0.9059944129099285,
+   "wall_time_s": 859.8695909170201
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/A1/seed0",
+   "trial_id": "f01b47e347eaa3c951fd7039364fec0722e6fd22d013aac6176ede9e2e368b9e",
+   "regime": "scarcity50",
+   "arm": "A1",
+   "seed": 0,
+   "step": 3800,
+   "auroc_artifact": 0.9035089853799734,
+   "auroc_clean": 0.9119596232541722,
+   "auroc_overall": 0.9098910763472203,
+   "wall_time_s": 1635.1500742080389
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/A1/seed1",
+   "trial_id": "ced044d07caaf56754599c1c6fb84ee487446cbb360eb2c8b6e8b98db73f492a",
+   "regime": "scarcity50",
+   "arm": "A1",
+   "seed": 1,
+   "step": 3500,
+   "auroc_artifact": 0.9068678446216891,
+   "auroc_clean": 0.911053431756231,
+   "auroc_overall": 0.9097977474109917,
+   "wall_time_s": 1652.043164333969
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/A1/seed2",
+   "trial_id": "1b3ba99870bc282bfe058808dd65c8b4c6fd0820825a7d14a63ac4dab7335fbc",
+   "regime": "scarcity50",
+   "arm": "A1",
+   "seed": 2,
+   "step": 3000,
+   "auroc_artifact": 0.9089999699819137,
+   "auroc_clean": 0.9151578184092933,
+   "auroc_overall": 0.9135677823694504,
+   "wall_time_s": 911.9004463329911
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/A3/seed0",
+   "trial_id": "85d1f6ebd5c72cb2483cad90d10e4ab19c9e984fe4d26d72cd5772b95309b00e",
+   "regime": "scarcity50",
+   "arm": "A3",
+   "seed": 0,
+   "step": 1700,
+   "auroc_artifact": 0.907593196987268,
+   "auroc_clean": 0.9139736750089614,
+   "auroc_overall": 0.9123628148744656,
+   "wall_time_s": 1878.156390374992
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/A3/seed1",
+   "trial_id": "ae0079cc78c8701739febccbdc59928a7818508531fb26623f83b4ac0811a68b",
+   "regime": "scarcity50",
+   "arm": "A3",
+   "seed": 1,
+   "step": 1600,
+   "auroc_artifact": 0.9082364121255303,
+   "auroc_clean": 0.912723757218933,
+   "auroc_overall": 0.9115096131419291,
+   "wall_time_s": 1891.6707787910127
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/A3/seed2",
+   "trial_id": "2c4c2fb2650f35da99bdd595b418782d91a64fec6ed34ffbdfbd4534f74c839b",
+   "regime": "scarcity50",
+   "arm": "A3",
+   "seed": 2,
+   "step": 1100,
+   "auroc_artifact": 0.9082722168745875,
+   "auroc_clean": 0.9147919326552044,
+   "auroc_overall": 0.9130963321596479,
+   "wall_time_s": 927.0738604160142
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/E1/seed0",
+   "trial_id": "f6bb6a44e02fbb68cfb6eb051b5a3a89363fbeb122e1076c5b1fc140dc46064a",
+   "regime": "scarcity50",
+   "arm": "E1",
+   "seed": 0,
+   "step": 1700,
+   "auroc_artifact": 0.9074230789774059,
+   "auroc_clean": 0.9141381635056904,
+   "auroc_overall": 0.9124927380864923,
+   "wall_time_s": 2006.0149039159878
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/E1/seed1",
+   "trial_id": "82090626114520b419611e34106dcfcaf6c4cc02367418c4d8320e4f23985270",
+   "regime": "scarcity50",
+   "arm": "E1",
+   "seed": 1,
+   "step": 1500,
+   "auroc_artifact": 0.9019312031467711,
+   "auroc_clean": 0.9112220282072355,
+   "auroc_overall": 0.9088983286689372,
+   "wall_time_s": 2016.117022874998
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/E1/seed2",
+   "trial_id": "4fc87cb1b6182084f65377991aa8b01cee80bf4ccd75b5e71f41cc7d9f4dda64",
+   "regime": "scarcity50",
+   "arm": "E1",
+   "seed": 2,
+   "step": 1800,
+   "auroc_artifact": 0.9083625619074874,
+   "auroc_clean": 0.9156714147489545,
+   "auroc_overall": 0.913962089083439,
+   "wall_time_s": 1113.0359997919877
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S1/seed0",
+   "trial_id": "a920d2372496b6e9b983f58115c38703cfbd634be244d3202fbe7ad3bf56bc14",
+   "regime": "scarcity50",
+   "arm": "S1",
+   "seed": 0,
+   "step": 1300,
+   "auroc_artifact": 0.9019331966480676,
+   "auroc_clean": 0.9146451211002171,
+   "auroc_overall": 0.911671312703003,
+   "wall_time_s": 2151.9467890000087
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S1/seed1",
+   "trial_id": "f1878898407d2eff9bf8896e2e206dfb16ad34ea6794d12c0b8e8f5090379e12",
+   "regime": "scarcity50",
+   "arm": "S1",
+   "seed": 1,
+   "step": 1600,
+   "auroc_artifact": 0.9133477809041066,
+   "auroc_clean": 0.9171323999283066,
+   "auroc_overall": 0.9159505875996181,
+   "wall_time_s": 2179.1891295000096
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S1/seed2",
+   "trial_id": "e93000b565e7eec210728cab737c70bb979af685a78b98f9d0ef52b2b84c7c9f",
+   "regime": "scarcity50",
+   "arm": "S1",
+   "seed": 2,
+   "step": 2200,
+   "auroc_artifact": 0.906342891399035,
+   "auroc_clean": 0.9142124463719637,
+   "auroc_overall": 0.9122031926686758,
+   "wall_time_s": 889.8578106249915
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S2/seed0",
+   "trial_id": "4725a4a4f36df95e375ef0d9d29b6a3b386b081e971f6fc53061c9df5c463f84",
+   "regime": "scarcity50",
+   "arm": "S2",
+   "seed": 0,
+   "step": 1700,
+   "auroc_artifact": 0.9093790353919375,
+   "auroc_clean": 0.9171247678577817,
+   "auroc_overall": 0.9151362884465216,
+   "wall_time_s": 1956.4755060420139
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S2/seed1",
+   "trial_id": "700d78b798435620915fe94f22fdb0e715314694efd96640c85e460c01a04a24",
+   "regime": "scarcity50",
+   "arm": "S2",
+   "seed": 1,
+   "step": 1400,
+   "auroc_artifact": 0.9105725985548727,
+   "auroc_clean": 0.9153619563816455,
+   "auroc_overall": 0.9141519328369622,
+   "wall_time_s": 2019.4453695419943
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S2/seed2",
+   "trial_id": "9cb1e84bc1458b3d987d8248865f8b18c32cd58791bc4d8935ed1a29fc8bb1c0",
+   "regime": "scarcity50",
+   "arm": "S2",
+   "seed": 2,
+   "step": 1300,
+   "auroc_artifact": 0.9059692603029482,
+   "auroc_clean": 0.9172678704523612,
+   "auroc_overall": 0.9144727700715233,
+   "wall_time_s": 915.6241885419586
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S3/seed0",
+   "trial_id": "dac347cdbb0d083cfee60b643d08a6b4ffa7209f403e87b8245733372014755e",
+   "regime": "scarcity50",
+   "arm": "S3",
+   "seed": 0,
+   "step": 3500,
+   "auroc_artifact": 0.8969004420982192,
+   "auroc_clean": 0.9042096888520925,
+   "auroc_overall": 0.9022249028433198,
+   "wall_time_s": 1190.1900292080245
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S3/seed1",
+   "trial_id": "34c2494e2dfd7306fc82d56014e9b7a13e88951c63e11870b8481cffbfe6395b",
+   "regime": "scarcity50",
+   "arm": "S3",
+   "seed": 1,
+   "step": 3800,
+   "auroc_artifact": 0.8936075609668579,
+   "auroc_clean": 0.902286303337284,
+   "auroc_overall": 0.9000478885552209,
+   "wall_time_s": 1068.9920210420387
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S3/seed2",
+   "trial_id": "da6eb36bd6dddd72cf6bb0aa6383ba3cbc2a7c1d98a0039477ef1b776f84a467",
+   "regime": "scarcity50",
+   "arm": "S3",
+   "seed": 2,
+   "step": 3800,
+   "auroc_artifact": 0.897824063898776,
+   "auroc_clean": 0.9043213726870502,
+   "auroc_overall": 0.9027204165554572,
+   "wall_time_s": 968.3457057499909
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S4/seed0",
+   "trial_id": "13846c172a54055587158b5a98d1474a6e06569c3be29e692a3b46acc3a9e398",
+   "regime": "scarcity50",
+   "arm": "S4",
+   "seed": 0,
+   "step": 10000,
+   "auroc_artifact": 0.8261180167854457,
+   "auroc_clean": 0.8387887575424324,
+   "auroc_overall": 0.8357335025221033,
+   "wall_time_s": 628.7953405830194
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S4/seed1",
+   "trial_id": "565cf266c7190215573979a06cf6a0631129a491dfeec36943e6a7fbf84f608e",
+   "regime": "scarcity50",
+   "arm": "S4",
+   "seed": 1,
+   "step": 9400,
+   "auroc_artifact": 0.8821250676222159,
+   "auroc_clean": 0.8958261839731039,
+   "auroc_overall": 0.8923291693089054,
+   "wall_time_s": 620.2341399169527
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/S4/seed2",
+   "trial_id": "758ff58bb3f1972ceb53ee5a931f192f1a2d83f177c3dbce6bdcc16726fefda0",
+   "regime": "scarcity50",
+   "arm": "S4",
+   "seed": 2,
+   "step": 9800,
+   "auroc_artifact": 0.8628883502196804,
+   "auroc_clean": 0.8769537928809447,
+   "auroc_overall": 0.8733044552776942,
+   "wall_time_s": 987.4247039170004
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T1/seed0",
+   "trial_id": "560eefa63c39e8efb968dec86f951c6c1290335e034fc1dfbaa097c0bf28077b",
+   "regime": "scarcity50",
+   "arm": "T1",
+   "seed": 0,
+   "step": 1100,
+   "auroc_artifact": 0.902256119869388,
+   "auroc_clean": 0.9114299207021987,
+   "auroc_overall": 0.908728489954979,
+   "wall_time_s": 507.65486479201354
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T1/seed1",
+   "trial_id": "3e1d13fa3fbb84fa4062335e57672653f3692fe8fa38d6d6c840baed4df0ccc7",
+   "regime": "scarcity50",
+   "arm": "T1",
+   "seed": 1,
+   "step": 1000,
+   "auroc_artifact": 0.9021559783285543,
+   "auroc_clean": 0.9100427672184536,
+   "auroc_overall": 0.9080688139197767,
+   "wall_time_s": 516.0447735000052
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T1/seed2",
+   "trial_id": "03e629b60b45dc5d01c9538ad030d53253eea85bc35c40ab1b2dd4d1a960dc24",
+   "regime": "scarcity50",
+   "arm": "T1",
+   "seed": 2,
+   "step": 900,
+   "auroc_artifact": 0.902639313638684,
+   "auroc_clean": 0.9130256255314144,
+   "auroc_overall": 0.9105159301771462,
+   "wall_time_s": 979.7489111670293
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T2/seed0",
+   "trial_id": "782c5628e81dabd9ecddaa2c15b74ec05299923c4837190fdc0c4f615bd316e9",
+   "regime": "scarcity50",
+   "arm": "T2",
+   "seed": 0,
+   "step": 1200,
+   "auroc_artifact": 0.9052242393086457,
+   "auroc_clean": 0.9124689483007536,
+   "auroc_overall": 0.9105938581801365,
+   "wall_time_s": 535.8362876669853
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T2/seed1",
+   "trial_id": "d581a71cc90d0c9e12d4318eeb01ff409f5aaee794b2ee45503426cca799a1f8",
+   "regime": "scarcity50",
+   "arm": "T2",
+   "seed": 1,
+   "step": 1400,
+   "auroc_artifact": 0.9061238585026645,
+   "auroc_clean": 0.9150261133419668,
+   "auroc_overall": 0.9124631823310475,
+   "wall_time_s": 536.1818246250041
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T2/seed2",
+   "trial_id": "c17d0cb6de6a2a27745ef42506a947976f080a5472ba6851cb157e6af514394d",
+   "regime": "scarcity50",
+   "arm": "T2",
+   "seed": 2,
+   "step": 1800,
+   "auroc_artifact": 0.8962069417153499,
+   "auroc_clean": 0.9120304767080686,
+   "auroc_overall": 0.908313218319801,
+   "wall_time_s": 1144.9692936249776
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T3/seed0",
+   "trial_id": "5b728b8e06c1e920c33f5bfebf915c4cea19c71c6fed12a438351b82e0a3edd8",
+   "regime": "scarcity50",
+   "arm": "T3",
+   "seed": 0,
+   "step": 900,
+   "auroc_artifact": 0.8871669527346683,
+   "auroc_clean": 0.9074494381204088,
+   "auroc_overall": 0.9026622895213297,
+   "wall_time_s": 557.189729375008
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T3/seed1",
+   "trial_id": "4169fb7e3c0c3286d80c3e8d8c924440dae86ec6585db8bc714befd9d1c27ed5",
+   "regime": "scarcity50",
+   "arm": "T3",
+   "seed": 1,
+   "step": 1000,
+   "auroc_artifact": 0.8900120795342783,
+   "auroc_clean": 0.9060299384546822,
+   "auroc_overall": 0.902301807903345,
+   "wall_time_s": 567.5307787500205
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T3/seed2",
+   "trial_id": "1a8d742bf3c07756027f3fa2400abee8730b854f730568876cb4566625940ebd",
+   "regime": "scarcity50",
+   "arm": "T3",
+   "seed": 2,
+   "step": 1000,
+   "auroc_artifact": 0.9028049964257592,
+   "auroc_clean": 0.9087370299843227,
+   "auroc_overall": 0.9072285377108624,
+   "wall_time_s": 994.3707000840222
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T4/seed0",
+   "trial_id": "d150c23db97618a03156338a3f193c51bc42a8b47b22d46ba39199a2b75fa465",
+   "regime": "scarcity50",
+   "arm": "T4",
+   "seed": 0,
+   "step": 1500,
+   "auroc_artifact": 0.9010762555952739,
+   "auroc_clean": 0.9177075200074537,
+   "auroc_overall": 0.9139259402454771,
+   "wall_time_s": 670.0383714999771
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T4/seed1",
+   "trial_id": "139148f988d348b690cda703886c1cfaa2b0240007dc96cc552c01804acfacd2",
+   "regime": "scarcity50",
+   "arm": "T4",
+   "seed": 1,
+   "step": 1900,
+   "auroc_artifact": 0.9066900930418023,
+   "auroc_clean": 0.9139663654734609,
+   "auroc_overall": 0.9121464597085074,
+   "wall_time_s": 674.7591754579917
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T4/seed2",
+   "trial_id": "d2662adaf71f164fb79407a7961c217764c5aa5cda7fc7e328449a78ee4fd22e",
+   "regime": "scarcity50",
+   "arm": "T4",
+   "seed": 2,
+   "step": 1600,
+   "auroc_artifact": 0.9061891529338443,
+   "auroc_clean": 0.914692897593152,
+   "auroc_overall": 0.9125826560502031,
+   "wall_time_s": 1081.3376500000013
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T5/seed0",
+   "trial_id": "0e302251eb334cb61cced0a46230784ca41f85c9692e7db8c08a1c8ed1c1b1ea",
+   "regime": "scarcity50",
+   "arm": "T5",
+   "seed": 0,
+   "step": 1300,
+   "auroc_artifact": 0.894780033380483,
+   "auroc_clean": 0.909336918030281,
+   "auroc_overall": 0.9058404345326997,
+   "wall_time_s": 568.8133751249989
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T5/seed1",
+   "trial_id": "ac37deeb8ea8428dd1d17eb62e102dd68f7f4e0e821389026a8695177b48ae97",
+   "regime": "scarcity50",
+   "arm": "T5",
+   "seed": 1,
+   "step": 1000,
+   "auroc_artifact": 0.8979530669163959,
+   "auroc_clean": 0.9067964244599918,
+   "auroc_overall": 0.9045638174360005,
+   "wall_time_s": 534.8822127919993
+  },
+  {
+   "run_dir": "runs/ptbxl-aug-sweep/scarcity50/T5/seed2",
+   "trial_id": "f97e5d5c84be7173e75490b4cf1681b47f336a32b892164167af9d19ecaecf72",
+   "regime": "scarcity50",
+   "arm": "T5",
+   "seed": 2,
+   "step": 700,
+   "auroc_artifact": 0.8966922879459925,
+   "auroc_clean": 0.9078164422856002,
+   "auroc_overall": 0.9047627731595638,
+   "wall_time_s": 1084.1922353749978
+  }
+ ]
+}

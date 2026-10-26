@@ -1,0 +1,2 @@
+# Plain files in each run directory: metrics.jsonl, figures/*.png, text/*.md, summary.json.
+backend: files

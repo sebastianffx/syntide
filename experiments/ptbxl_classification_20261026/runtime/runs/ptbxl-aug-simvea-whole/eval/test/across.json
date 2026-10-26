@@ -1,0 +1,728 @@
+{
+ "generated_at": "2026-10-25T20:46:20+00:00",
+ "split": "test",
+ "checkpoint": "best",
+ "protocol_dirs": [
+  "runs/ptbxl-aug-sweep",
+  "runs/ptbxl-aug-simvea",
+  "runs/ptbxl-aug-simvea-whole"
+ ],
+ "rules": {
+  "regime": "scarcity50",
+  "reference": "A0",
+  "primary": [
+   "S3",
+   "A1"
+  ],
+  "sequence": [
+   [
+    "E1",
+    "A3"
+   ]
+  ],
+  "sequence_regimes": [],
+  "diagnostics": [
+   [
+    "S1",
+    "A0"
+   ],
+   [
+    "S2",
+    "A0"
+   ],
+   [
+    "A1",
+    "A0"
+   ],
+   [
+    "S3",
+    "A0"
+   ],
+   [
+    "S4",
+    "A0"
+   ],
+   [
+    "S4",
+    "S3"
+   ],
+   [
+    "A3",
+    "A0"
+   ],
+   [
+    "E1",
+    "A0"
+   ],
+   [
+    "T1",
+    "A0"
+   ],
+   [
+    "T2",
+    "A0"
+   ],
+   [
+    "T3",
+    "A0"
+   ],
+   [
+    "T4",
+    "A0"
+   ],
+   [
+    "T5",
+    "A0"
+   ],
+   [
+    "T1",
+    "A1"
+   ],
+   [
+    "T2",
+    "A1"
+   ],
+   [
+    "T3",
+    "A1"
+   ],
+   [
+    "T4",
+    "A1"
+   ],
+   [
+    "T5",
+    "A1"
+   ],
+   [
+    "C2@full100",
+    "A0"
+   ]
+  ],
+  "practical_target": 0.02,
+  "noninferiority_margin": -0.01,
+  "gap_gate": {
+   "contrast": [
+    "C2@full100",
+    "A0"
+   ],
+   "min_effect": 0.01
+  },
+  "gap_closed": [
+   {
+    "name": "100% of patients",
+    "target": "C2@full100",
+    "baseline": "A0",
+    "gated": true
+   }
+  ],
+  "n_boot": 2000,
+  "ci_level": 0.95,
+  "bootstrap_seed": 0
+ },
+ "rules_sha256": "7329468ebc8d819add071638ad3efc87c389f58f11356787054b72de9cfe8c98",
+ "runs": [
+  "runs/ptbxl-aug-simvea-whole/scarcity50/T6W/seed0",
+  "runs/ptbxl-aug-simvea-whole/scarcity50/T6W/seed1",
+  "runs/ptbxl-aug-simvea-whole/scarcity50/T6W/seed2",
+  "runs/ptbxl-aug-simvea/scarcity50/T6/seed0",
+  "runs/ptbxl-aug-simvea/scarcity50/T6/seed1",
+  "runs/ptbxl-aug-simvea/scarcity50/T6/seed2",
+  "runs/ptbxl-aug-sweep/full100/C2/seed0",
+  "runs/ptbxl-aug-sweep/full100/C2/seed1",
+  "runs/ptbxl-aug-sweep/full100/C2/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/A0/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/A0/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/A0/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/A1/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/A1/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/A1/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/A3/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/A3/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/A3/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/E1/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/E1/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/E1/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/S1/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/S1/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/S1/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/S2/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/S2/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/S2/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/S3/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/S3/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/S3/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/S4/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/S4/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/S4/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/T1/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/T1/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/T1/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/T2/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/T2/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/T2/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/T3/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/T3/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/T3/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/T4/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/T4/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/T4/seed2",
+  "runs/ptbxl-aug-sweep/scarcity50/T5/seed0",
+  "runs/ptbxl-aug-sweep/scarcity50/T5/seed1",
+  "runs/ptbxl-aug-sweep/scarcity50/T5/seed2"
+ ],
+ "contrasts": [
+  {
+   "label": "T6W - T6",
+   "best_step": {
+    "T6W": [
+     1300,
+     1000,
+     1100
+    ],
+    "T6": [
+     1300,
+     1000,
+     900
+    ]
+   },
+   "artifact": {
+    "a": "T6W",
+    "b": "T6",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.00200999360551235,
+    "ci_low": -0.007563254005800347,
+    "ci_high": 0.004829385286702043,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.004890108441006014,
+     -0.0032546781333707697,
+     0.002114805757839733
+    ],
+    "mean_a": 0.8997763862212418,
+    "mean_b": 0.9017863798267541,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.0008433125316242481,
+     "HYP": -0.012690220987164214,
+     "MI": 0.000835199878516398,
+     "NORM": 0.003014403292181019,
+     "STTC": -0.0003660376794704841
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T6W",
+    "b": "T6",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.0003364427185822046,
+    "ci_low": -0.002943375836891376,
+    "ci_high": 0.002742595871583816,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.00014893725780484868,
+     -0.0022912454573574825,
+     0.0014308545594157174
+    ],
+    "mean_a": 0.9122341084345779,
+    "mean_b": 0.9125705511531601,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.003567454068241475,
+     "HYP": -0.005163505405387274,
+     "MI": -0.0009028537310908913,
+     "NORM": 0.0007297950598028624,
+     "STTC": 8.689641552287834e-05
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T6W",
+    "b": "T6",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.0006197366425383747,
+    "ci_low": -0.003300542293659649,
+    "ci_high": 0.002565645731903527,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.0009955805541619345,
+     -0.0025722843346085433,
+     0.0017086549611553536
+    ],
+    "mean_a": 0.9092004447228983,
+    "mean_b": 0.9098201813654366,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.0024496008177735673,
+     "HYP": -0.006490160079878904,
+     "MI": -0.00047225991255842964,
+     "NORM": 0.0012607336151699104,
+     "STTC": 0.00015340234680187118
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   }
+  },
+  {
+   "label": "T6W - A0",
+   "best_step": {
+    "T6W": [
+     1300,
+     1000,
+     1100
+    ],
+    "A0": [
+     1100,
+     1000,
+     900
+    ]
+   },
+   "artifact": {
+    "a": "T6W",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.00028433978872662485,
+    "ci_low": -0.007775309965625659,
+    "ci_high": 0.008628185160927825,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.0017824267949212436,
+     -0.004089950061415659,
+     0.0031605426326742903
+    ],
+    "mean_a": 0.8997763862212418,
+    "mean_b": 0.8994920464325151,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.00073087086074101,
+     "HYP": -0.009646685192536752,
+     "MI": 0.005365526492287054,
+     "NORM": 0.0026388888888888573,
+     "STTC": 0.003794839615735124
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T6W",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.0032622545195497197,
+    "ci_low": -0.0008143553421795466,
+    "ci_high": 0.007615579106626708,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.004546486623702051,
+     6.332419285914881e-05,
+     0.005176952742087959
+    ],
+    "mean_a": 0.9122341084345779,
+    "mean_b": 0.9089718539150282,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.01004514435695536,
+     "HYP": -0.004744691477472511,
+     "MI": 0.0038828654609243487,
+     "NORM": 0.006230024630272039,
+     "STTC": 0.0008979296270695084
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T6W",
+    "b": "A0",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.0026000502165235786,
+    "ci_low": -0.0016686689511378413,
+    "ci_high": 0.007223936283736219,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.004056378635088342,
+     -0.0010011401506214712,
+     0.004744912165103865
+    ],
+    "mean_a": 0.9092004447228983,
+    "mean_b": 0.9066003945063748,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.007433313277176075,
+     "HYP": -0.005862751097797954,
+     "MI": 0.004394693200663362,
+     "NORM": 0.005672939196577409,
+     "STTC": 0.0013620565059987062
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   }
+  },
+  {
+   "label": "T6W - A1",
+   "best_step": {
+    "T6W": [
+     1300,
+     1000,
+     1100
+    ],
+    "A1": [
+     3800,
+     3500,
+     3000
+    ]
+   },
+   "artifact": {
+    "a": "T6W",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": -0.0066825471066170134,
+    "ci_low": -0.016161513990541186,
+    "ci_high": 0.0032737884839284417,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.001914737847342085,
+     -0.010785645209086647,
+     -0.007347258263422307
+    ],
+    "mean_a": 0.8997763862212418,
+    "mean_b": 0.9064589333278588,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": -0.012305335357283434,
+     "HYP": -0.010440651052004793,
+     "MI": -0.0134707616769801,
+     "NORM": -0.0038220164609053717,
+     "STTC": 0.006626029014088708
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T6W",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": -0.0004895160386542511,
+    "ci_low": -0.005197855729401678,
+    "ci_high": 0.003903413217599426,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.00035020638854166286,
+     -0.00016342837582250525,
+     -0.001655326128681911
+    ],
+    "mean_a": 0.9122341084345779,
+    "mean_b": 0.9127236244732323,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.00572458442694664,
+     "HYP": -0.008893636939836394,
+     "MI": -0.0038181400288490597,
+     "NORM": 0.0011769843902040833,
+     "STTC": 0.0033626279582634013
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T6W",
+    "b": "A1",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": -0.001885090652989178,
+    "ci_low": -0.0060488098692370726,
+    "ci_high": 0.001984854601863462,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     -0.00034687423395696193,
+     -0.002479940430592631,
+     -0.002828457294417941
+    ],
+    "mean_a": 0.9092004447228983,
+    "mean_b": 0.9110855353758875,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.001469437004257057,
+     "HYP": -0.009032676265017506,
+     "MI": -0.006098673300165854,
+     "NORM": 0.0004027685449497313,
+     "STTC": 0.003833690751030535
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   }
+  },
+  {
+   "label": "T6W - S3",
+   "best_step": {
+    "T6W": [
+     1300,
+     1000,
+     1100
+    ],
+    "S3": [
+     3500,
+     3800,
+     3800
+    ]
+   },
+   "artifact": {
+    "a": "T6W",
+    "b": "S3",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "artifact",
+    "metric": "macro_auroc",
+    "estimate": 0.003665697233290688,
+    "ci_low": -0.005850813129940298,
+    "ci_high": 0.013660826632629334,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.004693805434412113,
+     0.0024746384457445814,
+     0.0038286478197153695
+    ],
+    "mean_a": 0.8997763862212418,
+    "mean_b": 0.896110688987951,
+    "n_records": 513,
+    "n_patients": 477,
+    "per_class": {
+     "CD": 0.0018623151740034816,
+     "HYP": -0.013153367738520568,
+     "MI": 0.009478253166799547,
+     "NORM": 0.008024691358024675,
+     "STTC": 0.012116594206146414
+    },
+    "n_positive": {
+     "CD": 121,
+     "HYP": 55,
+     "MI": 142,
+     "NORM": 225,
+     "STTC": 111
+    }
+   },
+   "clean": {
+    "a": "T6W",
+    "b": "S3",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "clean",
+    "metric": "macro_auroc",
+    "estimate": 0.008628320142435716,
+    "ci_low": 0.003818683031337055,
+    "ci_high": 0.013455348372030404,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.00810014079062138,
+     0.008603700043124496,
+     0.009181119593561271
+    ],
+    "mean_a": 0.9122341084345779,
+    "mean_b": 0.9036057882921421,
+    "n_records": 1645,
+    "n_patients": 1481,
+    "per_class": {
+     "CD": 0.021058967629046355,
+     "HYP": -0.005164625228723889,
+     "MI": 0.019187127828765565,
+     "NORM": 0.0029951227479933693,
+     "STTC": 0.005065007735097622
+    },
+    "n_positive": {
+     "CD": 375,
+     "HYP": 207,
+     "MI": 408,
+     "NORM": 738,
+     "STTC": 410
+    }
+   },
+   "overall": {
+    "a": "T6W",
+    "b": "S3",
+    "split": "test",
+    "checkpoint": "best",
+    "slice": "overall",
+    "metric": "macro_auroc",
+    "estimate": 0.007536042071565663,
+    "ci_low": 0.0031932087920252764,
+    "ci_high": 0.01183086799744641,
+    "ci_level": 0.95,
+    "n_boot": 2000,
+    "seeds": [
+     0,
+     1,
+     2
+    ],
+    "per_seed": [
+     0.007319299269943569,
+     0.007269918425178212,
+     0.008018908519575207
+    ],
+    "mean_a": 0.9092004447228983,
+    "mean_b": 0.9016644026513326,
+    "n_records": 2158,
+    "n_patients": 1877,
+    "per_class": {
+     "CD": 0.016345363792813372,
+     "HYP": -0.006812923417184684,
+     "MI": 0.017352253882104634,
+     "NORM": 0.0045089511362533434,
+     "STTC": 0.006286564963842019
+    },
+    "n_positive": {
+     "CD": 496,
+     "HYP": 262,
+     "MI": 550,
+     "NORM": 963,
+     "STTC": 521
+    }
+   }
+  }
+ ]
+}

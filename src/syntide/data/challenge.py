@@ -1,20 +1,22 @@
-"""The scarcity challenge: which records each experimental arm may train on.
+"""Build patient-separated data pools for the scarcity experiment.
 
-One manifest per pool fraction holds every role as an explicit, ordered list of record ids. Every
-draw takes whole patients, so no patient is split between roles that are meant to differ:
+Each manifest stores ordered recording identifiers for all data roles.
+Sampling always selects whole patients:
 
-- ``pool`` / ``unused``: a seeded fraction of training patients (all their ECGs) and the rest.
-  Pools for different fractions share one patient permutation, so smaller pools nest in larger ones.
-- ``retained_artifact`` / ``withheld``: the pool's artifact patients (at least one artifact ECG) are
-  split by ``retain``. Retained patients' artifact ECGs calibrate the generator; withheld patients
-  leave with all their ECGs, clean ones included.
-- ``depleted`` = pool - withheld: parents for A0-A3.
-- ``natural_mix``: the pool minus random whole patients holding as many ECGs as were withheld
-  (C1: matched N, natural artifact prevalence).
-- ``val`` / ``test``: the outer validation and test folds, untouched.
+- ``pool`` and ``unused`` partition training patients. Smaller pools are
+  subsets of larger pools because all fractions use the same patient
+  ordering.
+- ``retained_artifact`` contains noisy recordings used to calibrate the
+  editor. ``withheld`` removes all recordings of the other selected noisy
+  patients.
+- ``depleted`` contains the remaining pool used by the baseline and
+  synthetic data treatments.
+- ``natural_mix`` removes random whole patients to match the depleted pool's
+  size while retaining the natural prevalence of signal artifacts.
+- ``val`` and ``test`` contain the untouched validation and test folds.
 
-The manifest's sha256 covers everything else in it, so an edited file is rejected on load, and a
-written manifest is never silently replaced by a different one.
+A content hash detects changes after a manifest is saved. Existing manifests
+cannot be replaced with different contents.
 """
 
 import hashlib
@@ -26,15 +28,26 @@ from pathlib import Path
 import numpy as np
 import pyarrow as pa
 
-ROLES = ("pool", "unused", "retained_artifact", "withheld", "depleted", "natural_mix", "val", "test")
+ROLES = (
+    "pool",
+    "unused",
+    "retained_artifact",
+    "withheld",
+    "depleted",
+    "natural_mix",
+    "val",
+    "test",
+)
 
 
 @dataclass
 class ChallengeSpec:
-    """How the scarcity worlds are built. Also the Hydra schema node for ``challenge``."""
+    """Settings for patient sampling and withholding noisy recordings."""
 
     id: str = "ptbxl-artifact-v2"
-    train_folds: list[int] = field(default_factory=lambda: [1, 2, 3, 4, 5, 6, 7, 8])
+    train_folds: list[int] = field(
+        default_factory=lambda: [1, 2, 3, 4, 5, 6, 7, 8]
+    )
     val_folds: list[int] = field(default_factory=lambda: [9])
     test_folds: list[int] = field(default_factory=lambda: [10])
     pool_fractions: list[float] = field(default_factory=lambda: [0.10, 0.25])
@@ -52,15 +65,21 @@ class Manifest:
 
 
 class ManifestIntegrityError(ValueError):
-    """The manifest's content no longer matches its recorded sha256."""
+    """The manifest's content no longer matches its recorded content hash."""
 
 
 def pool_name(pool_fraction: float) -> str:
     return f"pool{round(pool_fraction * 100)}"
 
 
-def build_manifest(index: pa.Table, spec: ChallengeSpec, pool_fraction: float, source: dict) -> Manifest:
-    """Build every role for one pool fraction. Deterministic in (index, spec, pool_fraction)."""
+def build_manifest(
+    index: pa.Table, spec: ChallengeSpec, pool_fraction: float, source: dict
+) -> Manifest:
+    """Build data roles for one training-pool fraction.
+
+    The same index, specification, and pool fraction produce the same
+    manifest.
+    """
     record_id = np.asarray(index["record_id"].to_pylist())
     subject = np.asarray(index["subject_uid"].to_pylist())
     fold = np.asarray(index["strat_fold"].to_pylist())
@@ -70,18 +89,28 @@ def build_manifest(index: pa.Table, spec: ChallengeSpec, pool_fraction: float, s
     train_subjects = np.unique(subject[train])
     # One permutation per seed, whatever the fraction: pools nest.
     order = np.random.default_rng([spec.seed, 0]).permutation(train_subjects)
-    pool = train & np.isin(subject, order[: math.ceil(pool_fraction * len(train_subjects))])
+    pool = train & np.isin(
+        subject, order[: math.ceil(pool_fraction * len(train_subjects))]
+    )
 
     stream = round(pool_fraction * 1_000_000)
     artifact_subjects = np.unique(subject[pool & is_artifact])
     retained_subjects = np.random.default_rng([spec.seed, 1, stream]).choice(
-        artifact_subjects, math.ceil(spec.retain * len(artifact_subjects)), replace=False
+        artifact_subjects,
+        math.ceil(spec.retain * len(artifact_subjects)),
+        replace=False,
     )
     retained = pool & is_artifact & np.isin(subject, retained_subjects)
-    withheld = pool & np.isin(subject, artifact_subjects) & ~np.isin(subject, retained_subjects)
+    withheld = (
+        pool
+        & np.isin(subject, artifact_subjects)
+        & ~np.isin(subject, retained_subjects)
+    )
 
     dropped_subjects = _subjects_totalling(
-        subject[pool], int(withheld.sum()), np.random.default_rng([spec.seed, 2, stream])
+        subject[pool],
+        int(withheld.sum()),
+        np.random.default_rng([spec.seed, 2, stream]),
     )
 
     masks = {
@@ -105,18 +134,21 @@ def build_manifest(index: pa.Table, spec: ChallengeSpec, pool_fraction: float, s
 
 
 def save_manifest(manifest: Manifest, path: Path) -> None:
-    """Write a manifest. Once written it is frozen: rewriting it with different content is refused."""
+    """Save a manifest without replacing different existing contents."""
     path = Path(path)
     if path.exists():
         existing = load_manifest(path)
         if existing.sha256 != manifest.sha256:
             raise FileExistsError(
-                f"{path} already holds a different manifest (sha256 {existing.sha256[:12]}). Manifests "
-                "are frozen: set a new challenge.id, or delete the file on purpose to rebuild it."
+                f"{path} already holds a different manifest (sha256 "
+                f"{existing.sha256[:12]}). Manifests are frozen: set a new "
+                "challenge.id, or delete the file on purpose to rebuild it."
             )
         return
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(asdict(manifest), indent=1) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(asdict(manifest), indent=1) + "\n", encoding="utf-8"
+    )
 
 
 def load_manifest(path: Path) -> Manifest:
@@ -125,17 +157,23 @@ def load_manifest(path: Path) -> Manifest:
     recorded = payload.pop("sha256")
     if _sha256(payload) != recorded:
         raise ManifestIntegrityError(
-            f"{path}: content does not match its sha256; rebuild it instead of editing it"
+            f"{path}: content does not match its sha256; rebuild it "
+            "instead of editing it"
         )
-    payload["roles"] = {role: tuple(ids) for role, ids in payload["roles"].items()}
+    payload["roles"] = {
+        role: tuple(ids) for role, ids in payload["roles"].items()
+    }
     return Manifest(**payload, sha256=recorded)
 
 
-def _subjects_totalling(subjects: np.ndarray, n_records: int, rng: np.random.Generator) -> list[str]:
-    """Random whole subjects whose records add up to exactly ``n_records``.
+def _subjects_totalling(
+    subjects: np.ndarray, n_records: int, rng: np.random.Generator
+) -> list[str]:
+    """Select whole patients with exactly the requested recording count.
 
-    Subjects are taken in a seeded random order, skipping any that would overshoot. PTB-XL has
-    thousands of single-ECG patients, so the exact total is reachable in practice.
+    Visit patients in a seeded random order and skip those that would exceed
+    the target. PTB-XL has many patients with one recording, so the exact
+    target is reachable in practice.
     """
     names, counts = np.unique(subjects, return_counts=True)
     chosen, remaining = [], n_records
@@ -146,10 +184,14 @@ def _subjects_totalling(subjects: np.ndarray, n_records: int, rng: np.random.Gen
             chosen.append(str(names[k]))
             remaining -= int(counts[k])
     if remaining:
-        raise ValueError(f"no set of whole subjects holds exactly {n_records} records")
+        raise ValueError(
+            f"no set of whole subjects holds exactly {n_records} records"
+        )
     return chosen
 
 
 def _sha256(content: dict) -> str:
-    canonical = json.dumps(content, sort_keys=True, separators=(",", ":"), default=list)
+    canonical = json.dumps(
+        content, sort_keys=True, separators=(",", ":"), default=list
+    )
     return hashlib.sha256(canonical.encode()).hexdigest()

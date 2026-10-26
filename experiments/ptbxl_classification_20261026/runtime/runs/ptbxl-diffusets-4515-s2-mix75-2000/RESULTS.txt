@@ -1,0 +1,46 @@
+Three-seed PTB-XL classification: S2 + DiffuSETS
+
+Completed seeds 0, 1 and 2, each for 2,000 optimizer steps.
+Every seed uses all 8,579 real ECGs + all 4,515 accepted generated ECGs.
+Every batch: exactly 48 real + 16 generated; exactly 12 real + 4 generated receive S2.
+S2: gain 0.95–1.05, circular shift ±0.25 s, noise RMS 0–0.05 mV, baseline wander 0–1.75 mV at 0.05–0.7 Hz.
+Dose = 1/4 batch × 1/2 strength = 1/8. Labels unchanged by augmentation.
+Native ResNet1d/AdamW/BCE trainer and native generic augmentation unchanged.
+Each seed: 96,000 real + 32,000 generated presentations; 24,000 real + 8,000 generated augmented presentations.
+Every real ECG was seen 11–12 times and every generated ECG 7–8 times per seed.
+Validation every 100 steps; first maximum overall validation macro-AUROC selects the checkpoint.
+Validation fold 9: 2,146 records. Test fold 10: 2,158 records, scored after all three seeds finished.
+
+Macro-AUROC, mean ± sample SD across three seeds:
+Split  Slice       Historical S2          S2 + DiffuSETS         Difference
+val    overall     0.917232 ± 0.002087   0.919851 ± 0.000533   +0.002618
+val    artifact    0.914827 ± 0.003477   0.913973 ± 0.002278   -0.000854
+val    clean       0.918612 ± 0.001692   0.922187 ± 0.000516   +0.003575
+test   overall     0.914587 ± 0.000502   0.913002 ± 0.001836   -0.001585
+test   artifact    0.908640 ± 0.002389   0.903852 ± 0.003553   -0.004788
+test   clean       0.916585 ± 0.001061   0.915951 ± 0.001356   -0.000634
+
+New-trial per-seed overall results:
+Seed 0: best step 1700; validation 0.920192; test 0.911371.
+Seed 1: best step 1900; validation 0.919237; test 0.914991.
+Seed 2: best step 2000; validation 0.920124; test 0.912643.
+
+Interpretation and comparison limits:
+- Historical S2 uses 6,389 artifact-depleted real ECGs; this experiment uses 8,579 real + 4,515 generated. Differences include restoring 2,190 real records and adding generated records.
+- Historical S2 trained 10,000 steps, but all three selected checkpoints already lie within 2,000. Its saved test scores therefore also apply to the 2,000-step selection comparison.
+- The original real-data scaling line is seed 0 and trained 12,000 steps. Separate plots restrict every validation selection and smoothed peak to <=2,000 steps.
+- Error bars are sample SD, not confidence intervals; no significance claim is made.
+- Seed 2 selects the final step (2,000); these runs do not establish eventual convergence or saturation.
+- Generated labels are provisional conditioning-parent CD/HYP/MI/NORM/STTC targets; acceptance did not validate those diagnoses.
+- 2,212 generated ECGs use conditioning parents outside the real 50% pool (1,794 records / 1,765 patients). All are in training folds 1–8; no held-out record or patient overlap.
+- Previous test results were known; this is an exploratory experiment.
+
+Artifacts:
+figures/ contains overall-only and full scaling comparisons, zoomed comparisons, PNG/SVG figures and plotted CSV/JSON data.
+seed_metrics.csv and aggregate_metrics.csv contain full-precision validation/test metrics.
+results_summary.json contains metrics and evidence fingerprints.
+pool50/mix75_s2/seed{0,1,2}/ contains checkpoints, predictions, learning histories, all augmentation recipes and batch/source audits.
+
+Rebuild outputs from the synthetic_data_engine project root:
+.venv/bin/python runs/ptbxl-diffusets-4515-s2-mix75-2000/plot_results.py
+.venv/bin/python runs/ptbxl-diffusets-4515-s2-mix75-2000/build_report.py

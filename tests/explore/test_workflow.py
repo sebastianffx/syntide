@@ -1,4 +1,4 @@
-"""Integration checks for sampling, cache identity, portable plans and the HTTP seam."""
+"""Sampling, cached results, plans, and the web interface work together."""
 
 import json
 import re
@@ -29,17 +29,26 @@ from syntide.explore.viewer import write_viewer
 @pytest.fixture
 def bundle(tmp_path, monkeypatch):
     def fake_signals(signals, rates, channels, config):
-        return np.array([[x.mean(), x.std(), x.max(), 1] for x in signals]), {"backend": "test"}
+        return np.array([[x.mean(), x.std(), x.max(), 1] for x in signals]), {
+            "backend": "test"
+        }
 
     def fake_text(texts, config):
-        return np.array([[len(t), i + 1, 1] for i, t in enumerate(texts)]), {"backend": "test"}
+        return np.array([[len(t), i + 1, 1] for i, t in enumerate(texts)]), {
+            "backend": "test"
+        }
 
     monkeypatch.setattr(embeddings, "embed_recordings", fake_signals)
     monkeypatch.setattr(embeddings, "embed_texts", fake_text)
     rows = []
     for i in range(6):
         path = tmp_path / f"signal-{i}.npy"
-        np.save(path, np.stack([np.linspace(i, i + 2, 30), np.sin(np.arange(30)) * (i + 1)]))
+        np.save(
+            path,
+            np.stack(
+                [np.linspace(i, i + 2, 30), np.sin(np.arange(30)) * (i + 1)]
+            ),
+        )
         for j in range(2):
             rows.append(
                 {
@@ -62,7 +71,12 @@ def bundle(tmp_path, monkeypatch):
         "sampling": {"size": 4, "fraction": None, "seed": 42},
         "embedding": {"backend": "chronos", "seed": 42},
         "text": {"fields": ["question", "answer", "text"], "enabled": True},
-        "analysis": {"projection": "pca", "n_clusters": 2, "seed": 42, "target_count": 3},
+        "analysis": {
+            "projection": "pca",
+            "n_clusters": 2,
+            "seed": 42,
+            "target_count": 3,
+        },
     }
     output = tmp_path / "analysis"
     return config, output
@@ -82,14 +96,23 @@ def test_pipeline_keeps_record_and_question_counts_and_freezes_cache(bundle):
     analysis = run_analysis(config, output)
     assert len(analysis["records"]) == 4
     assert all(len(record["texts"]) == 2 for record in analysis["records"])
-    assert all(record["text_novelty"] is not None for record in analysis["records"])
+    assert all(
+        record["text_novelty"] is not None for record in analysis["records"]
+    )
     assert analysis["provenance"]["sampling"]["population_count"] == 6
     assert (output / "embeddings.npz").is_file()
     with np.load(output / "embeddings.npz", allow_pickle=False) as arrays:
         assert len(arrays["record_ids"]) == arrays["signals"].shape[0] == 4
-        assert len(arrays["text_ids"]) == len(arrays["text_record_ids"]) == arrays["texts"].shape[0] == 8
+        assert (
+            len(arrays["text_ids"])
+            == len(arrays["text_record_ids"])
+            == arrays["texts"].shape[0]
+            == 8
+        )
     verify_analysis(analysis)
-    assert run_analysis(config, output, reuse=True) == json.loads((output / "analysis.json").read_text())
+    assert run_analysis(config, output, reuse=True) == json.loads(
+        (output / "analysis.json").read_text()
+    )
     with pytest.raises(FileExistsError):
         run_analysis(config, output)
     config["sampling"]["seed"] += 1
@@ -97,12 +120,21 @@ def test_pipeline_keeps_record_and_question_counts_and_freezes_cache(bundle):
         run_analysis(config, output, reuse=True)
 
 
-def test_no_text_preserves_tuples_without_requiring_text_model(bundle, monkeypatch):
+def test_no_text_preserves_tuples_without_requiring_text_model(
+    bundle, monkeypatch
+):
     config, output = bundle
     config["text"]["enabled"] = False
-    monkeypatch.setattr(embeddings, "embed_texts", lambda *_: pytest.fail("Text model must not load"))
+    monkeypatch.setattr(
+        embeddings,
+        "embed_texts",
+        lambda *_: pytest.fail("Text model must not load"),
+    )
     result = run_analysis(config, output)
-    assert all(len(row["texts"]) == 2 and row["text_novelty"] is None for row in result["records"])
+    assert all(
+        len(row["texts"]) == 2 and row["text_novelty"] is None
+        for row in result["records"]
+    )
 
 
 def test_plan_validates_membership_counts_and_integrity(bundle):
@@ -111,10 +143,15 @@ def test_plan_validates_membership_counts_and_integrity(bundle):
     selection = {
         "record_ids": [analysis["records"][0]["record_id"]],
         "seed": 7,
-        "requests": [{"method": "editing", "count": 50}, {"method": "diffusion", "count": 20}],
+        "requests": [
+            {"method": "editing", "count": 50},
+            {"method": "diffusion", "count": 20},
+        ],
     }
     plan = make_plan(analysis, selection)
-    assert plan["total_requested"] == 70 and len(plan["targets"]["text_ids"]) == 2
+    assert (
+        plan["total_requested"] == 70 and len(plan["targets"]["text_ids"]) == 2
+    )
     assert "intent_only" in plan["status"]
     assert plan["requests"][1]["generator"] == "diffusets@1"
     assert plan["requests"][1]["modality"] == "ecg"
@@ -131,7 +168,10 @@ def test_plan_validates_membership_counts_and_integrity(bundle):
     with pytest.raises(ValueError, match="Unknown recording"):
         make_plan(analysis, {**selection, "record_ids": ["not-in-sample"]})
     with pytest.raises(ValueError, match="positive integer"):
-        make_plan(analysis, {**selection, "requests": [{"method": "editing", "count": -1}]})
+        make_plan(
+            analysis,
+            {**selection, "requests": [{"method": "editing", "count": -1}]},
+        )
     with pytest.raises(ValueError, match="belong"):
         make_plan(analysis, {**selection, "text_ids": ["unknown"]})
     analysis["records"][0]["labels"].append("tampered")
@@ -143,10 +183,15 @@ def test_plan_validates_membership_counts_and_integrity(bundle):
     "backend",
     [{}, {"generator": "research.ppg@2.0.0", "modality": " ppg "}],
 )
-def test_portable_browser_plan_matches_python_even_with_exponents(bundle, backend):
+def test_portable_browser_plan_matches_python_even_with_exponents(
+    bundle, backend
+):
     node = shutil.which("node")
     if not node:
-        pytest.skip("Node is optional; needed to compare browser/Python plan serialization")
+        pytest.skip(
+            "Node is optional; needed to compare "
+            "browser/Python plan serialization"
+        )
     config, output = bundle
     analysis = run_analysis(config, output)
     selection = {
@@ -157,19 +202,30 @@ def test_portable_browser_plan_matches_python_even_with_exponents(bundle, backen
             {
                 "method": "diffusion",
                 "count": 8,
-                "parameters": {"epsilon": 1e-7, "threshold": 1e-6, "scale": -0.0},
+                "parameters": {
+                    "epsilon": 1e-7,
+                    "threshold": 1e-6,
+                    "scale": -0.0,
+                },
                 **backend,
             }
         ],
     }
     template = Path(embeddings.__file__).with_name("viewer.html").read_text()
-    export_handler = re.search(r"""\$\(["']export-plan["']\)\.onclick""", template)
-    functions = template[template.index("function canonical(value)") : export_handler.start()]
+    export_handler = re.search(
+        r"""\$\(["']export-plan["']\)\.onclick""", template
+    )
+    functions = template[
+        template.index("function canonical(value)") : export_handler.start()
+    ]
     script = (
         "const p=JSON.parse(require('fs').readFileSync(0,'utf8'));"
         "const A=p.analysis,cleanAnalysis=A;"
         + functions
-        + "\nportablePlan(p.selection).then(x=>process.stdout.write(JSON.stringify(x)));"
+        + (
+            "\n"
+            "portablePlan(p.selection).then(x=>process.stdout.write(JSON.stringify(x)));"
+        )
     )
     result = subprocess.run(
         [node, "-e", script],
@@ -186,7 +242,12 @@ def test_portable_browser_plan_matches_python_even_with_exponents(bundle, backen
 
 
 def test_malformed_generation_requests_are_rejected_in_python_and_browser():
-    analysis = seal_analysis({"records": [{"record_id": "r1", "cluster": 0}], "provenance": {"source": {}}})
+    analysis = seal_analysis(
+        {
+            "records": [{"record_id": "r1", "cluster": 0}],
+            "provenance": {"source": {}},
+        }
+    )
     invalid = [
         None,
         [],
@@ -211,9 +272,13 @@ def test_malformed_generation_requests_are_rejected_in_python_and_browser():
             make_plan(analysis, {"record_ids": ["r1"], "requests": [request]})
     node = shutil.which("node")
     if node:
-        template = Path(embeddings.__file__).with_name("viewer.html").read_text()
+        template = (
+            Path(embeddings.__file__).with_name("viewer.html").read_text()
+        )
         start = template.index("function normalizeRequest(request)")
-        function = template[start : template.index("async function portablePlan(s)")]
+        function = template[
+            start : template.index("async function portablePlan(s)")
+        ]
         script = (
             "const requests=JSON.parse(require('fs').readFileSync(0,'utf8'));"
             + function
@@ -221,7 +286,11 @@ def test_malformed_generation_requests_are_rejected_in_python_and_browser():
             "try {normalizeRequest(r);return false;} catch {return true;}})));"
         )
         result = subprocess.run(
-            [node, "-e", script], input=json.dumps(invalid), text=True, capture_output=True, check=True
+            [node, "-e", script],
+            input=json.dumps(invalid),
+            text=True,
+            capture_output=True,
+            check=True,
         )
         assert json.loads(result.stdout) == [True] * len(invalid)
 
@@ -249,16 +318,25 @@ def test_viewer_embedded_json_and_local_server_plan(bundle):
             "requests": [{"method": "augmentation", "count": 5}],
         }
         request = urllib.request.Request(
-            url + "/api/plan", json.dumps(selection).encode(), {"Content-Type": "application/json"}
+            url + "/api/plan",
+            json.dumps(selection).encode(),
+            {"Content-Type": "application/json"},
         )
         with urllib.request.urlopen(request) as response:
             assert json.load(response)["total_requested"] == 5
         with pytest.raises(urllib.error.HTTPError) as error:
             urllib.request.urlopen(url + "/../catalog.jsonl")
         assert error.value.code == 404
-        for headers in ({"Host": "untrusted.example"}, {"Origin": "https://untrusted.example"}):
+        for headers in (
+            {"Host": "untrusted.example"},
+            {"Origin": "https://untrusted.example"},
+        ):
             with pytest.raises(urllib.error.HTTPError) as error:
-                urllib.request.urlopen(urllib.request.Request(url + "/api/analysis", headers=headers))
+                urllib.request.urlopen(
+                    urllib.request.Request(
+                        url + "/api/analysis", headers=headers
+                    )
+                )
             assert error.value.code == 403
     finally:
         server.shutdown()

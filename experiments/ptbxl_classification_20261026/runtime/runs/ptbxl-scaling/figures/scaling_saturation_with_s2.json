@@ -1,0 +1,283 @@
+{
+  "scaling": [
+    {
+      "share_percent": 10,
+      "source": "ptbxl-scaling/pool10/real/seed0",
+      "seed": 0,
+      "best_step": 300,
+      "smoothed_peak_step": 300,
+      "val": {
+        "overall": 0.8890958387893978,
+        "artifact": 0.8702696907673422,
+        "clean": 0.8958640977872603
+      }
+    },
+    {
+      "share_percent": 20,
+      "source": "ptbxl-scaling/pool20/real/seed0",
+      "seed": 0,
+      "best_step": 400,
+      "smoothed_peak_step": 500,
+      "val": {
+        "overall": 0.9066273196319738,
+        "artifact": 0.8982244899623929,
+        "clean": 0.9096097443395719
+      }
+    },
+    {
+      "share_percent": 30,
+      "source": "ptbxl-scaling/pool30/real/seed0",
+      "seed": 0,
+      "best_step": 1000,
+      "smoothed_peak_step": 1000,
+      "val": {
+        "overall": 0.9150688102780421,
+        "artifact": 0.909024448121535,
+        "clean": 0.9171982768955059
+      }
+    },
+    {
+      "share_percent": 50,
+      "source": "ptbxl-scaling/pool50/real/seed0",
+      "seed": 0,
+      "best_step": 1200,
+      "smoothed_peak_step": 1100,
+      "val": {
+        "overall": 0.9195656152825388,
+        "artifact": 0.9144401446307263,
+        "clean": 0.9218894094810715
+      }
+    },
+    {
+      "share_percent": 70,
+      "source": "ptbxl-scaling/pool70/real/seed0",
+      "seed": 0,
+      "best_step": 1300,
+      "smoothed_peak_step": 1900,
+      "val": {
+        "overall": 0.9256783582296035,
+        "artifact": 0.9239793116746146,
+        "clean": 0.9268417417130681
+      }
+    },
+    {
+      "share_percent": 100,
+      "source": "ptbxl-scaling/pool100/real/seed0",
+      "seed": 0,
+      "best_step": 3200,
+      "smoothed_peak_step": 3200,
+      "val": {
+        "overall": 0.930928257100865,
+        "artifact": 0.9259146607008647,
+        "clean": 0.9331361218584815
+      }
+    }
+  ],
+  "sweep": {
+    "A0": [
+      {
+        "source": "ptbxl-aug-sweep/scarcity50/A0/seed0",
+        "seed": 0,
+        "best_step": 1100,
+        "smoothed_peak_step": 1100,
+        "val": {
+          "overall": 0.9124408146988003,
+          "artifact": 0.9026250355371372,
+          "clean": 0.9163522205896907
+        },
+        "test": {
+          "overall": 0.905487823478175,
+          "artifact": 0.89981182073771,
+          "clean": 0.9077633430190118
+        }
+      },
+      {
+        "source": "ptbxl-aug-sweep/scarcity50/A0/seed1",
+        "seed": 1,
+        "best_step": 1000,
+        "smoothed_peak_step": 900,
+        "val": {
+          "overall": 0.9155588522038363,
+          "artifact": 0.9064548017086903,
+          "clean": 0.9194103678868337
+        },
+        "test": {
+          "overall": 0.9083189471310206,
+          "artifact": 0.9001721494740181,
+          "clean": 0.9108266791875493
+        }
+      },
+      {
+        "source": "ptbxl-aug-sweep/scarcity50/A0/seed2",
+        "seed": 2,
+        "best_step": 900,
+        "smoothed_peak_step": 1100,
+        "val": {
+          "overall": 0.9138754770057199,
+          "artifact": 0.9049357215989329,
+          "clean": 0.9172450989312537
+        },
+        "test": {
+          "overall": 0.9059944129099285,
+          "artifact": 0.8984921690858171,
+          "clean": 0.9083255395385235
+        }
+      }
+    ],
+    "S2": [
+      {
+        "source": "ptbxl-aug-sweep/scarcity50/S2/seed0",
+        "seed": 0,
+        "best_step": 1700,
+        "smoothed_peak_step": 1700,
+        "val": {
+          "overall": 0.9189132953271184,
+          "artifact": 0.9176012795342959,
+          "clean": 0.9199656075674648
+        },
+        "test": {
+          "overall": 0.9151362884465216,
+          "artifact": 0.9093790353919375,
+          "clean": 0.9171247678577817
+        }
+      },
+      {
+        "source": "ptbxl-aug-sweep/scarcity50/S2/seed1",
+        "seed": 1,
+        "best_step": 1400,
+        "smoothed_peak_step": 1600,
+        "val": {
+          "overall": 0.9148970824064303,
+          "artifact": 0.9109269649782142,
+          "clean": 0.9167156034671157
+        },
+        "test": {
+          "overall": 0.9141519328369622,
+          "artifact": 0.9105725985548727,
+          "clean": 0.9153619563816455
+        }
+      },
+      {
+        "source": "ptbxl-aug-sweep/scarcity50/S2/seed2",
+        "seed": 2,
+        "best_step": 1300,
+        "smoothed_peak_step": 1400,
+        "val": {
+          "overall": 0.9178865200005555,
+          "artifact": 0.9159534880584423,
+          "clean": 0.9191558946851742
+        },
+        "test": {
+          "overall": 0.9144727700715233,
+          "artifact": 0.9059692603029484,
+          "clean": 0.9172678704523612
+        }
+      }
+    ],
+    "C2": [
+      {
+        "source": "ptbxl-aug-sweep/full100/C2/seed0",
+        "seed": 0,
+        "best_step": 3200,
+        "smoothed_peak_step": 3200,
+        "val": {
+          "overall": 0.930928257100865,
+          "artifact": 0.9259146607008647,
+          "clean": 0.9331361218584815
+        },
+        "test": {
+          "overall": 0.9256877392089555,
+          "artifact": 0.9211231894656235,
+          "clean": 0.9271949316198279
+        }
+      },
+      {
+        "source": "ptbxl-aug-sweep/full100/C2/seed1",
+        "seed": 1,
+        "best_step": 3100,
+        "smoothed_peak_step": 2600,
+        "val": {
+          "overall": 0.9295886872182699,
+          "artifact": 0.9209222501368206,
+          "clean": 0.9331668037328156
+        },
+        "test": {
+          "overall": 0.924513464890896,
+          "artifact": 0.9217307044480982,
+          "clean": 0.9254944974659596
+        }
+      },
+      {
+        "source": "ptbxl-aug-sweep/full100/C2/seed2",
+        "seed": 2,
+        "best_step": 2100,
+        "smoothed_peak_step": 3300,
+        "val": {
+          "overall": 0.9262566806798667,
+          "artifact": 0.9207139126556234,
+          "clean": 0.9286663879224395
+        },
+        "test": {
+          "overall": 0.9218330665432262,
+          "artifact": 0.9213856179630902,
+          "clean": 0.9221666413647377
+        }
+      }
+    ]
+  },
+  "overall_mean_sd": {
+    "val": {
+      "A0": {
+        "mean": 0.9139583813027855,
+        "sd": 0.001560671109669366
+      },
+      "S2": {
+        "mean": 0.9172322992447013,
+        "sd": 0.0020865030922858053
+      },
+      "C2": {
+        "mean": 0.9289245416663339,
+        "sd": 0.002405560963668203
+      }
+    },
+    "test": {
+      "A0": {
+        "mean": 0.9066003945063748,
+        "sd": 0.0015097104211897593
+      },
+      "S2": {
+        "mean": 0.9145869971183357,
+        "sd": 0.0005020207716672716
+      },
+      "C2": {
+        "mean": 0.9240114235476925,
+        "sd": 0.0019757680715849287
+      }
+    }
+  },
+  "overall_gap_closure": {
+    "val": {
+      "initial_gap": 0.014966160363548364,
+      "gain": 0.0032739179419157827,
+      "remaining_gap": 0.011692242421632582,
+      "fraction_closed": 0.21875470143228917
+    },
+    "test": {
+      "initial_gap": 0.01741102904131775,
+      "gain": 0.007986602611960936,
+      "remaining_gap": 0.009424426429356814,
+      "fraction_closed": 0.458709395809294
+    }
+  },
+  "s2_smoothed_peak_step": {
+    "mean": 1566.6666666666667,
+    "sd": 152.75252316519467
+  },
+  "notes": [
+    "Scaling curves: raw validation AUROC at the best overall validation checkpoint, seed 0.",
+    "Convergence: centered 5-validation moving average, for both scaling and S2.",
+    "S2 overlay: validation overall mean and sample SD across seeds 0, 1, 2.",
+    "Gap closed uses same-sweep means: (S2 - A0) / (C2 - A0).",
+    "Scaling uses source_role=pool; S2/A0 use source_role=depleted (retaining 200 artifact records)."
+  ]
+}

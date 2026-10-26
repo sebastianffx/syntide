@@ -1,0 +1,215 @@
+{
+  "trials": [
+    {
+      "run_dir": "full100/C2/seed0",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 3250,
+      "new_best_step": 3200
+    },
+    {
+      "run_dir": "full100/C2/seed1",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 3250,
+      "new_best_step": 3100
+    },
+    {
+      "run_dir": "full100/C2/seed2",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 3250,
+      "new_best_step": 2100
+    },
+    {
+      "run_dir": "scarcity50/A0/seed0",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1250,
+      "new_best_step": 1100
+    },
+    {
+      "run_dir": "scarcity50/A0/seed1",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1000,
+      "new_best_step": 1000
+    },
+    {
+      "run_dir": "scarcity50/A0/seed2",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1000,
+      "new_best_step": 900
+    },
+    {
+      "run_dir": "scarcity50/A1/seed0",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 3250,
+      "new_best_step": 3800
+    },
+    {
+      "run_dir": "scarcity50/A1/seed1",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 3500,
+      "new_best_step": 3500
+    },
+    {
+      "run_dir": "scarcity50/A1/seed2",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 3000,
+      "new_best_step": 3000
+    },
+    {
+      "run_dir": "scarcity50/A2/seed0",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1250,
+      "new_best_step": 1100
+    },
+    {
+      "run_dir": "scarcity50/A2/seed1",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1000,
+      "new_best_step": 1000
+    },
+    {
+      "run_dir": "scarcity50/A2/seed2",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1000,
+      "new_best_step": 1200
+    },
+    {
+      "run_dir": "scarcity50/A3/seed0",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1250,
+      "new_best_step": 1700
+    },
+    {
+      "run_dir": "scarcity50/A3/seed1",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1250,
+      "new_best_step": 1600
+    },
+    {
+      "run_dir": "scarcity50/A3/seed2",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1000,
+      "new_best_step": 1100
+    },
+    {
+      "run_dir": "scarcity50/C1/seed0",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 750,
+      "new_best_step": 800
+    },
+    {
+      "run_dir": "scarcity50/C1/seed1",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1000,
+      "new_best_step": 1100
+    },
+    {
+      "run_dir": "scarcity50/C1/seed2",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 750,
+      "new_best_step": 1100
+    },
+    {
+      "run_dir": "scarcity50/C2/seed0",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1250,
+      "new_best_step": 1200
+    },
+    {
+      "run_dir": "scarcity50/C2/seed1",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1000,
+      "new_best_step": 1700
+    },
+    {
+      "run_dir": "scarcity50/C2/seed2",
+      "shared_checkpoints": 13,
+      "shared_metrics_exactly_equal": true,
+      "trainer_matches": true,
+      "initial_weights_match": true,
+      "validation_steps": 65,
+      "old_best_step": 1250,
+      "new_best_step": 900
+    }
+  ],
+  "scaling_seed0_first_65_rows_exactly_equal": true
+}

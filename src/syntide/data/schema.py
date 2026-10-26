@@ -1,7 +1,6 @@
-"""PTB-XL constants and the in-memory sample container shared by every phase.
+"""Shared PTB-XL constants and arrays of labelled recordings.
 
-This module never imports ``timenet``, so training and evaluation code can depend on it without
-depending on the data plane.
+Training and evaluation can use these structures without importing TimeNet.
 """
 
 from dataclasses import dataclass
@@ -9,22 +8,42 @@ from dataclasses import dataclass
 import numpy as np
 
 # Clinical lead order. PTB-XL headers spell the augmented leads in upper case.
-LEADS = ("I", "II", "III", "AVR", "AVL", "AVF", "V1", "V2", "V3", "V4", "V5", "V6")
-# Diagnostic superclasses in alphabetical order; column k of ``Samples.labels`` is SUPERCLASSES[k].
+LEADS = (
+    "I",
+    "II",
+    "III",
+    "AVR",
+    "AVL",
+    "AVF",
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6",
+)
+# Diagnostic superclasses in alphabetical order; column k of ``Samples.labels``
+# is SUPERCLASSES[k].
 SUPERCLASSES = ("CD", "HYP", "MI", "NORM", "STTC")
-# PTB-XL signal-quality columns; column k of ``Samples.artifacts`` is ARTIFACT_TYPES[k].
-ARTIFACT_TYPES = ("baseline_drift", "static_noise", "burst_noise", "electrodes_problems")
+# PTB-XL signal-quality columns; column k of ``Samples.artifacts`` is
+# ARTIFACT_TYPES[k].
+ARTIFACT_TYPES = (
+    "baseline_drift",
+    "static_noise",
+    "burst_noise",
+    "electrodes_problems",
+)
 FS_HZ = 100
 
 
 def subject_uid(patient_id: int) -> str:
-    """Return the global subject id, namespaced so it cannot collide with other datasets' patients."""
+    """Qualify a patient identifier with its dataset name."""
     return f"ptb-xl:{patient_id}"
 
 
 @dataclass(frozen=True)
 class Samples:
-    """Labelled ECGs held in memory, row-aligned across every field."""
+    """Labelled electrocardiograms with matching array row order."""
 
     record_id: np.ndarray  # (n,) str
     subject_uid: np.ndarray  # (n,) str
@@ -43,7 +62,9 @@ class Samples:
         for name, shape in expected.items():
             actual = getattr(self, name).shape
             if actual[: len(shape)] != shape:
-                raise ValueError(f"Samples.{name} has shape {actual}, expected {shape}")
+                raise ValueError(
+                    f"Samples.{name} has shape {actual}, expected {shape}"
+                )
 
     @property
     def is_artifact(self) -> np.ndarray:

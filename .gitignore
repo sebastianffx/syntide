@@ -19,5 +19,16 @@ outputs/
 .pytest_cache/
 .ruff_cache/
 
+# Compact historical run records belong to the reproduction archive.
+!experiments/ptbxl_classification_20261026/runtime/runs/
+!experiments/ptbxl_classification_20261026/runtime/runs/**
+
 # nox session environments (uvx nox)
 .nox/
+
+# Machine-specific editor settings and temporary export files
+.claude/
+*.tmp
+*.bak
+*.swp
+*~

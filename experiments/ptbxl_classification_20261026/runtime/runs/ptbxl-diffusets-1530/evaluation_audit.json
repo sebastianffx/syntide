@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "test_runs": 6,
+  "n_test": 2158,
+  "frozen_before_test_claim": true,
+  "original_outputs_unchanged": true,
+  "primary": [
+    "G1",
+    "C2"
+  ],
+  "key_control": [
+    "G1",
+    "R1"
+  ]
+}

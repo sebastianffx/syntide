@@ -1,0 +1,127 @@
+{
+  "split": "test",
+  "fold": 10,
+  "selection": "Best overall validation AUROC; no test selection",
+  "trials": [
+    {
+      "trial_id": "6c6ba59a4af3509c76074a7b6d37ec75dd587064edcd48f838c4f0508a41ef7e",
+      "original_run": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool10/real/seed0",
+      "checkpoint_path": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool10/real/seed0/best.pt",
+      "checkpoint_sha256": "b43eb269fd68c57b6ed0599ca4f65f71163c18032947ad67892061ae043b3567",
+      "checkpoint_step": 300,
+      "selection_metric": "val/auroc_overall",
+      "manifest": "manifests/ptbxl-scaling/pool10.json",
+      "manifest_sha256": "9ebf925d52caf5430f3ad05f4a7ef68488d47790f2af0066c55a1f0c1495f6e3",
+      "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+      "score_source": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-4515-mix75-2000/heldout_scaling_evaluation/real10/seed0",
+      "score_source_trial_id": "6c6ba59a4af3509c76074a7b6d37ec75dd587064edcd48f838c4f0508a41ef7e",
+      "mode": "new_frozen_checkpoint_evaluation"
+    },
+    {
+      "trial_id": "fd80e63b1336f96a174910b19d19ef3bd4828cf5532fd6b12a5c7c74bdd0b672",
+      "original_run": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool20/real/seed0",
+      "checkpoint_path": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool20/real/seed0/best.pt",
+      "checkpoint_sha256": "ed6a4c5714e457a9f37773f6789c351cd0d85b9b729aa017786c4ae42334bd92",
+      "checkpoint_step": 400,
+      "selection_metric": "val/auroc_overall",
+      "manifest": "manifests/ptbxl-scaling/pool20.json",
+      "manifest_sha256": "7f11bb8c56792fb0aaa4acd13f1b2139df85c9d2f9c38bf472f288c5e18e6317",
+      "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+      "score_source": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-4515-mix75-2000/heldout_scaling_evaluation/real20/seed0",
+      "score_source_trial_id": "fd80e63b1336f96a174910b19d19ef3bd4828cf5532fd6b12a5c7c74bdd0b672",
+      "mode": "new_frozen_checkpoint_evaluation"
+    },
+    {
+      "trial_id": "2a4bcb28e1f6a80207328b1944a41eb6c6771529685ca76d4f2cd32d2e6536a3",
+      "original_run": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool30/real/seed0",
+      "checkpoint_path": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool30/real/seed0/best.pt",
+      "checkpoint_sha256": "147859ff93d461d1e8ec0667c208ff141fdc72b646ae8a63f6f4e3336f62f5ca",
+      "checkpoint_step": 1000,
+      "selection_metric": "val/auroc_overall",
+      "manifest": "manifests/ptbxl-scaling/pool30.json",
+      "manifest_sha256": "d2924e7136f152a419e36d5790a5dba50d72649a02c75d78d708a6b8657b8689",
+      "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+      "score_source": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-4515-mix75-2000/heldout_scaling_evaluation/real30/seed0",
+      "score_source_trial_id": "2a4bcb28e1f6a80207328b1944a41eb6c6771529685ca76d4f2cd32d2e6536a3",
+      "mode": "new_frozen_checkpoint_evaluation"
+    },
+    {
+      "trial_id": "aad0da4088f0cbab402622107efc152244212e99b29c3e3c1840171a79423057",
+      "original_run": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool50/real/seed0",
+      "checkpoint_path": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool50/real/seed0/best.pt",
+      "checkpoint_sha256": "4be4bd485bc3fe34c6b32d8e0bd4803ab5f413342115f1c845c38d925d4b8404",
+      "checkpoint_step": 1200,
+      "selection_metric": "val/auroc_overall",
+      "manifest": "manifests/ptbxl-scaling/pool50.json",
+      "manifest_sha256": "95db415ff96315d1d6fce2df00992ffacaa4284f4f9d0a137c2051456cce602d",
+      "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+      "score_source": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0",
+      "score_source_trial_id": "4669acb4bec32cc3cb1fc88c4f82e305218e3fc995eacc47c2f69fb5d0a6001a",
+      "mode": "existing_exactly_equivalent_checkpoint_test"
+    },
+    {
+      "trial_id": "32cf6569ceea349e9082033a2de05c2c22157d3b9ab77b4e997e810ef5c0c420",
+      "original_run": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool70/real/seed0",
+      "checkpoint_path": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool70/real/seed0/best.pt",
+      "checkpoint_sha256": "444116c66e4c75bc6fdac55bc448fb5025db37d2a6a4ced5d1e582ad83679dcb",
+      "checkpoint_step": 1300,
+      "selection_metric": "val/auroc_overall",
+      "manifest": "manifests/ptbxl-scaling/pool70.json",
+      "manifest_sha256": "397de86134e95a49c5d3bc1f75c35c17fc6cb9f2bc068f9eefffdd9d23f54bda",
+      "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+      "score_source": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-4515-mix75-2000/heldout_scaling_evaluation/real70/seed0",
+      "score_source_trial_id": "32cf6569ceea349e9082033a2de05c2c22157d3b9ab77b4e997e810ef5c0c420",
+      "mode": "new_frozen_checkpoint_evaluation"
+    },
+    {
+      "trial_id": "b443ff5561d779a5b7096e8f82a5d68d768c025622e951668a6e01d5f4986253",
+      "original_run": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool100/real/seed0",
+      "checkpoint_path": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool100/real/seed0/best.pt",
+      "checkpoint_sha256": "07cb86b4cd0a2bffdc23fa07678fa80f45a41728ee999799e64c716472c024ed",
+      "checkpoint_step": 3200,
+      "selection_metric": "val/auroc_overall",
+      "manifest": "manifests/ptbxl-scaling/pool100.json",
+      "manifest_sha256": "632bbb8ec20a820f0bd3e2bef3cc6febda63ec0f453c9344665b2182784c55ec",
+      "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+      "score_source": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-artifact-50-val100/full100/C2/seed0",
+      "score_source_trial_id": "dd38eebf1b861f7e8e0c01712c4fc52d875385a26cd35f24b81e8afba459a3e8",
+      "mode": "existing_exactly_equivalent_checkpoint_test"
+    },
+    {
+      "trial_id": "453798dcf59dd958e014e02546dc48e95fce08a3df8215fe6f4d4acf25db17c3",
+      "original_run": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-4515-mix75-2000/pool50/mix75/seed0",
+      "checkpoint_path": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-4515-mix75-2000/pool50/mix75/seed0/best.pt",
+      "checkpoint_sha256": "577534c64240f10752edb20247b441e46ec59df8ccd06963d99624316dc31470",
+      "checkpoint_step": 1700,
+      "selection_metric": "val/auroc_overall",
+      "manifest": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/manifests/ptbxl-scaling/pool50.json",
+      "manifest_sha256": "95db415ff96315d1d6fce2df00992ffacaa4284f4f9d0a137c2051456cce602d",
+      "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+      "score_source": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-diffusets-4515-mix75-2000/pool50/mix75/seed0",
+      "score_source_trial_id": "453798dcf59dd958e014e02546dc48e95fce08a3df8215fe6f4d4acf25db17c3",
+      "mode": "existing_original_test"
+    }
+  ],
+  "checkpoint_equivalences": [
+    {
+      "scaling_checkpoint": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool50/real/seed0/best.pt",
+      "reused_checkpoint": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-artifact-50-val100/scarcity50/C2/seed0/best.pt",
+      "scaling_checkpoint_sha256": "4be4bd485bc3fe34c6b32d8e0bd4803ab5f413342115f1c845c38d925d4b8404",
+      "reused_checkpoint_sha256": "d44ec036a90e9e069eb37f06a5f7a14d8e8c46d11689c12eb94834c3821cda7f",
+      "all_model_tensors_exactly_equal": true,
+      "model_tensors_compared": 74,
+      "model_config_trainer_manifest_source_and_all_roles_equal": true,
+      "step": 1200
+    },
+    {
+      "scaling_checkpoint": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-scaling/pool100/real/seed0/best.pt",
+      "reused_checkpoint": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/runs/ptbxl-artifact-50-val100/full100/C2/seed0/best.pt",
+      "scaling_checkpoint_sha256": "07cb86b4cd0a2bffdc23fa07678fa80f45a41728ee999799e64c716472c024ed",
+      "reused_checkpoint_sha256": "8909fdc3f4288f6454d4893095df0868e092cc3780e2ecd2794aa4ef278cc4c8",
+      "all_model_tensors_exactly_equal": true,
+      "model_tensors_compared": 74,
+      "model_config_trainer_manifest_source_and_all_roles_equal": true,
+      "step": 3200
+    }
+  ]
+}

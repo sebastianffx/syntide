@@ -1,0 +1,12 @@
+# python -m syntide.data: build physionet/ptb-xl into TimeNet and write the challenge manifests.
+defaults:
+  - data_schema
+  - override hydra/job_logging: stdout
+  - _self_
+
+# Override any field from the CLI, e.g. `challenge.seed=1` for another scarcity pool draw.
+
+hydra:
+  output_subdir: null   # the manifests record their own spec; no .hydra/ folder needed
+  run:
+    dir: .

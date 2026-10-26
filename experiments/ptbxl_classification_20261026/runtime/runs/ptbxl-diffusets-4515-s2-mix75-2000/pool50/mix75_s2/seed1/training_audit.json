@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "seed": 1,
+  "steps": 2000,
+  "best_step": 1900,
+  "best_val_auroc": 0.9192367990295836,
+  "same_initial_weights_as_historical_s2": true,
+  "all_rows_seen": true,
+  "every_batch_has_48_real_16_generated": true,
+  "every_batch_augments_12_real_4_generated": true,
+  "all_32000_native_s2_recipes_verified": true,
+  "result_sha256": "ccceb90419a08849ad11ae74d915611b98b80e128b5f7330e548276af17432ab",
+  "recipes_sha256": "70f39f0a3fd098b252179af278fa623d79fa0ebdcac96ff2dbbc25819c954061",
+  "sampling_audit_sha256": "7cf0c15a2d774b869ada5299721c6fdef3ca19f066bbea752351669edd2208a3"
+}

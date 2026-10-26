@@ -1,0 +1,26 @@
+{
+ "protocol": "ptbxl-diffusets-4515-s2-mix75-2000",
+ "trials": [
+  {
+   "run_dir": "pool50/mix75_s2/seed0",
+   "trial_id": "2a2a4069fa575d7c04e06d768d56ad676d56a1e4fd5151b071c081a746c7037b",
+   "regime": "pool50",
+   "arm": "mix75_s2",
+   "seed": 0
+  },
+  {
+   "run_dir": "pool50/mix75_s2/seed1",
+   "trial_id": "3c59cd546864a6face232446c5135fbdd35c619acd64dc73f9518d532a4b08f9",
+   "regime": "pool50",
+   "arm": "mix75_s2",
+   "seed": 1
+  },
+  {
+   "run_dir": "pool50/mix75_s2/seed2",
+   "trial_id": "04749c57a888e6ef64c2219c5adf693551ce7093b01ea8b5e715cd02bbef5fbb",
+   "regime": "pool50",
+   "arm": "mix75_s2",
+   "seed": 2
+  }
+ ]
+}

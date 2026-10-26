@@ -1,27 +1,13 @@
-"""The QA corpus: bounded, restartable construction and atomic, immutable publication.
+"""Store question-answer datasets with resumable construction.
 
-Construction writes into ``<output>.staging/``:
+A build writes to a staging directory. Each completed work unit records tasks,
+evidence, waveform references, and rejected candidates. Waveform content
+checksums prevent duplicate storage. Publication verifies the complete dataset
+before moving it to the requested output directory, which is never overwritten.
 
-- ``signals/<sha256>.npy``: each distinct waveform once, however many questions it has;
-- ``chunks/<unit>.json``: per work unit, the accepted tasks, every evidence record they cite, and the
-  ledger of every candidate (accepted or rejected, with its reason). A chunk is written to a
-  ``.partial`` file and renamed, then ``progress.json`` records it with its sha256;
-- ``progress.json``: the build identity and the finished units. A rerun with the same identity skips
-  finished units (after re-checking their sha256); a different identity is refused.
-
-``publish`` re-verifies every chunk, then writes the committed outputs into the staging directory:
-
-- ``timenet/``: a TimeNet dataset, one ``Record`` per waveform (its evidence in the record metadata)
-  and one ``AnswerTask`` per accepted task, with the task's ordered inputs. A comparison task is one
-  task over two records, never two tasks;
-- ``catalog.jsonl``: the explorer's recording-to-many-``texts`` catalog (one row per waveform);
-- ``corpus.json``: identity, counts, a content hash and the sha256 of every file. ``corpus_id`` hashes the
-  identity, counts, content and every file except TimeNet's own (rewritten with new bytes on each
-  write); those are verified on load but kept out of the id, so a rebuild gives the same id.
-
-Only then is the staging directory renamed to ``<output>``. ``<output>`` therefore exists only for a
-complete, verified corpus; an interrupted build or publish leaves nothing there. A published corpus is
-never modified: a changed plan, policy or rule set builds a new one.
+Published corpora include a TimeNet dataset, an explorer catalog, and a
+manifest
+of content checksums. Readers verify those checksums before returning data.
 """
 
 from __future__ import annotations
@@ -48,7 +34,7 @@ LEDGER_DECISIONS = ("accepted", "rejected")
 
 
 class CorpusError(RuntimeError):
-    """A corpus build was interrupted inconsistently, or a published corpus does not verify."""
+    """A resumed or published corpus fails verification."""
 
 
 def _sha256(path: Path) -> str:
@@ -63,14 +49,16 @@ def _write_json(path: Path, value: Any) -> str:
     path.parent.mkdir(parents=True, exist_ok=True)
     partial = path.with_name(path.name + ".partial")
     partial.write_text(
-        json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False) + "\n", encoding="utf-8"
+        json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False)
+        + "\n",
+        encoding="utf-8",
     )
     os.replace(partial, path)
     return _sha256(path)
 
 
 def ledger_row(task: QATask, unit: str, attempt: str) -> dict[str, Any]:
-    """One candidate, accepted or rejected, without its waveform."""
+    """Describe an accepted or rejected task without storing its waveform."""
     v = task.verification
     return {
         "task_id": task.task_id,
@@ -90,8 +78,10 @@ def ledger_row(task: QATask, unit: str, attempt: str) -> dict[str, Any]:
     }
 
 
-def rejection(unit: str, attempt: str, family: str, reason: str, **details: Any) -> dict[str, Any]:
-    """A ledger row for a candidate that never became a task (invalid signal, failed remeasurement)."""
+def rejection(
+    unit: str, attempt: str, family: str, reason: str, **details: Any
+) -> dict[str, Any]:
+    """Record a rejected candidate that could not become a task."""
     return {
         "task_id": None,
         "unit": unit,
@@ -111,12 +101,15 @@ def rejection(unit: str, attempt: str, family: str, reason: str, **details: Any)
 
 
 class CorpusWriter:
-    """Stage a corpus build. Use ``unit_done``/``write_unit`` per work unit, then ``publish``."""
+    """Stage completed work units and publish them as one verified corpus."""
 
     def __init__(self, output: str | Path, identity: Mapping[str, Any]) -> None:
         self.output = Path(output).expanduser().resolve()
         if self.output.exists():
-            raise FileExistsError(f"{self.output} is already a published corpus; corpora are immutable")
+            raise FileExistsError(
+                f"{self.output} is already a published corpus; "
+                f"corpora are immutable"
+            )
         if identity.get("purpose") not in PURPOSES:
             raise CorpusError(f"identity.purpose must be one of {PURPOSES}")
         self.identity = json.loads(json.dumps(dict(identity), allow_nan=False))
@@ -124,19 +117,29 @@ class CorpusWriter:
         self.staging = self.output.with_name(self.output.name + ".staging")
         self._progress_path = self.staging / "progress.json"
         if self._progress_path.exists():
-            progress = json.loads(self._progress_path.read_text(encoding="utf-8"))
+            progress = json.loads(
+                self._progress_path.read_text(encoding="utf-8")
+            )
             if progress["identity_id"] != self.identity_id:
                 raise CorpusError(
-                    f"{self.staging} holds an interrupted build of another configuration "
-                    f"({progress['identity_id'][:12]}); remove it on purpose or choose another output"
+                    f"{self.staging} holds an interrupted build of "
+                    f"another configuration "
+                    f"({progress['identity_id'][:12]}); remove it on "
+                    f"purpose or choose another output"
                 )
             for unit, digest in progress["units"].items():
                 path = self.staging / "chunks" / f"{unit}.json"
                 if not path.exists() or _sha256(path) != digest:
-                    raise CorpusError(f"{path} is missing or changed since it was committed")
+                    raise CorpusError(
+                        f"{path} is missing or changed since it was committed"
+                    )
             self.progress = progress
         else:
-            self.progress = {"identity_id": self.identity_id, "identity": self.identity, "units": {}}
+            self.progress = {
+                "identity_id": self.identity_id,
+                "identity": self.identity,
+                "units": {},
+            }
             (self.staging / "signals").mkdir(parents=True, exist_ok=True)
             _write_json(self._progress_path, self.progress)
 
@@ -144,12 +147,16 @@ class CorpusWriter:
         return unit in self.progress["units"]
 
     def put_signal(self, ref: InputRef, x: np.ndarray) -> None:
-        """Store a waveform once, under its sha256."""
+        """Store a waveform once using its content checksum."""
         path = self.staging / "signals" / f"{ref.waveform_sha256}.npy"
         if path.exists():
             return
         partial = path.with_name(path.name + ".partial.npy")
-        np.save(partial, np.ascontiguousarray(x, dtype=np.float32), allow_pickle=False)
+        np.save(
+            partial,
+            np.ascontiguousarray(x, dtype=np.float32),
+            allow_pickle=False,
+        )
         os.replace(partial, path)
 
     def write_unit(
@@ -160,16 +167,26 @@ class CorpusWriter:
         ledger: Iterable[dict[str, Any]],
         waveforms: Iterable[InputRef],
     ) -> None:
-        """Commit one work unit. ``waveforms`` are every input it stored, accepted or not."""
+        """Save a completed work unit and all attempted waveform references."""
         if self.unit_done(unit):
             raise CorpusError(f"unit {unit} is already committed")
-        accepted = [t for t in tasks if t.verification.get("status") == "accepted"]
+        accepted = [
+            t for t in tasks if t.verification.get("status") == "accepted"
+        ]
         payload = {
             "unit": unit,
             "tasks": [t.to_json() for t in accepted],
-            "evidence": [e.to_json() for e in dict((e.evidence_id, e) for e in evidence).values()],
+            "evidence": [
+                e.to_json()
+                for e in dict((e.evidence_id, e) for e in evidence).values()
+            ],
             "ledger": list(ledger),
-            "waveforms": [ref.to_json() for ref in dict((r.waveform_sha256, r) for r in waveforms).values()],
+            "waveforms": [
+                ref.to_json()
+                for ref in dict(
+                    (r.waveform_sha256, r) for r in waveforms
+                ).values()
+            ],
         }
         digest = _write_json(self.staging / "chunks" / f"{unit}.json", payload)
         self.progress["units"][unit] = digest
@@ -183,11 +200,12 @@ class CorpusWriter:
             yield json.loads(path.read_text(encoding="utf-8"))
 
     def publish(self, *, expected_units: Iterable[str]) -> dict[str, Any]:
-        """Verify, write TimeNet + catalog + corpus.json, then rename staging to the output."""
+        """Verify and publish the corpus datasets and metadata."""
         missing = sorted(set(expected_units) - set(self.progress["units"]))
         if missing:
             raise CorpusError(
-                f"{len(missing)} work units are not finished (e.g. {missing[:3]}); nothing published"
+                f"{len(missing)} work units are not finished (e.g. "
+                f"{missing[:3]}); nothing published"
             )
         tasks: dict[str, QATask] = {}
         evidence: dict[str, Evidence] = {}
@@ -195,7 +213,9 @@ class CorpusWriter:
         ledger: list[dict[str, Any]] = []
         for chunk in self.chunks():
             for item in chunk["evidence"]:
-                evidence.setdefault(item["evidence_id"], Evidence.from_json(item))
+                evidence.setdefault(
+                    item["evidence_id"], Evidence.from_json(item)
+                )
             for item in chunk["waveforms"]:
                 ref = InputRef.from_json(item)
                 waveforms.setdefault(ref.waveform_id, ref)
@@ -203,28 +223,58 @@ class CorpusWriter:
                 task = QATask.from_json(item)
                 tasks.setdefault(task.task_id, task)
             ledger.extend(chunk["ledger"])
-        _check_publishable(tasks.values(), evidence, waveforms, self.staging / "signals")
-        used = {ref.waveform_id for task in tasks.values() for ref in task.inputs}
+        _check_publishable(
+            tasks.values(), evidence, waveforms, self.staging / "signals"
+        )
+        used = {
+            ref.waveform_id for task in tasks.values() for ref in task.inputs
+        }
         records = {wid: waveforms[wid] for wid in sorted(used)}
         published = {ref.waveform_sha256 for ref in records.values()}
-        evidence = {eid: e for eid, e in evidence.items() if e.waveform_sha256 in published}
+        evidence = {
+            eid: e
+            for eid, e in evidence.items()
+            if e.waveform_sha256 in published
+        }
         signals = self.staging / "signals"
-        for path in signals.glob("*.npy"):  # waveforms of rejected candidates are not published
-            if path.stem not in {ref.waveform_sha256 for ref in records.values()}:
+        for path in signals.glob(
+            "*.npy"
+        ):  # waveforms of rejected candidates are not published
+            if path.stem not in {
+                ref.waveform_sha256 for ref in records.values()
+            }:
                 path.unlink()
-        ordered = sorted(tasks.values(), key=lambda t: (t.inputs[0].waveform_id, t.family, t.task_id))
-        _write_timenet(self.staging / "timenet", self.identity, records, ordered, evidence, signals)
-        _write_catalog(self.staging / "catalog.jsonl", records, ordered, evidence, ledger)
+        ordered = sorted(
+            tasks.values(),
+            key=lambda t: (t.inputs[0].waveform_id, t.family, t.task_id),
+        )
+        _write_timenet(
+            self.staging / "timenet",
+            self.identity,
+            records,
+            ordered,
+            evidence,
+            signals,
+        )
+        _write_catalog(
+            self.staging / "catalog.jsonl", records, ordered, evidence, ledger
+        )
         _write_json(self.staging / "ledger.json", ledger)
         counts = corpus_counts(ordered, records, ledger)
         everything = {
             str(path.relative_to(self.staging)): _sha256(path)
             for path in sorted(self.staging.rglob("*"))
-            if path.is_file() and path.name not in ("progress.json",) and "chunks" not in path.parts
+            if path.is_file()
+            and path.name not in ("progress.json",)
+            and "chunks" not in path.parts
         }
-        # TimeNet rewrites its control database and manifest with new bytes on every write, so the id hashes
-        # the content (tasks, evidence, inputs, signals, catalog, ledger); TimeNet's files are verified only.
-        files = {k: v for k, v in everything.items() if not k.startswith("timenet/")}
+        # TimeNet rewrites its control database and manifest with new bytes on
+        # every write, so the id hashes
+        # the content (tasks, evidence, inputs, signals, catalog, ledger);
+        # TimeNet's files are verified only.
+        files = {
+            k: v for k, v in everything.items() if not k.startswith("timenet/")
+        }
         content = content_id(
             {
                 "tasks": [t.task_id for t in ordered],
@@ -244,7 +294,9 @@ class CorpusWriter:
             **body,
             "corpus_id": "corpus-" + content_id(body)[:24],
             "status": "published",
-            "timenet_files": {k: v for k, v in everything.items() if k.startswith("timenet/")},
+            "timenet_files": {
+                k: v for k, v in everything.items() if k.startswith("timenet/")
+            },
         }
         _write_json(self.staging / "corpus.json", info)
         shutil.rmtree(self.staging / "chunks")
@@ -262,27 +314,45 @@ def _check_publishable(
 ) -> None:
     for task in tasks:
         if task.verification.get("status") != "accepted":
-            raise CorpusError(f"{task.task_id} is not accepted; only accepted supervision is published")
+            raise CorpusError(
+                f"{task.task_id} is not accepted; only accepted "
+                f"supervision is published"
+            )
         for ref in task.inputs:
-            if ref.waveform_id not in waveforms or waveforms[ref.waveform_id] != ref:
-                raise CorpusError(f"{task.task_id}: input {ref.waveform_id} has no stored waveform record")
+            if (
+                ref.waveform_id not in waveforms
+                or waveforms[ref.waveform_id] != ref
+            ):
+                raise CorpusError(
+                    f"{task.task_id}: input {ref.waveform_id} has no "
+                    f"stored waveform record"
+                )
             if not (signals / f"{ref.waveform_sha256}.npy").exists():
-                raise CorpusError(f"{task.task_id}: the waveform of {ref.waveform_id} was not stored")
+                raise CorpusError(
+                    f"{task.task_id}: the waveform of "
+                    f"{ref.waveform_id} was not stored"
+                )
             review = ref.lineage.get("review_status")
             if ref.origin == "generated" and review != "verified":
                 raise CorpusError(
-                    f"{task.task_id}: generated waveform {ref.waveform_id} is {review!r}; pending generator "
+                    f"{task.task_id}: generated waveform "
+                    f"{ref.waveform_id} is {review!r}; pending "
+                    f"generator "
                     "outputs never enter an accepted export"
                 )
         for eid in task.required_evidence:
             if eid not in evidence:
-                raise CorpusError(f"{task.task_id}: evidence {eid} is not stored")
+                raise CorpusError(
+                    f"{task.task_id}: evidence {eid} is not stored"
+                )
 
 
 def corpus_counts(
-    tasks: list[QATask], records: Mapping[str, InputRef], ledger: list[dict[str, Any]]
+    tasks: list[QATask],
+    records: Mapping[str, InputRef],
+    ledger: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    """Patients, recordings, waveforms, semantic tasks, examples, paraphrases, attempts and tokens."""
+    """Count corpus patients, recordings, tasks, attempts, and text tokens."""
     roots = {r for ref in records.values() for r in ref.root_record_ids}
     subjects = {s for ref in records.values() for s in ref.root_subject_uids}
     origins = Counter(ref.origin for ref in records.values())
@@ -309,14 +379,27 @@ def corpus_counts(
         "rejected": decisions.get("rejected", 0),
         "rejection_reasons": dict(sorted(reasons.items())),
         "by_family": dict(sorted(Counter(t.family for t in tasks).items())),
-        "by_composition": dict(sorted(Counter(t.composition for t in tasks).items())),
-        "by_answerability": dict(sorted(Counter(t.answerability for t in tasks).items())),
-        "context_reveals_answer": sum(bool(t.verification.get("context_reveals_answer")) for t in tasks),
+        "by_composition": dict(
+            sorted(Counter(t.composition for t in tasks).items())
+        ),
+        "by_answerability": dict(
+            sorted(Counter(t.answerability for t in tasks).items())
+        ),
+        "context_reveals_answer": sum(
+            bool(t.verification.get("context_reveals_answer")) for t in tasks
+        ),
         "tokens": {
             "question_whitespace_tokens": question_tokens,
-            "answer_only_target_whitespace_tokens": sum(len(t.target("answer_only").split()) for t in tasks),
-            "rationale_target_whitespace_tokens": sum(len(t.target("rationale").split()) for t in tasks),
-            "note": "whitespace tokens; trainers report their own tokenizer counts in result.json",
+            "answer_only_target_whitespace_tokens": sum(
+                len(t.target("answer_only").split()) for t in tasks
+            ),
+            "rationale_target_whitespace_tokens": sum(
+                len(t.target("rationale").split()) for t in tasks
+            ),
+            ("note"): (
+                "whitespace tokens; trainers report their own tokenizer "
+                "counts in result.json"
+            ),
         },
     }
 
@@ -334,13 +417,18 @@ def _write_timenet(
     from timenet.types import AnswerTask, TimeSeriesSpec, ureg
     from timenet.types.metadata import DatasetMetadata
 
-    spec = TimeSeriesSpec(spec_type="ecg", name="12-lead ECG", unit_value=ureg.millivolt)
+    spec = TimeSeriesSpec(
+        spec_type="ecg", name="12-lead ECG", unit_value=ureg.millivolt
+    )
     metadata = DatasetMetadata(
         dataset_id=dataset_id(identity),
         dataset_version="1.0.0",
         name=f"SYNTIDE QA corpus {identity.get('name', '')}".strip(),
-        description="Evidence-grounded ECG question-answer-rationale tasks built by syntide.generate.qa. "
-        "Synthetic and edited waveforms are not clinically validated.",
+        description=(
+            "Evidence-grounded ECG question-answer-rationale tasks built "
+            "by syntide.generate.qa. "
+            "Synthetic and edited waveforms are not clinically validated."
+        ),
         license=identity.get("license", "CC-BY-4.0"),
         tags=("ecg", "qa", "synthetic", identity["purpose"]),
     )
@@ -351,19 +439,31 @@ def _write_timenet(
     built = {}
     for wid, ref in records.items():
         if ref.signal.units != "mV":
-            raise CorpusError(f"{wid}: the corpus stores ECGs in mV, not {ref.signal.units}")
+            raise CorpusError(
+                f"{wid}: the corpus stores ECGs in mV, not {ref.signal.units}"
+            )
         x = np.load(signals / f"{ref.waveform_sha256}.npy", allow_pickle=False)
         axis = RegularAxis.from_rate_hz(Fraction(str(ref.signal.sample_rate)))
         leads = tuple(
-            Signal(spec=spec, time_axis=axis, name=lead, data=x[k], id=f"{wid}/{lead}")
+            Signal(
+                spec=spec,
+                time_axis=axis,
+                name=lead,
+                data=x[k],
+                id=f"{wid}/{lead}",
+            )
             for k, lead in enumerate(ref.signal.channels)
         )
         record = Record(
             record_id=wid,
-            sources=(Source(id=f"{wid}/source", name=ref.origin, signals=leads),),
+            sources=(
+                Source(id=f"{wid}/source", name=ref.origin, signals=leads),
+            ),
             metadata={
                 "input": ref.to_json(),
-                "evidence": sorted(by_sha[ref.waveform_sha256], key=lambda e: e["evidence_id"]),
+                "evidence": sorted(
+                    by_sha[ref.waveform_sha256], key=lambda e: e["evidence_id"]
+                ),
             },
         )
         built[wid] = dataset.add_record(record=record)
@@ -384,9 +484,10 @@ def _write_timenet(
 
 
 def dataset_id(identity: Mapping[str, Any]) -> str:
-    name = "".join(c if c.isalnum() or c in "-_." else "-" for c in str(identity.get("name", "qa"))).strip(
-        "-"
-    )
+    name = "".join(
+        c if c.isalnum() or c in "-_." else "-"
+        for c in str(identity.get("name", "qa"))
+    ).strip("-")
     return f"syntide/{name or 'qa'}"
 
 
@@ -397,7 +498,7 @@ def _write_catalog(
     evidence: Mapping[str, Evidence],
     ledger: list[dict[str, Any]],
 ) -> None:
-    """One row per waveform; a task is attached to its first input only (a pair appears once)."""
+    """Write one entry per waveform with tasks linked to their first input."""
     anchored: dict[str, list[QATask]] = defaultdict(list)
     paired: dict[str, set[str]] = defaultdict(set)
     for task in tasks:
@@ -412,13 +513,23 @@ def _write_catalog(
             for wid in row["inputs"][:1]:
                 rejected[wid][row["reason"]] += 1
     rate_of = {
-        e.waveform_sha256: e.value for e in evidence.values() if e.attribute == "heart_rate_bpm" and e.usable
+        e.waveform_sha256: e.value
+        for e in evidence.values()
+        if e.attribute == "heart_rate_bpm" and e.usable
     }
     lines = []
     for wid, ref in records.items():
         own = anchored.get(wid, [])
         rate = rate_of.get(ref.waveform_sha256)
-        band = "unknown" if rate is None else "<60" if rate < 60 else "60-100" if rate <= 100 else ">100"
+        band = (
+            "unknown"
+            if rate is None
+            else "<60"
+            if rate < 60
+            else "60-100"
+            if rate <= 100
+            else ">100"
+        )
         labels = sorted(
             {
                 f"origin:{ref.origin}",
@@ -443,7 +554,9 @@ def _write_catalog(
                     "qa_origin": ref.origin,
                     "source_record_id": ref.root_record_ids[0],
                     "root_record_ids": list(ref.root_record_ids),
-                    "display_name": wid if len(wid) <= 24 else f"{wid[:10]}…{wid[-8:]}",
+                    "display_name": wid
+                    if len(wid) <= 24
+                    else f"{wid[:10]}…{wid[-8:]}",
                     "waveform_sha256": ref.waveform_sha256,
                     "generation": ref.lineage,
                     "qa_tasks": len(own),
@@ -465,7 +578,9 @@ def _write_catalog(
                             "paraphrase": task.paraphrase,
                             "evidence_confidence": _confidence(task, evidence),
                             "status": task.verification.get("status"),
-                            "context_reveals_answer": task.verification.get("context_reveals_answer", False),
+                            "context_reveals_answer": task.verification.get(
+                                "context_reveals_answer", False
+                            ),
                             "inputs": [r.waveform_id for r in task.inputs],
                             "pair_id": task.lineage.get("pair_id"),
                         },
@@ -475,7 +590,10 @@ def _write_catalog(
             }
         )
     path.write_text(
-        "".join(json.dumps(line, ensure_ascii=False, allow_nan=False) + "\n" for line in lines),
+        "".join(
+            json.dumps(line, ensure_ascii=False, allow_nan=False) + "\n"
+            for line in lines
+        ),
         encoding="utf-8",
     )
 
@@ -491,7 +609,7 @@ def _confidence(task: QATask, evidence: Mapping[str, Evidence]) -> float | None:
 
 @dataclass
 class Corpus:
-    """A verified, published corpus, read back from its TimeNet dataset."""
+    """Verified corpus contents loaded from their published TimeNet dataset."""
 
     path: Path
     info: dict[str, Any]
@@ -513,17 +631,30 @@ class Corpus:
 
 
 def verify_corpus_files(path: str | Path) -> dict[str, Any]:
-    """Check ``corpus.json``'s id and every file checksum. Returns the corpus info."""
+    """Verify the corpus identifier and files, then return its metadata."""
     path = Path(path)
     info_path = path / "corpus.json"
     if not info_path.exists():
         raise CorpusError(f"{path} is not a published corpus (no corpus.json)")
     info = json.loads(info_path.read_text(encoding="utf-8"))
     body = {
-        k: info[k] for k in ("schema_version", "identity", "identity_id", "counts", "files", "content_sha256")
+        k: info[k]
+        for k in (
+            "schema_version",
+            "identity",
+            "identity_id",
+            "counts",
+            "files",
+            "content_sha256",
+        )
     }
-    if info.get("schema_version") != SCHEMA or info.get("corpus_id") != "corpus-" + content_id(body)[:24]:
-        raise CorpusError(f"{info_path} does not match its corpus_id; it was edited")
+    if (
+        info.get("schema_version") != SCHEMA
+        or info.get("corpus_id") != "corpus-" + content_id(body)[:24]
+    ):
+        raise CorpusError(
+            f"{info_path} does not match its corpus_id; it was edited"
+        )
     for name, digest in {**info["files"], **info["timenet_files"]}.items():
         file = path / name
         if not file.exists() or _sha256(file) != digest:
@@ -532,28 +663,43 @@ def verify_corpus_files(path: str | Path) -> dict[str, Any]:
 
 
 def load_corpus(path: str | Path) -> Corpus:
-    """Load a published corpus from its TimeNet dataset, re-checking every task and waveform id."""
+    """Load a published corpus and verify every task and waveform identifier."""
     from timenet.reader import TimeFReader
     from timenet.registry import LocalRegistry
 
     path = Path(path)
     info = verify_corpus_files(path)
-    version = LocalRegistry(path / "timenet").open_version(dataset_id(info["identity"]), "1.0.0")
+    version = LocalRegistry(path / "timenet").open_version(
+        dataset_id(info["identity"]), "1.0.0"
+    )
     reader = TimeFReader(version)
     inputs, signals, evidence = {}, {}, {}
-    for record in reader.iter_records(reader.record_ids(), with_annotations=False):
+    for record in reader.iter_records(
+        reader.record_ids(), with_annotations=False
+    ):
         ref = InputRef.from_json(record.metadata["input"])
         by_name = {s.name: s for s in record.signals}
-        x = np.stack([np.asarray(by_name[lead].to_numpy(), dtype=np.float32) for lead in ref.signal.channels])
+        x = np.stack(
+            [
+                np.asarray(by_name[lead].to_numpy(), dtype=np.float32)
+                for lead in ref.signal.channels
+            ]
+        )
         from syntide.generate.qa.evidence import waveform_sha256
 
         if waveform_sha256(x) != ref.waveform_sha256:
-            raise CorpusError(f"{record.record_id}: stored values do not match waveform_sha256")
+            raise CorpusError(
+                f"{record.record_id}: stored values do not match "
+                f"waveform_sha256"
+            )
         inputs[record.record_id], signals[record.record_id] = ref, x
         for item in record.metadata["evidence"]:
             e = Evidence.from_json(item)
             evidence[e.evidence_id] = e
-    tasks = [QATask.from_json(task.metadata["qa_task"]) for task in reader.iter_tasks()]
+    tasks = [
+        QATask.from_json(task.metadata["qa_task"])
+        for task in reader.iter_tasks()
+    ]
     tasks.sort(key=lambda t: (t.inputs[0].waveform_id, t.family, t.task_id))
     content = content_id(
         {
@@ -564,6 +710,7 @@ def load_corpus(path: str | Path) -> Corpus:
     )
     if content != info["content_sha256"]:
         raise CorpusError(
-            f"{path}: the TimeNet dataset does not hold the published tasks, evidence and inputs"
+            f"{path}: the TimeNet dataset does not hold the published "
+            f"tasks, evidence and inputs"
         )
     return Corpus(path, info, tasks, evidence, inputs, signals)

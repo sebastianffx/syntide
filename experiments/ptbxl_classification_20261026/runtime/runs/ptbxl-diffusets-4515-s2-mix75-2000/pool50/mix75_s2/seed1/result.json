@@ -1,0 +1,225 @@
+{
+ "status": "complete",
+ "trial_id": "3c59cd546864a6face232446c5135fbdd35c619acd64dc73f9518d532a4b08f9",
+ "protocol": "ptbxl-diffusets-4515-s2-mix75-2000",
+ "regime": "pool50",
+ "arm": "mix75_s2",
+ "replicate_seed": 1,
+ "best_step": 1900,
+ "best_val_auroc": 0.9192367990295836,
+ "final_step": 2000,
+ "val_history": [
+  {
+   "step": 100,
+   "val/auroc_overall": 0.8644755186101618,
+   "val/auroc_artifact": 0.8492032884856077,
+   "val/auroc_clean": 0.8698084138825225,
+   "val/loss": 0.3790215089710222
+  },
+  {
+   "step": 200,
+   "val/auroc_overall": 0.8794728034711824,
+   "val/auroc_artifact": 0.8665449282963167,
+   "val/auroc_clean": 0.8837709631088758,
+   "val/loss": 0.3647648630260498
+  },
+  {
+   "step": 300,
+   "val/auroc_overall": 0.8855245193031729,
+   "val/auroc_artifact": 0.8717503837377011,
+   "val/auroc_clean": 0.8904953851856698,
+   "val/loss": 0.3434726042408194
+  },
+  {
+   "step": 400,
+   "val/auroc_overall": 0.8973283715359119,
+   "val/auroc_artifact": 0.8901834152898791,
+   "val/auroc_clean": 0.8998273801268724,
+   "val/loss": 0.3229057861488921
+  },
+  {
+   "step": 500,
+   "val/auroc_overall": 0.8935177412596852,
+   "val/auroc_artifact": 0.8875167759721551,
+   "val/auroc_clean": 0.8958615067879766,
+   "val/loss": 0.36712124176774596
+  },
+  {
+   "step": 600,
+   "val/auroc_overall": 0.9017428072053768,
+   "val/auroc_artifact": 0.887644931782391,
+   "val/auroc_clean": 0.9068299296307257,
+   "val/loss": 0.3122574390249314
+  },
+  {
+   "step": 700,
+   "val/auroc_overall": 0.8847448859624494,
+   "val/auroc_artifact": 0.8793192613783042,
+   "val/auroc_clean": 0.8869176413663455,
+   "val/loss": 0.3569979636213926
+  },
+  {
+   "step": 800,
+   "val/auroc_overall": 0.9069571761174444,
+   "val/auroc_artifact": 0.8965560467316838,
+   "val/auroc_clean": 0.9109008955098107,
+   "val/loss": 0.32630862376206726
+  },
+  {
+   "step": 900,
+   "val/auroc_overall": 0.9090643248353647,
+   "val/auroc_artifact": 0.9006139934325951,
+   "val/auroc_clean": 0.9122281460113527,
+   "val/loss": 0.3044784003588063
+  },
+  {
+   "step": 1000,
+   "val/auroc_overall": 0.9112323905833242,
+   "val/auroc_artifact": 0.8989775310164904,
+   "val/auroc_clean": 0.9155968446140438,
+   "val/loss": 0.30874557675876124
+  },
+  {
+   "step": 1100,
+   "val/auroc_overall": 0.9070136716769875,
+   "val/auroc_artifact": 0.8950657768192991,
+   "val/auroc_clean": 0.9114938676720001,
+   "val/loss": 0.31147423707887295
+  },
+  {
+   "step": 1200,
+   "val/auroc_overall": 0.9010482081539097,
+   "val/auroc_artifact": 0.8933783188975879,
+   "val/auroc_clean": 0.9041708480554721,
+   "val/loss": 0.3545982701426998
+  },
+  {
+   "step": 1300,
+   "val/auroc_overall": 0.9138931210710078,
+   "val/auroc_artifact": 0.9031162815793241,
+   "val/auroc_clean": 0.9178406971678339,
+   "val/loss": 0.30086604286242746
+  },
+  {
+   "step": 1400,
+   "val/auroc_overall": 0.9150857343739809,
+   "val/auroc_artifact": 0.90547114996108,
+   "val/auroc_clean": 0.918465084684646,
+   "val/loss": 0.32525266327626645
+  },
+  {
+   "step": 1500,
+   "val/auroc_overall": 0.9120663426892948,
+   "val/auroc_artifact": 0.9050227258870382,
+   "val/auroc_clean": 0.9149618478591041,
+   "val/loss": 0.31011207799460205
+  },
+  {
+   "step": 1600,
+   "val/auroc_overall": 0.9113998287693368,
+   "val/auroc_artifact": 0.902177766608593,
+   "val/auroc_clean": 0.9150358952696829,
+   "val/loss": 0.3040677455304627
+  },
+  {
+   "step": 1700,
+   "val/auroc_overall": 0.9157461855461622,
+   "val/auroc_artifact": 0.9053814978687964,
+   "val/auroc_clean": 0.9196990185578846,
+   "val/loss": 0.30673103132669394
+  },
+  {
+   "step": 1800,
+   "val/auroc_overall": 0.9169810676261202,
+   "val/auroc_artifact": 0.9137865653165894,
+   "val/auroc_clean": 0.9187138851145835,
+   "val/loss": 0.29665855373550754
+  },
+  {
+   "step": 1900,
+   "val/auroc_overall": 0.9192367990295836,
+   "val/auroc_artifact": 0.9117022564566304,
+   "val/auroc_clean": 0.9221533553376842,
+   "val/loss": 0.30688727865473214
+  },
+  {
+   "step": 2000,
+   "val/auroc_overall": 0.9165615833315292,
+   "val/auroc_artifact": 0.9092684320395807,
+   "val/auroc_clean": 0.9195920937473921,
+   "val/loss": 0.29836389166351884
+  }
+ ],
+ "exposure": {
+  "steps": 2000,
+  "presentations": 128000,
+  "transform_slots": 32000,
+  "candidates": 32000,
+  "accepted": 32000,
+  "rejected": 0,
+  "exhausted_slots": 0,
+  "distinct_recipes": 32000,
+  "real_presentations": 96000,
+  "generated_presentations": 32000,
+  "augmented_real_presentations": 24000,
+  "augmented_generated_presentations": 8000,
+  "distinct_real_records": 8579,
+  "distinct_generated_records": 4515
+ },
+ "trainer": {
+  "name": "syntide_trainers.torch_loop",
+  "version": "0.1.0",
+  "config": {
+   "model": {
+    "width": 64,
+    "kernel_size": 7
+   },
+   "optim": {
+    "lr": 0.001,
+    "weight_decay": 0.01
+   }
+  },
+  "device": "mps",
+  "predictor": "syntide_trainers.torch_loop:predict",
+  "fingerprint": "d93b8d026d15a8c46b0c40367a13ce55ae81fb61ec4405ef6f79475b641dc5d6",
+  "init_sha256": "1b2e4c4bbb09b37cba2db1f5dffa5050029c70433330d7011f3ead9091c5f43f"
+ },
+ "wall_time_s": 73.83964516595006,
+ "provenance": {
+  "dataset": "physionet/ptb-xl@1.0.3",
+  "registry": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/datasets/timenet-registry",
+  "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+  "manifest": "/Users/sebastian/dev/TeeMoE/synthetic_data_engine/manifests/ptbxl-scaling/pool50.json",
+  "manifest_sha256": "95db415ff96315d1d6fce2df00992ffacaa4284f4f9d0a137c2051456cce602d",
+  "calibration": null,
+  "calibration_sha256": null,
+  "checkpoints": {
+   "best": {
+    "path": "best.pt",
+    "step": 1900,
+    "sha256": "1b6b067e9dcbabc5af9997ff73cc4280e0d5c912bc4e1ea9f8577a938043e19d"
+   },
+   "final": {
+    "path": "final.pt",
+    "step": 2000,
+    "sha256": "57b5e615f2bf22f2ced2017e6aa866e1294ad8b37feaf4fc4326fec513d14c44"
+   }
+  }
+ },
+ "env": {
+  "python": "3.13.13",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "syntide": "0.1.0",
+  "packages": {
+   "numpy": "2.5.4",
+   "torch": "2.14.1",
+   "timenet": "0.11.0",
+   "scikit-learn": "1.9.1"
+  },
+  "git": {
+   "rev": "2c5538c03d7734e55828b22b6c713b1413fe7d3a",
+   "dirty": true
+  }
+ },
+ "finished_at": "2026-10-26T08:50:59+00:00"
+}

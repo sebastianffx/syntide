@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "steps": 2000,
+  "validation_checkpoints": 20,
+  "initial_weights_match_scaling_seed0": true,
+  "trainer_matches_scaling": true,
+  "original_outputs_unchanged": true,
+  "inputs_unchanged": true,
+  "sampler_audit_sha256": "da97248359f6e85d4fe7eeb36128ba9b240753419a8aab8d8d6770cfcf5c2a7e",
+  "result_sha256": "70372ed38f564c2f6bc98b48fd495ca4a92a5088191789aa37182e0b4300244f"
+}

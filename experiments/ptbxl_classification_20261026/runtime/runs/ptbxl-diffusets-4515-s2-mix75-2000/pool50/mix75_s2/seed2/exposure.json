@@ -1,0 +1,16 @@
+{
+ "steps": 2000,
+ "presentations": 128000,
+ "transform_slots": 32000,
+ "candidates": 32000,
+ "accepted": 32000,
+ "rejected": 0,
+ "exhausted_slots": 0,
+ "distinct_recipes": 32000,
+ "real_presentations": 96000,
+ "generated_presentations": 32000,
+ "augmented_real_presentations": 24000,
+ "augmented_generated_presentations": 8000,
+ "distinct_real_records": 8579,
+ "distinct_generated_records": 4515
+}

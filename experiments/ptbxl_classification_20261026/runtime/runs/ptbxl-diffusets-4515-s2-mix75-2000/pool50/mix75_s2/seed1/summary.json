@@ -1,0 +1,16 @@
+{
+ "hparams": {
+  "arm": "mix75_s2",
+  "regime": "pool50",
+  "seed": 1,
+  "model.width": 64,
+  "model.kernel_size": 7,
+  "optim.lr": 0.001,
+  "optim.weight_decay": 0.01
+ },
+ "metrics": {
+  "summary/best_val_auroc_overall": 0.9192367990295836,
+  "summary/best_step": 1900,
+  "summary/wall_time_seconds": 73.83964516595006
+ }
+}

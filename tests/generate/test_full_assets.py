@@ -13,7 +13,9 @@ from syntide.generate.full import assets
 
 
 class Response(io.BytesIO):
-    def __init__(self, data: bytes, *, status: int = 206, headers: dict | None = None):
+    def __init__(
+        self, data: bytes, *, status: int = 206, headers: dict | None = None
+    ):
         super().__init__(data)
         self.status = status
         self.headers = headers or {}
@@ -23,9 +25,13 @@ class Response(io.BytesIO):
 def archive():
     content = b"deterministic-checkpoint-state-dict\n" * 3000
     buffer = io.BytesIO()
-    with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED) as zipped:
+    with zipfile.ZipFile(
+        buffer, "w", compression=zipfile.ZIP_DEFLATED
+    ) as zipped:
         zipped.writestr("prerequisites/unet_all.pth", content)
-        zipped.writestr("patient_data/never_download.pt", b"not an inference asset")
+        zipped.writestr(
+            "patient_data/never_download.pt", b"not an inference asset"
+        )
     data = buffer.getvalue()
     with zipfile.ZipFile(io.BytesIO(data)) as zipped:
         info = zipped.getinfo("prerequisites/unet_all.pth")
@@ -45,7 +51,9 @@ def mock_http(monkeypatch, archive_bytes: bytes, *, mode: str | None = None):
 
     def open_url(request, timeout):
         assert timeout > 0
-        start, end = map(int, request.get_header("Range").removeprefix("bytes=").split("-"))
+        start, end = map(
+            int, request.get_header("Range").removeprefix("bytes=").split("-")
+        )
         calls.append((start, end))
         payload = archive_bytes[start : end + 1]
         headers = {
@@ -58,33 +66,58 @@ def mock_http(monkeypatch, archive_bytes: bytes, *, mode: str | None = None):
             headers["Content-Length"] = str(end - start + 2)
         if mode == "truncated":
             payload = payload[:-1]
-        return Response(payload, status=200 if mode == "ignored_range" else 206, headers=headers)
+        return Response(
+            payload,
+            status=200 if mode == "ignored_range" else 206,
+            headers=headers,
+        )
 
     monkeypatch.setattr(assets.urllib.request, "urlopen", open_url)
     return calls
 
 
-def test_checkpoint_fetches_only_pinned_member_and_reuses_verified_cache(tmp_path, monkeypatch, archive):
+def test_checkpoint_fetches_only_pinned_member_and_reuses_verified_cache(
+    tmp_path, monkeypatch, archive
+):
     data, content, member = archive
     calls = mock_http(monkeypatch, data)
     target = tmp_path / "weights" / "unet_all.pth"
-    assets._download_member("https://example.invalid/archive.zip", member, target, archive_size=len(data))
+    assets._download_member(
+        "https://example.invalid/archive.zip",
+        member,
+        target,
+        archive_size=len(data),
+    )
     assert target.read_bytes() == content
     assert len(calls) == 3
     # No central directory, second archive entry, or full archive transfer.
     assert sum(end - start + 1 for start, end in calls) < len(data)
-    assets._download_member("https://example.invalid/archive.zip", member, target, archive_size=len(data))
+    assets._download_member(
+        "https://example.invalid/archive.zip",
+        member,
+        target,
+        archive_size=len(data),
+    )
     assert len(calls) == 3
     assert not list(target.parent.glob(".diffusets-*"))
 
 
-@pytest.mark.parametrize("mode", ["wrong_range", "wrong_length", "ignored_range", "truncated"])
-def test_checkpoint_rejects_inexact_http_response(tmp_path, monkeypatch, archive, mode):
+@pytest.mark.parametrize(
+    "mode", ["wrong_range", "wrong_length", "ignored_range", "truncated"]
+)
+def test_checkpoint_rejects_inexact_http_response(
+    tmp_path, monkeypatch, archive, mode
+):
     data, _content, member = archive
     mock_http(monkeypatch, data, mode=mode)
     target = tmp_path / "checkpoint.pth"
     with pytest.raises(ValueError, match=r"range|Content-Length"):
-        assets._download_member("https://example.invalid/a.zip", member, target, archive_size=len(data))
+        assets._download_member(
+            "https://example.invalid/a.zip",
+            member,
+            target,
+            archive_size=len(data),
+        )
     assert not target.exists()
     assert not list(tmp_path.glob(".diffusets-*"))
 
@@ -98,7 +131,9 @@ def test_checkpoint_rejects_inexact_http_response(tmp_path, monkeypatch, archive
         ({"size": 1}, "header"),
     ],
 )
-def test_checkpoint_rejects_wrong_member_identity(tmp_path, monkeypatch, archive, change, match):
+def test_checkpoint_rejects_wrong_member_identity(
+    tmp_path, monkeypatch, archive, change, match
+):
     data, _content, member = archive
     mock_http(monkeypatch, data)
     target = tmp_path / "checkpoint.pth"
@@ -118,7 +153,12 @@ def test_checkpoint_corrupt_cached_asset_is_not_overwritten(tmp_path, archive):
     target = tmp_path / "checkpoint.pth"
     target.write_bytes(b"x" * len(content))
     with pytest.raises(ValueError, match=r"Cached.*SHA256"):
-        assets._download_member("https://example.invalid/a.zip", member, target, archive_size=len(data))
+        assets._download_member(
+            "https://example.invalid/a.zip",
+            member,
+            target,
+            archive_size=len(data),
+        )
     assert target.read_bytes() == b"x" * len(content)
 
 
@@ -134,7 +174,9 @@ def test_source_is_verified_before_writing(tmp_path, monkeypatch):
     monkeypatch.setattr(assets.urllib.request, "urlopen", open_url)
     target = tmp_path / "unet" / "unet_conditional.py"
     with pytest.raises(ValueError, match=r"source.*SHA256"):
-        assets._download_source("unet/unet_conditional.py", "0" * 64, target, 30)
+        assets._download_source(
+            "unet/unet_conditional.py", "0" * 64, target, 30
+        )
     assert not target.exists()
     assets._download_source("unet/unet_conditional.py", digest, target, 30)
     assets._download_source("unet/unet_conditional.py", digest, target, 30)
@@ -143,7 +185,9 @@ def test_source_is_verified_before_writing(tmp_path, monkeypatch):
     assert all(assets.SOURCE_REVISION in url for url in calls)
 
 
-def test_manifest_discloses_partial_archive_verification_and_unknown_example_prompt(tmp_path, monkeypatch):
+def test_manifest_discloses_verification_and_prompt_limits(
+    tmp_path, monkeypatch
+):
     downloaded = []
 
     def source(path, sha256, destination, timeout):

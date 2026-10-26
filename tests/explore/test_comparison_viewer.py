@@ -1,4 +1,4 @@
-"""Numerical and labeling invariants of the browser's real/synthetic comparison."""
+"""The browser compares real and generated signals with accurate labels."""
 
 import json
 import shutil
@@ -10,7 +10,15 @@ import pytest
 from syntide.explore import viewer
 
 
-def _record(record_id, values, *, origin="real", times=(0, 1), units="mV", channels=("I",)):
+def _record(
+    record_id,
+    values,
+    *,
+    origin="real",
+    times=(0, 1),
+    units="mV",
+    channels=("I",),
+):
     return {
         "record_id": record_id,
         "metadata": {"origin": origin},
@@ -34,9 +42,13 @@ def _javascript(payload, expression, *, render=False):
         pytest.skip("Node is needed to validate browser comparison geometry")
     template = Path(viewer.__file__).with_name("viewer.html").read_text()
     helpers = template[
-        template.index("function recordOrigin(r)") : template.index("const clusters = new Map")
+        template.index("function recordOrigin(r)") : template.index(
+            "const clusters = new Map"
+        )
     ]
-    script = "const p=JSON.parse(require('fs').readFileSync(0,'utf8'));\n" + helpers
+    script = (
+        "const p=JSON.parse(require('fs').readFileSync(0,'utf8'));\n" + helpers
+    )
     if render:
         script += """
         const R = p.records, active = R[0].record_id;
@@ -51,7 +63,9 @@ def _javascript(payload, expression, *, render=False):
         const svg = (tag, attrs) => ({tag, attrs});
         """
         script += template[
-            template.index("function wave() {") : template.index("function selectionChanged()")
+            template.index("function wave() {") : template.index(
+                "function selectionChanged()"
+            )
         ]
         script += "wave();\n"
     script += "process.stdout.write(JSON.stringify(" + expression + "));"
@@ -67,7 +81,9 @@ def _javascript(payload, expression, *, render=False):
 
 def test_overlay_preserves_amplitudes_and_actual_seconds():
     real = _record("real-1", [[0, 2]], times=(0, 2))
-    synthetic = _record("generated-1", [[0, 1]], origin="synthetic", times=(0, 1))
+    synthetic = _record(
+        "generated-1", [[0, 1]], origin="synthetic", times=(0, 1)
+    )
     result = _javascript(
         {"records": [synthetic, real]},
         'nodes.waveform.children.filter(node => node.tag === "path")',
@@ -84,8 +100,15 @@ def test_overlay_preserves_amplitudes_and_actual_seconds():
 
 
 def test_channels_align_by_name_and_incompatible_units_are_not_overlaid():
-    real = _record("real-1", [[-1, 1], [-5, 5]], channels=("I", "II"), units=["mV", "mV"])
-    synthetic = _record("generated-1", [[-3, 3], [-7, 7]], channels=("II", "I"), units=["mV", "V"])
+    real = _record(
+        "real-1", [[-1, 1], [-5, 5]], channels=("I", "II"), units=["mV", "mV"]
+    )
+    synthetic = _record(
+        "generated-1",
+        [[-3, 3], [-7, 7]],
+        channels=("II", "I"),
+        units=["mV", "V"],
+    )
     result = _javascript(
         {"records": [real, synthetic]},
         'waveformComparison(p.records[0], p.records[1], ["I", "II"])',
@@ -95,7 +118,9 @@ def test_channels_align_by_name_and_incompatible_units_are_not_overlaid():
     assert result["rows"][1]["series"][1]["values"] == [-3, 3]
     assert result["rows"][1]["lo"] == -5
     assert result["rows"][1]["hi"] == 5
-    assert result["notices"] == ["I: comparison omitted because channel units differ."]
+    assert result["notices"] == [
+        "I: comparison omitted because channel units differ."
+    ]
 
 
 def test_missing_channels_and_constant_missing_values_have_finite_axes():
@@ -115,28 +140,46 @@ def test_requested_labels_remain_distinct_from_dataset_labels():
     synthetic["metadata"]["requested_labels"] = ["AFIB"]
     result = _javascript(
         {"record": synthetic},
-        "({origin: recordOrigin(p.record), requested: requestedLabels(p.record), labels: p.record.labels})",
+        (
+            "({origin: recordOrigin(p.record), requested: "
+            "requestedLabels(p.record), labels: "
+            "p.record.labels})"
+        ),
     )
-    assert result == {"origin": "synthetic", "requested": ["AFIB"], "labels": []}
+    assert result == {
+        "origin": "synthetic",
+        "requested": ["AFIB"],
+        "labels": [],
+    }
 
 
-def test_generated_catalog_metadata_identifies_origin_and_available_conditioning_reference():
+def test_generated_catalog_preserves_origin_and_conditioning():
     real = _record("real-1", [[1, 2]])
     synthetic = _record("generated-1", [[3, 4]])
     # This is the metadata contract emitted by generate/full/runner.py.
     synthetic["metadata"] = {
         "synthetic": True,
-        "generation": {"source_record_ids": ["not-in-analysis", "generated-1", "real-1"]},
+        "generation": {
+            "source_record_ids": ["not-in-analysis", "generated-1", "real-1"]
+        },
         "requested_labels": ["AFIB"],
         "label_status": "pending_review",
     }
     result = _javascript(
         {"records": [synthetic, real]},
-        "({origin: recordOrigin(p.records[0]), "
-        "paired: pairedRecordId(p.records[0], p.records), "
-        "requested: requestedLabels(p.records[0]), labels: p.records[0].labels})",
+        (
+            "({origin: recordOrigin(p.records[0]), paired:"
+            " pairedRecordId(p.records[0], p.records), "
+            "requested: requestedLabels(p.records[0]), "
+            "labels: p.records[0].labels})"
+        ),
     )
-    assert result == {"origin": "synthetic", "paired": "real-1", "requested": ["AFIB"], "labels": []}
+    assert result == {
+        "origin": "synthetic",
+        "paired": "real-1",
+        "requested": ["AFIB"],
+        "labels": [],
+    }
 
 
 def test_explicit_origin_and_conditioning_reference_take_precedence():
@@ -150,7 +193,10 @@ def test_explicit_origin_and_conditioning_reference_take_precedence():
     )
     result = _javascript(
         {"records": [record, first, second]},
-        "({origin: recordOrigin(p.records[0]), paired: pairedRecordId(p.records[0], p.records)})",
+        (
+            "({origin: recordOrigin(p.records[0]), paired:"
+            " pairedRecordId(p.records[0], p.records)})"
+        ),
     )
     assert result == {"origin": "real", "paired": "real-2"}
 
@@ -158,10 +204,16 @@ def test_explicit_origin_and_conditioning_reference_take_precedence():
 def test_display_names_shorten_presentation_without_changing_identifiers():
     record_id = "synthetic:" + "a" * 64 + ":00000001"
     record = _record(record_id, [[1, 2]], origin="synthetic")
-    result = _javascript({"record": record}, "({label: recordLabel(p.record), id: p.record.record_id})")
+    result = _javascript(
+        {"record": record},
+        "({label: recordLabel(p.record), id: p.record.record_id})",
+    )
     assert len(result["label"]) <= 42
     assert result["label"].startswith("synthetic:")
     assert result["label"].endswith(":00000001")
     assert result["id"] == record_id
     record["metadata"]["display_name"] = "DiffuSETS 01 · ref ptbxl-5998"
-    assert _javascript({"record": record}, "recordLabel(p.record)") == record["metadata"]["display_name"]
+    assert (
+        _javascript({"record": record}, "recordLabel(p.record)")
+        == record["metadata"]["display_name"]
+    )

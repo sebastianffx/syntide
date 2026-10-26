@@ -1,18 +1,12 @@
-"""Real recordings for QA generation, restricted to one manifest role, plus the original ECG-QA-CoT tasks.
+"""Load allowed recordings and original questions for corpus construction.
 
-A ``QASource`` is the population a build may read: rows (record, patient, annotations, the ECG-QA-CoT
-clinical context and original questions) and an ordered waveform loader. ``open_source`` builds it from
-the existing PTB-XL adapter (and the ECG-QA view when questions are needed) after the leakage gate
-(Gate 1), the QA join check and ``check_lineage`` pass for every record of the role. Waveforms are
-loaded only for that role.
+A source limits access to one manifest role after checking record and patient
+separation. Training sources accept training roles only. Evaluation sources
+accept validation or test roles and cannot produce training corpora.
 
-``purpose='training'`` accepts training roles only (``pool``, ``depleted``, ``natural_mix``);
-``purpose='evaluation'`` accepts ``val`` or ``test`` only. An evaluation source can build evaluation
-suites, never a training corpus, and a training source never reads a held-out waveform.
-
-``source_tasks`` turns the original ECG-QA-CoT questions into ``QATask``s with the baseline-compatible
-context, unchanged answers and rationales, and ``clinical_review: source_dataset_unreviewed``. Their
-answers come from the dataset, not from evidence, so they are never re-derived after a waveform edit.
+Original ECG-QA-CoT questions retain their supplied answers and explanations.
+Those answers come from the source dataset and are not reused as measured
+evidence after editing a waveform.
 """
 
 from __future__ import annotations
@@ -49,7 +43,7 @@ class SourceRow:
 
 
 class QASource:
-    """A checked population of real recordings and its restricted loader."""
+    """Checked recordings and a loader restricted to the permitted records."""
 
     def __init__(
         self,
@@ -60,12 +54,17 @@ class QASource:
         purpose: str,
         signal: SignalInfo | None = None,
         dataset: str = PTBXL,
-        checker: Callable[[list[tuple[str, tuple[str, ...], tuple[str, ...]]]], None] | None = None,
+        checker: Callable[
+            [list[tuple[str, tuple[str, ...], tuple[str, ...]]]], None
+        ]
+        | None = None,
     ) -> None:
         self.rows = sorted(
             rows,
             key=lambda row: (
-                int(row.record_id.rpartition("-")[2]) if row.record_id.rpartition("-")[2].isdigit() else 0,
+                int(row.record_id.rpartition("-")[2])
+                if row.record_id.rpartition("-")[2].isdigit()
+                else 0,
                 row.record_id,
             ),
         )
@@ -81,8 +80,10 @@ class QASource:
     def subject_of(self) -> dict[str, str]:
         return {row.record_id: row.subject_uid for row in self.rows}
 
-    def check_ancestry(self, items: Sequence[tuple[str, Sequence[str], Sequence[str]]]) -> None:
-        """Every (input id, roots, subjects) must descend only from this source's role and its patients."""
+    def check_ancestry(
+        self, items: Sequence[tuple[str, Sequence[str], Sequence[str]]]
+    ) -> None:
+        """Check that every input uses allowed recordings and patients."""
         items = [(i, tuple(r), tuple(s)) for i, r, s in items]
         if self._checker is not None:
             self._checker(items)
@@ -95,22 +96,31 @@ class QASource:
             for i, roots, subs in items
             if not roots
             or len(roots) != len(subs)
-            or any(subjects.get(r) != s for r, s in zip(roots, subs, strict=True))
+            or any(
+                subjects.get(r) != s for r, s in zip(roots, subs, strict=True)
+            )
         ]
         if bad:
             raise LeakageError(
-                f"{len(bad)} task inputs descend from records outside the source role: {bad[:5]}"
+                f"{len(bad)} task inputs descend from records outside "
+                f"the source role: {bad[:5]}"
             )
 
     def without_subjects(self, subjects: set[str]) -> QASource:
-        """The same source minus every record of these patients (whole patients only)."""
+        """Exclude all recordings from the specified patients."""
         rows = [row for row in self.rows if row.subject_uid not in subjects]
         provenance = {
             **self.provenance,
-            "excluded_subjects": len({r.subject_uid for r in self.rows} & subjects),
+            "excluded_subjects": len(
+                {r.subject_uid for r in self.rows} & subjects
+            ),
         }
         provenance["fingerprint"] = content_id(
-            {k: v for k, v in provenance.items() if k not in ("manifest", "fingerprint")}
+            {
+                k: v
+                for k, v in provenance.items()
+                if k not in ("manifest", "fingerprint")
+            }
             | {"records": [r.record_id for r in rows]}
         )
         return QASource(
@@ -124,11 +134,15 @@ class QASource:
         )
 
     def restricted_to(self, record_ids: set[str]) -> QASource:
-        """The same source, reading only these recordings."""
+        """Return a source restricted to the specified recordings."""
         rows = [row for row in self.rows if row.record_id in record_ids]
         provenance = {**self.provenance, "restricted_records": len(rows)}
         provenance["fingerprint"] = content_id(
-            {k: v for k, v in provenance.items() if k not in ("manifest", "fingerprint")}
+            {
+                k: v
+                for k, v in provenance.items()
+                if k not in ("manifest", "fingerprint")
+            }
             | {"records": [r.record_id for r in rows]}
         )
         return QASource(
@@ -144,18 +158,25 @@ class QASource:
     def row(self, record_id: str) -> SourceRow:
         return self._by_id[record_id]
 
-    def load(self, record_ids: Sequence[str]) -> list[tuple[InputRef, np.ndarray]]:
-        """Waveforms of population members only, in the requested order, with their input references."""
+    def load(
+        self, record_ids: Sequence[str]
+    ) -> list[tuple[InputRef, np.ndarray]]:
+        """Load allowed waveforms and references in the requested order."""
         ids = list(record_ids)
         outside = sorted(set(ids) - self._by_id.keys())
         if outside:
-            raise PermissionError(f"waveform request outside the source population: {outside[:3]}")
+            raise PermissionError(
+                f"waveform request outside the source population: {outside[:3]}"
+            )
         x = self._loader(ids)
         out = []
         for record_id, signal in zip(ids, x, strict=True):
             signal = np.asarray(signal, dtype=np.float32)
             spec = SignalInfo(
-                self.signal.channels, self.signal.sample_rate, self.signal.units, signal.shape[-1]
+                self.signal.channels,
+                self.signal.sample_rate,
+                self.signal.units,
+                signal.shape[-1],
             )
             row = self._by_id[record_id]
             ref = InputRef(
@@ -188,10 +209,11 @@ def open_source(
     qa_dataset: str = ECGQA,
     manifest_sha256: str | None = None,
 ) -> QASource:
-    """PTB-XL recordings of one manifest role, with their ECG-QA-CoT questions when ``questions``.
+    """Open permitted PTB-XL recordings and optionally their original questions.
 
-    ``manifest_sha256`` pins the exact split (e.g. the RunPod baseline's ``ecgqa-artifact-50/pool50``);
-    any other manifest is refused.
+    A supplied manifest checksum fixes the exact dataset split. The source
+    checks
+    record and patient separation before allowing waveforms to be loaded.
     """
     from syntide.data.adapter import PtbXlAdapter
     from syntide.data.challenge import load_manifest
@@ -201,14 +223,17 @@ def open_source(
     manifest = load_manifest(Path(manifest_path))
     if manifest_sha256 is not None and manifest.sha256 != manifest_sha256:
         raise PermissionError(
-            f"{manifest_path} is manifest {manifest.sha256[:12]}, not the pinned {manifest_sha256[:12]}"
+            f"{manifest_path} is manifest {manifest.sha256[:12]}, not "
+            f"the pinned {manifest_sha256[:12]}"
         )
     if questions:
         from syntide.explore.qa import EcgQaView, check_qa_tasks
 
         view = EcgQaView(registry, qa_dataset, dataset)
         index, source = view.index(), view.source()
-        check_manifest(manifest, index, source)  # Gate 1, on the QA view's fingerprint
+        check_manifest(
+            manifest, index, source
+        )  # Gate 1, on the QA view's fingerprint
         check_qa_tasks(view.tasks(), manifest, index)
         adapter = view.signals
     else:
@@ -216,8 +241,17 @@ def open_source(
         index, source = adapter.index(), adapter.source()
         check_manifest(manifest, index, source)
     members = set(manifest.roles[role])
-    facts = {row["record_id"]: row for row in index.to_pylist() if row["record_id"] in members}
-    check_lineage(((r, (r,), (facts[r]["subject_uid"],)) for r in sorted(facts)), manifest, index, (role,))
+    facts = {
+        row["record_id"]: row
+        for row in index.to_pylist()
+        if row["record_id"] in members
+    }
+    check_lineage(
+        ((r, (r,), (facts[r]["subject_uid"],)) for r in sorted(facts)),
+        manifest,
+        index,
+        (role,),
+    )
     by_record: dict[str, list[dict[str, Any]]] = {}
     contexts: dict[str, str] = {}
     if questions:
@@ -246,17 +280,31 @@ def open_source(
         "records": len(rows),
         "subjects": len({row.subject_uid for row in rows}),
         "questions": sum(len(row.questions) for row in rows),
-        "split_policy": "PTB-XL patient folds through the manifest; the CoT release split is descriptive",
+        ("split_policy"): (
+            "PTB-XL patient folds through the manifest; the CoT release "
+            "split is descriptive"
+        ),
     }
-    provenance["fingerprint"] = content_id({k: v for k, v in provenance.items() if k != "manifest"})
+    provenance["fingerprint"] = content_id(
+        {k: v for k, v in provenance.items() if k != "manifest"}
+    )
 
     def load(ids: list[str]) -> np.ndarray:
         return adapter.load(ids).x
 
-    def checker(items: list[tuple[str, tuple[str, ...], tuple[str, ...]]]) -> None:
+    def checker(
+        items: list[tuple[str, tuple[str, ...], tuple[str, ...]]],
+    ) -> None:
         check_lineage(items, manifest, index, (role,))
 
-    return QASource(rows, load, provenance, purpose=purpose, dataset=dataset, checker=checker)
+    return QASource(
+        rows,
+        load,
+        provenance,
+        purpose=purpose,
+        dataset=dataset,
+        checker=checker,
+    )
 
 
 def open_external_source(
@@ -266,12 +314,13 @@ def open_external_source(
     signal: SignalInfo | None = None,
     label_mapping: dict[str, str] | None = None,
 ) -> QASource:
-    """An evaluation-only source from an explorer-style JSONL catalog of another dataset.
+    """Open an external evaluation dataset from an explorer catalog.
 
-    Every row must have ``split: test`` (or ``external``): an external catalog is never a training source.
-    Channels go through the generated-signal alias table, the sample rate must equal the target's (no
-    silent resampling), and patients are namespaced ``external:<dataset>:<subject>``. ``label_mapping``
-    maps the catalog's answer strings onto the canonical option strings and is part of the provenance.
+    Every catalog row must be marked as test or external data. Lead aliases are
+    normalized, but sampling rates must already match. Patient identifiers are
+    prefixed with the dataset name to prevent collisions. Optional label
+    mappings
+    convert source answers to the required option strings and are recorded.
     """
     import json
 
@@ -281,28 +330,43 @@ def open_external_source(
     path = Path(catalog)
     mapping = dict(label_mapping or {})
     rows, specs = {}, {}
-    for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+    for line_no, line in enumerate(
+        path.read_text(encoding="utf-8").splitlines(), 1
+    ):
         if not line.strip():
             continue
         item = json.loads(line)
         if item.get("split") not in ("test", "external"):
             raise PermissionError(
-                f"{path}:{line_no}: external catalogs hold evaluation rows only (split test)"
+                f"{path}:{line_no}: external catalogs hold evaluation "
+                f"rows only (split test)"
             )
         record_id = f"external:{dataset}:{item['record_id']}"
         channels = normalize_channels(item["channels"])
-        if set(target.channels) - set(channels) or float(item["sample_rate"]) != target.sample_rate:
-            raise ValueError(f"{path}:{line_no}: needs leads {target.channels} at {target.sample_rate} Hz")
+        if (
+            set(target.channels) - set(channels)
+            or float(item["sample_rate"]) != target.sample_rate
+        ):
+            raise ValueError(
+                f"{path}:{line_no}: needs leads {target.channels} at "
+                f"{target.sample_rate} Hz"
+            )
         specs[record_id] = (path.parent / item["signal_path"], channels)
         row = rows.setdefault(
             record_id,
             SourceRow(
-                record_id, f"external:{dataset}:{item.get('subject_uid') or item['record_id']}", [], []
+                record_id,
+                f"external:{dataset}:"
+                f"{item.get('subject_uid') or item['record_id']}",
+                [],
+                [],
             ),
         )
         for k, text in enumerate(item.get("texts") or []):
             answer = mapping.get(text["answer"], text["answer"])
-            options = [mapping.get(o, o) for o in text.get("answer_options") or []]
+            options = [
+                mapping.get(o, o) for o in text.get("answer_options") or []
+            ]
             row.questions.append(
                 {
                     "task_id": text.get("text_id") or f"{record_id}:q{k}",
@@ -312,13 +376,19 @@ def open_external_source(
                     "answer_options": options,
                     "clinical_context": text.get("clinical_context", ""),
                     "rationale": text.get("rationale", ""),
-                    "template_id": int((text.get("text_metadata") or {}).get("template_id", 0)),
-                    "question_type": (text.get("text_metadata") or {}).get("question_type", "external"),
+                    "template_id": int(
+                        (text.get("text_metadata") or {}).get("template_id", 0)
+                    ),
+                    "question_type": (text.get("text_metadata") or {}).get(
+                        "question_type", "external"
+                    ),
                     "cot_split": "external",
                     "is_artifact": False,
                 }
             )
-            row.clinical_context = row.clinical_context or text.get("clinical_context", "")
+            row.clinical_context = row.clinical_context or text.get(
+                "clinical_context", ""
+            )
     provenance = {
         "dataset": dataset,
         "catalog_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
@@ -334,15 +404,28 @@ def open_external_source(
         for record_id in ids:
             file, channels = specs[record_id]
             x = np.load(file, allow_pickle=False)
-            out.append(np.asarray(x, dtype=np.float32)[[channels.index(lead) for lead in target.channels]])
+            out.append(
+                np.asarray(x, dtype=np.float32)[
+                    [channels.index(lead) for lead in target.channels]
+                ]
+            )
         return np.stack(out)
 
-    def checker(items: list[tuple[str, tuple[str, ...], tuple[str, ...]]]) -> None:
+    def checker(
+        items: list[tuple[str, tuple[str, ...], tuple[str, ...]]],
+    ) -> None:
         from syntide.data.leakage import LeakageError
 
-        bad = [i for i, roots, _ in items if not roots or any(r not in rows for r in roots)]
+        bad = [
+            i
+            for i, roots, _ in items
+            if not roots or any(r not in rows for r in roots)
+        ]
         if bad:
-            raise LeakageError(f"{len(bad)} inputs descend from records outside the external catalog")
+            raise LeakageError(
+                f"{len(bad)} inputs descend from records outside the "
+                f"external catalog"
+            )
 
     return QASource(
         list(rows.values()),
@@ -356,20 +439,32 @@ def open_external_source(
 
 
 def _check_role(role: str, purpose: str) -> None:
-    allowed = {"training": TRAINING_ROLES, "evaluation": EVALUATION_ROLES}.get(purpose)
+    allowed = {"training": TRAINING_ROLES, "evaluation": EVALUATION_ROLES}.get(
+        purpose
+    )
     if allowed is None:
-        raise ValueError(f"purpose must be training or evaluation, got {purpose!r}")
+        raise ValueError(
+            f"purpose must be training or evaluation, got {purpose!r}"
+        )
     if role not in allowed:
-        raise PermissionError(f"a {purpose} source reads roles {allowed}, not {role!r}")
+        raise PermissionError(
+            f"a {purpose} source reads roles {allowed}, not {role!r}"
+        )
 
 
 def source_tasks(
-    source: QASource, ref: InputRef, *, dedupe: bool = False, qa_dataset: str = ECGQA
+    source: QASource,
+    ref: InputRef,
+    *,
+    dedupe: bool = False,
+    qa_dataset: str = ECGQA,
 ) -> list[QATask]:
-    """The original ECG-QA-CoT questions of one real recording, as accepted source supervision.
+    """Return original dataset questions for one real recording.
 
-    ``dedupe`` keeps one task per (record, question), the lowest task id (the baseline's evaluation
-    rule); training keeps every question/rationale row, as the baseline did.
+    When ``dedupe`` is true, keep the lowest task identifier for each recording
+    and question, matching baseline evaluation. Otherwise, retain every
+    question
+    and explanation used for training.
     """
     row = source.row(ref.waveform_id)
     questions = sorted(row.questions, key=lambda q: q["task_id"])
@@ -385,7 +480,10 @@ def source_tasks(
         options = tuple(q["answer_options"])
         answer = q["answer"]
         answer_type = "binary" if set(options) == {"yes", "no"} else "choice"
-        if answer not in options:  # a source answer outside its declared options is kept, but as an option
+        if (
+            answer not in options
+            # Keep a source answer outside its declared options as an option
+        ):
             options = (*options, answer)
         out.append(
             QATask(
@@ -403,17 +501,28 @@ def source_tasks(
                 context={"clinical_context": [q["clinical_context"]]},
                 tolerance=None,
                 semantic_key="sem-"
-                + content_id([ref.waveform_sha256, q["template_id"], q["question"], answer])[:24],
+                + content_id(
+                    [
+                        ref.waveform_sha256,
+                        q["template_id"],
+                        q["question"],
+                        answer,
+                    ]
+                )[:24],
                 paraphrase="seed",
                 composition="source",
-                generation={"generator": SOURCE_TASK_RULE, "operator": "source"},
+                generation={
+                    "generator": SOURCE_TASK_RULE,
+                    "operator": "source",
+                },
                 verification={
                     "status": "accepted",
                     "source": qa_dataset,
                     "checks": [{"name": SOURCE_TASK_RULE, "pass": True}],
                     "reason": "",
                     "context_policy": "ecgqa-cot-baseline@1",
-                    "context_reveals_answer": "signal quality" in q["clinical_context"].lower()
+                    "context_reveals_answer": "signal quality"
+                    in q["clinical_context"].lower()
                     and q["question_type"].startswith("single")
                     and _is_noise_question(q["question"]),
                     "clinical_review": "source_dataset_unreviewed",
@@ -426,7 +535,9 @@ def source_tasks(
                     "question_type": q["question_type"],
                     "cot_split": q["cot_split"],
                     "is_artifact": bool(q["is_artifact"]),
-                    "source_rationale_sha256": hashlib.sha256((q["rationale"] or "").encode()).hexdigest(),
+                    "source_rationale_sha256": hashlib.sha256(
+                        (q["rationale"] or "").encode()
+                    ).hexdigest(),
                 },
             )
         )
@@ -434,11 +545,12 @@ def source_tasks(
 
 
 def baseline_rationale(text: str | None) -> str:
-    """The source rationale without its own trailing ``Answer:`` (the baseline's ``target_text`` rule), so
-    the gold answer is appended exactly once."""
+    """Remove the trailing answer line before appending the final answer."""
     return re.split(r"(?i)\banswer\s*:", text or "")[0].strip()
 
 
 def _is_noise_question(question: str) -> bool:
     lowered = question.lower()
-    return any(word in lowered for word in ("noise", "drift", "electrode", "artifact"))
+    return any(
+        word in lowered for word in ("noise", "drift", "electrode", "artifact")
+    )

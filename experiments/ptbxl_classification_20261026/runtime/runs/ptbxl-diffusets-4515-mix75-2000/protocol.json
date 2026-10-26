@@ -1,0 +1,52 @@
+{
+  "id": "ptbxl-diffusets-4515-mix75-2000",
+  "label_policy": "provisional_conditioning_parent_superclasses",
+  "label_choice_authorization": "User: use the labels that makes more sense for those 4,515 ecgs",
+  "real_records": 8579,
+  "generated_records": 4515,
+  "real_per_batch": 48,
+  "generated_per_batch": 16,
+  "batch_size": 64,
+  "max_steps": 2000,
+  "val_every": 100,
+  "seed": 0,
+  "sampling": "independent shuffled cyclic source pools; exact source ratio in every batch",
+  "model": {
+    "width": 64,
+    "kernel_size": 7
+  },
+  "optimizer": {
+    "lr": 0.001,
+    "weight_decay": 0.01
+  },
+  "device": "mps",
+  "loss": "BCEWithLogitsLoss, equally weighted examples/classes",
+  "checkpoint_selection": "first maximum validation overall macro-AUROC across steps 100..2000",
+  "class_order": [
+    "CD",
+    "HYP",
+    "MI",
+    "NORM",
+    "STTC"
+  ],
+  "manifest": "manifests/ptbxl-scaling/pool50.json",
+  "manifest_sha256": "95db415ff96315d1d6fce2df00992ffacaa4284f4f9d0a137c2051456cce602d",
+  "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+  "diagnostic_labels_verified_on_generated_signals": false,
+  "comparison": "Exploratory single-seed trial. Original test results already known. Original scaling budget 12000; also compare histories restricted to <=2000.",
+  "inputs_sha256": {
+    "data/conditioning_labels.json": "cc6db4e2fede7b1f8cb60c137d82536fcec7089ebbfddf5d04d674697a70e855",
+    "data/generated.npz": "b27c7658249a72884c7073b255bfcf3e98f69c1a9dff7ea5669ec9d5ec48feb2",
+    "data/manifest.json": "a2ffde2934dd0ebedaca299cd2ef774228b925ec2b348129fac20d5f01ce7c8f",
+    "data/provenance.json": "98c8f69d165e669ae4120bfbc07b10450d8bc52aae14a46ae93a404d9434b50f"
+  },
+  "code_sha256": {
+    "runs/ptbxl-diffusets-4515-mix75-2000/run_experiment.py": "12bc173f81129c2fb2b804a30bbd93acd03826bfa70a64679be10dba4f6b32d8",
+    "runs/ptbxl-diffusets-4515-mix75-2000/mixed_stream.py": "3365b0bab12ae4ffca31518c0f26be8245ceeb223689071aa9e62235b354ef0b",
+    "runs/ptbxl-diffusets-4515-mix75-2000/prepare_data.py": "61a8fe8f6b20ae4e6aecd9781e8f7fc6ae5de28e078c797d462483d0a4337c37",
+    "trainers/src/syntide_trainers/torch_loop.py": "def4501896609c2d931e0de068e61e50be152758404404b065b69d75f6f70af7",
+    "src/syntide/trial.py": "398bac00a3c4043914886e57630c43dd3b1d577debb94eeed7e0d5179521bb64",
+    "src/syntide/eval/stats.py": "36483ba2d08a68234a8db60dad1c17e181b40de611d5f92b6aff84148bd0ade9",
+    "src/syntide/eval/holdout.py": "b65f23d3cfa228e1baf9b360357894ef3ba51c131eab50663fc1e01ae7095228"
+  }
+}

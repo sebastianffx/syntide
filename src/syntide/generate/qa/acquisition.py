@@ -1,37 +1,20 @@
-"""Acquisition variation with task-aware supervision: ``ecg.acquisition@1``.
+"""Create recording-condition variations and recheck their question answers.
 
-Operations (each a versioned recipe; randomness only from its ``seed_key``):
+Supported operations change sample rate, filter frequency content, crop time,
+mask leads, change gain, or add electrode artifacts. Recipes record the
+operation, settings, and random seed. Every transformed waveform is measured
+again before its questions are accepted.
 
-- ``resample``: down to ``rate_hz`` and back to the source rate with polyphase filtering (a lower-rate
-  device). The output keeps the source's length and rate, so it trains like every other input.
-- ``lowpass`` / ``highpass``: a zero-phase 4th-order Butterworth filter at ``cutoff_hz``.
-- ``crop``: keep ``duration_s`` seconds from ``start_s``. Times in the new waveform start at 0.
-- ``lead_mask``: zero the named leads (``leads``). Lead identities and order are kept; the leads are
-  flat, and evidence measures them as unavailable.
-- ``gain``: multiply every lead by ``factor`` (a calibration error).
-- ``electrode_artifact``: the existing editor ``ecg.electrode_artifact@1.0.0``, unchanged, with its own
-  blocking validators (``bounds@1``, ``alignment@1``) and ``LABEL_EFFECT``.
+Each operation declares whether it preserves, determines, or invalidates an
+attribute. A task that should retain its answer is rejected if remeasurement
+changes that answer. Other supported tasks receive updated answers and
+explanations, including explicit insufficient-evidence answers when needed.
+Inapplicable templates are rejected.
 
-Each operation declares a label effect per attribute group, in the existing vocabulary
-(``preserves | determines | invalidates``). After a transform every evidence-backed task is rebuilt
-from evidence remeasured on the new waveform, and the effect decides what that means:
-
-==============================  ===================  =========================  ==============
-rebuilt task                    ``preserves``         ``determines``             ``invalidates``
-==============================  ===================  =========================  ==============
-same answer                     kept                 kept                        kept
-different answer                rejected (invariant)  updated answer + rationale  updated
-now insufficient evidence       rejected (invariant)  insufficient-evidence task  insufficient
-template no longer applies      rejected              rejected                   rejected
-==============================  ===================  =========================  ==============
-
-Answerability is recorded on the task, separately from the label effect. Annotation evidence (PTB-XL
-flags, diagnostic superclasses) is not remeasured: it is inherited only for groups the operation
-preserves (diagnosis, for most operations), marked with its provenance, and becomes ``unknown`` for
-groups it invalidates. Preserving the underlying diagnosis label and preserving what the waveform
-shows are separate checks: a lead mask preserves the label but can make a lead-specific fact
-unobservable. Original ECG-QA-CoT tasks are never carried onto a transformed waveform, because their
-answers come from the dataset, not from evidence that can be remeasured.
+Source annotations are inherited only when their meaning is preserved. A
+preserved diagnosis does not imply every waveform measurement remains
+observable. Original dataset questions are not carried onto edited waveforms
+because their answers cannot be verified through remeasurement.
 """
 
 from __future__ import annotations
@@ -48,7 +31,11 @@ from syntide.explore.plans import content_id
 from syntide.generate import editor, validate
 from syntide.generate.editor import EditorConfig
 from syntide.generate.ledger import Recipe
-from syntide.generate.qa.evidence import ANNOTATIONS, EvidenceExtractor, waveform_sha256
+from syntide.generate.qa.evidence import (
+    ANNOTATIONS,
+    EvidenceExtractor,
+    waveform_sha256,
+)
 from syntide.generate.qa.templates import TEMPLATES, View, build_task
 from syntide.generate.qa.verify import student_context, verify_task
 
@@ -161,10 +148,17 @@ OPERATIONS = tuple(LABEL_EFFECT)
 
 @dataclass
 class AcquisitionConfig:
-    """Which operations to draw per source waveform, and their ranges."""
+    """Signal transformations and ranges to sample for each source recording."""
 
     operations: list[str] = field(
-        default_factory=lambda: ["resample", "lowpass", "crop", "lead_mask", "gain", "electrode_artifact"]
+        default_factory=lambda: [
+            "resample",
+            "lowpass",
+            "crop",
+            "lead_mask",
+            "gain",
+            "electrode_artifact",
+        ]
     )
     per_waveform: int = 1
     resample_rates_hz: list[float] = field(default_factory=lambda: [50.0])
@@ -201,7 +195,8 @@ def draw_recipe(
 ) -> dict[str, Any]:
     if op not in LABEL_EFFECT:
         raise UnsupportedTransformation(
-            f"{GENERATOR}@{VERSION} does not support {op!r}; choose one of {OPERATIONS}"
+            f"{GENERATOR}@{VERSION} does not support {op!r}; choose "
+            f"one of {OPERATIONS}"
         )
     pick = lambda values: values[int(rng.integers(len(values)))]  # noqa: E731
     seed_key = int(rng.integers(2**53))
@@ -215,12 +210,17 @@ def draw_recipe(
         duration = float(pick(cfg.crop_s))
         if duration >= spec.duration_s:
             raise UnsupportedTransformation(
-                f"crop of {duration} s needs a longer recording than {spec.duration_s} s"
+                f"crop of {duration} s needs a longer recording than "
+                f"{spec.duration_s} s"
             )
         start = round(float(rng.uniform(0, spec.duration_s - duration)), 2)
         params = {"start_s": start, "duration_s": duration}
     elif op == "lead_mask":
-        params = {"leads": [lead for lead in pick(cfg.lead_masks) if lead in spec.channels]}
+        params = {
+            "leads": [
+                lead for lead in pick(cfg.lead_masks) if lead in spec.channels
+            ]
+        }
     elif op == "gain":
         params = {"factor": float(pick(cfg.gains))}
     else:
@@ -228,31 +228,44 @@ def draw_recipe(
         kind = editor.ARTIFACTS[int(rng.integers(len(editor.ARTIFACTS)))]
         controls: dict[str, Any] = {
             "artifact_type": kind,
-            "electrode": editor.ELECTRODES[int(rng.integers(len(editor.ELECTRODES)))],
+            "electrode": editor.ELECTRODES[
+                int(rng.integers(len(editor.ELECTRODES)))
+            ],
         }
         for name in editor.CONTROLS[kind]:
             low, high = editor.control_range(env, kind, name, spec.duration_s)
             controls[name] = float(rng.uniform(low, high))
         params = {"controls": controls}
-    return {"generator": f"{GENERATOR}@{VERSION}", "op": op, "params": params, "seed_key": seed_key}
+    return {
+        "generator": f"{GENERATOR}@{VERSION}",
+        "op": op,
+        "params": params,
+        "seed_key": seed_key,
+    }
 
 
-def apply(x: np.ndarray, ref: InputRef, recipe: dict[str, Any], cfg: AcquisitionConfig) -> Variant:
-    """Transform one waveform. Returns the new input reference, values and blocking signal checks."""
+def apply(
+    x: np.ndarray, ref: InputRef, recipe: dict[str, Any], cfg: AcquisitionConfig
+) -> Variant:
+    """Transform a waveform and return its reference and signal checks."""
     op, params = recipe["op"], recipe["params"]
     spec, fs = ref.signal, ref.signal.sample_rate
     x64 = np.asarray(x, dtype=np.float64)
     checks: list[dict[str, Any]] = []
     channels, n = spec.channels, spec.num_samples
     if op == "resample":
-        down = Fraction(params["rate_hz"]).limit_denominator(1000) / Fraction(fs).limit_denominator(1000)
+        down = Fraction(params["rate_hz"]).limit_denominator(1000) / Fraction(
+            fs
+        ).limit_denominator(1000)
         low = resample_poly(x64, down.numerator, down.denominator, axis=-1)
         y = resample_poly(low, down.denominator, down.numerator, axis=-1)[:, :n]
         if y.shape[-1] < n:
             y = np.pad(y, ((0, 0), (0, n - y.shape[-1])), mode="edge")
     elif op in ("lowpass", "highpass"):
         if not 0 < params["cutoff_hz"] < fs / 2:
-            raise UnsupportedTransformation(f"cutoff {params['cutoff_hz']} Hz is outside (0, {fs / 2}) Hz")
+            raise UnsupportedTransformation(
+                f"cutoff {params['cutoff_hz']} Hz is outside (0, {fs / 2}) Hz"
+            )
         sos = butter(4, params["cutoff_hz"], btype=op, fs=fs, output="sos")
         y = sosfiltfilt(sos, x64, axis=-1)
     elif op == "crop":
@@ -263,7 +276,8 @@ def apply(x: np.ndarray, ref: InputRef, recipe: dict[str, Any], cfg: Acquisition
         unknown = set(params["leads"]) - set(channels)
         if unknown or not params["leads"]:
             raise UnsupportedTransformation(
-                f"lead_mask names leads {sorted(unknown)} the signal does not have"
+                f"lead_mask names leads {sorted(unknown)} the signal "
+                f"does not have"
             )
         y = x64.copy()
         y[[channels.index(lead) for lead in params["leads"]]] = 0.0
@@ -271,14 +285,23 @@ def apply(x: np.ndarray, ref: InputRef, recipe: dict[str, Any], cfg: Acquisition
         y = x64 * params["factor"]
     elif op == "electrode_artifact":
         edit_recipe = Recipe(
-            ref.waveform_id, editor.GENERATOR, editor.VERSION, params["controls"], recipe["seed_key"], None
+            ref.waveform_id,
+            editor.GENERATOR,
+            editor.VERSION,
+            params["controls"],
+            recipe["seed_key"],
+            None,
         )
         candidate = editor.edit(x, edit_recipe, fs)
-        found, _ = validate.evaluate(candidate, x, edit_recipe, asdict(cfg.editor), fs)
+        found, _ = validate.evaluate(
+            candidate, x, edit_recipe, asdict(cfg.editor), fs
+        )
         checks.extend(check.to_json() for check in found)
         y = candidate.x.astype(np.float64)
     else:
-        raise UnsupportedTransformation(f"{GENERATOR}@{VERSION} does not support {op!r}")
+        raise UnsupportedTransformation(
+            f"{GENERATOR}@{VERSION} does not support {op!r}"
+        )
     finite = bool(np.isfinite(y).all())
     peak = float(np.abs(y).max()) if finite and y.size else float("inf")
     limit = max(
@@ -309,7 +332,9 @@ def apply(x: np.ndarray, ref: InputRef, recipe: dict[str, Any], cfg: Acquisition
             "recipe": recipe,
             "parent_waveform_sha256": ref.waveform_sha256,
             "label_effect": LABEL_EFFECT[op],
-            "time_offset_s": params.get("start_s", 0.0) if op == "crop" else 0.0,
+            "time_offset_s": params.get("start_s", 0.0)
+            if op == "crop"
+            else 0.0,
         },
     )
     ok = all(c["pass"] for c in checks)
@@ -319,18 +344,25 @@ def apply(x: np.ndarray, ref: InputRef, recipe: dict[str, Any], cfg: Acquisition
 def inherit_annotations(
     parent: list[Evidence], variant: Variant, extractor: EvidenceExtractor
 ) -> list[Evidence]:
-    """Annotation evidence for the variant: inherited where the operation preserves its group."""
+    """Keep annotations only when a transformation preserves their meaning."""
     effect = variant.ref.lineage["label_effect"]
     out = []
     for item in parent:
         if item.method != ANNOTATIONS:
             continue
-        group = "diagnosis" if item.attribute == "diagnostic_superclasses" else "signal_quality"
+        group = (
+            "diagnosis"
+            if item.attribute == "diagnostic_superclasses"
+            else "signal_quality"
+        )
         keep = effect[group] == "preserves"
         out.append(
             Evidence(
                 **{
-                    **{name: getattr(item, name) for name in item.__dataclass_fields__},
+                    **{
+                        name: getattr(item, name)
+                        for name in item.__dataclass_fields__
+                    },
                     "waveform_sha256": variant.ref.waveform_sha256,
                     "signal": variant.ref.signal,
                     "record_id": variant.ref.waveform_id,
@@ -338,9 +370,15 @@ def inherit_annotations(
                     "status": item.status if keep else "unknown",
                     "confidence": item.confidence,
                     "observability": (
-                        f"inherited from {item.record_id}: {variant.recipe['op']} preserves {group}"
+                        (
+                            f"inherited from {item.record_id}: "
+                            f"{variant.recipe['op']} preserves {group}"
+                        )
                         if keep
-                        else f"{variant.recipe['op']} invalidates the {group} annotation of {item.record_id}"
+                        else (
+                            f"{variant.recipe['op']} invalidates the "
+                            f"{group} annotation of {item.record_id}"
+                        )
                     ),
                     "provenance": {
                         **item.provenance,
@@ -355,17 +393,24 @@ def inherit_annotations(
 
 
 def carry(
-    task: QATask, variant: Variant, variant_evidence: list[Evidence], parent_context: str
+    task: QATask,
+    variant: Variant,
+    variant_evidence: list[Evidence],
+    parent_context: str,
 ) -> tuple[QATask | None, str, tuple[Evidence, ...]]:
-    """Rebuild one evidence-backed task on the variant: (task or None, decision, evidence it cites)."""
+    """Rebuild and check a task using the transformed signal."""
     if task.composition in ("source", "comparison") or len(task.inputs) != 1:
         return None, "not_carried", ()
     template = TEMPLATES.get(task.template)
     if template is None:
         return None, "rejected:unknown_template", ()
-    effect = variant.ref.lineage["label_effect"][TEMPLATE_GROUP[template.family]]
+    effect = variant.ref.lineage["label_effect"][
+        TEMPLATE_GROUP[template.family]
+    ]
     view = View(variant.ref, variant_evidence)
-    context = {"clinical_context": [student_context("transformed", parent_context)]}
+    context = {
+        "clinical_context": [student_context("transformed", parent_context)]
+    }
     generation = {
         "generator": f"{GENERATOR}@{VERSION}",
         "operator": "acquisition",
@@ -384,18 +429,29 @@ def carry(
     if built is None:
         return None, "rejected:template_no_longer_applies", ()
     rebuilt, cited = built
-    same = (rebuilt.answer, rebuilt.answerability) == (task.answer, task.answerability)
+    same = (rebuilt.answer, rebuilt.answerability) == (
+        task.answer,
+        task.answerability,
+    )
     if same:
         decision = "preserved"
     elif effect == "preserves":
-        return None, f"rejected:invariant_violation:{TEMPLATE_GROUP[template.family]}", ()
+        return (
+            None,
+            f"rejected:invariant_violation:{TEMPLATE_GROUP[template.family]}",
+            (),
+        )
     elif rebuilt.answerability != "answerable":
         decision = "insufficient_after_transform"
     else:
         decision = "remeasured_updated"
     store = {e.evidence_id: e for e in [*variant_evidence, *cited]}
     checked = verify_task(
-        replace(rebuilt, generation={**rebuilt.generation, "carry_decision": decision}), store
+        replace(
+            rebuilt,
+            generation={**rebuilt.generation, "carry_decision": decision},
+        ),
+        store,
     )
     if checked.verification["status"] != "accepted":
         return checked, "rejected:" + checked.verification["reason"], cited

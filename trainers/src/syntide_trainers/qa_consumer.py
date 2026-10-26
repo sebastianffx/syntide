@@ -1,19 +1,15 @@
-"""A lightweight, offline QA trainer that exercises the whole ``syntide.qa_trial`` contract.
+"""Exercise question-answer trial training with a small offline model.
 
-    uv run python -m syntide_trainers.qa_consumer "runs/ecgqa-cot-qa-offline/*/*/seed*"
+For categorical questions, learn the most frequent answer by question family
+and wording. For numeric questions, fit a least-squares model using four
+waveform measurements: duration, a repeating-pattern rate, slow-wave
+amplitude, and robust signal spread. Training reads only the batches
+supplied by Syntide.
 
-It is a contract exerciser, not a model of record. Per question family it learns from the served
-batches only:
-
-- options, sets and "insufficient evidence": the most frequent answer per (family, question);
-- numbers: a least-squares fit of the answer on four features it computes itself from the first
-  signal (duration, an autocorrelation rate estimate, the largest slow-wave half peak-to-peak and the
-  largest robust spread). It never reads syntide's evidence, so the waveform-swap and context-only
-  controls can show whether it uses the signal.
-
-Every ``val_every`` steps it predicts the selection suite, scores it with ``syntide.eval.qa_metrics``
-and keeps ``best.json`` on the first argmax; ``final.json`` is the state at the last step. Checkpoints
-are JSON, and ``predict`` (the test-time ``QAPredictor``) reloads them. NumPy only; no torch.
+Evaluate the selection collection every val_every steps and keep the
+earliest checkpoint with the highest accuracy. Save the final model at the
+last step. Checkpoints are JSON files. This NumPy implementation checks the
+training interface; it is not the model used for the reported experiment.
 """
 
 from __future__ import annotations
@@ -56,13 +52,22 @@ def features(signal: np.ndarray, sample_rate: float) -> list[float]:
         lag = lo + int(np.argmax(ac[lo:hi]))
         rate = 60.0 * sample_rate / lag
     width = max(1, int(sample_rate))
-    slow = np.stack([np.convolve(lead, np.ones(width) / width, mode="same") for lead in x])
+    slow = np.stack(
+        [np.convolve(lead, np.ones(width) / width, mode="same") for lead in x]
+    )
     return [
         1.0,
         n / sample_rate,
         rate,
         float((0.5 * np.ptp(slow, axis=-1)).max()),
-        float((1.4826 * np.median(np.abs(x - np.median(x, axis=-1, keepdims=True)), axis=-1)).max()),
+        float(
+            (
+                1.4826
+                * np.median(
+                    np.abs(x - np.median(x, axis=-1, keepdims=True)), axis=-1
+                )
+            ).max()
+        ),
     ]
 
 
@@ -81,10 +86,17 @@ class Model:
         key = f"{example.family}\x00{example.student['question']}"
         self.answers[key][answer] += 1
         self.answers[example.family][answer] += 1
-        if not example.student["options"] and re.fullmatch(r"-?\d+(\.\d+)?", answer):
+        if not example.student["options"] and re.fullmatch(
+            r"-?\d+(\.\d+)?", answer
+        ):
             spec = example.student["inputs"][0]["signal"]
             self.numeric[example.family].append(
-                [*features(example.student["signals"][0], spec["sample_rate"]), float(answer)]
+                [
+                    *features(
+                        example.student["signals"][0], spec["sample_rate"]
+                    ),
+                    float(answer),
+                ]
             )
 
     def state(self) -> dict:
@@ -92,9 +104,16 @@ class Model:
         for family, rows in self.numeric.items():
             data = np.asarray(rows)
             coef[family] = (
-                np.linalg.lstsq(data[:, :-1], data[:, -1], rcond=None)[0].tolist() if len(rows) >= 2 else None
+                np.linalg.lstsq(data[:, :-1], data[:, -1], rcond=None)[
+                    0
+                ].tolist()
+                if len(rows) >= 2
+                else None
             )
-        return {"answers": {k: dict(v) for k, v in sorted(self.answers.items())}, "coef": coef}
+        return {
+            "answers": {k: dict(v) for k, v in sorted(self.answers.items())},
+            "coef": coef,
+        }
 
 
 def predict_state(state: dict, examples: Sequence[QAExample]) -> list[str]:
@@ -109,13 +128,23 @@ def predict_state(state: dict, examples: Sequence[QAExample]) -> list[str]:
         if (
             not ex.student["options"]
             and coef is not None
-            and not (votes and max(votes, key=votes.get) == "insufficient evidence")
+            and not (
+                votes and max(votes, key=votes.get) == "insufficient evidence"
+            )
         ):
             spec = ex.student["inputs"][0]["signal"]
-            value = float(np.dot(coef, features(ex.student["signals"][0], spec["sample_rate"])))
+            value = float(
+                np.dot(
+                    coef,
+                    features(ex.student["signals"][0], spec["sample_rate"]),
+                )
+            )
             outputs.append(f"Answer: {round(value, 3)}")
         elif votes:
-            outputs.append(f"Answer: {sorted(votes.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]}")
+            outputs.append(
+                "Answer: "
+                f"{sorted(votes.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]}"
+            )
         else:
             outputs.append("Answer: insufficient evidence")
     return outputs
@@ -124,13 +153,20 @@ def predict_state(state: dict, examples: Sequence[QAExample]) -> list[str]:
 def _save(state: dict, path: Path, step: int, trial_id: str) -> Checkpoint:
     partial = path.with_name(path.name + ".partial")
     partial.write_text(
-        json.dumps({"state": state, "step": step, "trial_id": trial_id}, sort_keys=True) + "\n"
+        json.dumps(
+            {"state": state, "step": step, "trial_id": trial_id}, sort_keys=True
+        )
+        + "\n"
     )
     os.replace(partial, path)
     return Checkpoint(path, step)
 
 
-def predict(checkpoint: Checkpoint | str | Path, examples: Sequence[QAExample], device: str) -> list[str]:
+def predict(
+    checkpoint: Checkpoint | str | Path,
+    examples: Sequence[QAExample],
+    device: str,
+) -> list[str]:
     """The ``QAPredictor`` syntide calls for held-out suites."""
     path = checkpoint.path if isinstance(checkpoint, Checkpoint) else checkpoint
     return predict_state(json.loads(Path(path).read_text())["state"], examples)
@@ -149,10 +185,18 @@ def trainer_info() -> TrainerInfo:
 def fit(trial: QATrial, info: TrainerInfo) -> dict:
     spec, started = trial.spec, time.monotonic()
     model = Model()
-    init_sha256 = hashlib.sha256(json.dumps(model.state(), sort_keys=True).encode()).hexdigest()
+    init_sha256 = hashlib.sha256(
+        json.dumps(model.state(), sort_keys=True).encode()
+    ).hexdigest()
     selection = trial.selection_examples()
     tasks = trial.selection_tasks
-    history, best, best_score, best_outputs, outputs = [], None, -np.inf, None, None
+    history, best, best_score, best_outputs, outputs = (
+        [],
+        None,
+        -np.inf,
+        None,
+        None,
+    )
     tokens = Counter()
     for batch in trial.batches():
         for ex in batch.examples:
@@ -165,9 +209,22 @@ def fit(trial: QATrial, info: TrainerInfo) -> dict:
             history.append({"step": batch.step, **scores})
             trial.tracker.log_scalars(scores, batch.step)
             if scores[qa_metrics.SELECTION_METRIC] > best_score:
-                best_score, best_outputs = scores[qa_metrics.SELECTION_METRIC], outputs
-                best = _save(state, trial.run_dir / "best.json", batch.step, spec.trial_id)
-    final = _save(model.state(), trial.run_dir / "final.json", spec.max_steps, spec.trial_id)
+                best_score, best_outputs = (
+                    scores[qa_metrics.SELECTION_METRIC],
+                    outputs,
+                )
+                best = _save(
+                    state,
+                    trial.run_dir / "best.json",
+                    batch.step,
+                    spec.trial_id,
+                )
+    final = _save(
+        model.state(),
+        trial.run_dir / "final.json",
+        spec.max_steps,
+        spec.trial_id,
+    )
     return trial.finish(
         info,
         best=best,
@@ -190,12 +247,15 @@ def train(run_dir: str | Path, tracker: TrackerConfig) -> dict | None:
 
 def main(argv: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
-        prog="python -m syntide_trainers.qa_consumer", description=__doc__.split("\n")[0]
+        prog="python -m syntide_trainers.qa_consumer",
+        description=__doc__.split("\n")[0],
     )
     parser.add_argument("run_dirs", nargs="+")
     parser.add_argument("--tracker", default="conf/tracker/files.yaml")
     args = parser.parse_args(argv)
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S"
+    )
     tracker = TrackerConfig.from_yaml(args.tracker)
     dirs = [
         Path(m)
@@ -207,7 +267,9 @@ def main(argv: Sequence[str] | None = None) -> None:
         try:
             result = train(run_dir, tracker)
         except TrialError as error:
-            raise SystemExit(f"[{n}/{len(dirs)}] {run_dir}: refused: {error}") from error
+            raise SystemExit(
+                f"[{n}/{len(dirs)}] {run_dir}: refused: {error}"
+            ) from error
         log.info(
             "[%d/%d] %s: %s",
             n,
@@ -215,7 +277,10 @@ def main(argv: Sequence[str] | None = None) -> None:
             run_dir,
             "already complete"
             if result is None
-            else f"best val/qa_accuracy {result['best_val']:.4f} at {result['best_step']}",
+            else (
+                f"best val/qa_accuracy {result['best_val']:.4f} at "
+                f"{result['best_step']}"
+            ),
         )
 
 

@@ -1,0 +1,63 @@
+{
+ "protocol": "ptbxl-aug-sweep",
+ "regime": "scarcity50",
+ "arm": "E1",
+ "replicate_seed": 2,
+ "source_role": "depleted",
+ "transform_family": "editor",
+ "sampling_policy": "gap_targeted",
+ "generator": "ecg.electrode_artifact@1.0.0",
+ "validators": [
+  "bounds@1",
+  "alignment@1"
+ ],
+ "transform": {
+  "mv_limit": 10.0,
+  "alignment_tol": 0.15,
+  "max_retries": 5,
+  "type_smoothing": 0.1,
+  "density_floor": 1.0,
+  "envelope": {
+   "baseline_drift": {
+    "amplitude_mv": [
+     0.1,
+     3.5
+    ],
+    "freq_hz": [
+     0.1,
+     0.4
+    ]
+   },
+   "static_noise": {
+    "amplitude_mv": [
+     0.005,
+     0.1
+    ]
+   },
+   "burst_noise": {
+    "amplitude_mv": [
+     0.01,
+     0.6
+    ],
+    "duration_s": [
+     0.5,
+     3.0
+    ]
+   }
+  }
+ },
+ "dataset": "physionet/ptb-xl@1.0.3",
+ "source_sha256": "a196f876fc7fc2efba3c40ccd772f6741c5c92276ee92f92529db360c229a3a4",
+ "manifest_sha256": "af56199d780e8ca529c1191c8ab4201dcbfaa301362e9b99d8949838b5230c50",
+ "calibration_sha256": "862998a56e7e4644151015c604a5c3c3c476eb63546718d15c136153e563e999",
+ "batch_size": 64,
+ "max_steps": 10000,
+ "val_every": 100,
+ "transform_fraction": 1.0,
+ "init_seed": 745470182815633045,
+ "syntide_version": "0.1.0",
+ "registry": "datasets/timenet-registry",
+ "manifest": "manifests/ptbxl-artifact-50/pool50.json",
+ "calibration": "manifests/ptbxl-artifact-50/calibration/pool50.json",
+ "trial_id": "4fc87cb1b6182084f65377991aa8b01cee80bf4ccd75b5e71f41cc7d9f4dda64"
+}
